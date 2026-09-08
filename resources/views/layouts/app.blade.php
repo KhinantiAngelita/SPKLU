@@ -10,6 +10,8 @@
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="https://unpkg.com/lucide@latest"></script>
+    @stack('styles')
+    
 </head>
 <body>
 
