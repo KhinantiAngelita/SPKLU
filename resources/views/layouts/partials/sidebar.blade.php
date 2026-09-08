@@ -10,7 +10,8 @@
                     ->all();
             }
             return $item;
-        });
+        })
+        ->values(); // re-index biar submenu-N konsisten setelah difilter
 @endphp
 
 <aside class="sidebar">
@@ -28,11 +29,12 @@
     <nav class="sidebar-nav">
         @foreach ($menuItems as $index => $item)
 
-            @if (isset($item['children']) && count($item['children']))
+            @if (!empty($item['children']))
 
                 @php
-                    $isParentActive = collect($item['children'])->contains(fn ($c) => request()->routeIs($c['route'].'*'));
-                    $submenuId = 'submenu-'.$index;
+                    $submenuId      = 'submenu-'.$index;
+                    $isParentActive = collect($item['children'])
+                        ->contains(fn ($child) => request()->routeIs($child['route'].'*'));
                 @endphp
 
                 <button
@@ -40,7 +42,7 @@
                     class="sidebar-link sidebar-group-toggle {{ $isParentActive ? 'open' : '' }}"
                     data-toggle-submenu="{{ $submenuId }}"
                 >
-                    <span style="display:flex; align-items:center; gap:12px;">
+                    <span class="sidebar-link-content">
                         <i data-lucide="{{ $item['icon'] }}"></i>
                         {{ $item['label'] }}
                     </span>
@@ -49,8 +51,9 @@
 
                 <div id="{{ $submenuId }}" class="sidebar-submenu {{ $isParentActive ? 'open' : '' }}">
                     @foreach ($item['children'] as $child)
-                        @php $active = request()->routeIs($child['route'].'*'); @endphp
-                        <a href="{{ route($child['route']) }}" class="sidebar-sublink {{ $active ? 'active' : '' }}">
+                        @php $childActive = request()->routeIs($child['route'].'*'); @endphp
+                        <a href="{{ route($child['route']) }}"
+                           class="sidebar-sublink {{ $childActive ? 'active' : '' }}">
                             {{ $child['label'] }}
                         </a>
                     @endforeach
@@ -74,6 +77,7 @@
             <div class="sidebar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
             <p class="sidebar-user-name">{{ auth()->user()->name }}</p>
         </div>
+
         <form class="sidebar-logout-form" method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit">

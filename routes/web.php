@@ -72,8 +72,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('transaksi')->name('transaksi.')->group(function () {
         Route::get('/', [TransaksiController::class, 'index'])->name('index');
+        Route::get('upload', [TransaksiController::class, 'uploadPage'])->middleware('role:super_admin,pengelola')->name('upload');
+        Route::delete('upload/{transaksiUpload}', [TransaksiController::class, 'destroyUpload'])->middleware('role:super_admin')->name('upload.destroy');
+        Route::get('export', [TransaksiController::class, 'export'])->name('export');
         Route::post('import', [TransaksiController::class, 'import'])->middleware('role:super_admin,pengelola')->name('import');
-        Route::post('alias', [TransaksiController::class, 'storeAlias'])->middleware('role:super_admin,pengelola')->name('alias.store'); // BARU
+        Route::post('alias', [TransaksiController::class, 'storeAlias'])->middleware('role:super_admin,pengelola')->name('alias.store');
     });
 
     Route::middleware('role:super_admin')->prefix('manajemen-user')->name('manajemen-user.')->group(function () {
@@ -82,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('{user}', [ManajemenUserController::class, 'update'])->name('update');
         Route::post('{user}/resend-invitation', [ManajemenUserController::class, 'resendInvitation'])->name('resend-invitation');
         Route::post('{user}/toggle-status', [ManajemenUserController::class, 'toggleStatus'])->name('toggle-status');
+        Route::delete('{user}', [ManajemenUserController::class, 'destroy'])->name('destroy');
     });
 
     Route::middleware('role:super_admin')->prefix('master-parameter')->name('master-parameter.')->group(function () {

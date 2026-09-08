@@ -15,6 +15,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'email', 'password', 'role', 'status',
         'google_id', 'avatar', 'invited_by',
+        'invitation_token', 'invitation_expires_at',
         'force_password_change', 'created_directly_by',
         'requires_otp_first_login', 'first_login_verified_at',
     ];
