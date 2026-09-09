@@ -6,536 +6,146 @@
 @section('content')
 
 <style>
-    /* ================= SPKLU DASHBOARD — ENHANCED STYLES ================= */
-    .spklu-dashboard {
-        --sd-radius: 16px;
-        --sd-radius-sm: 10px;
-        --sd-border: rgba(0,0,0,0.06);
-        --sd-shadow: 0 1px 2px rgba(16,24,40,0.04), 0 4px 16px rgba(16,24,40,0.05);
-        --sd-shadow-hover: 0 4px 10px rgba(16,24,40,0.06), 0 12px 28px rgba(16,24,40,0.08);
-        --sd-blue: #0081AB;
-        --sd-blue-dark: #023E8A;
-        --sd-amber: #E8A317;
-        --sd-green: #16A34A;
-        --sd-red: #E4572E;
-    }
+    .dsh-subtitle { color:#64748B; margin:-6px 0 20px; font-size:13.5px; }
 
-    .spklu-dashboard .sd-subtitle {
-        color: var(--text-secondary);
-        margin: -12px 0 22px;
-        font-size: 14.5px;
-    }
+    .dsh-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px; }
+    .dsh-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); transition:transform .18s ease, box-shadow .18s ease; }
+    .dsh-card:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(15,23,42,.06), 0 14px 28px rgba(15,23,42,.09); }
+    .dsh-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+    .dsh-card-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .dsh-card-icon svg { width:20px; height:20px; stroke-width:2; }
+    .dsh-card-label { font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:0 0 6px; }
+    .dsh-card-value { font-size:26px; font-weight:800; letter-spacing:-.02em; color:#0f172a; margin:0; }
+    .dsh-trend { display:inline-flex; align-items:center; padding:4px 11px; border-radius:999px; font-size:11.5px; font-weight:700; margin-top:10px; }
+    .dsh-trend-up { background:rgba(46,158,91,.12); color:#2E9E5B; }
+    .dsh-trend-down { background:rgba(192,57,43,.12); color:#C0392B; }
+    .dsh-trend-neutral { background:#eef2f7; color:#64748B; }
+    .dsh-trend-amber { background:rgba(232,163,23,.14); color:#92660f; }
 
-    /* ---------- Summary cards ---------- */
-    .spklu-dashboard .card-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-        margin-bottom: 22px;
-    }
+    /* Kolom kiri (Kalender) & kanan (Jadwal Terdekat) di-stretch sama tinggi mengikuti grid row */
+    .dsh-grid-2col { display:grid; grid-template-columns:1.3fr 1fr; gap:20px; margin-bottom:20px; }
+    .dsh-grid-2col > .surface-card { display:flex; flex-direction:column; }
 
-    .spklu-dashboard .summary-card {
-        background: var(--surface, #fff);
-        border: 1px solid var(--sd-border);
-        border-radius: var(--sd-radius);
-        padding: 20px 22px;
-        box-shadow: var(--sd-shadow);
-        transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
-    }
+    .calendar-widget { padding:22px 24px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+    .calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .calendar-nav-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; width:30px; height:30px; cursor:pointer; color:#64748B; }
+    .calendar-today-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; color:#1E293B; }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+    .calendar-day-label { text-align:center; font-size:11.5px; font-weight:700; color:#94a3b8; padding:8px 0; text-transform:uppercase; }
+    .calendar-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:9px; font-size:13px; position:relative; color:#1E293B; }
+    .calendar-cell.today { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; font-weight:800; box-shadow:0 3px 10px rgba(2,62,138,.28); }
+    .calendar-cell.has-event::after { content:''; position:absolute; bottom:5px; width:4px; height:4px; border-radius:50%; background:#0081AB; }
+    .calendar-cell.today.has-event::after { background:#FFC629; }
 
-    .spklu-dashboard .summary-card:hover {
-        box-shadow: var(--sd-shadow-hover);
-        transform: translateY(-2px);
-        border-color: rgba(0,129,171,0.22);
-    }
+    .jadwal-widget { padding:20px 22px; flex:1; }
 
-    /* ---------- Reusable card-title with plain line icon ---------- */
-    .spklu-dashboard .sd-card-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 15.5px;
-        font-weight: 700;
-        color: var(--text-primary, #101828);
-    }
+    .jadwal-item { display:flex; align-items:center; gap:14px; padding:12px 14px; border-radius:11px; background:#f8fafc; border-left:4px solid #2E9E5B; margin-bottom:8px; transition:transform .15s ease; }
+    .jadwal-item:hover { transform:translateX(2px); }
+    .jadwal-item.besok { border-left-color:#E8A317; }
+    .jadwal-time { font-weight:800; color:#0081AB; font-size:14px; width:52px; flex-shrink:0; }
+    .jadwal-info p { margin:0; }
+    .jadwal-title { font-weight:700; font-size:13.8px; color:#1E293B; }
+    .jadwal-desc { font-size:11.5px; color:#94a3b8; margin-top:2px !important; }
+    .jadwal-badge { display:inline-flex; padding:4px 10px; border-radius:999px; font-size:10.5px; font-weight:700; }
+    .jadwal-badge-online { background:rgba(46,158,91,.14); color:#2E9E5B; }
+    .jadwal-badge-offline { background:#eef2f7; color:#64748B; }
 
-    .spklu-dashboard .sd-card-title-icon {
-        width: 30px;
-        height: 30px;
-        min-width: 30px;
-        border-radius: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
+    /* Filter bulanan untuk Tren Transaksi — cuma range bulan, tanpa spklu/satuan/tampilan */
+    .dsh-month-range { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:2px 10px; flex-shrink:0; }
+    .dsh-month-range input { border:none; padding:9px 2px; font-size:12.8px; color:#1E293B; width:126px; font-family:inherit; }
+    .dsh-month-range input:focus { outline:none; }
+    .dsh-month-range-sep { color:#cbd5e1; font-size:12px; }
 
-    .spklu-dashboard .sd-card-title-icon svg {
-        width: 16px;
-        height: 16px;
-        stroke-width: 1.9;
-    }
+    .dsh-table { width:100%; border-collapse:collapse; }
+    .dsh-table thead th { background:#fafbfc; text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#94a3b8; padding:13px 20px; border-bottom:1px solid #eef1f5; }
+    .dsh-table td { padding:14px 20px; font-size:13.3px; border-bottom:1px solid #f5f7fa; }
+    .dsh-table tbody tr:nth-child(even) { background:#fbfcfd; }
+    .dsh-table tbody tr:hover { background:rgba(0,129,171,.05); }
+    .dsh-table tbody tr:last-child td { border-bottom:none; }
+    .dsh-empty { text-align:center; padding:44px 20px; color:#94a3b8; font-size:13.5px; }
+    .dsh-empty-inline { text-align:center; padding:24px 10px; color:#94a3b8; font-size:13px; }
 
-    .spklu-dashboard .sd-card-title-icon.blue   { background: rgba(0,129,171,0.12); color: var(--sd-blue-dark); }
-    .spklu-dashboard .sd-card-title-icon.amber  { background: rgba(232,163,23,0.14); color: var(--sd-amber); }
-    .spklu-dashboard .sd-card-title-icon.green  { background: rgba(22,163,74,0.12); color: var(--sd-green); }
-    .spklu-dashboard .sd-card-title-icon.red    { background: rgba(228,87,46,0.12); color: var(--sd-red); }
+    .badge-potensi-sangat-tinggi { background:rgba(46,158,91,.14); color:#2E9E5B; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; }
+    .badge-potensi-tinggi { background:rgba(232,163,23,.14); color:#92660f; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; }
+    .badge-potensi-sedang { background:#eef2f7; color:#64748B; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; }
 
-    .spklu-dashboard .sd-card-subtitle {
-        color: var(--text-secondary);
-        font-size: 13px;
-        margin: 3px 0 0 40px;
-    }
-
-    .spklu-dashboard .summary-card-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-    .spklu-dashboard .summary-card-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        margin: 0 0 8px;
-        text-transform: uppercase;
-        letter-spacing: .03em;
-    }
-
-    .spklu-dashboard .summary-card-value {
-        font-size: 28px;
-        font-weight: 700;
-        margin: 0;
-        color: var(--text-primary, #101828);
-        line-height: 1.2;
-    }
-
-    .spklu-dashboard .summary-card-icon {
-        width: 46px;
-        height: 46px;
-        min-width: 46px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .spklu-dashboard .summary-card-icon svg {
-        width: 21px;
-        height: 21px;
-        stroke-width: 1.8;
-    }
-
-    .spklu-dashboard .icon-blue   { background: linear-gradient(135deg,#e0f4fa,#c7ecf7); color: var(--sd-blue-dark); }
-    .spklu-dashboard .icon-amber  { background: linear-gradient(135deg,#fdf1d8,#fbe6b8); color: var(--sd-amber); }
-    .spklu-dashboard .icon-green  { background: linear-gradient(135deg,#dcfbe7,#c2f5d3); color: var(--sd-green); }
-    .spklu-dashboard .icon-red    { background: linear-gradient(135deg,#fde3da,#fbcdbd); color: var(--sd-red); }
-
-    .spklu-dashboard .summary-card-trend {
-        display: inline-block;
-        margin-top: 14px;
-        font-size: 12.5px;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 999px;
-    }
-
-    .spklu-dashboard .trend-up      { background: rgba(22,163,74,0.12); color: var(--sd-green); }
-    .spklu-dashboard .trend-neutral { background: rgba(100,116,139,0.12); color: #64748b; }
-    .spklu-dashboard .trend-amber   { background: rgba(232,163,23,0.12); color: var(--sd-amber); }
-
-    /* ---------- Two-column layout: calendar + jadwal ---------- */
-    .spklu-dashboard .sd-grid-2col {
-        display: grid;
-        grid-template-columns: 1.3fr 1fr;
-        gap: 20px;
-        margin-bottom: 22px;
-        align-items: start;
-    }
-
-    /* ---------- Calendar widget ---------- */
-    .spklu-dashboard .calendar-widget {
-        padding: 18px 20px;
-        background: linear-gradient(180deg, #fbfdff 0%, #ffffff 55%);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .spklu-dashboard .calendar-widget::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--sd-blue), var(--sd-blue-dark), var(--sd-amber));
-    }
-
-    .spklu-dashboard .calendar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .spklu-dashboard .calendar-nav-btn,
-    .spklu-dashboard .calendar-today-btn {
-        border: 1px solid var(--sd-border);
-        background: #fff;
-        border-radius: 8px;
-        padding: 3px 9px;
-        font-size: 12.5px;
-        cursor: pointer;
-        color: var(--text-secondary);
-        transition: background .2s ease, color .2s ease, transform .15s ease;
-    }
-
-    .spklu-dashboard .calendar-nav-btn:hover,
-    .spklu-dashboard .calendar-today-btn:hover {
-        background: var(--sd-blue);
-        color: #fff;
-        border-color: var(--sd-blue);
-        transform: translateY(-1px);
-    }
-
-    .spklu-dashboard .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-        text-align: center;
-    }
-
-    .spklu-dashboard .calendar-day-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--text-secondary);
-        padding-bottom: 4px;
-        letter-spacing: .02em;
-    }
-
-    .spklu-dashboard .calendar-day-label:nth-child(6),
-    .spklu-dashboard .calendar-day-label:nth-child(7) {
-        color: var(--sd-red);
-        opacity: .75;
-    }
-
-    .spklu-dashboard .calendar-grid > div:not(.calendar-day-label) {
-        aspect-ratio: 1 / 1;
-        max-height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        font-size: 12.5px;
-        color: var(--text-primary, #101828);
-        position: relative;
-        transition: background .2s ease, transform .15s ease;
-    }
-
-    .spklu-dashboard .calendar-cell:hover {
-        background: rgba(0,129,171,0.1);
-        transform: scale(1.08);
-        cursor: default;
-        font-weight: 600;
-    }
-
-    .spklu-dashboard .calendar-cell.has-event {
-        background: rgba(232,163,23,0.1);
-        font-weight: 600;
-        color: #92650c;
-    }
-
-    .spklu-dashboard .calendar-cell.today {
-        background: linear-gradient(135deg, var(--sd-blue), var(--sd-blue-dark));
-        color: #fff;
-        font-weight: 700;
-        box-shadow: 0 3px 8px rgba(2,62,138,0.35);
-    }
-
-    .spklu-dashboard .calendar-cell.has-event::after {
-        content: "";
-        position: absolute;
-        bottom: 3px;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: var(--sd-amber);
-    }
-
-    .spklu-dashboard .calendar-cell.today.has-event::after {
-        background: #fff;
-    }
-
-    .spklu-dashboard .calendar-legend {
-        display: flex;
-        gap: 16px;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px dashed var(--sd-border);
-        font-size: 11.5px;
-        color: var(--text-secondary);
-    }
-
-    .spklu-dashboard .calendar-legend span {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .spklu-dashboard .calendar-legend i {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .spklu-dashboard .calendar-legend i.dot-today { background: var(--sd-blue-dark); }
-    .spklu-dashboard .calendar-legend i.dot-event { background: var(--sd-amber); }
-
-    /* ---------- Jadwal list ---------- */
-    .spklu-dashboard .jadwal-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 8px;
-        border-radius: var(--sd-radius-sm);
-        transition: background .2s ease;
-    }
-
-    .spklu-dashboard .jadwal-item:hover {
-        background: #f8fafc;
-        transform: translateX(2px);
-    }
-
-    .spklu-dashboard .jadwal-item + .jadwal-item {
-        border-top: 1px dashed var(--sd-border);
-        margin-top: 2px;
-    }
-
-    .spklu-dashboard .jadwal-time {
-        min-width: 54px;
-        font-weight: 700;
-        font-size: 13px;
-        color: var(--sd-blue-dark);
-        background: rgba(0,129,171,0.08);
-        border: 1px solid rgba(0,129,171,0.14);
-        border-radius: 9px;
-        text-align: center;
-        padding: 7px 4px;
-    }
-
-    .spklu-dashboard .jadwal-title {
-        margin: 0;
-        font-weight: 600;
-        font-size: 14px;
-        color: var(--text-primary, #101828);
-    }
-
-    .spklu-dashboard .jadwal-desc {
-        margin: 2px 0 0;
-        font-size: 12.5px;
-        color: var(--text-secondary);
-    }
-
-    /* ---------- Badges ---------- */
-    .spklu-dashboard .badge {
-        display: inline-block;
-        padding: 4px 11px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-        border: 1px solid rgba(0,0,0,0.04);
-    }
-
-    .spklu-dashboard .badge-green { background: rgba(22,163,74,0.12); color: var(--sd-green); }
-    .spklu-dashboard .badge-gray  { background: rgba(100,116,139,0.12); color: #64748b; }
-
-    .spklu-dashboard .badge-potensi-sangat-tinggi { background: rgba(2,62,138,0.1); color: var(--sd-blue-dark); }
-    .spklu-dashboard .badge-potensi-tinggi         { background: rgba(0,129,171,0.1); color: var(--sd-blue); }
-    .spklu-dashboard .badge-potensi-sedang         { background: rgba(232,163,23,0.12); color: var(--sd-amber); }
-
-    /* ---------- Trend chart card ---------- */
-    .spklu-dashboard .sd-chart-card {
-        margin-bottom: 22px;
-    }
-
-    .spklu-dashboard .sd-chart-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 18px;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    /* ---------- Table ---------- */
-    .spklu-dashboard .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
-    }
-
-    .spklu-dashboard .data-table thead th {
-        text-align: left;
-        font-size: 11.5px;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-        color: var(--text-secondary);
-        font-weight: 700;
-        padding: 11px 14px;
-        background: #f8fafc;
-    }
-
-    .spklu-dashboard .data-table thead th:first-child { border-radius: 8px 0 0 8px; }
-    .spklu-dashboard .data-table thead th:last-child  { border-radius: 0 8px 8px 0; }
-
-    .spklu-dashboard .data-table tbody td {
-        padding: 13px 14px;
-        border-bottom: 1px solid var(--sd-border);
-        vertical-align: middle;
-    }
-
-    .spklu-dashboard .data-table tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    .spklu-dashboard .data-table tbody tr {
-        transition: background .15s ease;
-    }
-
-    .spklu-dashboard .data-table tbody tr:hover {
-        background: #f8fafc;
-    }
-
-    .spklu-dashboard .progress-bar-wrap {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .spklu-dashboard .progress-bar-track {
-        flex: 1;
-        height: 8px;
-        border-radius: 999px;
-        background: #eef1f4;
-        overflow: hidden;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
-    }
-
-    .spklu-dashboard .progress-bar-fill {
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient(90deg, var(--sd-blue), var(--sd-blue-dark));
-    }
-
-    .spklu-dashboard .progress-bar-fill.amber {
-        background: linear-gradient(90deg, #f6c453, var(--sd-amber));
-    }
-
-    .spklu-dashboard .progress-bar-fill.red {
-        background: linear-gradient(90deg, #f28b6f, var(--sd-red));
-    }
-
-    .spklu-dashboard .progress-bar-value {
-        font-weight: 700;
-        font-size: 13px;
-        min-width: 26px;
-        text-align: right;
-    }
-
-    /* ---------- Responsive ---------- */
-    @media (max-width: 1100px) {
-        .spklu-dashboard .card-grid { grid-template-columns: repeat(2, 1fr); }
-        .spklu-dashboard .sd-grid-2col { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 560px) {
-        .spklu-dashboard .card-grid { grid-template-columns: 1fr; }
-    }
+    .progress-bar-wrap { display:flex; align-items:center; gap:8px; }
+    .progress-bar-track { flex:1; height:6px; background:#eef1f5; border-radius:999px; overflow:hidden; min-width:60px; }
+    .progress-bar-fill { height:100%; border-radius:999px; background:#2E9E5B; }
+    .progress-bar-fill.amber { background:#E8A317; }
+    .progress-bar-fill.red { background:#C0392B; }
+    .progress-bar-value { font-weight:800; font-size:13px; width:30px; text-align:right; }
 </style>
 
-<div class="spklu-dashboard">
+<p class="dsh-subtitle">Ringkasan Sistem SPKLU</p>
 
-    <p class="sd-subtitle">Ringkasan Sistem SPKLU</p>
-
-    <div class="card-grid">
-        <div class="summary-card">
-            <div class="summary-card-header">
-                <div>
-                    <p class="summary-card-label">Total SPKLU Terpasang</p>
-                    <p class="summary-card-value">{{ number_format($totalSpkluTerpasang) }} <span style="font-size:14px; font-weight:400; color:var(--text-secondary);">unit</span></p>
-                </div>
-                <div class="summary-card-icon icon-blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
+<div class="dsh-card-grid">
+    <div class="dsh-card">
+        <div class="dsh-card-top">
+            <div>
+                <p class="dsh-card-label">Total SPKLU Terpasang</p>
+                <p class="dsh-card-value">{{ number_format($totalSpkluTerpasang) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">unit</span></p>
             </div>
-            <span class="summary-card-trend trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span>
+            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12)); color:#023E8A;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         </div>
-
-        <div class="summary-card">
-            <div class="summary-card-header">
-                <div>
-                    <p class="summary-card-label">Pengajuan On-Progress</p>
-                    <p class="summary-card-value">{{ number_format($pengajuanOnProgress) }} <span style="font-size:14px; font-weight:400; color:var(--text-secondary);">sesi</span></p>
-                </div>
-                <div class="summary-card-icon icon-amber">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-                </div>
-            </div>
-            <span class="summary-card-trend trend-neutral">vs bulan lalu</span>
-        </div>
-
-        <div class="summary-card">
-            <div class="summary-card-header">
-                <div>
-                    <p class="summary-card-label">Kandidat Aktif</p>
-                    <p class="summary-card-value">{{ number_format($kandidatAktif) }} <span style="font-size:14px; font-weight:400; color:var(--text-secondary);">lokasi</span></p>
-                </div>
-                <div class="summary-card-icon icon-green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
-            </div>
-            <span class="summary-card-trend trend-amber">{{ $kandidatButuhTindakLanjut }} menunggu tindak lanjut</span>
-        </div>
-
-        <div class="summary-card">
-            <div class="summary-card-header">
-                <div>
-                    <p class="summary-card-label">Jadwal Mendatang</p>
-                    <p class="summary-card-value">{{ ($jadwalHariIni->count() + $jadwalBesok->count()) }}</p>
-                </div>
-                <div class="summary-card-icon icon-red">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </div>
-            </div>
-            <span class="summary-card-trend trend-neutral">minggu ini</span>
-        </div>
+        <span class="dsh-trend dsh-trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span>
     </div>
 
-    <div class="sd-grid-2col">
+    <div class="dsh-card">
+        <div class="dsh-card-top">
+            <div>
+                <p class="dsh-card-label">Pengajuan On-Progress</p>
+                <p class="dsh-card-value">{{ number_format($pengajuanOnProgress) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">sesi</span></p>
+            </div>
+            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(232,163,23,.15), rgba(232,163,23,.06)); color:#E8A317;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        </div>
+        <span class="dsh-trend dsh-trend-neutral">vs bulan lalu</span>
+    </div>
 
-        {{-- Kalender --}}
-        <div class="summary-card calendar-widget">
+    <div class="dsh-card">
+        <div class="dsh-card-top">
+            <div>
+                <p class="dsh-card-label">Kandidat Aktif</p>
+                <p class="dsh-card-value">{{ number_format($kandidatAktif) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">lokasi</span></p>
+            </div>
+            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(46,158,91,.14), rgba(46,158,91,.06)); color:#2E9E5B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        </div>
+        <span class="dsh-trend dsh-trend-amber">{{ $kandidatButuhTindakLanjut }} menunggu tindak lanjut</span>
+    </div>
+
+    <div class="dsh-card">
+        <div class="dsh-card-top">
+            <div>
+                <p class="dsh-card-label">Jadwal Mendatang</p>
+                <p class="dsh-card-value">{{ ($jadwalHariIni->count() + $jadwalBesok->count()) }}</p>
+            </div>
+            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(147,51,234,.14), rgba(147,51,234,.06)); color:#9333ea;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+        <span class="dsh-trend dsh-trend-neutral">minggu ini</span>
+    </div>
+</div>
+
+<div class="dsh-grid-2col">
+    <div class="surface-card">
+        <div class="section-header-bar">
+            <div class="section-header-bar-left">
+                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <div><h2>{{ now()->translatedFormat('F Y') }}</h2></div>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button class="calendar-nav-btn">‹</button>
+                <button class="calendar-today-btn">Hari Ini</button>
+                <button class="calendar-nav-btn">›</button>
+            </div>
+        </div>
+
+        <div class="calendar-widget">
             @php
                 $bulanIni = now();
                 $awalBulan = $bulanIni->copy()->startOfMonth();
                 $akhirBulan = $bulanIni->copy()->endOfMonth();
-                $offsetAwal = $awalBulan->dayOfWeekIso - 1; // Senin = 0
+                $offsetAwal = $awalBulan->dayOfWeekIso - 1;
             @endphp
-
-            <div class="calendar-header">
-                <h3 class="sd-card-title">
-                    <span class="sd-card-title-icon blue">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </span>
-                    {{ $bulanIni->translatedFormat('d F Y') }}
-                </h3>
-                <div style="display:flex; gap:6px;">
-                    <button class="calendar-nav-btn">‹</button>
-                    <button class="calendar-today-btn">Hari Ini</button>
-                    <button class="calendar-nav-btn">›</button>
-                </div>
-            </div>
 
             <div class="calendar-grid">
                 @foreach (['Sen','Sel','Rab','Kam','Jum','Sab','Min'] as $hari)
@@ -551,123 +161,130 @@
                         $isToday = $tgl === $bulanIni->day;
                         $hasEvent = in_array((string) $tgl, $kalenderBulanIni['tanggalBerjadwal'] ?? []);
                     @endphp
-                    <div class="calendar-cell {{ $isToday ? 'today' : '' }} {{ $hasEvent ? 'has-event' : '' }}">
-                        {{ $tgl }}
-                    </div>
+                    <div class="calendar-cell {{ $isToday ? 'today' : '' }} {{ $hasEvent ? 'has-event' : '' }}">{{ $tgl }}</div>
                 @endfor
             </div>
+        </div>
+    </div>
 
-            <div class="calendar-legend">
-                <span><i class="dot-today"></i> Hari ini</span>
-                <span><i class="dot-event"></i> Ada jadwal</span>
+    <div class="surface-card">
+        <div class="section-header-bar">
+            <div class="section-header-bar-left">
+                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div><h2>Jadwal Terdekat</h2></div>
             </div>
         </div>
 
-        {{-- Jadwal --}}
-        <div class="summary-card">
-            <h3 class="sd-card-title" style="margin:0 0 12px;">
-                <span class="sd-card-title-icon amber">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                </span>
-                Jadwal Hari Ini
-            </h3>
+        <div class="jadwal-widget">
+            <p style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; margin:0 0 10px;">Hari Ini</p>
             @forelse ($jadwalHariIni as $jadwal)
                 <div class="jadwal-item">
                     <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
                     <div class="jadwal-info" style="flex:1;">
                         <p class="jadwal-title">{{ $jadwal->judul }}</p>
-                        <p class="jadwal-desc">{{ Str::limit($jadwal->deskripsi, 40) }}</p>
+                        <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
                     </div>
-                    <span class="badge {{ $jadwal->mode === 'online' ? 'badge-green' : 'badge-gray' }}">{{ ucfirst($jadwal->mode) }}</span>
+                    <span class="jadwal-badge {{ $jadwal->mode === 'online' ? 'jadwal-badge-online' : 'jadwal-badge-offline' }}">{{ ucfirst($jadwal->mode) }}</span>
                 </div>
             @empty
-                <p style="color:var(--text-secondary); font-size:14px;">Tidak ada jadwal hari ini.</p>
+                <p class="dsh-empty-inline">Tidak ada jadwal hari ini.</p>
             @endforelse
 
-            <h3 class="sd-card-title" style="margin:20px 0 12px;">
-                <span class="sd-card-title-icon blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-                </span>
-                Jadwal Besok
-            </h3>
+            <p style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; margin:20px 0 10px;">Besok</p>
             @forelse ($jadwalBesok as $jadwal)
                 <div class="jadwal-item besok">
                     <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
                     <div class="jadwal-info" style="flex:1;">
                         <p class="jadwal-title">{{ $jadwal->judul }}</p>
-                        <p class="jadwal-desc">{{ Str::limit($jadwal->deskripsi, 40) }}</p>
+                        <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
                     </div>
-                    <span class="badge {{ $jadwal->mode === 'online' ? 'badge-green' : 'badge-gray' }}">{{ ucfirst($jadwal->mode) }}</span>
+                    <span class="jadwal-badge {{ $jadwal->mode === 'online' ? 'jadwal-badge-online' : 'jadwal-badge-offline' }}">{{ ucfirst($jadwal->mode) }}</span>
                 </div>
             @empty
-                <p style="color:var(--text-secondary); font-size:14px;">Tidak ada jadwal besok.</p>
+                <p class="dsh-empty-inline">Tidak ada jadwal besok.</p>
             @endforelse
         </div>
     </div>
+</div>
 
-    <div class="summary-card sd-chart-card">
-        <div class="sd-chart-head">
+<form method="GET" id="form-filter-dashboard" class="filter-shell" style="flex-direction:row; flex-wrap:wrap; align-items:center;">
+    <div class="filter-label-inline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filter Bulan
+    </div>
+
+    <div class="dsh-month-range">
+        <input type="month" name="dari_bulan" value="{{ $dariBulan }}" onchange="document.getElementById('form-filter-dashboard').submit()">
+        <span class="dsh-month-range-sep">—</span>
+        <input type="month" name="sampai_bulan" value="{{ $sampaiBulan }}" onchange="document.getElementById('form-filter-dashboard').submit()">
+    </div>
+</form>
+
+<div class="surface-card">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div>
-                <h3 class="sd-card-title" style="margin:0;">
-                    <span class="sd-card-title-icon green">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>
-                    </span>
-                    Tren Transaksi
-                </h3>
-                <p class="sd-card-subtitle">{{ now()->subMonths(6)->translatedFormat('M Y') }} - {{ now()->translatedFormat('M Y') }}</p>
+                <h2>Tren Transaksi</h2>
+                <p>{{ \Carbon\Carbon::createFromFormat('Y-m', $dariBulan)->translatedFormat('M Y') }} – {{ \Carbon\Carbon::createFromFormat('Y-m', $sampaiBulan)->translatedFormat('M Y') }}</p>
             </div>
-            <span class="summary-card-trend trend-up">↑ {{ $trenTransaksiPersen ?? 0 }}% total</span>
         </div>
+        <span class="dsh-trend {{ $trenTransaksiPersen >= 0 ? 'dsh-trend-up' : 'dsh-trend-down' }}">
+            {{ $trenTransaksiPersen >= 0 ? '↑' : '↓' }} {{ abs($trenTransaksiPersen) }}% vs periode lalu
+        </span>
+    </div>
+    <div style="padding:22px 24px;">
         <canvas id="chart-tren-dashboard" height="70"></canvas>
     </div>
+</div>
 
-    <div class="summary-card">
-        <h3 class="sd-card-title" style="margin:0 0 4px;">
-            <span class="sd-card-title-icon amber">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8.5 22 9.5 17 14.5 18.5 21.5 12 18 5.5 21.5 7 14.5 2 9.5 9 8.5 12 2"/></svg>
-            </span>
-            Top 5 Kandidat Prioritas
-        </h3>
-        <p class="sd-card-subtitle" style="margin-bottom:16px;">Berdasarkan skor potensi pemasangan SPKLU</p>
-
-        <table class="data-table">
-            <thead>
-                <tr><th>#</th><th>Nama Lokasi</th><th>Kota/Wilayah</th><th>Potensi</th><th>Skor</th></tr>
-            </thead>
-            <tbody>
-                @forelse ($topKandidat as $i => $kandidat)
-                    @php
-                        $potensiClass = match(true) {
-                            $kandidat->skor >= 85 => 'badge-potensi-sangat-tinggi',
-                            $kandidat->skor >= 65 => 'badge-potensi-tinggi',
-                            default => 'badge-potensi-sedang',
-                        };
-                        $potensiLabel = match(true) {
-                            $kandidat->skor >= 85 => 'Sangat Tinggi',
-                            $kandidat->skor >= 65 => 'Tinggi',
-                            default => 'Sedang',
-                        };
-                        $barClass = $kandidat->skor >= 75 ? '' : ($kandidat->skor >= 50 ? 'amber' : 'red');
-                    @endphp
-                    <tr>
-                        <td>{{ $i + 1 }}</td>
-                        <td style="font-weight:600;">{{ $kandidat->nama }}</td>
-                        <td>{{ $kandidat->wilayah }}</td>
-                        <td><span class="badge {{ $potensiClass }}">{{ $potensiLabel }}</span></td>
-                        <td>
-                            <div class="progress-bar-wrap">
-                                <div class="progress-bar-track"><div class="progress-bar-fill {{ $barClass }}" style="width:{{ $kandidat->skor }}%;"></div></div>
-                                <span class="progress-bar-value">{{ $kandidat->skor }}</span>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" style="text-align:center; color:var(--text-secondary);">Belum ada data kandidat.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+<div class="surface-card">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <div>
+                <h2>Top 5 Kandidat Prioritas</h2>
+                <p>Berdasarkan skor potensi pemasangan SPKLU</p>
+            </div>
+        </div>
     </div>
 
+    <table class="dsh-table">
+        <thead>
+            <tr><th>#</th><th>Nama Lokasi</th><th>Kota/Wilayah</th><th>Potensi</th><th>Skor</th></tr>
+        </thead>
+        <tbody>
+            @forelse ($topKandidat as $i => $kandidat)
+                @php
+                    $potensiClass = match(true) {
+                        $kandidat->skor >= 85 => 'badge-potensi-sangat-tinggi',
+                        $kandidat->skor >= 65 => 'badge-potensi-tinggi',
+                        default => 'badge-potensi-sedang',
+                    };
+                    $potensiLabel = match(true) {
+                        $kandidat->skor >= 85 => 'Sangat Tinggi',
+                        $kandidat->skor >= 65 => 'Tinggi',
+                        default => 'Sedang',
+                    };
+                    $barClass = $kandidat->skor >= 75 ? '' : ($kandidat->skor >= 50 ? 'amber' : 'red');
+                @endphp
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td style="font-weight:600;">{{ $kandidat->nama }}</td>
+                    <td>{{ $kandidat->wilayah }}</td>
+                    <td><span class="{{ $potensiClass }}">{{ $potensiLabel }}</span></td>
+                    <td>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-track"><div class="progress-bar-fill {{ $barClass }}" style="width:{{ $kandidat->skor }}%;"></div></div>
+                            <span class="progress-bar-value">{{ $kandidat->skor }}</span>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="5" class="dsh-empty">Belum ada data kandidat.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
@@ -678,24 +295,11 @@
             labels: {!! json_encode($trenTransaksiLabels ?? []) !!},
             datasets: [{
                 data: {!! json_encode($trenTransaksiData ?? []) !!},
-                borderColor: '#0081AB',
-                backgroundColor: 'rgba(0,129,171,0.1)',
-                tension: 0.35,
-                fill: true,
-                pointRadius: 4,
-                pointBackgroundColor: '#023E8A',
-                pointHoverRadius: 6,
-                borderWidth: 2.5,
+                borderColor: '#0081AB', backgroundColor: 'rgba(0,129,171,0.1)',
+                tension: 0.35, fill: true, pointRadius: 4, pointBackgroundColor: '#023E8A', borderWidth: 2.5,
             }]
         },
-        options: {
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
-                x: { grid: { display: false } }
-            },
-            interaction: { intersect: false, mode: 'index' }
-        }
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
 </script>
 

@@ -38,10 +38,6 @@ class UserInvitationService
         Mail::to($user->email)->send(new UserInvitationMail($user));
     }
 
-    /**
-     * Super Admin buat akun langsung, tanpa proses undangan/aktivasi.
-     * Return password plain text SEKALI SAJA (untuk ditampilkan ke Super Admin, tidak pernah disimpan).
-     */
     public function createDirectly(string $name, string $email, string $role, ?string $password, User $createdBy): array
     {
         $plainPassword = $password ?: Str::password(12);

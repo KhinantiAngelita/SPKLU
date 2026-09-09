@@ -10,22 +10,31 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
+class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading, WithCustomCsvSettings
 {
-    /** Agregat per (spklu_id + tanggal), diakumulasi lintas-chunk selama import berjalan. */
     protected array $aggregates = [];
-
-    /** Cache nama SPKLU (dinormalisasi) -> id, dibangun sekali di awal. */
-    protected ?array $spkluCache = null;
-
-    /** Cache alias manual: nama_asli persis -> spklu_id. */
+    protected ?array $spkluCacheLoose = null;
+    protected ?array $spkluCacheTight = null;
     protected ?array $aliasCache = null;
-
-    /** Nama SPKLU di file yang gagal dicocokkan -> jumlah baris terdampak. */
     public array $unmatched = [];
-
     public int $totalRowsProcessed = 0;
+    protected string $csvDelimiter;
+
+    public function __construct(string $csvDelimiter = ',')
+    {
+        $this->csvDelimiter = $csvDelimiter;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => $this->csvDelimiter,
+            'enclosure' => '"',
+            'input_encoding' => 'UTF-8',
+        ];
+    }
 
     public function collection(Collection $rows): void
     {
@@ -64,17 +73,23 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
             }
 
             $this->aggregates[$key]['jumlah']++;
-            $this->aggregates[$key]['kwh'] += (float) ($row['kwh'] ?? 0);
-            $this->aggregates[$key]['rp'] += (float) ($row['rppakai'] ?? 0);
+            $this->aggregates[$key]['kwh'] += $this->parseAngka($row['kwh'] ?? 0);
+            $this->aggregates[$key]['rp'] += $this->parseAngka($row['rppakai'] ?? 0);
         }
     }
 
     protected function primeCachesIfNeeded(): void
     {
-        if ($this->spkluCache === null) {
-            $this->spkluCache = [];
+        if ($this->spkluCacheLoose === null) {
+            $this->spkluCacheLoose = [];
+            $this->spkluCacheTight = [];
+
             foreach (Spklu::withTrashed()->get(['id', 'nama']) as $spklu) {
-                $this->spkluCache[$this->normalize($spklu->nama)] = $spklu->id;
+                $loose = $this->normalize($spklu->nama);
+                $tight = str_replace(' ', '', $loose);
+
+                $this->spkluCacheLoose[$loose] = $spklu->id;
+                $this->spkluCacheTight[$tight] = $spklu->id;
             }
         }
 
@@ -85,20 +100,30 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
 
     protected function resolveSpkluId(string $namaRaw): ?int
     {
-        // 1. Cek alias manual dulu (nama PERSIS seperti di file, case-sensitive apa adanya)
         if (isset($this->aliasCache[$namaRaw])) {
             return $this->aliasCache[$namaRaw];
         }
 
-        // 2. Cek nama yang sudah dinormalisasi (menangani beda kapitalisasi/spasi/tanda baca ringan)
-        $normalized = $this->normalize($namaRaw);
-        return $this->spkluCache[$normalized] ?? null;
+        $loose = $this->normalize($namaRaw);
+
+        if (isset($this->spkluCacheLoose[$loose])) {
+            return $this->spkluCacheLoose[$loose];
+        }
+
+        $tight = str_replace(' ', '', $loose);
+        if (isset($this->spkluCacheTight[$tight])) {
+            return $this->spkluCacheTight[$tight];
+        }
+
+        return null;
     }
 
     protected function normalize(string $s): string
     {
         $s = strtoupper($s);
-        $s = str_replace(['+', '.', ','], ' ', $s);
+        $s = str_replace('+', ' ', $s);
+        $s = preg_replace('/\bPLUS\b/', ' ', $s);
+        $s = str_replace(['.', ','], ' ', $s);
         $s = preg_replace('/[^A-Z0-9 ]/', '', $s);
         $s = preg_replace('/\s+/', ' ', $s);
         return trim($s);
@@ -106,7 +131,6 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
 
     protected function parseTanggal(string $raw): ?string
     {
-        // Format asli: "01-01-2026 00.07.19,326000000" -> ambil tanggalnya saja
         $datePart = trim(explode(' ', $raw)[0] ?? '');
         try {
             return Carbon::createFromFormat('d-m-Y', $datePart)->format('Y-m-d');
@@ -115,13 +139,27 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
         }
     }
 
+    protected function parseAngka($value): float
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return 0.0;
+        }
+        return (float) str_replace(',', '.', $value);
+    }
+
     public function chunkSize(): int
     {
         return 5000;
     }
 
-    /** Dipanggil controller SETELAH Excel::import() selesai — simpan hasil agregasi ke DB sekaligus. */
-    public function flushToDatabase(int $uploadedBy): int
+    public function getAggregates(): array
+    {
+        return $this->aggregates;
+    }
+
+    /** Sekarang butuh transaksiUploadId, buat nandain baris ini hasil dari upload yang mana. */
+    public function flushToDatabase(int $uploadedBy, int $transaksiUploadId): int
     {
         $now = now();
         $rows = [];
@@ -134,6 +172,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
                 'energi_kwh' => round($agg['kwh'], 2),
                 'pendapatan_rp' => round($agg['rp'], 2),
                 'diupload_oleh' => $uploadedBy,
+                'transaksi_upload_id' => $transaksiUploadId,
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
@@ -143,7 +182,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading
             DB::table('transaksis')->upsert(
                 $chunk,
                 ['spklu_id', 'tanggal'],
-                ['jumlah_transaksi', 'energi_kwh', 'pendapatan_rp', 'diupload_oleh', 'updated_at']
+                ['jumlah_transaksi', 'energi_kwh', 'pendapatan_rp', 'diupload_oleh', 'transaksi_upload_id', 'updated_at']
             );
         }
 

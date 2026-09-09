@@ -8,17 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('spklu_aliases', function (Blueprint $table) {
+        Schema::create('transaksi_unmatched_names', function (Blueprint $table) {
             $table->id();
             $table->string('nama_asli')->unique();
-            $table->foreignId('spklu_id')->constrained('spklus')->cascadeOnDelete();
-            $table->foreignId('dibuat_oleh')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedInteger('jumlah_baris_total')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('spklu_aliases');
+        Schema::dropIfExists('transaksi_unmatched_names');
     }
 };
