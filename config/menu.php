@@ -16,9 +16,20 @@ return [
     ],
     [
         'label' => 'Transaksi',
-        'route' => 'transaksi.index',
         'icon'  => 'arrow-left-right',
         'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+        'children' => [
+            [
+                'label' => 'Ringkasan',
+                'route' => 'transaksi.index',
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+            [
+                'label' => 'Upload Data',
+                'route' => 'transaksi.upload',
+                'roles' => ['super_admin', 'pengelola'],
+            ],
+        ],
     ],
     [
         'label' => 'Master Parameter',
@@ -31,6 +42,24 @@ return [
         'route' => 'manajemen-user.index',
         'icon'  => 'users',
         'roles' => ['super_admin'],
+    ],
+
+    [
+        'label'    => 'Monitoring SPKLU',
+        'icon'     => 'activity',
+        'roles'    => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+        'children' => [
+            [
+                'label' => 'Probabilitas',
+                'route' => 'monitoring.probabilitas.index',
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+            [
+                'label' => 'Pengajuan',
+                'route' => 'monitoring.pengajuan.index',
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+        ],
     ],
 
 ];

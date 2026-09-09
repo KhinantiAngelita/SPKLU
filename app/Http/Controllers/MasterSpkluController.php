@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\SpkluStatus;
 use App\Imports\SpkluImport;
 use App\Models\Spklu;
+use App\Models\SpkluAlias;
+use App\Models\TransaksiUnmatchedName;
 use App\Models\UlpMapping;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,6 +27,12 @@ class MasterSpkluController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        // Nama SPKLU dari file transaksi yang belum berhasil dipetakan ke Master SPKLU manapun.
+        // Ditampilkan di sini juga (bukan cuma di halaman Transaksi) supaya Super Admin/Pengelola
+        // yang lagi buka Master SPKLU ikut sadar ada data transaksi "menggantung" karena beda ejaan nama.
+        $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
+        $unmatchedTransaksiCount = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)->count();
+
         return view('master-spklu.index', [
             'spklus' => $spklus,
             'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
@@ -35,6 +43,7 @@ class MasterSpkluController extends Controller
             'totalKapasitas' => Spklu::aktif()->sum('kw'),
 
             'menungguValidasiCount' => Spklu::menungguValidasi()->count(),
+            'unmatchedTransaksiCount' => $unmatchedTransaksiCount,
         ]);
     }
 
@@ -130,6 +139,7 @@ class MasterSpkluController extends Controller
             'nozzle' => 'required|integer|min:1',
             'kepemilikan' => 'required|in:PLN,Swasta',
             'skema' => 'nullable|integer',
+            'tanggal_aktif' => 'nullable|date',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
         ]);

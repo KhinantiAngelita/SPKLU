@@ -10,6 +10,6 @@ class SpkluAlias extends Model
 
     public function spklu()
     {
-        return $this->belongsTo(Spklu::class);
+        return $this->belongsTo(Spklu::class)->withTrashed();
     }
 }

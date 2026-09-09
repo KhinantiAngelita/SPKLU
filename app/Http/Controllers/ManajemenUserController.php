@@ -94,4 +94,14 @@ class ManajemenUserController extends Controller
 
         return back()->with('success', 'Data user diperbarui.');
     }
+
+    public function destroy(User $user)
+    {
+        abort_if($user->id === auth()->id(), 400, 'Tidak bisa menghapus akun sendiri.');
+
+        $namaUser = $user->name;
+        $user->delete();
+
+        return back()->with('success', "User \"{$namaUser}\" berhasil dihapus.");
+    }
 }

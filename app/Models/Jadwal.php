@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jadwal extends Model
 {
-    protected $fillable = ['judul', 'deskripsi', 'waktu_mulai', 'mode', 'lokasi', 'dibuat_oleh'];
+    protected $fillable = [
+        'judul', 'deskripsi', 'waktu_mulai', 'mode', 'lokasi', 'dibuat_oleh',
+        'pengajuan_id', 'penanggung_jawab', 'status',
+    ];
 
     protected $casts = [
         'waktu_mulai' => 'datetime',
@@ -15,5 +18,15 @@ class Jadwal extends Model
     public function dibuatOleh()
     {
         return $this->belongsTo(User::class, 'dibuat_oleh');
+    }
+
+    public function pengajuan()
+    {
+        return $this->belongsTo(Pengajuan::class);
+    }
+
+    public function penanggungJawab()
+    {
+        return $this->belongsTo(User::class, 'penanggung_jawab');
     }
 }

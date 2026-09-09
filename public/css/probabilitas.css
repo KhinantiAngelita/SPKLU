@@ -1,0 +1,475 @@
+/* Palet resmi — samakan dengan variabel di app.css utama kalau sudah ada */
+:root {
+    --biru-gelap: #0A2E52;
+    --biru-menengah: #14508C;
+    --biru-muda: #3E82C4;
+    --kuning-pln: #FFC629;
+    --hijau: #2E9E5B;
+    --kuning-redup: #E8A317;
+    --merah: #C0392B;
+    --ungu: #6D5DD3;
+    --bg: #F5F7FA;
+    --teks-utama: #1E293B;
+    --teks-sekunder: #64748B;
+}
+
+/* ===== Table — sticky header/kolom + pembatas per kolom ===== */
+
+.table-scroll {
+    max-height: 75vh;
+    overflow: auto;
+    position: relative;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #E5E9F0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.table-probabilitas {
+    font-size: 13px;
+    white-space: nowrap;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: max-content;
+    min-width: 100%;
+}
+
+.table-probabilitas th,
+.table-probabilitas td {
+    padding: 11px 14px;
+    border-bottom: 1px solid #EDF1F6;
+    border-right: 1px solid #EDF1F6;  /* pembatas tiap kolom */
+    text-align: left;
+}
+.table-probabilitas th:last-child,
+.table-probabilitas td:last-child { border-right: none; }
+
+/* Header sticky vertikal */
+.table-probabilitas thead th {
+    position: sticky;
+    z-index: 3;
+    background: var(--biru-gelap);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+.table-probabilitas thead tr:first-child th { top: 0; }
+.table-probabilitas thead tr:last-child th { top: var(--thead-row1-h, 40px); }
+
+/* Kolom No & Lokasi sticky horizontal (kiri) */
+.col-sticky { position: sticky; left: 0; background: #fff; z-index: 2; }
+.col-no { left: 0; width: 44px; text-align: center; }
+.col-lokasi { left: 44px; min-width: 170px; box-shadow: 3px 0 6px rgba(0,0,0,0.08); }
+
+.table-probabilitas thead th.col-sticky,
+.table-probabilitas thead th.sticky-right {
+    z-index: 6;
+    background: var(--biru-gelap);
+}
+.table-probabilitas thead th.col-lokasi { box-shadow: 3px 0 6px rgba(0,0,0,0.08); }
+.table-probabilitas thead th.sticky-right { box-shadow: -3px 0 6px rgba(0,0,0,0.08); }
+
+/* Kolom Edit sticky horizontal (kanan) */
+.sticky-right {
+    position: sticky; right: 0; background: #fff; z-index: 2;
+    box-shadow: -3px 0 6px rgba(0,0,0,0.08); text-align: center;
+}
+
+/* Pembatas TEBAL di ujung tiap section (lebih tegas dari border kolom biasa) */
+.group-end { border-right: 2px solid #B9C4D1 !important; }
+thead .group-end { border-right: 2px solid rgba(255,255,255,0.35) !important; }
+
+/* Tint lembut per-section biar section kebutuhan mesin/fasilitas/okupansi/tahapan gampang dibedakan */
+.group-alt { background: #F7FAFD; }
+tbody tr:nth-child(even) .group-alt { background: #EFF4F9; }
+thead .group-alt { background: rgba(255,255,255,0.08); }
+
+.group-header { text-align: center; }
+
+/* Zebra striping antar baris */
+.table-probabilitas tbody tr:nth-child(even) { background: #FBFCFE; }
+.table-probabilitas tbody tr:nth-child(even) .col-sticky,
+.table-probabilitas tbody tr:nth-child(even) .sticky-right { background: #FBFCFE; }
+.table-probabilitas tbody tr:hover { background: rgba(20,80,140,0.05) !important; }
+.table-probabilitas tbody tr:hover .col-sticky,
+.table-probabilitas tbody tr:hover .sticky-right { background: #EAF1F8 !important; }
+
+.dot { text-align: center; }
+.dot::after { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #CBD5E1; }
+.dot-on::after { background: var(--biru-menengah); }
+
+.badge-tahap {
+    border: none; border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: rgba(100,116,139,0.15); color: var(--teks-sekunder);
+}
+.badge-hijau { background: rgba(46,158,91,0.15); color: var(--hijau); }
+.badge-kuning { background: rgba(232,163,23,0.15); color: var(--kuning-redup); }
+.badge-merah { background: rgba(192,57,43,0.15); color: var(--merah); }
+.badge-abu { background: rgba(100,116,139,0.15); color: var(--teks-sekunder); }
+
+.badge-kategori { display: inline-block; padding: 4px 12px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+
+.btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+.btn-primary { background: linear-gradient(135deg, var(--biru-gelap), var(--biru-muda)); color: #fff; }
+.btn-outline { background: #fff; color: var(--teks-utama); border: 1px solid #CBD5E1; }
+.btn-outline:hover { background: #F8FAFC; }
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 16px; }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.toolbar-filters { display: flex; gap: 8px; }
+.toolbar-filters input, .toolbar-filters select { padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; }
+
+/* ===== Modal umum ===== */
+.modal { border: none; border-radius: 12px; padding: 0; width: 480px; max-width: 92vw; box-shadow: 0 8px 30px rgba(0,0,0,.2); }
+.modal-lg { width: 720px; }
+.modal-header-blue {
+    background: linear-gradient(135deg, var(--biru-gelap), var(--biru-menengah));
+    color: #fff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: flex-start;
+}
+.modal-header-blue h2 { margin: 0; font-size: 18px; }
+.modal-header-blue p { margin: 4px 0 0; font-size: 13px; opacity: .85; }
+.modal-close { background: rgba(255,255,255,.15); color: #fff; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.modal-body { padding: 20px 24px; max-height: 70vh; overflow-y: auto; }
+
+.modal-hint, .hint { color: var(--teks-sekunder); font-size: 13px; margin: 0 0 16px; }
+.modal-hint:last-child, .hint:last-child { margin-bottom: 0; }
+
+.modal-actions {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 16px 24px; border-top: 1px solid #E5E9F0; background: #FBFCFD;
+}
+
+.form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+.form-row:last-child { margin-bottom: 0; }
+.form-row > div { flex: 1; }
+
+.form-row label, label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--teks-utama); }
+input[type=text], input[type=number], input[type=date], select, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid #CBD5E1; border-radius: 6px; box-sizing: border-box;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--biru-menengah);
+    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+}
+
+.status-tahapan-list { border: 1px solid #E5E9F0; border-radius: 8px; overflow: hidden; }
+.status-tahapan-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid #E5E9F0; background: #F8FAFC; }
+.status-tahapan-row:last-child { border-bottom: none; }
+.status-tahapan-nomor { color: var(--teks-sekunder); width: 20px; }
+.status-tahapan-label { flex: 1; font-weight: 500; }
+
+.riwayat-list { margin-bottom: 20px; }
+.riwayat-card { border: 1px solid #E5E9F0; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.riwayat-card-header { display: flex; justify-content: space-between; align-items: center; }
+.riwayat-tanggal { color: var(--teks-sekunder); font-size: 13px; }
+.riwayat-pic { font-size: 13px; margin-top: 4px; }
+.riwayat-catatan { font-size: 13px; color: var(--teks-sekunder); margin-top: 4px; }
+.riwayat-hapus { text-align: right; }
+.btn-icon-sm { background: none; border: none; cursor: pointer; font-size: 13px; }
+
+.empty-state { text-align: center; color: var(--teks-sekunder); padding: 24px; }
+
+.page-header h1 { margin: 0; color: var(--teks-utama); }
+.page-subtitle { color: var(--teks-sekunder); margin: 4px 0 20px; }
+
+.text-center { text-align: center; }
+
+.icon-tahap {
+    width: 26px; height: 26px; border: none; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.icon-tahap i { width: 14px; height: 14px; }
+.icon-tahap-hijau { background: rgba(46,158,91,0.15); color: var(--hijau); }
+.icon-tahap-kuning { background: rgba(232,163,23,0.15); color: var(--kuning-redup); }
+.icon-tahap-abu { background: rgba(100,116,139,0.15); color: var(--teks-sekunder); }
+.icon-tahap-merah { background: rgba(192,57,43,0.15); color: var(--merah); }
+
+.btn-icon-edit {
+    background: rgba(232,163,23,0.15); border: none; border-radius: 50%;
+    width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--kuning-redup);
+}
+.btn-icon-edit:hover { background: rgba(232,163,23,0.28); }
+.btn-icon-edit i { width: 16px; height: 16px; }
+
+.tahap-quick-list { display: flex; flex-direction: column; gap: 10px; }
+.tahap-quick-row { border: 1px solid #E5E9F0; border-radius: 8px; padding: 10px 12px; background: #F8FAFC; }
+.tahap-quick-done { background: rgba(46,158,91,0.06); border-color: rgba(46,158,91,0.3); }
+.tahap-quick-header { display: flex; align-items: center; gap: 8px; }
+.tahap-quick-checkbox { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #CBD5E1; display: inline-block; flex-shrink: 0; }
+.tahap-quick-checkbox.checked { background: var(--hijau); border-color: var(--hijau); }
+.tahap-quick-nomor { color: var(--teks-sekunder); }
+.tahap-quick-label { flex: 1; font-weight: 500; }
+.btn-selesai { background: rgba(46,158,91,0.15); color: var(--hijau); border: none; border-radius: 999px; padding: 4px 14px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.tahap-quick-body { display: flex; gap: 12px; margin-top: 8px; }
+.tahap-quick-body > div { flex: 1; }
+.tahap-quick-body label { font-size: 12px; }
+
+/* ===== Modal Tambah Lokasi (dialog-clean) ===== */
+.dialog-clean {
+    border: none;
+    border-radius: 14px;
+    padding: 0;
+    width: 460px;
+    max-width: 92vw;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.25);
+    overflow: hidden;
+}
+.dialog-clean::backdrop {
+    background: rgba(15,23,42,0.45);
+}
+
+.modal-header-gradient {
+    background: linear-gradient(135deg, var(--biru-gelap), var(--biru-menengah));
+    color: #fff;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header-gradient h2 { margin: 0; font-size: 17px; font-weight: 600; }
+.modal-close-btn {
+    background: rgba(255,255,255,.15);
+    color: #fff; border: none; border-radius: 6px;
+    width: 28px; height: 28px; cursor: pointer; font-size: 14px;
+}
+.modal-close-btn:hover { background: rgba(255,255,255,.25); }
+
+.modal-body-clean { padding: 22px 24px; }
+/* ===== Modal Tambah Lokasi ===== */
+.modal-body-clean { padding: 22px 24px; }
+
+.field-group { margin-bottom: 16px; }
+.field-group:last-child { margin-bottom: 0; }
+
+.field-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--teks-utama);
+}
+
+.field-group input,
+.field-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    font-size: 13.5px;
+    box-sizing: border-box;
+}
+.field-group input:focus,
+.field-group select:focus {
+    outline: none;
+    border-color: var(--biru-menengah);
+    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+}
+
+.field-hint {
+    font-size: 12px;
+    color: var(--teks-sekunder);
+    margin: 6px 0 0;
+}
+
+.modal-hint {
+    color: var(--teks-sekunder);
+    font-size: 13px;
+    margin: 0 0 18px;
+}
+
+.form-row { display: flex; gap: 12px; }
+.form-row .field-group { flex: 1; margin-bottom: 0; }
+
+/* alert error */
+.alert-error {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+}
+.alert-error ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--merah);
+}
+.modal-body-clean label:first-child { margin-top: 0; }
+.modal-body-clean input, .modal-body-clean select {
+    width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0;
+    border-radius: 9px; font-size: 13.5px; box-sizing: border-box;
+}
+.modal-body-clean input:focus, .modal-body-clean select:focus {
+    outline: none; border-color: var(--biru-menengah);
+    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+}
+.field-hint { font-size: 12px; color: var(--teks-sekunder); margin: 4px 0 0; }
+
+/* =====================================================================
+   Modal Edit — panel beraksen warna per kategori (bukan kartu seragam)
+   Dipakai oleh _modal_edit.blade.php: .edit-body > .edit-section
+   ===================================================================== */
+.edit-body { display: flex; flex-direction: column; }
+
+.edit-section {
+    display: flex;
+    padding: 18px 24px;
+    border-bottom: 1px solid #EDF1F6;
+    gap: 14px;
+}
+.edit-section:last-of-type { border-bottom: none; }
+
+.edit-section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 190px;
+    flex-shrink: 0;
+    position: relative;
+    padding-left: 12px;
+}
+
+/* aksen batang warna di kiri tiap section — beda warna per kategori */
+.edit-section-tab {
+    position: absolute;
+    left: 0; top: 2px; bottom: 2px;
+    width: 3px;
+    border-radius: 3px;
+    background: var(--biru-menengah);
+}
+.edit-section--mesin .edit-section-tab      { background: var(--biru-menengah); }
+.edit-section--fasilitas .edit-section-tab  { background: var(--kuning-pln); }
+.edit-section--okupansi .edit-section-tab   { background: var(--hijau); }
+.edit-section--tahapan .edit-section-tab    { background: var(--ungu); }
+.edit-section--keterangan .edit-section-tab { background: var(--teks-sekunder); }
+
+.edit-section-head i {
+    width: 16px; height: 16px;
+    margin-top: 2px;
+    color: var(--teks-sekunder);
+    flex-shrink: 0;
+}
+
+.edit-section-head h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--teks-utama);
+}
+.edit-section-head p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--teks-sekunder);
+    line-height: 1.4;
+}
+
+.edit-section-body { flex: 1; min-width: 0; }
+
+.edit-grid { display: grid; gap: 12px; }
+.edit-grid-6 { grid-template-columns: repeat(6, 1fr); }
+.edit-grid-4 { grid-template-columns: repeat(4, 1fr); }
+.edit-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.edit-grid-spaced { margin-top: 14px; }
+
+.edit-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--teks-utama);
+}
+.edit-field input,
+.edit-field select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 13px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.edit-section-body textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+/* progres — penutup yang menonjol, dipakai baik di modal edit maupun tempat lain */
+.progres-preview {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: 18px 24px 4px;
+    padding: 14px 16px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    border: 1px solid #E5E9F0;
+}
+
+/* responsif — di layar sempit grid pecah jadi lebih sedikit kolom */
+@media (max-width: 640px) {
+    .edit-section { flex-direction: column; }
+    .edit-section-head { width: auto; }
+    .edit-grid-6 { grid-template-columns: repeat(3, 1fr); }
+    .edit-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .edit-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ===== Modal Edit — tiap section jadi card ===== */
+.modal-body {
+    background: #F5F7FA;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.edit-card {
+    background: #fff;
+    border: 1px solid #E5E9F0;
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.edit-card h3 {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teks-utama);
+}
+
+.edit-card .hint {
+    font-weight: 400;
+    color: var(--teks-sekunder);
+    font-size: 12px;
+}
+
+.edit-card p.hint {
+    margin: -8px 0 12px;
+}
+
+.edit-card textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 13px;
+    resize: vertical;
+}
+
+.progres-preview {
+    background: #fff;
+    border: 1px solid #E5E9F0;
+    border-radius: 10px;
+    margin: 0;
+}

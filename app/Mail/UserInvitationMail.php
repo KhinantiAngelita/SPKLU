@@ -1,66 +1,26 @@
 <?php
 
-namespace App\Services;
+namespace App\Mail;
 
-use App\Enums\UserStatus;
-use App\Mail\UserInvitationMail;
 use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
-class UserInvitationService
+class UserInvitationMail extends Mailable
 {
-    public function invite(string $name, string $email, string $role, User $invitedBy): User
+    use Queueable, SerializesModels;
+
+    public function __construct(public User $user) {}
+
+    public function build()
     {
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'role' => $role,
-            'status' => UserStatus::Pending,
-            'password' => null,
-            'invitation_token' => User::generateInvitationToken(),
-            'invitation_expires_at' => now()->addDays(7),
-            'invited_by' => $invitedBy->id,
-        ]);
+        $activationUrl = route('activation.show', $this->user->invitation_token);
 
-        Mail::to($user->email)->send(new UserInvitationMail($user));
-
-        return $user;
-    }
-
-    public function resend(User $user): void
-    {
-        $user->update([
-            'invitation_token' => User::generateInvitationToken(),
-            'invitation_expires_at' => now()->addDays(7),
-        ]);
-
-        Mail::to($user->email)->send(new UserInvitationMail($user));
-    }
-
-    /**
-     * Super Admin buat akun langsung, tanpa proses undangan/aktivasi.
-     * Return password plain text SEKALI SAJA (untuk ditampilkan ke Super Admin, tidak pernah disimpan).
-     */
-    public function createDirectly(string $name, string $email, string $role, ?string $password, User $createdBy): array
-    {
-        $plainPassword = $password ?: Str::password(12);
-
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'role' => $role,
-            'status' => UserStatus::Active,
-            'password' => bcrypt($plainPassword),
-            'force_password_change' => true,
-            'requires_otp_first_login' => true,
-            'created_directly_by' => $createdBy->id,
-            'email_verified_at' => now(),
-        ]);
-
-        return [
-            'user' => $user,
-            'plain_password' => $plainPassword,
-        ];
+        return $this->subject('Undangan Bergabung — Sistem SPKLU')
+            ->markdown('emails.user-invitation', [
+                'user' => $this->user,
+                'activationUrl' => $activationUrl,
+            ]);
     }
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('spklu_aliases', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_asli')->unique(); // persis seperti tertulis di file sumber (Excel transaksi, dll)
+            $table->string('nama_asli')->unique();
             $table->foreignId('spklu_id')->constrained('spklus')->cascadeOnDelete();
             $table->foreignId('dibuat_oleh')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
