@@ -195,7 +195,6 @@ function bukaRiwayat(probabilitasId, tahapKey, tahapLabel) {
         .then(data => window.isiModalRiwayat(probabilitasId, tahapKey, tahapLabel, data));
 }
 
-document.addEventListener('DOMContentLoaded', () => lucide.createIcons());    
 document.getElementById('form-tambah').addEventListener('submit', function (e) {
     const gabung = document.getElementById('tikor-gabung').value;
     const parts = gabung.split(',').map(s => s.trim());
@@ -219,7 +218,6 @@ function aturTinggiHeaderTabel() {
 
 document.addEventListener('DOMContentLoaded', () => {
     aturTinggiHeaderTabel();
-    lucide.createIcons();
 });
 window.addEventListener('resize', aturTinggiHeaderTabel);
 
