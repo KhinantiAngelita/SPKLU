@@ -44,4 +44,22 @@ return [
         'roles' => ['super_admin'],
     ],
 
+    [
+        'label'    => 'Monitoring SPKLU',
+        'icon'     => 'activity',
+        'roles'    => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+        'children' => [
+            [
+                'label' => 'Probabilitas',
+                'route' => 'monitoring.probabilitas.index',
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+            [
+                'label' => 'Pengajuan',
+                'route' => 'monitoring.pengajuan.index',
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+        ],
+    ],
+
 ];

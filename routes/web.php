@@ -9,6 +9,8 @@ use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\MasterParameterController;
 use App\Http\Controllers\MasterSpkluController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\Monitoring\ProbabilitasController;
+use App\Http\Controllers\Monitoring\PengajuanController;
 use Illuminate\Support\Facades\Route;
 
 // ============ ROOT ============
@@ -95,4 +97,25 @@ Route::middleware(['auth'])->group(function () {
         Route::post('target', [MasterParameterController::class, 'storeTarget'])->name('target.store');
     });
 
+    Route::prefix('monitoring/probabilitas')->name('monitoring.probabilitas.')->group(function () {
+        Route::get('/', [ProbabilitasController::class, 'index'])->name('index');
+        Route::post('/', [ProbabilitasController::class, 'store'])->name('store');
+        Route::get('/{probabilitas}/edit-data', [ProbabilitasController::class, 'editData'])->name('edit-data');
+        Route::put('/{probabilitas}', [ProbabilitasController::class, 'update'])->name('update');
+
+        Route::post('/{probabilitas}/tahapan', [ProbabilitasController::class, 'storeTahapan'])->name('tahapan.store');
+        Route::get('/{probabilitas}/tahapan/{tahap}', [ProbabilitasController::class, 'riwayatTahap'])->name('tahapan.riwayat');
+        Route::delete('/{probabilitas}/tahapan/{tahapanProbing}', [ProbabilitasController::class, 'destroyTahapan'])->name('tahapan.destroy');
+
+    });
+
+    Route::prefix('monitoring/pengajuan')->name('monitoring.pengajuan.')->group(function () {
+        Route::get('/', [PengajuanController::class, 'index'])->name('index');
+        Route::get('/create', [PengajuanController::class, 'create'])->name('create');
+        Route::post('/', [PengajuanController::class, 'store'])->name('store');
+        Route::get('/{pengajuan}', [PengajuanController::class, 'show'])->name('show');
+        Route::get('/{pengajuan}/edit', [PengajuanController::class, 'edit'])->name('edit');
+        Route::put('/{pengajuan}', [PengajuanController::class, 'update'])->name('update');
+        Route::delete('/{pengajuan}', [PengajuanController::class, 'destroy'])->name('destroy');
+    });    
 });
