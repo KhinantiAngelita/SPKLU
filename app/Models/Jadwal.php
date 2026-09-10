@@ -8,7 +8,7 @@ class Jadwal extends Model
 {
     protected $fillable = [
         'judul', 'deskripsi', 'waktu_mulai', 'mode', 'lokasi', 'dibuat_oleh',
-        'pengajuan_id', 'penanggung_jawab', 'status',
+        'pengajuan_id', 'probabilitas_id', 'penanggung_jawab', 'status',
     ];
 
     protected $casts = [
@@ -23,6 +23,11 @@ class Jadwal extends Model
     public function pengajuan()
     {
         return $this->belongsTo(Pengajuan::class);
+    }
+
+    public function probabilitas()
+    {
+        return $this->belongsTo(Probabilitas::class);
     }
 
     public function penanggungJawab()

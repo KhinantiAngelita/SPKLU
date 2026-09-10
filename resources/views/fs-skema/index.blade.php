@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'FS Skema')
+@section('breadcrumb', 'FS Skema')
+@section('page-title', 'FS Skema')
 
 @section('content')
 <div class="page-header">
     <h1>FS Skema</h1>
-    <p class="page-subtitle">Ringkasan Sistem SPKLU</p>
+    <p class="page-subtitle">Daftar hasil analisis kelayakan lokasi SPKLU</p>
 </div>
 
 <div class="toolbar">

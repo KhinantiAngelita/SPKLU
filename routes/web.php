@@ -64,7 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('master-spklu')->name('master-spklu.')->group(function () {
         Route::get('/', [MasterSpkluController::class, 'index'])->name('index');
         Route::post('/', [MasterSpkluController::class, 'store'])->middleware('role:super_admin,pengelola')->name('store');
-        Route::put('{spklu}', [MasterSpkluController::class, 'update'])->middleware('role:super_admin,pengelola')->name('update'); // GANTI dari destroy
+        Route::put('{spklu}', [MasterSpkluController::class, 'update'])->middleware('role:super_admin,pengelola')->name('update');
         Route::post('import', [MasterSpkluController::class, 'importExcel'])->middleware('role:super_admin,pengelola')->name('import');
 
         Route::middleware('role:super_admin')->group(function () {
@@ -108,18 +108,15 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{probabilitas}/tahapan', [ProbabilitasController::class, 'storeTahapan'])->name('tahapan.store');
         Route::get('/{probabilitas}/tahapan/{tahap}', [ProbabilitasController::class, 'riwayatTahap'])->name('tahapan.riwayat');
         Route::delete('/{probabilitas}/tahapan/{tahapanProbing}', [ProbabilitasController::class, 'destroyTahapan'])->name('tahapan.destroy');
-
     });
 
-        Route::prefix('monitoring/pengajuan')->name('monitoring.pengajuan.')->group(function () {
+    // "Pengajuan" — Kanban ringkasan progres Probabilitas + aksi Validasi Integrasi
+    // (yang otomatis bikin record baru di Master SPKLU).
+    Route::prefix('monitoring/pengajuan')->name('monitoring.pengajuan.')->group(function () {
         Route::get('/', [PengajuanController::class, 'index'])->name('index');
-        Route::get('/create', [PengajuanController::class, 'create'])->middleware('role:super_admin,pengelola')->name('create');
-        Route::post('/', [PengajuanController::class, 'store'])->middleware('role:super_admin,pengelola')->name('store');
-        Route::get('/{pengajuan}', [PengajuanController::class, 'show'])->name('show');
-        Route::get('/{pengajuan}/edit', [PengajuanController::class, 'edit'])->middleware('role:super_admin,pengelola')->name('edit');
-        Route::put('/{pengajuan}', [PengajuanController::class, 'update'])->middleware('role:super_admin,pengelola')->name('update');
-        Route::delete('/{pengajuan}', [PengajuanController::class, 'destroy'])->middleware('role:super_admin')->name('destroy');
-        Route::patch('/{pengajuan}/ubah-status', [PengajuanController::class, 'ubahStatus'])->middleware('role:super_admin,pengelola')->name('ubah-status');
+        Route::post('/{probabilitas}/validasi', [PengajuanController::class, 'validasi'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('validasi');
     });
 
     Route::prefix('fs-skema')->name('fs-skema.')->group(function () {
@@ -139,5 +136,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{jadwal}/edit', [PenjadwalanController::class, 'edit'])->middleware('role:super_admin,pemasaran,pengelola')->name('edit');
         Route::put('/{jadwal}', [PenjadwalanController::class, 'update'])->middleware('role:super_admin,pemasaran,pengelola')->name('update');
         Route::delete('/{jadwal}', [PenjadwalanController::class, 'destroy'])->middleware('role:super_admin')->name('destroy');
-    });    
+    });
 });

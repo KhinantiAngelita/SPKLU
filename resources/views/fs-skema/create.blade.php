@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah FS Skema')
+@section('breadcrumb', 'FS Skema')
+@section('page-title', 'Tambah FS Skema')
 
 @section('content')
 <div class="page-header">
-    <h1>FS Skema</h1>
-    <p class="page-subtitle">Ringkasan Sistem SPKLU</p>
+    <h1>Tambah FS Skema</h1>
+    <p class="page-subtitle">Hitung kelayakan lokasi SPKLU baru</p>
 </div>
 
 <div class="card">
@@ -33,23 +34,13 @@
 
         <div class="form-row">
             <div class="field-group">
-                <label>Nama Tempat/Lokasi (Nama SPKLU)</label>
+                <label>Nama Tempat/Lokasi</label>
                 <input type="text" name="nama_lokasi" value="{{ old('nama_lokasi') }}" placeholder="Masukan nama lengkap" required>
             </div>
             <div class="field-group">
                 <label>Titik Koordinat</label>
                 <input type="text" name="titik_koordinat" value="{{ old('titik_koordinat') }}" placeholder="Masukan titik kordinat">
             </div>
-        </div>
-
-        <div class="field-group">
-            <label>Kandidat Terkait (opsional)</label>
-            <select name="kandidat_id">
-                <option value="">Tidak terhubung ke kandidat</option>
-                @foreach ($kandidats as $k)
-                    <option value="{{ $k->id }}" @selected(old('kandidat_id') == $k->id)>{{ $k->lokasi }}</option>
-                @endforeach
-            </select>
         </div>
 
         <div class="form-row">

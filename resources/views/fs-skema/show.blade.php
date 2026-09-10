@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $fsSkema->nama_lokasi)
+@section('breadcrumb', 'FS Skema')
+@section('page-title', $fsSkema->nama_lokasi)
 
 @section('content')
 <div class="page-header">
@@ -39,18 +40,6 @@
                 <i data-lucide="alert-circle"></i> Status Kelayakan: {{ $fsSkema->status_kelayakan }}
             </div>
         </div>
-
-        @if (!$fsSkema->pengajuan && $fsSkema->status_kelayakan !== 'Tidak Layak')
-            @can('create', \App\Models\Pengajuan::class)
-                <a href="{{ route('monitoring.pengajuan.create', ['fs_skema_id' => $fsSkema->id]) }}" class="btn btn-primary" style="margin-top:12px;">
-                    Ajukan ke Monitoring Pengajuan
-                </a>
-            @endcan
-        @elseif ($fsSkema->pengajuan)
-            <a href="{{ route('monitoring.pengajuan.show', $fsSkema->pengajuan) }}" class="btn btn-outline" style="margin-top:12px;">
-                Lihat Pengajuan Terkait ({{ $fsSkema->pengajuan->id_pengajuan }})
-            </a>
-        @endif
     </div>
 
     <div class="side-column">

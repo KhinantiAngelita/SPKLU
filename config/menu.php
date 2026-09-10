@@ -31,18 +31,6 @@ return [
             ],
         ],
     ],
-    [
-        'label' => 'Master Parameter',
-        'route' => 'master-parameter.index',
-        'icon'  => 'settings',
-        'roles' => ['super_admin'],
-    ],
-    [
-        'label' => 'Manajemen User',
-        'route' => 'manajemen-user.index',
-        'icon'  => 'users',
-        'roles' => ['super_admin'],
-    ],
 
     [
         'label'    => 'Monitoring SPKLU',
@@ -60,6 +48,32 @@ return [
                 'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
             ],
         ],
+    ],
+
+    [
+        'label' => 'FS Skema',
+        'route' => 'fs-skema.index',
+        'icon'  => 'calculator',
+        'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+    ],
+    [
+        'label' => 'Penjadwalan',
+        'route' => 'penjadwalan.index',
+        'icon'  => 'calendar-check',
+        'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+    ],
+
+    [
+        'label' => 'Master Parameter',
+        'route' => 'master-parameter.index',
+        'icon'  => 'settings',
+        'roles' => ['super_admin'],
+    ],
+    [
+        'label' => 'Manajemen User',
+        'route' => 'manajemen-user.index',
+        'icon'  => 'users',
+        'roles' => ['super_admin'],
     ],
 
 ];

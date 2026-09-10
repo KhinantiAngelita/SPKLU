@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumb', 'Penjadwalan')
-@section('page-title', 'Buat Jadwal')
+@section('page-title', 'Edit Jadwal')
 
 @section('content')
 
@@ -23,7 +23,6 @@
     }
     .jdw-form-body input:focus, .jdw-form-body select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); }
     .jdw-form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .jdw-hint { font-size:11.5px; color:#94a3b8; margin-top:5px; }
     .jdw-mode-group { display:inline-flex; background:#f8fafc; border:1px solid #e2e8f0; border-radius:9px; padding:3px; gap:2px; }
     .jdw-mode-pill { border:none; background:none; padding:9px 20px; border-radius:7px; font-size:13px; font-weight:700; color:#64748B; cursor:pointer; transition:all .15s ease; display:inline-flex; align-items:center; gap:7px; }
     .jdw-mode-pill svg { width:15px; height:15px; stroke-width:2.2; }
@@ -34,7 +33,7 @@
 </style>
 
 <div class="jdw-page-header">
-    <p class="jdw-page-subtitle">Jadwalkan kunjungan/pertemuan untuk lokasi yang sedang berjalan di Probabilitas</p>
+    <p class="jdw-page-subtitle">Perbarui detail jadwal — {{ $jadwal->judul }}</p>
     <a href="{{ route('penjadwalan.index') }}" class="jdw-btn jdw-btn-outline">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         Kembali
@@ -53,65 +52,72 @@
     <div class="section-header-bar">
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
             </div>
-            <div><h2>Buat Jadwal Kunjungan</h2><p>Isi detail waktu & mode pertemuan</p></div>
+            <div><h2>Edit Jadwal</h2><p>Perbarui waktu, mode, atau status jadwal</p></div>
         </div>
     </div>
 
-    <form method="POST" action="{{ route('penjadwalan.store') }}" id="form-jadwal" class="jdw-form-body">
+    <form method="POST" action="{{ route('penjadwalan.update', $jadwal) }}" id="form-jadwal" class="jdw-form-body">
         @csrf
+        @method('PUT')
 
         <label>Pilih Permohonan</label>
         <select name="probabilitas_id" required>
             <option value="">Pilih lokasi...</option>
             @foreach ($probabilitasList as $p)
-                <option value="{{ $p->id }}" @selected(request('probabilitas_id') == $p->id || old('probabilitas_id') == $p->id)>
+                <option value="{{ $p->id }}" @selected(old('probabilitas_id', $jadwal->probabilitas_id) == $p->id)>
                     {{ $p->lokasi }} — ULP {{ $p->ulp }}
                 </option>
             @endforeach
         </select>
-        <p class="jdw-hint">Daftar diambil dari data Probabilitas yang belum selesai integrasi.</p>
 
         @php
-            $oldWaktu = old('waktu_mulai');
-            $oldTanggal = $oldWaktu ? \Illuminate\Support\Carbon::parse($oldWaktu)->format('Y-m-d') : '';
-            $oldJam = $oldWaktu ? \Illuminate\Support\Carbon::parse($oldWaktu)->format('H:i') : '';
+            $waktuAwal = old('waktu_mulai') ?: $jadwal->waktu_mulai;
+            $tanggalAwal = $waktuAwal ? \Illuminate\Support\Carbon::parse($waktuAwal)->format('Y-m-d') : '';
+            $jamAwal = $waktuAwal ? \Illuminate\Support\Carbon::parse($waktuAwal)->format('H:i') : '';
         @endphp
         <div class="jdw-form-row">
-            <div><label>Tanggal</label><input type="date" id="input-tanggal" value="{{ $oldTanggal }}" required></div>
-            <div><label>Jam</label><input type="time" id="input-jam" value="{{ $oldJam }}" required></div>
+            <div><label>Tanggal</label><input type="date" id="input-tanggal" value="{{ $tanggalAwal }}" required></div>
+            <div><label>Jam</label><input type="time" id="input-jam" value="{{ $jamAwal }}" required></div>
         </div>
-        <input type="hidden" name="waktu_mulai" id="input-waktu-mulai" value="{{ $oldWaktu }}">
+        <input type="hidden" name="waktu_mulai" id="input-waktu-mulai" value="{{ $waktuAwal }}">
 
         <label>Mode</label>
         <div class="jdw-mode-group">
             <label class="jdw-mode-pill" id="pill-online">
-                <input type="radio" name="mode" value="online" id="mode-online" style="display:none;" @checked(old('mode') === 'online') required onchange="pilihMode('online')">
+                <input type="radio" name="mode" value="online" id="mode-online" style="display:none;" @checked(old('mode', $jadwal->mode) === 'online') required onchange="pilihMode('online')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l5-5v14l-5-5"/><rect x="1" y="6" width="14" height="12" rx="2"/></svg>
                 Online
             </label>
             <label class="jdw-mode-pill" id="pill-offline">
-                <input type="radio" name="mode" value="offline" id="mode-offline" style="display:none;" @checked(old('mode', 'offline') === 'offline') required onchange="pilihMode('offline')">
+                <input type="radio" name="mode" value="offline" id="mode-offline" style="display:none;" @checked(old('mode', $jadwal->mode) === 'offline') required onchange="pilihMode('offline')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 Offline
             </label>
         </div>
 
         <label>Lokasi <span id="label-wajib" style="display:none; color:#C0392B;">*</span></label>
-        <input type="text" name="lokasi" value="{{ old('lokasi') }}" placeholder="Alamat lokasi kunjungan">
+        <input type="text" name="lokasi" value="{{ old('lokasi', $jadwal->lokasi) }}" placeholder="Alamat lokasi kunjungan">
 
         <label>Penanggung Jawab</label>
         <select name="penanggung_jawab">
             <option value="">Belum ditentukan</option>
             @foreach ($users as $u)
-                <option value="{{ $u->id }}" @selected(old('penanggung_jawab') == $u->id)>{{ $u->name }}</option>
+                <option value="{{ $u->id }}" @selected(old('penanggung_jawab', $jadwal->penanggung_jawab) == $u->id)>{{ $u->name }}</option>
+            @endforeach
+        </select>
+
+        <label>Status</label>
+        <select name="status">
+            @foreach (['terjadwal', 'berlangsung', 'selesai', 'batal'] as $s)
+                <option value="{{ $s }}" @selected(old('status', $jadwal->status) === $s)>{{ ucfirst($s) }}</option>
             @endforeach
         </select>
 
         <div class="jdw-form-actions">
             <a href="{{ route('penjadwalan.index') }}" class="jdw-btn jdw-btn-outline">Batal</a>
-            <button type="submit" class="jdw-btn jdw-btn-primary">Simpan Jadwal</button>
+            <button type="submit" class="jdw-btn jdw-btn-primary">Simpan Perubahan</button>
         </div>
     </form>
 </div>

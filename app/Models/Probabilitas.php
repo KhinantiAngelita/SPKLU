@@ -36,6 +36,9 @@ class Probabilitas extends Model
         'okupansi_ruas_jalan',
         'keterangan',
         'created_by',
+        'spklu_id',
+        'divalidasi_pada',
+        'divalidasi_oleh',
     ];
 
     protected $casts = [
@@ -48,13 +51,9 @@ class Probabilitas extends Model
         'okupansi_pusat_keramaian' => 'boolean',
         'okupansi_ruas_jalan' => 'boolean',
         'persentase_progres' => 'decimal:2',
+        'divalidasi_pada' => 'datetime',
     ];
 
-    /**
-     * Urutan resmi 11 tahap — dipakai untuk generate baris kosong saat
-     * lokasi baru dibuat, dan untuk urutan kolom di grid & modal.
-     * Key = value enum di DB, value = label tampilan.
-     */
     public const TAHAPAN = [
         'probing' => 'Probing',
         'survey_nps' => 'Survey NPS',
@@ -79,13 +78,16 @@ class Probabilitas extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Kunjungan terakhir per tahap, dikelompokkan — dipakai untuk render
-     * badge grid tanpa query N+1 (eager load riwayatTahapan lalu panggil
-     * ini di memory).
-     *
-     * @return array<string, \Illuminate\Support\Collection>
-     */
+    public function spklu()
+    {
+        return $this->belongsTo(Spklu::class);
+    }
+
+    public function divalidasiOleh()
+    {
+        return $this->belongsTo(User::class, 'divalidasi_oleh');
+    }
+
     public function riwayatPerTahap(): array
     {
         $grouped = $this->riwayatTahapan->groupBy('tahap');
@@ -98,10 +100,6 @@ class Probabilitas extends Model
         return $result;
     }
 
-    /**
-     * Data badge siap-render per tahap: label, warna, jumlah kunjungan.
-     * Dipakai langsung di Blade grid.
-     */
     public function badgePerTahap(): array
     {
         $badges = [];
@@ -112,7 +110,7 @@ class Probabilitas extends Model
                 continue;
             }
 
-            $terakhir = $riwayat->first(); // sudah diurutkan terbaru dulu
+            $terakhir = $riwayat->first();
             $jumlah = $riwayat->count();
 
             $badges[$tahap] = match ($terakhir->hasil) {
@@ -124,5 +122,61 @@ class Probabilitas extends Model
         }
 
         return $badges;
+    }
+
+    public function tahapSaatIni(): string
+    {
+        $badges = $this->badgePerTahap();
+
+        foreach (self::TAHAPAN as $key => $label) {
+            if (($badges[$key]['warna'] ?? 'abu') !== 'hijau') {
+                return $label;
+            }
+        }
+
+        return 'Integrasi';
+    }
+
+    public function statusKanban(): string
+    {
+        $badges = $this->badgePerTahap();
+
+        if (($badges['integrasi']['warna'] ?? 'abu') === 'hijau') {
+            return 'selesai_integrasi';
+        }
+
+        $adaYangSelesai = collect($badges)->contains(fn ($b) => $b['warna'] === 'hijau');
+
+        return $adaYangSelesai ? 'on_progress' : 'belum_mulai';
+    }
+
+    public function tanggalUpdateTerakhir(): \Illuminate\Support\Carbon
+    {
+        $terbaru = $this->riwayatTahapan->sortByDesc('tanggal')->first();
+
+        return $terbaru ? \Illuminate\Support\Carbon::parse($terbaru->tanggal) : $this->created_at;
+    }
+
+    public function sudahDivalidasi(): bool
+    {
+        return $this->spklu_id !== null;
+    }
+
+    /** Total KW hasil jumlah semua kebutuhan mesin — dipakai sebagai nilai awal (bisa diedit) di modal validasi. */
+    public function estimasiTotalKw(): float
+    {
+        return (22 * ($this->kebutuhan_22kw ?? 0))
+            + (30 * ($this->kebutuhan_30kw ?? 0))
+            + (50 * ($this->kebutuhan_50kw ?? 0))
+            + (60 * ($this->kebutuhan_60kw ?? 0))
+            + (120 * ($this->kebutuhan_120kw ?? 0))
+            + (180 * ($this->kebutuhan_180kw ?? 0));
+    }
+
+    /** Total unit mesin (dipakai sebagai estimasi jumlah nozzle awal, bisa diedit). */
+    public function estimasiNozzle(): int
+    {
+        return (int) (($this->kebutuhan_22kw ?? 0) + ($this->kebutuhan_30kw ?? 0) + ($this->kebutuhan_50kw ?? 0)
+            + ($this->kebutuhan_60kw ?? 0) + ($this->kebutuhan_120kw ?? 0) + ($this->kebutuhan_180kw ?? 0));
     }
 }

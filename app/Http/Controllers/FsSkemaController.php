@@ -27,8 +27,9 @@ class FsSkemaController extends Controller
 
     public function create()
     {
-        $kandidats = KandidatPrioritas::orderBy('nama_lokasi')->get();
-        return view('fs-skema.create', compact('kandidats'));
+        $kandidatList = KandidatPrioritas::all();
+
+        return view('fs-skema.create', compact('kandidatList'));
     }
 
     public function store(Request $request)
@@ -42,21 +43,23 @@ class FsSkemaController extends Controller
 
     public function show(FsSkema $fsSkema)
     {
-        $fsSkema->load('kandidat', 'pengajuan');
+        $fsSkema->load('kandidat');
 
-        $proyeksiRoi = $this->calculator->hitungProyeksiROI(
-            (float) $fsSkema->total_rab_investasi,
-            $fsSkema->mobil_per_hari,
-            (float) $fsSkema->transaksi_kwh_per_mobil,
-        );
+        $koordinat = $fsSkema->koordinat();
+        $spkluTerdekat = $koordinat
+            ? $this->calculator->cari3SpkluTerdekat($koordinat[0], $koordinat[1])
+            : [];
 
-        return view('fs-skema.show', compact('fsSkema', 'proyeksiRoi'));
+        $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
+
+        return view('fs-skema.show', compact('fsSkema', 'spkluTerdekat', 'proyeksiRoi'));
     }
 
     public function edit(FsSkema $fsSkema)
     {
-        $kandidats = KandidatPrioritas::orderBy('nama_lokasi')->get();
-        return view('fs-skema.edit', compact('fsSkema', 'kandidats'));
+        $kandidatList = KandidatPrioritas::all();
+
+        return view('fs-skema.edit', compact('fsSkema', 'kandidatList'));
     }
 
     public function update(Request $request, FsSkema $fsSkema)
@@ -86,10 +89,6 @@ class FsSkemaController extends Controller
 
     public function destroy(FsSkema $fsSkema)
     {
-        if ($fsSkema->pengajuan()->exists()) {
-            return back()->with('error', 'FS Skema tidak bisa dihapus karena sudah punya pengajuan terkait.');
-        }
-
         $fsSkema->delete();
 
         return redirect()->route('fs-skema.index')->with('success', 'FS Skema berhasil dihapus.');
@@ -102,9 +101,17 @@ class FsSkemaController extends Controller
             'skema' => 'required|in:skema_2,skema_3',
             'nama_lokasi' => 'required|string|max:255',
             'titik_koordinat' => 'nullable|string',
-            'total_rab_investasi' => 'required|numeric|min:0',
+
+            // Skema 2
+            'total_rab_investasi' => 'required_if:skema,skema_2|nullable|numeric|min:0',
+
+            // Skema 3
+            'rab_mitra_mesin' => 'required_if:skema,skema_3|nullable|numeric|min:0',
+            'rab_mitra_lahan' => 'required_if:skema,skema_3|nullable|numeric|min:0',
+            'sharing_provit_mitra_lahan' => 'nullable|numeric|min:0|max:1',
+
+            'layanan_listrik' => 'nullable|in:TM,TR,LTR',
             'mobil_per_hari' => 'required|integer|min:0',
-            'layanan_listrik' => 'nullable|string',
             'transaksi_kwh_per_mobil' => 'required|numeric|min:0',
             'fasilitas' => 'nullable|array',
             'kesiapan_jaringan' => 'nullable|string',

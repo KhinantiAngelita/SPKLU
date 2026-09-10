@@ -3,99 +3,72 @@
 namespace App\Http\Controllers\Monitoring;
 
 use App\Http\Controllers\Controller;
-use App\Models\FsSkema;
-use App\Models\Pengajuan;
-use App\Services\ValidasiIntegrasiService;
+use App\Models\Probabilitas;
+use App\Models\Spklu;
+use App\Models\UlpMapping;
 use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
 {
-    public function __construct(protected ValidasiIntegrasiService $validasiService) {}
-
     public function index(Request $request)
     {
-        $pengajuans = Pengajuan::with(['fsSkema', 'pengaju', 'verifikator'])
-            ->when($request->status, fn ($q) => $q->where('status', $request->status))
-            ->latest()
-            ->paginate(10);
+        $semua = Probabilitas::with('riwayatTahapan')->orderBy('lokasi')->get();
 
-        return view('monitoring.pengajuan.index', compact('pengajuans'));
-    }
+        $kolom = [
+            'belum_mulai' => collect(),
+            'on_progress' => collect(),
+            'selesai_integrasi' => collect(),
+        ];
 
-    public function create()
-    {
-        // hanya FS Skema yang layak/menjadi pertimbangan & belum punya pengajuan
-        $fsSkemas = FsSkema::whereDoesntHave('pengajuan')
-            ->where('status_kelayakan', '!=', 'Tidak Layak')
-            ->get();
-
-        return view('monitoring.pengajuan.create', compact('fsSkemas'));
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'fs_skema_id' => 'required|exists:fs_skemas,id',
-        ]);
-
-        $fsSkema = FsSkema::findOrFail($validated['fs_skema_id']);
-
-        $pengajuan = $this->validasiService->buatPengajuan(
-            $fsSkema->id,
-            $fsSkema->kandidat_id,
-        );
-
-        return redirect()->route('monitoring.pengajuan.show', $pengajuan)
-            ->with('success', "Pengajuan {$pengajuan->id_pengajuan} berhasil dibuat.");
-    }
-
-    public function show(Pengajuan $pengajuan)
-    {
-        $pengajuan->load(['fsSkema', 'pengaju', 'verifikator', 'jadwal']);
-        return view('monitoring.pengajuan.show', compact('pengajuan'));
-    }
-
-    public function edit(Pengajuan $pengajuan)
-    {
-        return view('monitoring.pengajuan.edit', compact('pengajuan'));
-    }
-
-    public function update(Request $request, Pengajuan $pengajuan)
-    {
-        $validated = $request->validate([
-            'catatan_verifikasi' => 'nullable|string',
-        ]);
-
-        $pengajuan->update($validated);
-
-        return redirect()->route('monitoring.pengajuan.show', $pengajuan)
-            ->with('success', 'Pengajuan berhasil diperbarui.');
-    }
-
-    public function destroy(Pengajuan $pengajuan)
-    {
-        if ($pengajuan->status !== 'diajukan') {
-            return back()->with('error', 'Hanya pengajuan berstatus "diajukan" yang bisa dihapus.');
+        foreach ($semua as $p) {
+            $kolom[$p->statusKanban()]->push($p);
         }
 
-        $pengajuan->delete();
-
-        return redirect()->route('monitoring.pengajuan.index')->with('success', 'Pengajuan berhasil dihapus.');
+        return view('monitoring.pengajuan.index', [
+            'belumMulai' => $kolom['belum_mulai'],
+            'onProgress' => $kolom['on_progress'],
+            'selesaiIntegrasi' => $kolom['selesai_integrasi'],
+            'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
+        ]);
     }
 
-    public function ubahStatus(Request $request, Pengajuan $pengajuan)
+    /**
+     * Eksekusi validasi integrasi: lokasi Probabilitas yang sudah tuntas 11 tahap
+     * dipindahkan resmi menjadi record baru di Master SPKLU (status langsung "aktif",
+     * sesuai keputusan sebelumnya — tanpa lewat validasi 2-tahap Super Admin lagi).
+     */
+    public function validasi(Request $request, Probabilitas $probabilitas)
     {
+        abort_if($probabilitas->sudahDivalidasi(), 400, 'Lokasi ini sudah pernah divalidasi sebelumnya.');
+        abort_unless($probabilitas->statusKanban() === 'selesai_integrasi', 400, 'Lokasi ini belum menyelesaikan tahap Integrasi.');
+
         $validated = $request->validate([
-            'status' => 'required|string|in:diverifikasi,disetujui,ditolak,tervalidasi',
-            'catatan' => 'nullable|string',
+            'ulp_mapping_id' => 'required|exists:ulp_mappings,id',
+            'type' => 'required|in:AC,DC',
+            'kw' => 'required|numeric|min:0',
+            'nozzle' => 'required|integer|min:1',
+            'kepemilikan' => 'required|in:PLN,Swasta',
         ]);
 
-        try {
-            $this->validasiService->ubahStatus($pengajuan, $validated['status'], $validated['catatan'] ?? null);
-        } catch (\InvalidArgumentException $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        $nomorUrut = Spklu::withTrashed()->max('id') + 1;
 
-        return back()->with('success', 'Status pengajuan berhasil diperbarui.');
+        $spklu = Spklu::create([
+            ...$validated,
+            'id_spklu' => 'SPKLU-' . str_pad((string) $nomorUrut, 3, '0', STR_PAD_LEFT),
+            'nama' => $probabilitas->lokasi,
+            'latitude' => $probabilitas->tikor_lat,
+            'longitude' => $probabilitas->tikor_lng,
+            'status' => 'aktif',
+            'sumber' => 'pengajuan',
+            'tanggal_aktif' => now(),
+        ]);
+
+        $probabilitas->update([
+            'spklu_id' => $spklu->id,
+            'divalidasi_pada' => now(),
+            'divalidasi_oleh' => $request->user()->id,
+        ]);
+
+        return back()->with('success', "\"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi masuk Master SPKLU.");
     }
 }
