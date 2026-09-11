@@ -68,6 +68,8 @@
 
     {{-- ===== Table ===== --}}
     <div class="kp-table-wrap">
+        @php $spkluDataJs = []; @endphp
+
         <table class="kp-table">
             <thead>
                 <tr>
@@ -90,6 +92,14 @@
                         $badgeClass = $kandidat->kategori === 'A' ? 'kp-badge-a' : ($kandidat->kategori === 'B' ? 'kp-badge-b' : 'kp-badge-c');
                         $skorClass = $kandidat->kategori === 'A' ? 'kp-skor-a' : ($kandidat->kategori === 'B' ? 'kp-skor-b' : 'kp-skor-c');
                         $lineColor = fn ($v) => $v > 80 ? '#22c55e' : ($v >= 50 ? '#f59e0b' : '#ef4444');
+                    @endphp
+                    @php
+                        $spkluDataJs[$kandidat->id] = collect($kandidat->spklu_terdekat)->map(function ($s) {
+                            return [
+                                'nama' => is_array($s) ? ($s['nama'] ?? '') : ($s->nama_spklu ?? $s->nama ?? ''),
+                                'jarak_km' => is_array($s) ? ($s['jarak_km'] ?? '') : ($s->jarak_km ?? ''),
+                            ];
+                        })->values();
                     @endphp
                     <tr class="{{ $kandidat->jarak_real_diisi ? '' : 'kp-attn' }}">
                         <td>{{ $kandidatList->firstItem() + $index }}</td>
@@ -128,8 +138,10 @@
                             <button type="button"
                                 class="kp-btn-input-jarak"
                                 onclick="bukaModalJarak({{ $kandidat->id }})"
-                                style="margin-top:6px; font-size:11px; padding:2px 8px; border:1px solid #cbd5e1; border-radius:4px; background:#fff; cursor:pointer;">
-                                ✎ Input Jarak REAL
+                                style="margin-top:6px; font-size:11px; padding:3px 10px; border:1px solid #cbd5e1; border-radius:6px; background:#fff; color:#334155; cursor:pointer; transition:all .15s;"
+                                onmouseover="this.style.background='#f1f5f9'"
+                                onmouseout="this.style.background='#fff'">
+                                Input Jarak REAL
                             </button>
                         </td>
 
@@ -170,32 +182,69 @@
     <div style="margin-top:12px;">
         {{ $kandidatList->links() }}
     </div>
-    
+
     {{-- ===== Modal input jarak REAL 3 SPKLU terdekat ===== --}}
-    <div id="modalJarak" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:8px; padding:20px; width:420px; max-width:90%;">
-            <h3 style="margin:0 0 12px;">Input Jarak REAL — 3 SPKLU Terdekat</h3>
+    <div id="modalJarak" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.5); backdrop-filter:blur(2px); z-index:50; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:12px; padding:0; width:460px; max-width:92%; box-shadow:0 20px 50px rgba(0,0,0,0.25); overflow:hidden;">
+
+            <div style="padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <h3 style="margin:0; font-size:16px; font-weight:700; color:#0f172a;">Input Jarak REAL</h3>
+                    <p style="margin:2px 0 0; font-size:12.5px; color:#64748b;">3 SPKLU terdekat dari lokasi ini</p>
+                </div>
+                <button type="button" onclick="tutupModalJarak()" style="background:none; border:none; font-size:20px; line-height:1; color:#94a3b8; cursor:pointer; padding:4px;">&times;</button>
+            </div>
 
             <form id="formJarak" method="POST">
                 @csrf
-                @for ($i = 0; $i < 3; $i++)
-                    <div style="display:flex; gap:8px; margin-bottom:8px;">
-                        <input type="text" name="items[{{ $i }}][nama_spklu]" placeholder="Nama SPKLU #{{ $i + 1 }}" required style="flex:2; padding:6px;">
-                        <input type="number" step="0.01" min="0" name="items[{{ $i }}][jarak_km]" placeholder="Jarak (km)" required style="flex:1; padding:6px;">
-                    </div>
-                @endfor
+                <div style="padding:20px 24px; display:flex; flex-direction:column; gap:12px;">
+                    @for ($i = 0; $i < 3; $i++)
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span style="flex-shrink:0; width:22px; height:22px; border-radius:50%; background:#eff6ff; color:#2563eb; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;">{{ $i + 1 }}</span>
+                            <input type="text" name="items[{{ $i }}][nama_spklu]" data-role="nama"
+                                placeholder="Nama SPKLU #{{ $i + 1 }}" required
+                                style="flex:2; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; outline:none;"
+                                onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'">
+                            <input type="number" step="0.01" min="0" name="items[{{ $i }}][jarak_km]" data-role="jarak"
+                                placeholder="Jarak (km)" required
+                                style="flex:1; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; outline:none;"
+                                onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#cbd5e1'">
+                        </div>
+                    @endfor
+                </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
-                    <button type="button" onclick="tutupModalJarak()" style="padding:6px 14px;">Batal</button>
-                    <button type="submit" style="padding:6px 14px; background:#2563eb; color:#fff; border:none; border-radius:4px;">Simpan</button>
+                <div style="display:flex; justify-content:flex-end; gap:8px; padding:16px 24px; background:#f8fafc; border-top:1px solid #e2e8f0;">
+                    <button type="button" onclick="tutupModalJarak()"
+                        style="padding:8px 16px; border:1px solid #cbd5e1; border-radius:7px; background:#fff; color:#334155; font-size:13px; font-weight:600; cursor:pointer;">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        style="padding:8px 18px; background:#2563eb; color:#fff; border:none; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer;">
+                        Simpan
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        const SPKLU_DATA = @json($spkluDataJs ?? []);
+
         function bukaModalJarak(kandidatId) {
             document.getElementById('formJarak').action = `/kandidat-prioritas/${kandidatId}/spklu-terdekat`;
+
+            const data = SPKLU_DATA[kandidatId] || [];
+
+            const namaInputs = document.querySelectorAll('#formJarak input[data-role="nama"]');
+            const jarakInputs = document.querySelectorAll('#formJarak input[data-role="jarak"]');
+
+            namaInputs.forEach((input, i) => {
+                input.value = data[i]?.nama ?? '';
+            });
+            jarakInputs.forEach((input, i) => {
+                input.value = data[i]?.jarak_km ?? '';
+            });
+
             document.getElementById('modalJarak').style.display = 'flex';
         }
 
