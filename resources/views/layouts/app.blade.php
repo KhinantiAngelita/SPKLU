@@ -362,6 +362,8 @@
             .topbar-dropdown-panel { width: 280px; }
         }
     </style>
+    @stack('styles')
+    
 </head>
 <body>
 

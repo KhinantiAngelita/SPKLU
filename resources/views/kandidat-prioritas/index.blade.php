@@ -29,7 +29,7 @@
         <div class="kp-card green">
             <div class="label">Rata-rata Skor Progres</div>
             <div class="value">{{ $ringkasan['rata_rata_skor'] }}%</div>
-            <div class="note">dari total poin Fasilitas, Jaringan &amp; Okupasi</div>
+            <div class="note">dari total poin Fasilitas, <br>Jaringan &amp; Okupasi</div>
         </div>
 
         <div class="kp-card amber">
@@ -78,10 +78,10 @@
                     <th>Kordinat</th>
                     <th>Mitra Mesin</th>
                     <th>3 SPKLU Terdekat</th>
-                    <th>Poin Fasilitas</th>
-                    <th>Poin Jaringan</th>
-                    <th>Poin Okupasi</th>
-                    <th>Skor Prioritas</th>
+                    <th>Skor Jarak</th>
+                    <th>Skor Poin Kapasitas</th>
+                    <th>Skor Poin Okupansi +<br>Fasilitas + Jaringan</th>
+                    <th>Skor Prioritas Akhir</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,22 +124,31 @@
                             @empty
                                 <span style="font-size:12px; color:#9ca3af;">Koordinat belum diisi</span>
                             @endforelse
+
+                            <button type="button"
+                                class="kp-btn-input-jarak"
+                                onclick="bukaModalJarak({{ $kandidat->id }})"
+                                style="margin-top:6px; font-size:11px; padding:2px 8px; border:1px solid #cbd5e1; border-radius:4px; background:#fff; cursor:pointer;">
+                                ✎ Input Jarak REAL
+                            </button>
                         </td>
 
                         <td class="kp-poin">
-                            <div class="num">{{ $kandidat->poin_fasilitas }}</div>
-                            <div class="line" style="background: {{ $lineColor($kandidat->poin_fasilitas) }};"></div>
-                        </td>
-                        <td class="kp-poin">
-                            <div class="num">{{ $kandidat->poin_jaringan }}</div>
-                            <div class="line" style="background: {{ $lineColor($kandidat->poin_jaringan) }};"></div>
-                        </td>
-                        <td class="kp-poin">
-                            <div class="num">{{ $kandidat->poin_okupasi }}</div>
-                            <div class="line" style="background: {{ $lineColor($kandidat->poin_okupasi) }};"></div>
+                            <div class="num">{{ $kandidat->skor_jarak ?? '-' }}</div>
                         </td>
 
-                        <td><span class="kp-skor {{ $skorClass }}">{{ $kandidat->skor_prioritas }}</span></td>
+                        <td class="kp-poin">
+                            <div class="num">{{ $kandidat->skor_poin_kapasitas ?? '-' }}</div>
+                            @if (is_null($kandidat->skor_poin_kapasitas))
+                                <div class="kp-warn" style="font-size:11px;">Belum ada data unit mesin</div>
+                            @endif
+                        </td>
+
+                        <td class="kp-poin">
+                            <div class="num">{{ $kandidat->skor_poin_okupansi ?? '-' }}</div>
+                        </td>
+
+                        <td><span class="kp-skor {{ $skorClass }}">{{ $kandidat->skor_prioritas_akhir ?? '-' }}</span></td>
                     </tr>
                 @empty
                     <tr>
@@ -161,6 +170,40 @@
     <div style="margin-top:12px;">
         {{ $kandidatList->links() }}
     </div>
+    
+    {{-- ===== Modal input jarak REAL 3 SPKLU terdekat ===== --}}
+    <div id="modalJarak" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
+        <div style="background:#fff; border-radius:8px; padding:20px; width:420px; max-width:90%;">
+            <h3 style="margin:0 0 12px;">Input Jarak REAL — 3 SPKLU Terdekat</h3>
 
+            <form id="formJarak" method="POST">
+                @csrf
+                @for ($i = 0; $i < 3; $i++)
+                    <div style="display:flex; gap:8px; margin-bottom:8px;">
+                        <input type="text" name="items[{{ $i }}][nama_spklu]" placeholder="Nama SPKLU #{{ $i + 1 }}" required style="flex:2; padding:6px;">
+                        <input type="number" step="0.01" min="0" name="items[{{ $i }}][jarak_km]" placeholder="Jarak (km)" required style="flex:1; padding:6px;">
+                    </div>
+                @endfor
+
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" onclick="tutupModalJarak()" style="padding:6px 14px;">Batal</button>
+                    <button type="submit" style="padding:6px 14px; background:#2563eb; color:#fff; border:none; border-radius:4px;">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function bukaModalJarak(kandidatId) {
+            document.getElementById('formJarak').action = `/kandidat-prioritas/${kandidatId}/spklu-terdekat`;
+            document.getElementById('modalJarak').style.display = 'flex';
+        }
+
+        function tutupModalJarak() {
+            document.getElementById('modalJarak').style.display = 'none';
+        }
+    </script>
 </div>
+
+
 @endsection

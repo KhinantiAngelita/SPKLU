@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 class Probabilitas extends Model
 {
@@ -40,6 +42,9 @@ class Probabilitas extends Model
         'okupansi_ruas_jalan',
         'keterangan',
         'created_by',
+        'spklu_id',
+        'divalidasi_pada',
+        'divalidasi_oleh',
     ];
 
     protected $casts = [
@@ -53,6 +58,7 @@ class Probabilitas extends Model
         'okupansi_ruas_jalan' => 'boolean',
         'poin_perluasan_jaringan' => 'decimal:1',
         'persentase_progres' => 'decimal:2',
+        'divalidasi_pada' => 'datetime',
     ];
 
     /**
@@ -74,15 +80,87 @@ class Probabilitas extends Model
         'integrasi' => 'Integrasi',
     ];
 
+    /*
+    |--------------------------------------------------------------------
+    | Relasi
+    |--------------------------------------------------------------------
+    */
+
     public function riwayatTahapan(): HasMany
     {
         return $this->hasMany(TahapanProbing::class);
     }
 
-    public function pembuat()
+    public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function spklu(): BelongsTo
+    {
+        return $this->belongsTo(Spklu::class);
+    }
+
+    public function divalidasiOleh(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'divalidasi_oleh');
+    }
+
+    public function kandidatPrioritas(): HasOne
+    {
+        return $this->hasOne(KandidatPrioritas::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------
+    | Poin (accessor) — dipakai oleh KandidatPrioritasSyncService
+    |--------------------------------------------------------------------
+    */
+
+    /**
+     * Poin Fasilitas: jumlah fasilitas yang aktif (ruang tunggu, parkir,
+     * toilet, kafe), masing-masing bernilai 1 poin. Maksimal 4.
+     * Sesuai sheet 'Definisi & Aturan' & kolom N sheet 'Probabilitas >50%'.
+     */
+    public function getPoinFasilitasAttribute(): int
+    {
+        return collect([
+            $this->fasilitas_ruang_tunggu,
+            $this->fasilitas_parkir,
+            $this->fasilitas_toilet,
+            $this->fasilitas_kafe,
+        ])->filter()->count();
+    }
+
+    /**
+     * Poin Okupansi: jumlah kondisi okupansi yang aktif (perumahan, pintu
+     * tol, pusat keramaian, ruas jalan), masing-masing 1 poin. Maksimal 4.
+     * Sesuai kolom O sheet 'Probabilitas >50%'.
+     */
+    public function getPoinOkupasiAttribute(): int
+    {
+        return collect([
+            $this->okupansi_perumahan,
+            $this->okupansi_pintu_tol,
+            $this->okupansi_pusat_keramaian,
+            $this->okupansi_ruas_jalan,
+        ])->filter()->count();
+    }
+
+    /**
+     * Poin Jaringan: alias langsung dari poin_perluasan_jaringan (skala
+     * 0-2, kelipatan 0.5). Sesuai kolom M sheet 'Probabilitas >50%'.
+     */
+    public function getPoinJaringanAttribute(): float
+    {
+        return (float) ($this->poin_perluasan_jaringan ?? 0);
+    }
+
+    /*
+    |--------------------------------------------------------------------
+    | Tahapan & status kanban
+    |--------------------------------------------------------------------
+    */
 
     /**
      * Kunjungan terakhir per tahap, dikelompokkan — dipakai untuk render
@@ -131,46 +209,71 @@ class Probabilitas extends Model
         return $badges;
     }
 
-    /**
-     * Poin Fasilitas: jumlah fasilitas yang aktif (ruang tunggu, parkir,
-     * toilet, kafe), masing-masing bernilai 1 poin. Maksimal 4.
-     * Sesuai sheet 'Definisi & Aturan' & kolom N sheet 'Probabilitas >50%'.
-     */
-    public function getPoinFasilitasAttribute(): int
+    public function tahapSaatIni(): string
     {
-        return collect([
-            $this->fasilitas_ruang_tunggu,
-            $this->fasilitas_parkir,
-            $this->fasilitas_toilet,
-            $this->fasilitas_kafe,
-        ])->filter()->count();
+        $badges = $this->badgePerTahap();
+
+        foreach (self::TAHAPAN as $key => $label) {
+            if (($badges[$key]['warna'] ?? 'abu') !== 'hijau') {
+                return $label;
+            }
+        }
+
+        return 'Integrasi';
+    }
+
+    public function statusKanban(): string
+    {
+        $badges = $this->badgePerTahap();
+
+        if (($badges['integrasi']['warna'] ?? 'abu') === 'hijau') {
+            return 'selesai_integrasi';
+        }
+
+        $adaYangSelesai = collect($badges)->contains(fn ($b) => $b['warna'] === 'hijau');
+
+        return $adaYangSelesai ? 'on_progress' : 'belum_mulai';
+    }
+
+    public function tanggalUpdateTerakhir(): Carbon
+    {
+        $terbaru = $this->riwayatTahapan->sortByDesc('tanggal')->first();
+
+        return $terbaru ? Carbon::parse($terbaru->tanggal) : $this->created_at;
+    }
+
+    /*
+    |--------------------------------------------------------------------
+    | Validasi ke Master SPKLU
+    |--------------------------------------------------------------------
+    */
+
+    public function sudahDivalidasi(): bool
+    {
+        return $this->spklu_id !== null;
     }
 
     /**
-     * Poin Okupansi: jumlah kondisi okupansi yang aktif (perumahan, pintu
-     * tol, pusat keramaian, ruas jalan), masing-masing 1 poin. Maksimal 4.
-     * Sesuai kolom O sheet 'Probabilitas >50%'.
+     * Total KW hasil jumlah semua kebutuhan mesin — dipakai sebagai nilai
+     * awal (bisa diedit) di modal validasi.
      */
-    public function getPoinOkupasiAttribute(): int
+    public function estimasiTotalKw(): float
     {
-        return collect([
-            $this->okupansi_perumahan,
-            $this->okupansi_pintu_tol,
-            $this->okupansi_pusat_keramaian,
-            $this->okupansi_ruas_jalan,
-        ])->filter()->count();
+        return (22 * ($this->kebutuhan_22kw ?? 0))
+            + (30 * ($this->kebutuhan_30kw ?? 0))
+            + (50 * ($this->kebutuhan_50kw ?? 0))
+            + (60 * ($this->kebutuhan_60kw ?? 0))
+            + (120 * ($this->kebutuhan_120kw ?? 0))
+            + (180 * ($this->kebutuhan_180kw ?? 0));
     }
 
     /**
-     * Poin Jaringan: alias langsung dari poin_perluasan_jaringan (skala
-     * 0-2, kelipatan 0.5). Sesuai kolom M sheet 'Probabilitas >50%'.
+     * Total unit mesin (dipakai sebagai estimasi jumlah nozzle awal, bisa
+     * diedit).
      */
-    public function getPoinJaringanAttribute(): float
+    public function estimasiNozzle(): int
     {
-        return (float) ($this->poin_perluasan_jaringan ?? 0);
-    }
-    public function kandidatPrioritas(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(KandidatPrioritas::class);
+        return (int) (($this->kebutuhan_22kw ?? 0) + ($this->kebutuhan_30kw ?? 0) + ($this->kebutuhan_50kw ?? 0)
+            + ($this->kebutuhan_60kw ?? 0) + ($this->kebutuhan_120kw ?? 0) + ($this->kebutuhan_180kw ?? 0));
     }
 }

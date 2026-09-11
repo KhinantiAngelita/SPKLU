@@ -105,4 +105,19 @@ class KandidatPrioritas extends Model
     {
         return $this->belongsTo(Probabilitas::class);
     }
+
+    public function getSkorProgresAttribute(): float
+    {
+        $tahapan = ['probing','survey_nps','surat_masuk','survey_ulp','rab','kkp_final','pks','bayar_bp','pembangunan','integrasi'];
+        $selesai = collect($tahapan)->filter(fn ($t) => $this->{$t})->count();
+
+        return $selesai / count($tahapan); // 0.0 - 1.0, sama seperti I5 di Excel
+    }
+
+    public function spkluTerdekat()
+    {
+        return $this->hasMany(KandidatSpkluTerdekat::class, 'kandidat_id');
+    }
+
+    
 }

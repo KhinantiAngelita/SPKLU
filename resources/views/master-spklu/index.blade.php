@@ -17,6 +17,8 @@
     .msp-btn-outline { background:#fff; color:#1E293B; border:1px solid #e2e8f0; }
     .msp-btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; }
     .msp-btn-warning { background:#FFC629; color:#023E8A; font-weight:700; box-shadow:0 2px 8px rgba(255,198,41,.4); }
+    .msp-btn-danger { background:#C0392B; color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(192,57,43,.35); }
+    .msp-btn-danger:hover { transform:translateY(-1px); background:#a8302a; }
 
     .msp-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:24px; }
     .msp-card {
@@ -47,6 +49,7 @@
     .msp-ic-red   { background:linear-gradient(135deg, rgba(192,57,43,.14), rgba(192,57,43,.06)); color:#C0392B; }
 
     .msp-banner { background:linear-gradient(135deg, rgba(255,198,41,.12), rgba(232,163,23,.08)); border:1px solid rgba(232,163,23,.35); border-radius:12px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; color:#92660f; font-size:13.5px; font-weight:500; gap:12px; flex-wrap:wrap; }
+    .msp-banner-danger { background:linear-gradient(135deg, rgba(192,57,43,.10), rgba(192,57,43,.06)); border:1px solid rgba(192,57,43,.3); color:#C0392B; }
     .msp-banner-text { display:flex; align-items:center; gap:8px; }
     .msp-banner-text svg { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
 
@@ -75,7 +78,7 @@
     .msp-reset svg { width:13px; height:13px; stroke-width:2.3; }
 
     .msp-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-    .msp-table { width:100%; border-collapse:collapse; min-width:1100px; }
+    .msp-table { width:100%; border-collapse:collapse; min-width:1180px; }
     .msp-table thead th {
         background:#fafbfc; text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase;
         letter-spacing:.06em; color:#94a3b8; padding:13px 24px; border-top:1px solid #eef1f5; border-bottom:1px solid #eef1f5; white-space:nowrap;
@@ -92,7 +95,6 @@
     .msp-pill-dc { background:rgba(0,129,171,.14); color:#023E8A; }
     .msp-pill-pln { background:rgba(2,62,138,.12); color:#023E8A; }
     .msp-pill-swasta { background:rgba(232,163,23,.15); color:#92660f; }
-    /* .msp-pill-custom { background:rgba(232,163,23,.15); color:#92660f; } */
 
     .msp-del-btn { width:32px; height:32px; border-radius:8px; border:none; background:rgba(0,129,171,.1); color:#023E8A; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:background .15s ease; }
     .msp-del-btn svg { width:15px; height:15px; stroke-width:2; }
@@ -204,6 +206,16 @@
     </div>
 </div>
 
+@if (($unmatchedTransaksiCount ?? 0) > 0)
+<div class="msp-banner msp-banner-danger">
+    <span class="msp-banner-text">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Ada {{ $unmatchedTransaksiCount }} nama SPKLU dari data transaksi yang belum cocok dengan Master SPKLU. Data transaksi untuk nama-nama itu belum terhitung sampai dipetakan.
+    </span>
+    <a href="{{ route('transaksi.upload') }}" class="msp-btn msp-btn-danger">Lakukan Pemetaan</a>
+</div>
+@endif
+
 @if ($menungguValidasiCount > 0 && auth()->user()->role === 'super_admin')
 <div class="msp-banner">
     <span class="msp-banner-text">
@@ -284,6 +296,7 @@
                     <th>Nozzle</th>
                     <th>Kepemilikan</th>
                     <th>Skema</th>
+                    <th>Tanggal Aktif</th>
                     <th>Koordinat</th>
                     @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))<th>Aksi</th>@endif
                 </tr>
@@ -302,9 +315,6 @@
                         <td>
                             <div class="msp-kw-cell">
                                 <span>{{ $spklu->kw_detail ?? $spklu->kw }}</span>
-                                <!-- @if (is_null($spklu->kw))
-                                    <span class="msp-pill msp-pill-custom">Custom</span>
-                                @endif -->
                             </div>
                         </td>
                         <td>{{ $spklu->nozzle }}</td>
@@ -312,6 +322,7 @@
                             <span class="msp-pill {{ $spklu->kepemilikan === 'PLN' ? 'msp-pill-pln' : 'msp-pill-swasta' }}">{{ $spklu->kepemilikan }}</span>
                         </td>
                         <td>{{ $spklu->skema ?? '—' }}</td>
+                        <td style="white-space:nowrap;">{{ $spklu->tanggal_aktif?->translatedFormat('d M Y') ?? '—' }}</td>
                         <td style="font-size:12px; color:#94a3b8; white-space:nowrap;">
                             @if ($spklu->latitude && $spklu->longitude)
                                 {{ number_format($spklu->latitude, 5) }}, {{ number_format($spklu->longitude, 5) }}
@@ -329,7 +340,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11">
+                        <td colspan="12">
                             <div class="msp-empty">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                                 <p>Belum ada data SPKLU.</p>
@@ -516,6 +527,9 @@
                 <label>Skema</label>
                 <input type="number" name="skema" id="edit-skema">
 
+                <label>Tanggal Aktif</label>
+                <input type="date" name="tanggal_aktif" id="edit-tanggal-aktif">
+
                 <label>Latitude</label>
                 <input type="text" name="latitude" id="edit-latitude">
 
@@ -542,6 +556,8 @@ function bukaModalEdit(spklu) {
     document.getElementById('edit-nozzle').value = spklu.nozzle ?? 1;
     document.getElementById('edit-kepemilikan').value = spklu.kepemilikan ?? '';
     document.getElementById('edit-skema').value = spklu.skema ?? '';
+    // tanggal_aktif dikirim server sebagai "YYYY-MM-DD" (date cast) atau "YYYY-MM-DDTHH:mm:ss.sssZ" — potong ke 10 karakter pertama biar cocok sama <input type="date">
+    document.getElementById('edit-tanggal-aktif').value = spklu.tanggal_aktif ? spklu.tanggal_aktif.substring(0, 10) : '';
     document.getElementById('edit-latitude').value = spklu.latitude ?? '';
     document.getElementById('edit-longitude').value = spklu.longitude ?? '';
     document.getElementById('modal-edit-spklu').style.display = 'flex';

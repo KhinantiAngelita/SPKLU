@@ -22,33 +22,43 @@
     .dsh-trend-neutral { background:#eef2f7; color:#64748B; }
     .dsh-trend-amber { background:rgba(232,163,23,.14); color:#92660f; }
 
-    /* Kolom kiri (Kalender) & kanan (Jadwal Terdekat) di-stretch sama tinggi mengikuti grid row */
-    .dsh-grid-2col { display:grid; grid-template-columns:1.3fr 1fr; gap:20px; margin-bottom:20px; }
-    .dsh-grid-2col > .surface-card { display:flex; flex-direction:column; }
+    /* Kolom kiri (Kalender) & kanan (Jadwal Terdekat) — tinggi TETAP, bukan ngikutin isi */
+    .dsh-grid-2col { display:grid; grid-template-columns:1.3fr 1fr; gap:20px; margin-bottom:20px; align-items:stretch; }
+    .dsh-grid-2col > .surface-card { display:flex; flex-direction:column; height:390px; }
 
-    .calendar-widget { padding:22px 24px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+    .calendar-widget { padding:16px 20px 18px; flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0; }
     .calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-    .calendar-nav-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; width:30px; height:30px; cursor:pointer; color:#64748B; }
-    .calendar-today-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:600; cursor:pointer; color:#1E293B; }
-    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
-    .calendar-day-label { text-align:center; font-size:11.5px; font-weight:700; color:#94a3b8; padding:8px 0; text-transform:uppercase; }
-    .calendar-cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:9px; font-size:13px; position:relative; color:#1E293B; }
+    .calendar-nav-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; width:28px; height:28px; cursor:pointer; color:#64748B; transition:background .15s ease; }
+    .calendar-nav-btn:hover { background:#e2e8f0; }
+    .calendar-today-btn { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; color:#1E293B; transition:background .15s ease; }
+    .calendar-today-btn:hover { background:#e2e8f0; }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+    .calendar-day-label { text-align:center; font-size:10.5px; font-weight:700; color:#94a3b8; padding:4px 0 8px; text-transform:uppercase; }
+    .calendar-cell { height:34px; display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:12.5px; position:relative; color:#1E293B; transition:background .15s ease; }
+    .calendar-cell:not(.today):not(:empty):hover { background:#f1f5f9; cursor:default; }
     .calendar-cell.today { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; font-weight:800; box-shadow:0 3px 10px rgba(2,62,138,.28); }
-    .calendar-cell.has-event::after { content:''; position:absolute; bottom:5px; width:4px; height:4px; border-radius:50%; background:#0081AB; }
+    .calendar-cell.has-event::after { content:''; position:absolute; bottom:4px; width:4px; height:4px; border-radius:50%; background:#0081AB; }
     .calendar-cell.today.has-event::after { background:#FFC629; }
 
-    .jadwal-widget { padding:20px 22px; flex:1; }
+    .jadwal-widget { padding:16px 18px; flex:1; min-height:0; overflow-y:auto; }
+    .jadwal-widget::-webkit-scrollbar { width:5px; }
+    .jadwal-widget::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:4px; }
+    .jadwal-section-label { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; margin:0 0 8px; display:flex; align-items:center; gap:6px; }
+    .jadwal-section-label:not(:first-child) { margin-top:16px; }
+    .jadwal-section-label::after { content:''; flex:1; height:1px; background:#f1f5f9; }
 
-    .jadwal-item { display:flex; align-items:center; gap:14px; padding:12px 14px; border-radius:11px; background:#f8fafc; border-left:4px solid #2E9E5B; margin-bottom:8px; transition:transform .15s ease; }
+    .jadwal-item { display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:10px; background:#f8fafc; border-left:3px solid #2E9E5B; margin-bottom:6px; transition:transform .15s ease; }
     .jadwal-item:hover { transform:translateX(2px); }
     .jadwal-item.besok { border-left-color:#E8A317; }
-    .jadwal-time { font-weight:800; color:#0081AB; font-size:14px; width:52px; flex-shrink:0; }
+    .jadwal-time { font-weight:800; color:#0081AB; font-size:12.5px; width:42px; flex-shrink:0; }
+    .jadwal-info { flex:1; min-width:0; }
     .jadwal-info p { margin:0; }
-    .jadwal-title { font-weight:700; font-size:13.8px; color:#1E293B; }
-    .jadwal-desc { font-size:11.5px; color:#94a3b8; margin-top:2px !important; }
-    .jadwal-badge { display:inline-flex; padding:4px 10px; border-radius:999px; font-size:10.5px; font-weight:700; }
+    .jadwal-title { font-weight:700; font-size:12.8px; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .jadwal-desc { font-size:11px; color:#94a3b8; margin-top:1px !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .jadwal-badge { display:inline-flex; padding:3px 9px; border-radius:999px; font-size:10px; font-weight:700; flex-shrink:0; }
     .jadwal-badge-online { background:rgba(46,158,91,.14); color:#2E9E5B; }
     .jadwal-badge-offline { background:#eef2f7; color:#64748B; }
+    .dsh-empty-inline { text-align:center; padding:16px 10px; color:#94a3b8; font-size:12.5px; }
 
     /* Filter bulanan untuk Tren Transaksi — cuma range bulan, tanpa spklu/satuan/tampilan */
     .dsh-month-range { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:2px 10px; flex-shrink:0; }
@@ -63,7 +73,6 @@
     .dsh-table tbody tr:hover { background:rgba(0,129,171,.05); }
     .dsh-table tbody tr:last-child td { border-bottom:none; }
     .dsh-empty { text-align:center; padding:44px 20px; color:#94a3b8; font-size:13.5px; }
-    .dsh-empty-inline { text-align:center; padding:24px 10px; color:#94a3b8; font-size:13px; }
 
     .badge-potensi-sangat-tinggi { background:rgba(46,158,91,.14); color:#2E9E5B; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; }
     .badge-potensi-tinggi { background:rgba(232,163,23,.14); color:#92660f; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; }
@@ -176,11 +185,11 @@
         </div>
 
         <div class="jadwal-widget">
-            <p style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; margin:0 0 10px;">Hari Ini</p>
+            <p class="jadwal-section-label">Hari Ini</p>
             @forelse ($jadwalHariIni as $jadwal)
                 <div class="jadwal-item">
                     <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
-                    <div class="jadwal-info" style="flex:1;">
+                    <div class="jadwal-info">
                         <p class="jadwal-title">{{ $jadwal->judul }}</p>
                         <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
                     </div>
@@ -190,11 +199,11 @@
                 <p class="dsh-empty-inline">Tidak ada jadwal hari ini.</p>
             @endforelse
 
-            <p style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#94a3b8; margin:20px 0 10px;">Besok</p>
+            <p class="jadwal-section-label">Besok</p>
             @forelse ($jadwalBesok as $jadwal)
                 <div class="jadwal-item besok">
                     <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
-                    <div class="jadwal-info" style="flex:1;">
+                    <div class="jadwal-info">
                         <p class="jadwal-title">{{ $jadwal->judul }}</p>
                         <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
                     </div>
@@ -288,7 +297,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
+    Chart.register(ChartDataLabels);
+
     new Chart(document.getElementById('chart-tren-dashboard'), {
         type: 'line',
         data: {
@@ -299,7 +311,22 @@
                 tension: 0.35, fill: true, pointRadius: 4, pointBackgroundColor: '#023E8A', borderWidth: 2.5,
             }]
         },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        options: {
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    align: 'top',
+                    anchor: 'end',
+                    color: '#023E8A',
+                    font: { weight: '700', size: 11 },
+                    formatter: (value) => new Intl.NumberFormat('id-ID').format(value),
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, grace: '15%' }
+            },
+            layout: { padding: { top: 20 } }
+        }
     });
 </script>
 

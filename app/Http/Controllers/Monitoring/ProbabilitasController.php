@@ -124,6 +124,13 @@ class ProbabilitasController extends Controller
      */
     public function update(Request $request, Probabilitas $probabilitas)
     {
+        // Normalisasi input koma desimal (format Indonesia) jadi titik sebelum validasi
+        if ($request->filled('poin_perluasan_jaringan')) {
+            $request->merge([
+                'poin_perluasan_jaringan' => str_replace(',', '.', $request->input('poin_perluasan_jaringan')),
+            ]);
+        }
+        
         $validated = $request->validate([
             'lokasi' => 'required|string|max:255',
             'alamat' => 'nullable|string|max:255',
@@ -167,6 +174,7 @@ class ProbabilitasController extends Controller
      */
     public function storeTahapan(Request $request, Probabilitas $probabilitas)
     {
+        
         $validated = $request->validate([
             'tahap' => 'required|in:' . implode(',', array_keys(Probabilitas::TAHAPAN)),
             'tanggal' => 'required|date',

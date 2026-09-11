@@ -11,14 +11,15 @@ class Spklu extends Model
     use SoftDeletes;
 
     protected $fillable = [
-    'id_spklu', 'kode_unit', 'nama', 'ulp_mapping_id', 'type', 'kw', 'kw_detail', 'nozzle',
-    'kepemilikan', 'skema', 'latitude', 'longitude', 'status', 'sumber',
-    'pengajuan_id', 'validated_by', 'validated_at',
+        'id_spklu', 'id_spklu_sumber', 'kode_unit', 'nama', 'ulp_mapping_id', 'type', 'kw', 'kw_detail', 'nozzle',
+        'kepemilikan', 'skema', 'tanggal_aktif', 'latitude', 'longitude', 'status', 'sumber',
+        'pengajuan_id', 'validated_by', 'validated_at',
     ];
 
     protected $casts = [
         'status' => SpkluStatus::class,
         'validated_at' => 'datetime',
+        'tanggal_aktif' => 'date',
     ];
 
     public function ulp()

@@ -16,11 +16,14 @@
     .trx-btn-export { background:linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; box-shadow:0 2px 10px rgba(220,38,38,.28); }
     .trx-btn-export:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(220,38,38,.34); }
 
+    /* ===== Filter — satu baris, wrap otomatis di layar sempit, dropdown SPKLU dibatasi lebarnya ===== */
+    .trx-filter-form { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+
     .trx-select {
-        padding:9px 30px 9px 14px; border-radius:9px; border:1px solid #e2e8f0; font-size:13px; font-weight:500;
-        background:#fff; color:#1E293B; cursor:pointer; appearance:none; min-width:150px;
+        padding:10px 34px 10px 14px; border-radius:9px; border:1px solid #e2e8f0; font-size:13.3px; font-weight:500;
+        background:#fff; color:#1E293B; cursor:pointer; appearance:none; width:220px; flex:0 0 auto;
         background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2364748B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-        background-repeat:no-repeat; background-position:right 12px center; transition:all .15s ease; flex-shrink:0;
+        background-repeat:no-repeat; background-position:right 14px center; transition:all .15s ease;
     }
     .trx-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
 
@@ -29,10 +32,21 @@
     .trx-pill:hover { color:#1E293B; }
     .trx-pill.active { background:linear-gradient(135deg,#FFC629,#ffab00); color:#023E8A; box-shadow:0 2px 6px rgba(255,198,41,.4); }
 
-    .trx-daterange { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:2px 10px; flex-shrink:0; }
-    .trx-daterange input { border:none; padding:7px 2px; font-size:12.8px; color:#1E293B; width:112px; }
+    .trx-daterange { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:8px 12px; flex-shrink:0; transition:border-color .15s ease; }
+    .trx-daterange:focus-within { border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
+    .trx-daterange input { border:none; padding:0; font-size:12.8px; color:#1E293B; width:106px; font-family:inherit; }
     .trx-daterange input:focus { outline:none; }
-    .trx-daterange-sep { color:#cbd5e1; font-size:12px; }
+    /* Recolor ikon kalender bawaan browser jadi biru brand, biar gak abu-abu polos */
+    .trx-daterange input::-webkit-calendar-picker-indicator {
+        filter: invert(28%) sepia(97%) saturate(1226%) hue-rotate(175deg) brightness(94%) contrast(101%);
+        cursor: pointer;
+        opacity: .8;
+        padding: 2px;
+        border-radius: 5px;
+        transition: background-color .15s ease;
+    }
+    .trx-daterange input::-webkit-calendar-picker-indicator:hover { background-color: rgba(0,129,171,.1); opacity: 1; }
+    .trx-daterange-sep { color:#cbd5e1; font-size:12px; flex-shrink:0; }
 
     .trx-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); margin-bottom:20px; }
 
@@ -79,40 +93,42 @@
     </div>
 </div>
 
-<form method="GET" id="form-filter" class="filter-shell" style="flex-direction:row; flex-wrap:wrap; align-items:center;">
-    <div class="filter-label-inline">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-        Filter
-    </div>
+<form method="GET" id="form-filter" class="filter-shell">
+    <div class="trx-filter-form">
+        <div class="filter-label-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filter
+        </div>
 
-    <select name="spklu_id" class="trx-select" onchange="document.getElementById('form-filter').submit()">
-        <option value="">Semua SPKLU</option>
-        @foreach ($spkluList as $spklu)
-            <option value="{{ $spklu->id }}" {{ (string) $spkluTerpilih === (string) $spklu->id ? 'selected' : '' }}>{{ $spklu->nama }}</option>
-        @endforeach
-    </select>
+        <select name="spklu_id" class="trx-select" onchange="document.getElementById('form-filter').submit()">
+            <option value="">Semua SPKLU</option>
+            @foreach ($spkluList as $spklu)
+                <option value="{{ $spklu->id }}" {{ (string) $spkluTerpilih === (string) $spklu->id ? 'selected' : '' }}>{{ $spklu->nama }}</option>
+            @endforeach
+        </select>
 
-    <div class="filter-divider"></div>
+        <div class="filter-divider"></div>
 
-    <input type="hidden" name="satuan" id="input-satuan" value="{{ $satuan }}">
-    <div class="trx-pill-group">
-        <button type="button" class="trx-pill {{ $satuan === 'kali' ? 'active' : '' }}" onclick="setSatuan('kali')">Kali</button>
-        <button type="button" class="trx-pill {{ $satuan === 'kwh' ? 'active' : '' }}" onclick="setSatuan('kwh')">kWh</button>
-        <button type="button" class="trx-pill {{ $satuan === 'rp' ? 'active' : '' }}" onclick="setSatuan('rp')">Rp</button>
-    </div>
+        <input type="hidden" name="satuan" id="input-satuan" value="{{ $satuan }}">
+        <div class="trx-pill-group">
+            <button type="button" class="trx-pill {{ $satuan === 'kali' ? 'active' : '' }}" onclick="setSatuan('kali')">Kali</button>
+            <button type="button" class="trx-pill {{ $satuan === 'kwh' ? 'active' : '' }}" onclick="setSatuan('kwh')">kWh</button>
+            <button type="button" class="trx-pill {{ $satuan === 'rp' ? 'active' : '' }}" onclick="setSatuan('rp')">Rp</button>
+        </div>
 
-    <input type="hidden" name="tampilan" id="input-tampilan" value="{{ $tampilan }}">
-    <div class="trx-pill-group">
-        <button type="button" class="trx-pill {{ $tampilan === 'bulanan' ? 'active' : '' }}" onclick="setTampilan('bulanan')">Bulanan</button>
-        <button type="button" class="trx-pill {{ $tampilan === 'kumulatif' ? 'active' : '' }}" onclick="setTampilan('kumulatif')">Kumulatif</button>
-    </div>
+        <input type="hidden" name="tampilan" id="input-tampilan" value="{{ $tampilan }}">
+        <div class="trx-pill-group">
+            <button type="button" class="trx-pill {{ $tampilan === 'bulanan' ? 'active' : '' }}" onclick="setTampilan('bulanan')">Bulanan</button>
+            <button type="button" class="trx-pill {{ $tampilan === 'kumulatif' ? 'active' : '' }}" onclick="setTampilan('kumulatif')">Kumulatif</button>
+        </div>
 
-    <div class="filter-divider"></div>
+        <div class="filter-divider"></div>
 
-    <div class="trx-daterange">
-        <input type="date" name="dari" value="{{ $dari }}" onchange="document.getElementById('form-filter').submit()">
-        <span class="trx-daterange-sep">—</span>
-        <input type="date" name="sampai" value="{{ $sampai }}" onchange="document.getElementById('form-filter').submit()">
+        <div class="trx-daterange">
+            <input type="date" name="dari" value="{{ $dari }}" onchange="document.getElementById('form-filter').submit()">
+            <span class="trx-daterange-sep">—</span>
+            <input type="date" name="sampai" value="{{ $sampai }}" onchange="document.getElementById('form-filter').submit()">
+        </div>
     </div>
 </form>
 
@@ -250,9 +266,14 @@
 @endif
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script>
+    Chart.register(ChartDataLabels);
+
     function setSatuan(v) { document.getElementById('input-satuan').value = v; document.getElementById('form-filter').submit(); }
     function setTampilan(v) { document.getElementById('input-tampilan').value = v; document.getElementById('form-filter').submit(); }
+
+    const satuanAktif = '{{ $satuan }}';
 
     new Chart(document.getElementById('chart-transaksi'), {
         type: 'line',
@@ -267,9 +288,22 @@
             }]
         },
         options: {
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } },
-            interaction: { intersect: false, mode: 'index' }
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    align: 'top',
+                    anchor: 'end',
+                    color: '#023E8A',
+                    font: { weight: '700', size: 11 },
+                    formatter: (value) => {
+                        if (satuanAktif === 'rp') return 'Rp' + new Intl.NumberFormat('id-ID', { notation: 'compact' }).format(value);
+                        return new Intl.NumberFormat('id-ID').format(value);
+                    },
+                }
+            },
+            scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, grace: '15%' }, x: { grid: { display: false } } },
+            interaction: { intersect: false, mode: 'index' },
+            layout: { padding: { top: 20 } }
         }
     });
 </script>
