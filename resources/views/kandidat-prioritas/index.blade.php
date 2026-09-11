@@ -4,6 +4,137 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/kandidat.css') }}">
+    <style>
+        /* ============ Design tokens ============ */
+        .kp-wrap{ --kp-blue:#2563eb; --kp-blue-dark:#1d4ed8; --kp-blue-soft:#eff6ff;
+                   --kp-green:#16a34a; --kp-green-soft:#f0fdf4;
+                   --kp-amber:#d97706; --kp-amber-soft:#fffbeb;
+                   --kp-rose:#e11d48; --kp-rose-soft:#fff1f2;
+                   --kp-ink:#0f172a; --kp-sub:#64748b; --kp-border:#e2e8f0;
+                   --kp-radius:12px; }
+
+        .kp-wrap h1{ font-size:22px; font-weight:800; color:var(--kp-ink); margin-bottom:2px; }
+        .kp-sub{ color:var(--kp-sub); font-size:13.5px; margin-bottom:18px; }
+
+        /* ============ Summary cards ============ */
+        .kp-cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+        .kp-card{ background:#fff; border-radius:var(--kp-radius); padding:16px 18px;
+                   border:1px solid var(--kp-border); box-shadow:0 1px 2px rgba(15,23,42,.04);
+                   transition:box-shadow .18s ease, transform .18s ease; position:relative; overflow:hidden; }
+        .kp-card::before{ content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
+        .kp-card.blue::before{ background:var(--kp-blue); }
+        .kp-card.green::before{ background:var(--kp-green); }
+        .kp-card.amber::before{ background:var(--kp-amber); }
+        .kp-card.rose::before{ background:var(--kp-rose); }
+        .kp-card:hover{ box-shadow:0 8px 20px rgba(15,23,42,.08); transform:translateY(-2px); }
+        .kp-card .label{ font-size:12.5px; font-weight:600; color:var(--kp-sub); text-transform:uppercase; letter-spacing:.03em; }
+        .kp-card .value{ font-size:26px; font-weight:800; color:var(--kp-ink); margin:6px 0 4px; }
+        .kp-card .note{ font-size:12px; color:var(--kp-sub); line-height:1.4; }
+        .kp-card.amber .note{ color:var(--kp-amber); font-weight:600; }
+
+        .kp-split-row{ display:flex; gap:18px; margin:6px 0 4px; }
+        .value-split{ font-size:22px; font-weight:800; color:var(--kp-ink); display:flex; flex-direction:column; }
+        .value-split small{ font-size:11px; font-weight:600; color:var(--kp-sub); text-transform:uppercase; letter-spacing:.02em; }
+
+        /* ============ Strip: title + filters ============ */
+        .kp-strip{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+                    background:#fff; border:1px solid var(--kp-border); border-radius:var(--kp-radius) var(--kp-radius) 0 0;
+                    padding:14px 18px; }
+        .kp-strip-title{ font-size:15px; font-weight:700; color:var(--kp-ink); }
+        .kp-filter-form{ display:flex; gap:8px; }
+        .kp-filter-form input[type="text"]{
+            padding:8px 12px; border:1px solid var(--kp-border); border-radius:8px; font-size:13px;
+            min-width:220px; outline:none; transition:border-color .15s ease, box-shadow .15s ease; }
+        .kp-filter-form input[type="text"]:focus{ border-color:var(--kp-blue); box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+        .kp-filter-form select{
+            padding:8px 12px; border:1px solid var(--kp-border); border-radius:8px; font-size:13px;
+            background:#fff; color:var(--kp-ink); outline:none; cursor:pointer; }
+        .kp-filter-form select:focus{ border-color:var(--kp-blue); }
+
+        /* ============ Table ============ */
+        .kp-table-wrap{ background:#fff; border:1px solid var(--kp-border); border-top:none;
+                         border-radius:0 0 var(--kp-radius) var(--kp-radius); overflow:hidden; }
+        .kp-table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+        .kp-table{ width:100%; min-width:1180px; border-collapse:collapse; }
+        .kp-table thead th{
+            position:sticky; top:0; background:#eff6ff; color:var(--kp-sub); font-size:11.5px;
+            font-weight:700; text-transform:uppercase; letter-spacing:.03em; text-align:left;
+            padding:10px 12px; border-bottom:1px solid var(--kp-border); white-space:nowrap; }
+        .kp-table tbody td{ padding:12px; font-size:13px; color:var(--kp-ink); border-bottom:1px solid #f1f5f9; vertical-align:top; }
+        .kp-table tbody tr:hover{ background:#f8fafc; }
+        .kp-table tbody tr.kp-attn{ background:var(--kp-amber-soft); }
+        .kp-table tbody tr.kp-attn:hover{ background:#fef3c7; }
+        .kp-table tbody tr:last-child td{ border-bottom:none; }
+
+        /* Freeze kolom No & Nama Lokasi saat tabel digeser ke samping */
+        .kp-table th:nth-child(1), .kp-table td:nth-child(1){ position:sticky; left:0; width:48px; }
+        .kp-table th:nth-child(2), .kp-table td:nth-child(2){ position:sticky; left:48px; width:180px; box-shadow:2px 0 6px rgba(15,23,42,.06); }
+        .kp-table thead th:nth-child(1), .kp-table thead th:nth-child(2){ z-index:3; }
+        .kp-table tbody td:nth-child(1), .kp-table tbody td:nth-child(2){ z-index:1; background:#fff; }
+        .kp-table tbody tr:hover td:nth-child(1), .kp-table tbody tr:hover td:nth-child(2){ background:#f8fafc; }
+        .kp-table tbody tr.kp-attn td:nth-child(1), .kp-table tbody tr.kp-attn td:nth-child(2){ background:var(--kp-amber-soft); }
+        .kp-table tbody tr.kp-attn:hover td:nth-child(1), .kp-table tbody tr.kp-attn:hover td:nth-child(2){ background:#fef3c7; }
+
+        .kp-nama{ font-weight:700; color:var(--kp-ink); font-size:13.5px; }
+        .kp-warn{ color:var(--kp-amber); font-size:11.5px; font-weight:600; margin-top:2px;
+                   display:flex; align-items:center; gap:4px; }
+
+        /* Kategori badge */
+        .kp-badge-kategori{ display:inline-flex; align-items:center; justify-content:center; min-width:26px;
+                              height:22px; padding:0 8px; border-radius:999px; font-size:12px; font-weight:800; }
+        .kp-badge-a{ background:var(--kp-green-soft); color:var(--kp-green); border:1px solid #bbf7d0; }
+        .kp-badge-b{ background:var(--kp-amber-soft); color:var(--kp-amber); border:1px solid #fde68a; }
+        .kp-badge-c{ background:var(--kp-rose-soft); color:var(--kp-rose); border:1px solid #fecdd3; }
+
+        /* Skor prioritas akhir */
+        .kp-skor{ display:inline-flex; align-items:center; justify-content:center; min-width:40px;
+                    padding:5px 10px; border-radius:8px; font-size:13px; font-weight:800; }
+        .kp-skor-a{ background:var(--kp-green); color:#fff; }
+        .kp-skor-b{ background:var(--kp-amber); color:#fff; }
+        .kp-skor-c{ background:var(--kp-rose); color:#fff; }
+
+        .kp-poin .num{ font-weight:700; font-size:13.5px; color:var(--kp-ink); }
+
+        /* SPKLU terdekat list */
+        .kp-spklu-item{ margin-bottom:8px; }
+        .kp-spklu-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:3px; }
+        .kp-spklu-nama{ font-size:12px; color:var(--kp-blue); font-weight:600; max-width:120px;
+                          overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .kp-jarak-badge{ font-size:11px; font-weight:700; color:var(--kp-ink); background:#f1f5f9;
+                           padding:2px 7px; border-radius:6px; flex-shrink:0; }
+        .kp-spklu-bar{ height:5px; border-radius:999px; background:#e2e8f0; overflow:hidden; position:relative; }
+        .kp-spklu-bar::after{ content:""; position:absolute; inset:0; border-radius:999px; }
+        .kp-status-bagus::after{ background:var(--kp-green); width:100%; }
+        .kp-status-tidak::after{ background:var(--kp-rose); width:100%; }
+        .kp-status-belum::after{ background:var(--kp-amber); width:60%; }
+
+        /* Legend */
+        .kp-legend{ display:flex; align-items:center; flex-wrap:wrap; gap:16px; padding:14px 18px;
+                     background:#f8fafc; border-top:1px solid var(--kp-border); font-size:12px; color:var(--kp-sub); }
+        .kp-legend strong{ color:var(--kp-ink); font-size:12.5px; }
+        .kp-legend span{ display:inline-flex; align-items:center; gap:6px; }
+        .kp-dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+        .kp-empty{ text-align:center; padding:40px 20px !important; color:var(--kp-sub); font-size:14px; }
+
+        /* Input Jarak REAL button */
+        .kp-btn-input-jarak{ margin-top:8px; width:100%; display:flex; align-items:center; justify-content:center;
+            gap:7px; font-size:12.5px; font-weight:700; padding:9px 10px; border:none; border-radius:8px;
+            background:linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; cursor:pointer; letter-spacing:.2px;
+            box-shadow:0 2px 6px rgba(37,99,235,.35); transition:all .18s ease; }
+        .kp-btn-input-jarak:hover{ background:linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow:0 4px 10px rgba(37,99,235,.45); transform:translateY(-1px); }
+
+        @media (max-width: 1100px){
+            .kp-cards{ grid-template-columns:repeat(2,1fr); }
+        }
+        @media (max-width: 640px){
+            .kp-cards{ grid-template-columns:1fr; }
+            .kp-strip{ flex-direction:column; align-items:stretch; }
+            .kp-filter-form{ flex-direction:column; }
+            .kp-filter-form input[type="text"]{ min-width:0; }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -20,10 +151,7 @@
         <div class="kp-card blue">
             <div class="label">Total Kandidat</div>
             <div class="value">{{ $ringkasan['total_kandidat'] }}</div>
-            <div class="note">
-                {{ $kandidatList->where('kategori', 'A')->count() }} kategori A ·
-                {{ $kandidatList->where('kategori', 'B')->count() }} kategori B
-            </div>
+            <div class="note">Seluruh kandidat SPKLU terdaftar</div>
         </div>
 
         <div class="kp-card green">
@@ -48,7 +176,7 @@
         </div>
     </div>
 
-    {{-- ===== Strip: judul + search + filter + tombol Skema, satu baris ===== --}}
+    {{-- ===== Strip: judul + search + filter, satu baris ===== --}}
     <div class="kp-strip">
         <span class="kp-strip-title">Daftar SPKLU</span>
 
@@ -70,11 +198,11 @@
     <div class="kp-table-wrap">
         @php $spkluDataJs = []; @endphp
 
+        <div class="kp-table-scroll">
         <table class="kp-table">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Kategori</th>
                     <th>Nama Lokasi</th>
                     <th>ULP</th>
                     <th>Kordinat</th>
@@ -104,9 +232,7 @@
                     <tr class="{{ $kandidat->jarak_real_diisi ? '' : 'kp-attn' }}">
                         <td>{{ $kandidatList->firstItem() + $index }}</td>
 
-                        <td><span class="kp-badge-kategori {{ $badgeClass }}">{{ $kandidat->kategori }}</span></td>
-
-                        <td style="min-width:180px;">
+                        <td style="min-width:180px; max-width:180px;">
                             <div class="kp-nama">{{ $kandidat->nama_lokasi }}</div>
                             @unless ($kandidat->jarak_real_diisi)
                                 <div class="kp-warn">⚠ Jarak REAL belum diisi</div>
@@ -137,10 +263,8 @@
 
                             <button type="button"
                                 class="kp-btn-input-jarak"
-                                onclick="bukaModalJarak({{ $kandidat->id }})"
-                                style="margin-top:6px; font-size:11px; padding:3px 10px; border:1px solid #cbd5e1; border-radius:6px; background:#fff; color:#334155; cursor:pointer; transition:all .15s;"
-                                onmouseover="this.style.background='#f1f5f9'"
-                                onmouseout="this.style.background='#fff'">
+                                onclick="bukaModalJarak({{ $kandidat->id }})">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                                 Input Jarak REAL
                             </button>
                         </td>
@@ -164,11 +288,12 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" class="kp-empty">Belum ada data kandidat.</td>
+                        <td colspan="10" class="kp-empty">Belum ada data kandidat.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
+        </div>
 
         <div class="kp-legend">
             <strong>Keterangan:</strong>
