@@ -3,13 +3,10 @@
         @csrf
         @method('PUT')
 
-        {{-- Identitas TIDAK ditampilkan sebagai input di modal ini (sesuai desain),
-             tapi tetap dikirim sebagai hidden field supaya tidak ke-null-kan saat update. --}}
+        {{-- Lokasi & koordinat tetap hidden (jarang diubah di modal ini) --}}
         <input type="hidden" name="lokasi" id="f-lokasi">
-        <input type="hidden" name="ulp" id="f-ulp">
         <input type="hidden" name="tikor_lat" id="f-lat">
         <input type="hidden" name="tikor_lng" id="f-lng">
-        <input type="hidden" name="skema" id="f-skema">
 
         <div class="modal-header-blue">
             <div>
@@ -20,6 +17,30 @@
         </div>
 
         <div class="modal-body">
+
+            <div class="edit-card">
+                <h3>Identitas Lokasi</h3>
+                <div class="form-row">
+                    <div>
+                        <label>ULP</label>
+                        <select name="ulp" id="f-ulp" required>
+                            <option value="">— Pilih ULP —</option>
+                            @foreach ($daftarUlp as $ulp)
+                                <option value="{{ $ulp->nama_penuh }}">{{ $ulp->nama_penuh }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label>Skema</label>
+                        <select name="skema" id="f-skema">
+                            <option value="">— Pilih Skema —</option>
+                            <option value="Mandiri">Mandiri</option>
+                            <option value="Kerjasama">Kerjasama</option>
+                            <option value="Kemitraan">Kemitraan</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <div class="edit-card">
                 <h3>Kebutuhan Mesin (unit)</h3>
@@ -34,7 +55,7 @@
 
                 <div class="form-row">
                     <div><label>Mitra Mesin</label><input type="text" name="mitra_mesin" id="f-mitra-mesin"></div>
-                    <div><label>Poin Perluasan Jaringan</label><input type="number" min="0" name="poin_perluasan_jaringan" id="f-poin-jaringan"></div>
+                    <div><label>Poin Perluasan Jaringan</label><input type="number" min="0" max="2" step="0.5" name="poin_perluasan_jaringan" id="f-poin-jaringan"></div>
                 </div>
             </div>
 
@@ -138,9 +159,10 @@ window.isiModalEdit = function (data) {
     document.getElementById('edit-subjudul').textContent = `TIKOR : ${p.tikor_lat}, ${p.tikor_lng} . ULP ${p.ulp}`;
 
     document.getElementById('f-lokasi').value = p.lokasi;
-    document.getElementById('f-ulp').value = p.ulp;
     document.getElementById('f-lat').value = p.tikor_lat;
     document.getElementById('f-lng').value = p.tikor_lng;
+
+    document.getElementById('f-ulp').value = p.ulp ?? '';
     document.getElementById('f-skema').value = p.skema ?? '';
 
     document.getElementById('f-22kw').value = p.kebutuhan_22kw;

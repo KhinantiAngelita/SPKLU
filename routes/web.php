@@ -11,6 +11,7 @@ use App\Http\Controllers\MasterSpkluController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Monitoring\ProbabilitasController;
 use App\Http\Controllers\Monitoring\PengajuanController;
+use App\Http\Controllers\KandidatPrioritasController;
 use Illuminate\Support\Facades\Route;
 
 // ============ ROOT ============
@@ -104,18 +105,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{probabilitas}', [ProbabilitasController::class, 'update'])->name('update');
 
         Route::post('/{probabilitas}/tahapan', [ProbabilitasController::class, 'storeTahapan'])->name('tahapan.store');
+        Route::get('/{probabilitas}/tahapan/{tahap}/riwayat', [ProbabilitasController::class, 'riwayatLengkap'])->name('riwayat-lengkap');
         Route::get('/{probabilitas}/tahapan/{tahap}', [ProbabilitasController::class, 'riwayatTahap'])->name('tahapan.riwayat');
         Route::delete('/{probabilitas}/tahapan/{tahapanProbing}', [ProbabilitasController::class, 'destroyTahapan'])->name('tahapan.destroy');
+    }); 
 
+    Route::prefix('monitoring/kandidat')->name('monitoring.kandidat.')->group(function () {
+        Route::get('/create', [ProbabilitasController::class, 'create'])->name('create');    
     });
-
-    Route::prefix('monitoring/pengajuan')->name('monitoring.pengajuan.')->group(function () {
-        Route::get('/', [PengajuanController::class, 'index'])->name('index');
-        Route::get('/create', [PengajuanController::class, 'create'])->name('create');
-        Route::post('/', [PengajuanController::class, 'store'])->name('store');
-        Route::get('/{pengajuan}', [PengajuanController::class, 'show'])->name('show');
-        Route::get('/{pengajuan}/edit', [PengajuanController::class, 'edit'])->name('edit');
-        Route::put('/{pengajuan}', [PengajuanController::class, 'update'])->name('update');
-        Route::delete('/{pengajuan}', [PengajuanController::class, 'destroy'])->name('destroy');
-    });    
+    Route::get('/kandidat-prioritas', [KandidatPrioritasController::class, 'index'])
+        ->name('kandidat-prioritas.index');
 });

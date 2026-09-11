@@ -19,9 +19,9 @@ return new class extends Migration
 
             // Identitas lokasi kandidat — wajib diisi saat tambah baru.
             $table->string('lokasi');
-            $table->decimal('tikor_lat', 10, 7);
-            $table->decimal('tikor_lng', 10, 7);
-            $table->string('ulp'); // TODO: ganti ke foreignId('ulp_mapping_id') kalau tabel ulp_mappings sudah ada
+            $table->double('tikor_lat');
+            $table->double('tikor_lng');
+            $table->string('ulp')->nullable(); // TODO: ganti ke foreignId('ulp_mapping_id') kalau tabel ulp_mappings sudah ada
             $table->string('skema')->nullable();
 
             // Kebutuhan Mesin (unit) per kapasitas — sesuai kolom di grid.

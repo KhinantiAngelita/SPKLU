@@ -55,11 +55,18 @@ return [
                 'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
             ],
             [
-                'label' => 'Pengajuan',
-                'route' => 'monitoring.pengajuan.index',
+                'label' => 'Tambah Kandidat Baru',
+                'route' => 'monitoring.kandidat.create',
                 'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
             ],
         ],
+    ],
+
+    [
+        'label' => 'Kandidat',
+        'route' => 'kandidat-prioritas.index',
+        'icon'  => 'users',
+        'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
     ],
 
 ];

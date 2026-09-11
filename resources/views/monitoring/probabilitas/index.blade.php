@@ -13,19 +13,33 @@
 </div>
 
 <div class="toolbar">
-    <form method="GET" class="toolbar-filters">
+    <form method="GET" class="toolbar-filters" id="filter-form">
         <input type="text" name="search" placeholder="Cari lokasi..." value="{{ request('search') }}">
-        <select name="kategori" onchange="this.form.submit()">
-            <option value="">Semua Kategori</option>
-            <option value=">50%" @selected(request('kategori') === '>50%')>&gt;50%</option>
-            <option value="<50%" @selected(request('kategori') === '<50%')>&lt;50%</option>
-        </select>
+        <input type="hidden" name="kategori" id="kategori-hidden" value="{{ request('kategori') }}">
+
+        <div class="segmented-filter">
+            <button type="button"
+                    class="segmented-btn {{ ! request('kategori') ? 'active' : '' }}"
+                    onclick="pilihKategori('')">
+                Semua
+            </button>
+            <button type="button"
+                    class="segmented-btn {{ request('kategori') === '>50%' ? 'active' : '' }}"
+                    onclick="pilihKategori('>50%')">
+                &gt;50%
+            </button>
+            <button type="button"
+                    class="segmented-btn {{ request('kategori') === '<50%' ? 'active' : '' }}"
+                    onclick="pilihKategori('<50%')">
+                &lt;50%
+            </button>
+        </div>
     </form>
 
     @can('create', \App\Models\Probabilitas::class)
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('modal-tambah').showModal()">
-            + Tambah Lokasi
-        </button>
+        <a href="{{ route('monitoring.kandidat.create') }}" class="btn btn-primary">
+            + Tambah Kandidat Baru
+        </a>
     @endcan
 </div>
 
@@ -38,7 +52,7 @@
                 <th colspan="3" class="group-header">Identitas</th>
                 <th colspan="6" class="group-header group-alt">Kebutuhan Mesin (unit)</th>
                 <th rowspan="2" class="group-start">Mitra Mesin</th>
-                <th rowspan="2" class="group-end">Poin Perluasan</th>
+                <th rowspan="2" class="group-end">Poin Perluasan <br> Jaringan</th>
                 <th colspan="4" class="group-header group-alt">Poin Fasilitas</th>
                 <th colspan="4" class="group-header">Poin Okupansi</th>
                 <th colspan="{{ count(\App\Models\Probabilitas::TAHAPAN) }}" class="group-header group-alt">Status Tahapan</th>
@@ -62,7 +76,11 @@
                 @php $badges = $p->badgePerTahap(); @endphp
                 <tr>
                     <td class="col-sticky col-no">{{ $daftarProbabilitas->firstItem() + $i }}</td>
-                    <td class="col-sticky col-lokasi group-start"><strong>{{ $p->lokasi }}</strong></td>
+                    <td class="col-sticky col-lokasi group-start">
+                        <strong class="lokasi-clickable" onclick="bukaDetail({{ $p->id }})" style="cursor: pointer;">
+                            {{ $p->lokasi }}
+                        </strong>
+                    </td>
                     <td>{{ $p->tikor_lat }}, {{ $p->tikor_lng }}</td>
                     <td>{{ $p->ulp }}</td>
                     <td class="group-end">{{ $p->skema ?? '—' }}</td>
@@ -112,75 +130,6 @@
 
 {{ $daftarProbabilitas->links() }}
 
-{{-- Modal Tambah Lokasi --}}
-<dialog id="modal-tambah" class="dialog-clean">
-    <form method="POST" action="{{ route('monitoring.probabilitas.store') }}" id="form-tambah">
-        @csrf
-
-        <div class="modal-header-gradient">
-            <h2>Tambah Lokasi Kandidat</h2>
-            <button type="button" class="modal-close-btn" onclick="document.getElementById('modal-tambah').close()">✕</button>
-        </div>
-
-        <div class="modal-body-clean">
-            <p class="modal-hint">Isi identitas dasar dulu — poin fasilitas, okupansi, dan tahapan bisa dilengkapi belakangan lewat Edit.</p>
-
-            @if ($errors->any())
-                <div class="alert alert-error">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <div class="field-group">
-                <label>Lokasi</label>
-                <input type="text" name="lokasi" value="{{ old('lokasi') }}" placeholder="cth. SPKLU UP3 Bogor" required>
-            </div>
-
-            <div class="field-group">
-                <label>TIKOR (Titik Koordinat)</label>
-                <input type="text" id="tikor-gabung" placeholder="-6.1944, 106.8318"
-                       value="{{ old('tikor_lat') ? old('tikor_lat').', '.old('tikor_lng') : '' }}" required>
-                <p class="field-hint">Paste langsung dari Google Maps, format: lat, lng — akan otomatis terpisah saat disimpan.</p>
-            </div>
-
-            {{-- hidden fields ini yang beneran dikirim ke server --}}
-            <input type="hidden" name="tikor_lat" id="f-tikor-lat">
-            <input type="hidden" name="tikor_lng" id="f-tikor-lng">
-
-            <div class="form-row">
-                <div class="field-group">
-                    <label>ULP</label>
-                    <select name="ulp" required>
-                        <option value="">Pilih ULP...</option>
-                        @foreach ($daftarUlp as $ulp)
-                            <option value="{{ $ulp->nama_penuh }}" @selected(old('ulp') === $ulp->nama_penuh)>
-                                {{ $ulp->nama_penuh }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="field-group">
-                    <label>Skema</label>
-                    <select name="skema">
-                        <option value="">Belum ditentukan</option>
-                        <option value="Skema 2" @selected(old('skema') === 'Skema 2')>Skema 2 (Curah TR)</option>
-                        <option value="Skema 3" @selected(old('skema') === 'Skema 3')>Skema 3 (Mitra Mesin & Lahan)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-tambah').close()">Batal</button>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-    </form>
-</dialog>
-
 <script>
 
 function bukaEdit(id) {
@@ -195,20 +144,28 @@ function bukaRiwayat(probabilitasId, tahapKey, tahapLabel) {
         .then(data => window.isiModalRiwayat(probabilitasId, tahapKey, tahapLabel, data));
 }
 
-document.addEventListener('DOMContentLoaded', () => lucide.createIcons());    
-document.getElementById('form-tambah').addEventListener('submit', function (e) {
-    const gabung = document.getElementById('tikor-gabung').value;
-    const parts = gabung.split(',').map(s => s.trim());
+function pilihKategori(value) {
+    document.getElementById('kategori-hidden').value = value;
+    document.getElementById('filter-form').submit();
+}
 
-    if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) {
-        e.preventDefault();
-        alert('Format TIKOR salah. Contoh yang benar: -6.1944, 106.8318');
-        return;
-    }
+function bukaDetail(id) {
+    fetch(`/monitoring/probabilitas/${id}/edit-data`)
+        .then(r => r.json())
+        .then(data => {
+            const p = data.probabilitas;
+            document.getElementById('detail-lokasi').textContent = p.lokasi;
+            document.getElementById('detail-alamat').textContent = p.alamat || '—';
+            document.getElementById('detail-telepon').textContent = p.nomor_telepon || '—';
+            document.getElementById('detail-pic').textContent = p.pic || '—';
+            document.getElementById('detail-tikor').textContent = `${p.tikor_lat}, ${p.tikor_lng}`;
+            document.getElementById('detail-ulp').textContent = p.ulp || '—';
+            document.getElementById('detail-skema').textContent = p.skema || '—';
+            document.getElementById('modal-detail').showModal();
+        });
+}
 
-    document.getElementById('f-tikor-lat').value = parts[0];
-    document.getElementById('f-tikor-lng').value = parts[1];
-});
+document.addEventListener('DOMContentLoaded', () => lucide.createIcons());  
 
 function aturTinggiHeaderTabel() {
     const theadRow1 = document.querySelector('.table-probabilitas thead tr:first-child');
@@ -223,17 +180,63 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 window.addEventListener('resize', aturTinggiHeaderTabel);
 
-// Kalau ada error validasi dari server, buka lagi modalnya otomatis
-@if ($errors->any())
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('modal-tambah').showModal();
-    });
-@endif
 </script>
 
 {{-- Modal Edit (Image 2) dan Modal Riwayat dimuat lewat include terpisah,
      di-render kosong lalu diisi via fetch saat tombol diklik, supaya
      tidak perlu render N modal untuk tiap baris grid. --}}
+
+{{-- Modal Detail Kandidat (read-only, isi form Tambah Kandidat) --}}
+<dialog id="modal-detail" class="dialog-clean detail-dialog">
+    <div class="modal-header-gradient">
+        <h2 id="detail-lokasi">-</h2>
+        <button type="button" class="modal-close-btn" onclick="document.getElementById('modal-detail').close()">✕</button>
+    </div>
+
+    <div class="modal-body-clean detail-body">
+        <div class="detail-item detail-full">
+            <span class="detail-label">Alamat</span>
+            <span class="detail-value" id="detail-alamat">-</span>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-row">
+            <div class="detail-item">
+                <span class="detail-label">Nomor Telephone</span>
+                <span class="detail-value" id="detail-telepon">-</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">PIC</span>
+                <span class="detail-value" id="detail-pic">-</span>
+            </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-item detail-full">
+            <span class="detail-label">Titik Koordinat</span>
+            <span class="detail-value detail-mono" id="detail-tikor">-</span>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-row">
+            <div class="detail-item">
+                <span class="detail-label">ULP</span>
+                <span class="detail-value" id="detail-ulp">-</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Skema</span>
+                <span class="detail-value" id="detail-skema">-</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-detail').close()">Tutup</button>
+    </div>
+</dialog>     
 @include('monitoring.probabilitas._modal_edit')
 @include('monitoring.probabilitas._modal_riwayat')
 

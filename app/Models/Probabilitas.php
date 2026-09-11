@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Probabilitas extends Model
 {
@@ -14,6 +15,9 @@ class Probabilitas extends Model
 
     protected $fillable = [
         'lokasi',
+        'alamat',
+        'nomor_telepon',
+        'pic',
         'tikor_lat',
         'tikor_lng',
         'ulp',
@@ -47,6 +51,7 @@ class Probabilitas extends Model
         'okupansi_pintu_tol' => 'boolean',
         'okupansi_pusat_keramaian' => 'boolean',
         'okupansi_ruas_jalan' => 'boolean',
+        'poin_perluasan_jaringan' => 'decimal:1',
         'persentase_progres' => 'decimal:2',
     ];
 
@@ -124,5 +129,48 @@ class Probabilitas extends Model
         }
 
         return $badges;
+    }
+
+    /**
+     * Poin Fasilitas: jumlah fasilitas yang aktif (ruang tunggu, parkir,
+     * toilet, kafe), masing-masing bernilai 1 poin. Maksimal 4.
+     * Sesuai sheet 'Definisi & Aturan' & kolom N sheet 'Probabilitas >50%'.
+     */
+    public function getPoinFasilitasAttribute(): int
+    {
+        return collect([
+            $this->fasilitas_ruang_tunggu,
+            $this->fasilitas_parkir,
+            $this->fasilitas_toilet,
+            $this->fasilitas_kafe,
+        ])->filter()->count();
+    }
+
+    /**
+     * Poin Okupansi: jumlah kondisi okupansi yang aktif (perumahan, pintu
+     * tol, pusat keramaian, ruas jalan), masing-masing 1 poin. Maksimal 4.
+     * Sesuai kolom O sheet 'Probabilitas >50%'.
+     */
+    public function getPoinOkupasiAttribute(): int
+    {
+        return collect([
+            $this->okupansi_perumahan,
+            $this->okupansi_pintu_tol,
+            $this->okupansi_pusat_keramaian,
+            $this->okupansi_ruas_jalan,
+        ])->filter()->count();
+    }
+
+    /**
+     * Poin Jaringan: alias langsung dari poin_perluasan_jaringan (skala
+     * 0-2, kelipatan 0.5). Sesuai kolom M sheet 'Probabilitas >50%'.
+     */
+    public function getPoinJaringanAttribute(): float
+    {
+        return (float) ($this->poin_perluasan_jaringan ?? 0);
+    }
+    public function kandidatPrioritas(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(KandidatPrioritas::class);
     }
 }

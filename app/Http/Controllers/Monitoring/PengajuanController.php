@@ -8,6 +8,6 @@ class PengajuanController extends Controller
 {
     public function index()
     {
-        return view('monitoring.pengajuan.index');
+        return view('monitoring.pengajuan.create');
     }
 }
