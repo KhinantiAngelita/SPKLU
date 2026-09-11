@@ -45,10 +45,17 @@ class FsSkemaController extends Controller
     {
         $fsSkema->load('kandidat');
 
-        $koordinat = $fsSkema->koordinat();
-        $spkluTerdekat = $koordinat
-            ? $this->calculator->cari3SpkluTerdekat($koordinat[0], $koordinat[1])
-            : [];
+        // [DICABUT sejak keputusan "numpang baca dari modul Kandidat"] 3 SPKLU Terdekat
+        // TIDAK dihitung sendiri lagi di sini. Haversine (hitungJarakKm/cari3SpkluTerdekat
+        // di FsSkemaCalculatorService) masih ada di file itu, tapi ditandai TIDAK DIPAKAI —
+        // disimpan cuma untuk referensi/fallback darurat kalau suatu saat dibutuhkan lagi.
+        //
+        // TODO (menunggu modul Kandidat milik tim lain selesai, pakai Google Distance
+        // Matrix API — jarak rute kendaraan asli, bukan garis lurus): ganti baris di bawah
+        // jadi ambil data asli, contoh:
+        //   $spkluTerdekat = $fsSkema->kandidat->spkluTerdekat ?? [];
+        // (sesuaikan nama relasi/kolom setelah struktur tabel kandidat_prioritas fix)
+        $spkluTerdekat = [];
 
         $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
 
@@ -97,7 +104,10 @@ class FsSkemaController extends Controller
     protected function validasi(Request $request): array
     {
         return $request->validate([
-            'kandidat_id' => 'nullable|exists:kandidat_prioritas,id',
+            // [WAJIB] 3 SPKLU Terdekat ditarik dari data Kandidat, jadi FS Skema
+            // WAJIB terhubung ke satu Kandidat — tidak boleh kosong lagi.
+            'kandidat_id' => 'required|exists:kandidat_prioritas,id',
+
             'skema' => 'required|in:skema_2,skema_3',
             'nama_lokasi' => 'required|string|max:255',
             'titik_koordinat' => 'nullable|string',
