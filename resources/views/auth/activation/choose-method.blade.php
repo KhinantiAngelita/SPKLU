@@ -7,88 +7,98 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #023E8A 0%, #0081AB 100%);
-            padding: 20px;
+            background: linear-gradient(160deg, #023E8A 0%, #034d9e 45%, #0081AB 100%);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.10), transparent 45%),
+                        radial-gradient(circle at 8% 92%, rgba(255,198,41,.14), transparent 40%);
         }
 
         .act-card {
             background: #fff;
-            border-radius: 20px;
+            border-radius: 22px;
             width: 440px;
             max-width: 100%;
-            box-shadow: 0 24px 60px rgba(0,0,0,.25);
+            box-shadow: 0 30px 70px rgba(1,26,64,.35);
             overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
 
         .act-header {
-            background: linear-gradient(135deg, rgba(2,62,138,.08), rgba(0,129,171,.12));
-            padding: 32px 32px 24px;
+            background: linear-gradient(150deg, rgba(2,62,138,.06), rgba(0,129,171,.10));
+            padding: 40px 36px 26px;
             text-align: center;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .act-logo {
             width: 56px; height: 56px; border-radius: 16px;
-            background: linear-gradient(135deg, #023E8A, #0081AB);
+            background: linear-gradient(135deg, #FFC629, #ffab00);
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 20px rgba(2,62,138,.3);
+            margin: 0 auto 18px;
+            box-shadow: 0 8px 20px rgba(255,171,0,.35);
         }
-        .act-logo svg { width: 28px; height: 28px; color: #FFC629; }
+        .act-logo svg { width: 26px; height: 26px; color: #023E8A; stroke-width: 2.2; }
 
-        .act-header h1 { font-size: 18px; font-weight: 800; color: #023E8A; margin-bottom: 4px; }
+        .act-header h1 { font-size: 19px; font-weight: 800; color: #0f172a; margin-bottom: 5px; letter-spacing: -.01em; }
         .act-header p { font-size: 13px; color: #64748B; }
 
-        .act-body { padding: 28px 32px 32px; }
+        .act-body { padding: 30px 36px 36px; }
 
         .act-user-box {
             background: #F8FAFC;
             border: 1px solid #eef1f5;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 26px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 13px;
         }
         .act-avatar {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: linear-gradient(135deg, #FFC629, #ffab00);
-            color: #023E8A;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, #023E8A, #0081AB);
+            color: #fff;
             display: flex; align-items: center; justify-content: center;
             font-size: 14px; font-weight: 800; flex-shrink: 0;
         }
-        .act-user-info h3 { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .act-user-info h3 { font-size: 14.5px; font-weight: 700; color: #0f172a; }
         .act-user-info p { font-size: 12.5px; color: #64748B; margin-top: 2px; }
         .act-role-badge {
-            display: inline-block; margin-top: 6px;
+            display: inline-block; margin-top: 7px;
             padding: 3px 10px; border-radius: 999px;
             font-size: 10.5px; font-weight: 700;
-            background: rgba(2,62,138,.12); color: #023E8A;
+            background: rgba(2,62,138,.1); color: #023E8A;
         }
 
         .act-alert {
             padding: 12px 14px; border-radius: 10px;
-            font-size: 12.5px; margin-bottom: 18px;
-            display: flex; align-items: flex-start; gap: 8px;
+            font-size: 12.5px; margin-bottom: 20px;
+            display: flex; align-items: flex-start; gap: 9px;
         }
         .act-alert-error { background: rgba(192,57,43,.08); color: #C0392B; border: 1px solid rgba(192,57,43,.2); }
         .act-alert-success { background: rgba(46,158,91,.08); color: #2E9E5B; border: 1px solid rgba(46,158,91,.2); }
         .act-alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
 
         .act-option-title {
-            font-size: 12px; font-weight: 700; color: #94a3b8;
-            text-transform: uppercase; letter-spacing: .05em;
-            margin-bottom: 12px;
+            font-size: 11.5px; font-weight: 700; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: .06em;
+            margin-bottom: 13px;
         }
 
         .act-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; padding: 13px 20px; border-radius: 10px;
+            width: 100%; padding: 14px 20px; border-radius: 12px;
             font-size: 13.8px; font-weight: 700; cursor: pointer;
             border: none; text-decoration: none; transition: all .15s ease;
             margin-bottom: 12px;
@@ -103,21 +113,21 @@
         .act-btn-otp {
             background: linear-gradient(135deg, #023E8A, #0081AB);
             color: #fff;
-            box-shadow: 0 4px 14px rgba(2,62,138,.25);
+            box-shadow: 0 5px 16px rgba(2,62,138,.28);
         }
-        .act-btn-otp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(2,62,138,.32); }
+        .act-btn-otp:hover { transform: translateY(-1px); box-shadow: 0 7px 20px rgba(2,62,138,.35); }
 
         .act-divider {
             display: flex; align-items: center; gap: 12px;
-            margin: 20px 0; color: #cbd5e1; font-size: 11.5px; font-weight: 600;
+            margin: 20px 0; color: #cbd5e1; font-size: 11px; font-weight: 700; letter-spacing: .04em;
         }
         .act-divider::before, .act-divider::after {
             content: ''; flex: 1; height: 1px; background: #eef1f5;
         }
 
         .act-footer {
-            text-align: center; margin-top: 24px;
-            font-size: 11.5px; color: #94a3b8;
+            text-align: center; margin-top: 26px;
+            font-size: 11.5px; color: #94a3b8; line-height: 1.6;
         }
         .act-footer strong { color: #64748B; }
     </style>
@@ -126,10 +136,10 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <h1>Aktivasi Akun</h1>
-            <p>Sistem Manajemen SPKLU</p>
+            <p>Sistem SPKLU · PLN UP3 Bogor</p>
         </div>
 
         <div class="act-body">
@@ -174,8 +184,7 @@
             </form>
 
             <p class="act-footer">
-                Link ini berlaku hingga
-                <strong>{{ $user->invitation_expires_at?->translatedFormat('d F Y, H:i') }}</strong>.
+                Link ini berlaku hingga <strong>{{ $user->invitation_expires_at?->translatedFormat('d F Y, H:i') }}</strong>.<br>
                 Kalau merasa tidak diundang, abaikan halaman ini.
             </p>
         </div>

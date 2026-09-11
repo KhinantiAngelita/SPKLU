@@ -18,6 +18,7 @@ class User extends Authenticatable
         'invitation_token', 'invitation_expires_at',
         'force_password_change', 'created_directly_by',
         'requires_otp_first_login', 'first_login_verified_at',
+        'otp_code', 'otp_expires_at', 'otp_attempts', // <-- BARU, ini yang kurang
     ];
 
     protected $hidden = ['password', 'otp_code', 'remember_token'];
