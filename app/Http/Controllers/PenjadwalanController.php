@@ -25,7 +25,32 @@ class PenjadwalanController extends Controller
         $probabilitasList = $this->probabilitasBisaDijadwalkan();
         $users = User::orderBy('name')->get();
 
-        return view('penjadwalan.create', compact('probabilitasList', 'users'));
+        $bulanTampil = request('bulan')
+            ? \Illuminate\Support\Carbon::parse(request('bulan'))
+            : now();
+
+        $jadwalSebulan = Jadwal::with('probabilitas')
+            ->whereBetween('waktu_mulai', [
+                $bulanTampil->copy()->startOfMonth(),
+                $bulanTampil->copy()->endOfMonth(),
+            ])
+            ->orderBy('waktu_mulai')
+            ->get()
+            ->map(fn ($j) => [
+                'id' => $j->id,
+                'tanggal' => $j->waktu_mulai->format('Y-m-d'),
+                'jam' => $j->waktu_mulai->format('H:i'),
+                'lokasi_nama' => $j->probabilitas->lokasi ?? 'Lokasi',
+                'mode' => $j->mode,
+                'deskripsi' => $j->deskripsi,
+            ]);
+
+        return view('penjadwalan.create', compact(
+            'probabilitasList',
+            'users',
+            'jadwalSebulan',
+            'bulanTampil'
+        ));
     }
 
     public function store(Request $request)
@@ -75,6 +100,7 @@ class PenjadwalanController extends Controller
     public function destroy(Jadwal $jadwal)
     {
         $jadwal->delete();
+
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil dihapus.');
     }
 
