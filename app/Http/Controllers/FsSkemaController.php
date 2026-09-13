@@ -6,6 +6,7 @@ use App\Models\FsSkema;
 use App\Models\KandidatPrioritas;
 use App\Services\FsSkemaCalculatorService;
 use App\Services\NarasiGeneratorService;
+use App\Services\SpkluTerdekatService;
 use Illuminate\Http\Request;
 
 class FsSkemaController extends Controller
@@ -13,6 +14,7 @@ class FsSkemaController extends Controller
     public function __construct(
         protected FsSkemaCalculatorService $calculator,
         protected NarasiGeneratorService $narasiGenerator,
+        protected SpkluTerdekatService $spkluTerdekatService,
     ) {}
 
     public function index(Request $request)
@@ -35,7 +37,7 @@ class FsSkemaController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validasi($request);
-        $fsSkema = $this->simpanDenganPerhitungan($validated);
+        $fsSkema = $this->simpanDenganPerhitungan($validated, $request);
 
         return redirect()->route('fs-skema.show', $fsSkema)
             ->with('success', 'FS Skema berhasil dibuat.');
@@ -45,21 +47,11 @@ class FsSkemaController extends Controller
     {
         $fsSkema->load('kandidat');
 
-        // [DICABUT sejak keputusan "numpang baca dari modul Kandidat"] 3 SPKLU Terdekat
-        // TIDAK dihitung sendiri lagi di sini. Haversine (hitungJarakKm/cari3SpkluTerdekat
-        // di FsSkemaCalculatorService) masih ada di file itu, tapi ditandai TIDAK DIPAKAI —
-        // disimpan cuma untuk referensi/fallback darurat kalau suatu saat dibutuhkan lagi.
-        //
-        // TODO (menunggu modul Kandidat milik tim lain selesai, pakai Google Distance
-        // Matrix API — jarak rute kendaraan asli, bukan garis lurus): ganti baris di bawah
-        // jadi ambil data asli, contoh:
-        //   $spkluTerdekat = $fsSkema->kandidat->spkluTerdekat ?? [];
-        // (sesuaikan nama relasi/kolom setelah struktur tabel kandidat_prioritas fix)
-        $spkluTerdekat = [];
-
+        $spkluTerdekat = $this->hitungSpkluTerdekatDariKoordinat($fsSkema->titik_koordinat);
         $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
+        $riwayatAnalisis = $fsSkema->riwayat()->latest()->get();
 
-        return view('fs-skema.show', compact('fsSkema', 'spkluTerdekat', 'proyeksiRoi'));
+        return view('fs-skema.show', compact('fsSkema', 'spkluTerdekat', 'proyeksiRoi', 'riwayatAnalisis'));
     }
 
     public function edit(FsSkema $fsSkema)
@@ -72,23 +64,21 @@ class FsSkemaController extends Controller
     public function update(Request $request, FsSkema $fsSkema)
     {
         $validated = $this->validasi($request);
-
-        $poinFasilitas = $this->calculator->hitungPoinFasilitas($validated['fasilitas'] ?? []);
-        $poinJaringan = $this->calculator->hitungPoinKesiapanJaringan($validated['kesiapan_jaringan'] ?? null);
-        $poinOkupansi = $this->calculator->hitungPoinOkupansi($validated['okupansi'] ?? []);
-        $totalPoin = $this->calculator->hitungTotalPoin($poinFasilitas, $poinJaringan, $poinOkupansi);
-        $status = $this->calculator->tentukanStatusKelayakan($totalPoin);
+        $poin = $this->hitungSemuaPoin($validated);
 
         $fsSkema->update([
             ...$validated,
-            'poin_fasilitas' => $poinFasilitas,
-            'poin_kesiapan_jaringan' => $poinJaringan,
-            'poin_okupansi' => $poinOkupansi,
-            'total_poin' => $totalPoin,
-            'status_kelayakan' => $status,
+            'poin_fasilitas' => $poin['fasilitas'],
+            'poin_kesiapan_jaringan' => $poin['jaringan'],
+            'poin_okupansi' => $poin['okupansi'],
+            'total_poin' => $poin['total'],
+            'status_kelayakan' => $poin['status'],
         ]);
 
-        $fsSkema->update(['narasi_analisis' => $this->narasiGenerator->buatNarasi($fsSkema)]);
+        $narasi = $this->narasiGenerator->buatNarasi($fsSkema);
+        $fsSkema->update(['narasi_analisis' => $narasi]);
+
+        $this->catatRiwayat($fsSkema, $poin, $narasi, $request);
 
         return redirect()->route('fs-skema.show', $fsSkema)
             ->with('success', 'FS Skema berhasil diperbarui.');
@@ -101,25 +91,70 @@ class FsSkemaController extends Controller
         return redirect()->route('fs-skema.index')->with('success', 'FS Skema berhasil dihapus.');
     }
 
+    /**
+     * Endpoint AJAX untuk panel kanan (dipanggil live saat isi form,
+     * sebelum data disimpan). Tidak menulis apa pun ke database.
+     */
+    public function preview(Request $request)
+    {
+        $data = $request->validate([
+            'nama_lokasi' => 'nullable|string',
+            'skema' => 'nullable|in:skema_2,skema_3',
+            'titik_koordinat' => 'nullable|string',
+            'layanan_listrik' => 'nullable|in:TM,TR,LTR',
+            'total_rab_investasi' => 'nullable|numeric|min:0',
+            'rab_mitra_mesin' => 'nullable|numeric|min:0',
+            'rab_mitra_lahan' => 'nullable|numeric|min:0',
+            'sharing_provit_mitra_lahan' => 'nullable|numeric|min:0|max:1',
+            'mobil_per_hari' => 'nullable|integer|min:0',
+            'transaksi_kwh_per_mobil' => 'nullable|numeric|min:0',
+            'fasilitas' => 'nullable|array',
+            'kesiapan_jaringan' => 'nullable|string',
+            'okupansi' => 'nullable|array',
+        ]);
+
+        $poin = $this->hitungSemuaPoin($data);
+
+        $fsSkemaSementara = new FsSkema([
+            ...$data,
+            'poin_fasilitas' => $poin['fasilitas'],
+            'poin_kesiapan_jaringan' => $poin['jaringan'],
+            'poin_okupansi' => $poin['okupansi'],
+            'total_poin' => $poin['total'],
+            'status_kelayakan' => $poin['status'],
+        ]);
+
+        $proyeksiRoi = ($data['mobil_per_hari'] ?? null) !== null && ($data['transaksi_kwh_per_mobil'] ?? null) !== null
+            ? $this->calculator->hitungProyeksiROI($fsSkemaSementara)
+            : null;
+
+        $spkluTerdekat = $this->hitungSpkluTerdekatDariKoordinat($data['titik_koordinat'] ?? null);
+
+        try {
+            $narasi = $this->narasiGenerator->buatNarasi($fsSkemaSementara);
+        } catch (\Throwable $e) {
+            $narasi = null;
+        }
+
+        return response()->json([
+            'poin' => $poin,
+            'spklu_terdekat' => $spkluTerdekat,
+            'proyeksi_roi' => $proyeksiRoi,
+            'narasi_analisis' => $narasi,
+        ]);
+    }
+
     protected function validasi(Request $request): array
     {
         return $request->validate([
-            // [WAJIB] 3 SPKLU Terdekat ditarik dari data Kandidat, jadi FS Skema
-            // WAJIB terhubung ke satu Kandidat — tidak boleh kosong lagi.
-            'kandidat_id' => 'required|exists:kandidat_prioritas,id',
-
+            'kandidat_id' => 'nullable|exists:kandidat_prioritas,id',
             'skema' => 'required|in:skema_2,skema_3',
             'nama_lokasi' => 'required|string|max:255',
             'titik_koordinat' => 'nullable|string',
-
-            // Skema 2
             'total_rab_investasi' => 'required_if:skema,skema_2|nullable|numeric|min:0',
-
-            // Skema 3
             'rab_mitra_mesin' => 'required_if:skema,skema_3|nullable|numeric|min:0',
             'rab_mitra_lahan' => 'required_if:skema,skema_3|nullable|numeric|min:0',
             'sharing_provit_mitra_lahan' => 'nullable|numeric|min:0|max:1',
-
             'layanan_listrik' => 'nullable|in:TM,TR,LTR',
             'mobil_per_hari' => 'required|integer|min:0',
             'transaksi_kwh_per_mobil' => 'required|numeric|min:0',
@@ -129,26 +164,64 @@ class FsSkemaController extends Controller
         ]);
     }
 
-    protected function simpanDenganPerhitungan(array $validated): FsSkema
+    protected function simpanDenganPerhitungan(array $validated, Request $request): FsSkema
     {
-        $poinFasilitas = $this->calculator->hitungPoinFasilitas($validated['fasilitas'] ?? []);
-        $poinJaringan = $this->calculator->hitungPoinKesiapanJaringan($validated['kesiapan_jaringan'] ?? null);
-        $poinOkupansi = $this->calculator->hitungPoinOkupansi($validated['okupansi'] ?? []);
-        $totalPoin = $this->calculator->hitungTotalPoin($poinFasilitas, $poinJaringan, $poinOkupansi);
-        $status = $this->calculator->tentukanStatusKelayakan($totalPoin);
+        $poin = $this->hitungSemuaPoin($validated);
 
         $fsSkema = FsSkema::create([
             ...$validated,
-            'poin_fasilitas' => $poinFasilitas,
-            'poin_kesiapan_jaringan' => $poinJaringan,
-            'poin_okupansi' => $poinOkupansi,
-            'total_poin' => $totalPoin,
-            'status_kelayakan' => $status,
+            'poin_fasilitas' => $poin['fasilitas'],
+            'poin_kesiapan_jaringan' => $poin['jaringan'],
+            'poin_okupansi' => $poin['okupansi'],
+            'total_poin' => $poin['total'],
+            'status_kelayakan' => $poin['status'],
             'created_by' => auth()->id(),
         ]);
 
-        $fsSkema->update(['narasi_analisis' => $this->narasiGenerator->buatNarasi($fsSkema)]);
+        $narasi = $this->narasiGenerator->buatNarasi($fsSkema);
+        $fsSkema->update(['narasi_analisis' => $narasi]);
+
+        $this->catatRiwayat($fsSkema, $poin, $narasi, $request);
 
         return $fsSkema;
+    }
+
+    protected function catatRiwayat(FsSkema $fsSkema, array $poin, ?string $narasi, Request $request): void
+    {
+        $fsSkema->riwayat()->create([
+            'poin_fasilitas' => $poin['fasilitas'],
+            'poin_kesiapan_jaringan' => $poin['jaringan'],
+            'poin_okupansi' => $poin['okupansi'],
+            'total_poin' => $poin['total'],
+            'status_kelayakan' => $poin['status'],
+            'narasi_analisis' => $narasi,
+            'dicatat_oleh' => $request->user()?->id,
+        ]);
+    }
+
+    protected function hitungSemuaPoin(array $data): array
+    {
+        $fasilitas = $this->calculator->hitungPoinFasilitas($data['fasilitas'] ?? []);
+        $jaringan = $this->calculator->hitungPoinKesiapanJaringan($data['kesiapan_jaringan'] ?? null);
+        $okupansi = $this->calculator->hitungPoinOkupansi($data['okupansi'] ?? []);
+        $total = $this->calculator->hitungTotalPoin($fasilitas, $jaringan, $okupansi);
+        $status = $this->calculator->tentukanStatusKelayakan($total);
+
+        return compact('fasilitas', 'jaringan', 'okupansi', 'total', 'status');
+    }
+
+    protected function hitungSpkluTerdekatDariKoordinat(?string $titikKoordinat): array
+    {
+        if (! $titikKoordinat) {
+            return [];
+        }
+
+        $bagian = array_map('trim', explode(',', $titikKoordinat));
+
+        if (count($bagian) !== 2 || ! is_numeric($bagian[0]) || ! is_numeric($bagian[1])) {
+            return [];
+        }
+
+        return $this->spkluTerdekatService->cariTerdekat((float) $bagian[0], (float) $bagian[1], 3);
     }
 }

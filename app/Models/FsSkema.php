@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FsSkema extends Model
 {
@@ -28,6 +29,12 @@ class FsSkema extends Model
     public function kandidat()
     {
         return $this->belongsTo(KandidatPrioritas::class, 'kandidat_id');
+    }
+
+    // ⬇️ TAMBAHAN: ditaruh DI DALAM class, di antara method-method lain
+    public function riwayat(): HasMany
+    {
+        return $this->hasMany(FsSkemaRiwayat::class);
     }
 
     public function isSkema3(): bool

@@ -296,6 +296,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/', [FsSkemaController::class, 'store'])
                 ->name('store');
 
+            // ⬇️ TAMBAHAN: harus di ATAS route GET /{fsSkema} di bawah ini,
+            // kalau ditaruh di bawah, "preview" akan ketangkep sebagai
+            // {fsSkema} dan Laravel akan coba cari FsSkema dengan id="preview" → 404.
+            Route::post('/preview', [FsSkemaController::class, 'preview'])
+                ->name('preview');
+
             Route::get('/{fsSkema}', [FsSkemaController::class, 'show'])
                 ->name('show');
 
@@ -311,7 +317,6 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('role:super_admin,pengelola')
                 ->name('destroy');
         });
-
 
     // ============ PENJADWALAN ============
 
