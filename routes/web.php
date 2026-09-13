@@ -15,6 +15,7 @@ use App\Http\Controllers\Monitoring\ProbabilitasController;
 use App\Http\Controllers\PenjadwalanController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\KandidatSpkluTerdekatController;
+use App\Http\Controllers\KandidatPeringkatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -261,6 +262,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('kandidat-prioritas/{kandidat}/spklu-terdekat', [KandidatSpkluTerdekatController::class, 'store'])
         ->name('kandidat-prioritas.spklu-terdekat.store');
+
+    Route::get('/kandidat-peringkat', [KandidatPeringkatController::class, 'index2'])
+    ->name('kandidat-peringkat.index');   
 
     // ============ MONITORING PENGAJUAN ============
 

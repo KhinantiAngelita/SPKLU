@@ -54,9 +54,20 @@ return [
 
     [
         'label' => 'Kandidat',
-        'route' => 'kandidat-prioritas.index',
-        'icon'  => 'users',
+        'icon'  => 'bolt', // ganti sesuai icon set yang dipakai menu lain
         'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+        'children' => [
+            [
+                'label' => 'Jarak & Poin',
+                'route' => 'kandidat-prioritas.index', // route existing (KandidatPrioritasController) - cek nama aslinya di routes/web.php
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+            [
+                'label' => 'Peringkat',
+                'route' => 'kandidat-peringkat.index', // route baru
+                'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+            ],
+        ],
     ],
 
     [
