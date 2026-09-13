@@ -130,7 +130,7 @@ class ProbabilitasController extends Controller
                 'poin_perluasan_jaringan' => str_replace(',', '.', $request->input('poin_perluasan_jaringan')),
             ]);
         }
-        
+
         $validated = $request->validate([
             'lokasi' => 'required|string|max:255',
             'alamat' => 'nullable|string|max:255',
@@ -158,9 +158,17 @@ class ProbabilitasController extends Controller
             'okupansi_ruas_jalan' => 'boolean',
             'keterangan' => 'nullable|string',
         ]);
+        // Field kebutuhan mesin & poin jaringan NOT NULL di database — kalau
+        // dikosongkan di form (dianggap 0 unit), isi null-nya jadi 0 di sini.
+        foreach (['kebutuhan_22kw', 'kebutuhan_30kw', 'kebutuhan_50kw', 'kebutuhan_60kw', 'kebutuhan_120kw', 'kebutuhan_180kw', 'poin_perluasan_jaringan'] as $field) {
+            if (array_key_exists($field, $validated) && $validated[$field] === null) {
+                $validated[$field] = 0;
+            }
+        }
 
         $probabilitas->update($validated);
 
+        $this->scoreService->recalculate($probabilitas);
         $this->kandidatSync->sync($probabilitas);
 
         return redirect()
@@ -174,7 +182,6 @@ class ProbabilitasController extends Controller
      */
     public function storeTahapan(Request $request, Probabilitas $probabilitas)
     {
-        
         $validated = $request->validate([
             'tahap' => 'required|in:' . implode(',', array_keys(Probabilitas::TAHAPAN)),
             'tanggal' => 'required|date',
@@ -183,6 +190,32 @@ class ProbabilitasController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
+        // Urutan cuma wajib MULAI dari setelah "kpp_final" (PKS, Bayar BP,
+        // Pembangunan, Integrasi). Tahap Probing s/d KPP (final) bebas urutan.
+        if ($validated['hasil'] === 'berhasil') {
+            $urutan = array_keys(Probabilitas::TAHAPAN);
+            $indexKpp = array_search('kpp_final', $urutan);
+            $indexTahapIni = array_search($validated['tahap'], $urutan);
+
+            if ($indexTahapIni > $indexKpp) {
+                // Semua tahap dari kpp_final s/d sebelum tahap ini harus
+                // sudah 'berhasil' dulu.
+                $tahapWajibSelesai = array_slice($urutan, $indexKpp, $indexTahapIni - $indexKpp);
+
+                $badges = $probabilitas->badgePerTahap();
+
+                $belumSelesai = collect($tahapWajibSelesai)
+                    ->first(fn ($key) => ($badges[$key]['warna'] ?? 'abu') !== 'hijau');
+
+                if ($belumSelesai) {
+                    $labelBelum = Probabilitas::TAHAPAN[$belumSelesai];
+                    $errorMsg = "Tahap \"{$labelBelum}\" harus berhasil dulu sebelum tahap ini bisa ditandai berhasil.";
+
+                    return response()->json(['success' => false, 'message' => $errorMsg], 422);
+                }
+            }
+        }
+
         $riwayat = $probabilitas->riwayatTahapan()->create([
             ...$validated,
             'created_by' => $request->user()?->id,
@@ -190,15 +223,11 @@ class ProbabilitasController extends Controller
 
         $this->scoreService->recalculate($probabilitas);
 
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Kunjungan tercatat.',
-                'riwayat' => $riwayat,
-            ]);
-        }
-
-        return back()->with('success', 'Kunjungan tercatat.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Kunjungan tercatat.',
+            'riwayat' => $riwayat,
+        ]);
     }
 
     /**

@@ -42,7 +42,13 @@ class ProbabilitasScoreService
 
         $probabilitas->jumlah_tahap_selesai = $jumlahSelesai;
         $probabilitas->persentase_progres = $persentase;
-        $probabilitas->kategori = $persentase >= 50 ? '>50%' : '<50%';
+
+        // Mitra mesin sudah ada -> otomatis dianggap >50%, terlepas dari
+        // persentase progres tahapan aktual.
+        $probabilitas->kategori = (! empty($probabilitas->mitra_mesin) || $persentase >= 50)
+            ? '>50%'
+            : '<50%';
+
         $probabilitas->save();
 
         return $probabilitas;

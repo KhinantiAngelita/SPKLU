@@ -20,6 +20,7 @@
         </div>
 
         {{-- ============ FORM TAMBAH KUNJUNGAN ============ --}}
+        <div id="riwayat-error" style="display:none; margin-bottom:12px; padding:10px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; color:#b91c1c; font-size:13px;"></div>
         <h3>Tambah Kunjungan Baru</h3>
         <form id="form-tambah-riwayat" method="POST">
             @csrf
@@ -90,11 +91,17 @@ window.isiModalRiwayat = function (probabilitasId, tahapKey, tahapLabel, data) {
     const terakhirBox = document.getElementById('riwayat-terakhir');
     const totalSpan    = document.getElementById('riwayat-total');
     const linkLengkap  = document.getElementById('link-riwayat-lengkap');
+    const errorBox     = document.getElementById('riwayat-error');
+
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
 
     document.getElementById('riwayat-judul').textContent = `Riwayat — ${tahapLabel}`;
     document.getElementById('riwayat-subjudul').textContent = `${data.riwayat.length} kunjungan tercatat`;
     document.getElementById('rt-tahap').value = tahapKey;
     document.getElementById('form-tambah-riwayat').action = `/monitoring/probabilitas/${probabilitasId}/tahapan`;
+    document.getElementById('form-tambah-riwayat').reset();
+    document.getElementById('rt-tahap').value = tahapKey;
 
     terakhirBox.innerHTML = '';
     totalSpan.textContent = data.riwayat.length;
@@ -111,4 +118,50 @@ window.isiModalRiwayat = function (probabilitasId, tahapKey, tahapLabel, data) {
 
     document.getElementById('modal-riwayat').showModal();
 };
+
+document.getElementById('form-tambah-riwayat').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const errorBox = document.getElementById('riwayat-error');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
+    submitBtn.disabled = true;
+
+    const formData = new FormData(form);
+    const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+        },
+        body: formData,
+    })
+        .then(async (res) => {
+            const data = await res.json();
+
+            if (!res.ok) {
+                const pesan = data.errors
+                    ? Object.values(data.errors).flat().join(' ')
+                    : (data.message || 'Terjadi kesalahan, silakan coba lagi.');
+
+                errorBox.textContent = pesan;
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            window.location.reload();
+        })
+        .catch(() => {
+            errorBox.textContent = 'Gagal menghubungi server. Coba lagi.';
+            errorBox.style.display = 'block';
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+        });
+});
 </script>
