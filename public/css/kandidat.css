@@ -1,153 +1,577 @@
-/* ============================================================
-   Kandidat Prioritas — Stylesheet
-   ============================================================ */
+.kp-wrap{
+            --kp-blue-dark:#1d4ed8;
+            --kp-blue-soft:#eff6ff;
 
-.kp-wrap { padding: 24px; }
-.kp-wrap h1 { font-size: 24px; font-weight: 700; color: #1f2937; margin: 0; }
-.kp-sub { font-size: 13px; color: #6b7280; margin-top: 2px; margin-bottom: 20px; }
+            --kp-green:#16a34a;
+            --kp-green-soft:#f0fdf4;
 
-/* ===== Summary cards ===== */
-.kp-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
-@media (max-width: 900px) { .kp-cards { grid-template-columns: 1fr; } }
+            --kp-amber:#d97706;
+            --kp-amber-soft:#fffbeb;
 
-.kp-card { border-radius: 14px; padding: 16px 18px; }
-.kp-card .label { font-size: 13px; color: #6b7280; margin-bottom: 6px; }
-.kp-card .value { font-size: 26px; font-weight: 700; color: #1f2937; }
-.kp-card .note { font-size: 11px; color: #9ca3af; margin-top: 8px; line-height: 1.5; }
-.kp-card.blue { background: #eef4ff; }
-.kp-card.green { background: #eafaf1; }
-.kp-card.amber { background: #fdf6e6; }
-.kp-card.rose { background: #fdeef0; }
-.kp-card .value-split { font-size: 22px; font-weight: 700; color: #1f2937; }
-.kp-card .value-split small { font-size: 10px; font-weight: 500; color: #9ca3af; display: block; margin-top: 2px; }
-.kp-split-row { display: flex; gap: 20px; }
+            --kp-rose:#e11d48;
+            --kp-rose-soft:#fff1f2;
 
-/* ============================================================
-   Daftar SPKLU strip (judul + search + filter select + tombol)
-   Selector dibuat lebih spesifik (.kp-strip form.kp-filter-form ...)
-   supaya menang melawan CSS global template (input/select 100%).
-   ============================================================ */
+            --kp-ink:#0f172a;
+            --kp-sub:#64748b;
+            --kp-border:#e2e8f0;
 
-.kp-strip {
-    background: #eef4ff;
-    border-radius: 14px;
-    padding: 14px 18px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-}
+            --kp-radius:12px;
+        }
 
-.kp-strip-title {
-    font-weight: 700;
-    color: #1f2937;
-    font-size: 15px;
-    white-space: nowrap;
-    margin-right: 6px;
-    flex-shrink: 0;
-}
+        .kp-wrap h1{
+            font-size:22px;
+            font-weight:800;
+            color:var(--kp-ink);
+            margin-bottom:2px;
+        }
 
-.kp-strip form.kp-filter-form {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px;
-    flex: 1;
-    flex-wrap: nowrap;      /* dipaksa satu baris */
-    min-width: 0;
-    overflow-x: auto;       /* kalau kepanjangan, scroll ke samping, bukan turun */
-}
+        .kp-sub{
+            color:var(--kp-sub);
+            font-size:13.5px;
+            margin-bottom:18px;
+        }
 
-.kp-strip form.kp-filter-form input[type="text"] {
-    width: 180px !important;
-    max-width: 180px;
-    flex: 0 0 auto !important;
-    display: inline-block !important;
-    border: 1px solid #e0e6f0;
-    border-radius: 8px;
-    padding: 7px 12px;
-    font-size: 13px;
-    background: #fff;
-    box-sizing: border-box;
-    color: #374151;
-}
 
-.kp-strip form.kp-filter-form select {
-    width: auto !important;
-    max-width: 150px;
-    flex: 0 0 auto !important;
-    display: inline-block !important;
-    border: 1px solid #e0e6f0;
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-size: 13px;
-    background: #fff;
-    box-sizing: border-box;
-    color: #374151;
-}
+        /* =========================================================
+           SUMMARY CARDS
+        ========================================================= */
+        .kp-cards{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
+            margin-bottom:22px;
+        }
 
-/* ===== Table ===== */
-.kp-table-wrap { background: #fff; border: 1px solid #eef0f3; border-radius: 14px; overflow-x: auto; }
-.kp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.kp-table thead th {
-    text-align: left; padding: 12px 14px; color: #9ca3af; font-weight: 600; font-size: 12px;
-    border-bottom: 1px solid #eef0f3; white-space: nowrap;
-}
-.kp-table tbody td { padding: 12px 14px; border-bottom: 1px solid #f5f6f8; vertical-align: top; }
-.kp-table tbody tr:last-child td { border-bottom: none; }
-.kp-table tbody tr.kp-attn td:first-child { box-shadow: inset 4px 0 0 0 #f59e0b; }
+        .kp-card{
+            background:#fff;
+            border-radius:var(--kp-radius);
+            padding:16px 18px;
+            border:1px solid var(--kp-border);
+            box-shadow:0 1px 2px rgba(15,23,42,.04);
+            transition:box-shadow .18s ease, transform .18s ease;
+            position:relative;
+            overflow:hidden;
+        }
 
-.kp-badge-kategori {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px; border-radius: 999px; color: #fff;
-    font-size: 12px; font-weight: 700;
-}
-.kp-badge-a { background: #22c55e; }
-.kp-badge-b { background: #f59e0b; }
-.kp-badge-c { background: #ef4444; }
+        .kp-card::before{
+            content:"";
+            position:absolute;
+            top:0;
+            left:0;
+            width:4px;
+            height:100%;
+        }
 
-.kp-nama { font-weight: 600; color: #1f2937; }
-.kp-warn { font-size: 11px; color: #f59e0b; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+        .kp-card.blue::before{
+            background:var(--kp-blue);
+        }
 
-/* 3 SPKLU Terdekat */
-.kp-spklu-item { margin-bottom: 6px; }
-.kp-spklu-item:last-child { margin-bottom: 0; }
-.kp-spklu-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.kp-spklu-nama { color: #374151; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
-.kp-jarak-badge {
-    font-size: 10px; padding: 2px 7px; border-radius: 999px; white-space: nowrap; font-weight: 600;
-    background: #f3f4f6; color: #6b7280;
-}
-.kp-spklu-bar { height: 3px; border-radius: 999px; margin-top: 3px; }
-.kp-status-bagus { background: #22c55e; }
-.kp-status-tidak { background: #ef4444; }
-.kp-status-belum { background: #d1d5db; }
+        .kp-card.green::before{
+            background:var(--kp-green);
+        }
 
-/* Poin columns — number + short colored underline */
-.kp-poin { text-align: left; }
-.kp-poin .num { font-size: 14px; font-weight: 600; color: #374151; }
-.kp-poin .line { width: 34px; height: 3px; border-radius: 999px; margin-top: 5px; }
+        .kp-card.amber::before{
+            background:var(--kp-amber);
+        }
 
-.kp-skor {
-    display: inline-block; padding: 5px 14px; border-radius: 8px;
-    font-size: 14px; font-weight: 700;
-}
-.kp-skor-a { background: #dcfce7; color: #16a34a; }
-.kp-skor-b { background: #fef3c7; color: #d97706; }
-.kp-skor-c { background: #fee2e2; color: #dc2626; }
+        .kp-card.rose::before{
+            background:var(--kp-rose);
+        }
 
-.kp-empty { text-align: center; color: #9ca3af; padding: 32px 0; }
+        .kp-card:hover{
+            box-shadow:0 8px 20px rgba(15,23,42,.08);
+            transform:translateY(-2px);
+        }
 
-/* ===== Legend ===== */
-.kp-legend {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 18px;
-    font-size: 12px; color: #6b7280; padding: 14px 16px;
-}
-.kp-legend strong { color: #374151; margin-right: 4px; }
-.kp-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.kp-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+        .kp-card .label{
+            font-size:12.5px;
+            font-weight:600;
+            color:var(--kp-sub);
+            text-transform:uppercase;
+            letter-spacing:.03em;
+        }
 
-/* ===== Mobile fallback: scroll horizontal, bukan stack ===== */
-@media (max-width: 768px) {
-    .kp-strip { flex-wrap: nowrap; overflow-x: auto; }
-}
+        .kp-card .value{
+            font-size:26px;
+            font-weight:800;
+            color:var(--kp-ink);
+            margin:6px 0 4px;
+        }
+
+        .kp-card .note{
+            font-size:12px;
+            color:var(--kp-sub);
+            line-height:1.4;
+        }
+
+        .kp-card.amber .note{
+            color:var(--kp-amber);
+            font-weight:600;
+        }
+
+        .kp-split-row{
+            display:flex;
+            gap:18px;
+            margin:6px 0 4px;
+        }
+
+        .value-split{
+            font-size:22px;
+            font-weight:800;
+            color:var(--kp-ink);
+            display:flex;
+            flex-direction:column;
+        }
+
+        .value-split small{
+            font-size:11px;
+            font-weight:600;
+            color:var(--kp-sub);
+            text-transform:uppercase;
+            letter-spacing:.02em;
+        }
+
+
+        /* =========================================================
+           STRIP: TITLE + FILTER
+        ========================================================= */
+        .kp-strip{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:10px;
+            background:#fff;
+            border:1px solid var(--kp-border);
+            border-radius:var(--kp-radius) var(--kp-radius) 0 0;
+            padding:14px 18px;
+        }
+
+        .kp-strip-title{
+            font-size:15px;
+            font-weight:700;
+            color:var(--kp-ink);
+        }
+
+        .kp-filter-form{
+            display:flex;
+            gap:8px;
+        }
+
+        .kp-filter-form input[type="text"]{
+            padding:9px 16px;
+            border:1px solid var(--kp-border);
+            border-radius:999px;
+            font-size:13px;
+            min-width:220px;
+            outline:none;
+            background:#f8fafc;
+            transition:border-color .15s ease, box-shadow .15s ease;
+        }
+
+        .kp-filter-form input[type="text"]:focus{
+            border-color:var(--kp-blue);
+            background:#fff;
+            box-shadow:0 0 0 3px rgba(37,99,235,.12);
+        }
+
+        .kp-filter-form select{
+            padding:9px 16px;
+            border:1px solid var(--kp-border);
+            border-radius:999px;
+            font-size:13px;
+            background:#f8fafc;
+            color:var(--kp-ink);
+            outline:none;
+            cursor:pointer;
+        }
+
+        .kp-filter-form select:focus{
+            border-color:var(--kp-blue);
+            background:#fff;
+        }
+
+
+        /* =========================================================
+           TABLE
+        ========================================================= */
+        .kp-table-wrap{
+            background:#fff;
+            border:1px solid var(--kp-border);
+            border-top:none;
+            border-radius:0 0 var(--kp-radius) var(--kp-radius);
+            overflow:hidden;
+        }
+
+        .kp-table-scroll{
+            overflow-x:auto;
+            -webkit-overflow-scrolling:touch;
+        }
+
+        .kp-table{
+            width:100%;
+            min-width:1180px;
+            border-collapse:separate;
+            border-spacing:0;
+        }
+
+        .kp-table thead th{
+            position:sticky;
+            top:0;
+            background:#0b2a4a;
+            color:#e2e8f0;
+            font-size:11.5px;
+            font-weight:700;
+            text-transform:uppercase;
+            letter-spacing:.03em;
+            text-align:left;
+            padding:12px;
+            border-bottom:1px solid #0b2a4a;
+            white-space:nowrap;
+        }
+
+        .kp-table tbody td{
+            padding:12px;
+            font-size:13px;
+            color:var(--kp-ink);
+            border-bottom:1px solid #f1f5f9;
+            vertical-align:top;
+        }
+
+        .kp-table tbody tr:hover{
+            background:#f8fafc;
+        }
+
+        .kp-table tbody tr.kp-attn{
+            background:var(--kp-amber-soft);
+        }
+
+        .kp-table tbody tr.kp-attn:hover{
+            background:#fef3c7;
+        }
+
+        .kp-table tbody tr:last-child td{
+            border-bottom:none;
+        }
+
+
+        /* =========================================================
+           STICKY COLUMN
+           Tanpa garis biru tebal
+        ========================================================= */
+
+        /* Kolom NO */
+        .kp-table th:nth-child(1),
+        .kp-table td:nth-child(1){
+            position:sticky !important;
+            left:0 !important;
+            width:48px !important;
+            min-width:48px !important;
+            z-index:2 !important;
+        }
+
+        /* Kolom NAMA LOKASI */
+        .kp-table th:nth-child(2),
+        .kp-table td:nth-child(2){
+            position:sticky !important;
+            left:48px !important;
+            width:180px !important;
+            min-width:180px !important;
+            z-index:2 !important;
+
+            /* Garis pemisah biasa */
+            border-right:1px solid #e5e7eb !important;
+
+            /* Shadow sangat tipis */
+            box-shadow:3px 0 5px rgba(0,0,0,.04) !important;
+        }
+
+        /* Header sticky */
+        .kp-table thead th:nth-child(1),
+        .kp-table thead th:nth-child(2){
+            z-index:4 !important;
+            background:#0b2a4a !important;
+        }
+
+        /* Background sticky normal */
+        .kp-table tbody td:nth-child(1),
+        .kp-table tbody td:nth-child(2){
+            background:#fff !important;
+        }
+
+        /* Hover */
+        .kp-table tbody tr:hover td:nth-child(1),
+        .kp-table tbody tr:hover td:nth-child(2){
+            background:#f8fafc !important;
+        }
+
+        /* Baris perhatian */
+        .kp-table tbody tr.kp-attn td:nth-child(1),
+        .kp-table tbody tr.kp-attn td:nth-child(2){
+            background:var(--kp-amber-soft) !important;
+        }
+
+        .kp-table tbody tr.kp-attn:hover td:nth-child(1),
+        .kp-table tbody tr.kp-attn:hover td:nth-child(2){
+            background:#fef3c7 !important;
+        }
+
+
+        /* =========================================================
+           NAMA + WARNING
+        ========================================================= */
+        .kp-nama{
+            font-weight:700;
+            color:var(--kp-ink);
+            font-size:13.5px;
+        }
+
+        .kp-warn{
+            color:var(--kp-amber);
+            font-size:11.5px;
+            font-weight:600;
+            margin-top:2px;
+            display:flex;
+            align-items:center;
+            gap:4px;
+        }
+
+
+        /* =========================================================
+           KATEGORI BADGE
+        ========================================================= */
+        .kp-badge-kategori{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:26px;
+            height:22px;
+            padding:0 8px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:800;
+        }
+
+        .kp-badge-a{
+            background:var(--kp-green-soft);
+            color:var(--kp-green);
+            border:1px solid #bbf7d0;
+        }
+
+        .kp-badge-b{
+            background:var(--kp-amber-soft);
+            color:var(--kp-amber);
+            border:1px solid #fde68a;
+        }
+
+        .kp-badge-c{
+            background:var(--kp-rose-soft);
+            color:var(--kp-rose);
+            border:1px solid #fecdd3;
+        }
+
+
+        /* =========================================================
+           SKOR PRIORITAS
+        ========================================================= */
+        .kp-skor{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:40px;
+            padding:5px 10px;
+            border-radius:8px;
+            font-size:13px;
+            font-weight:800;
+        }
+
+        .kp-skor-a{
+            background:var(--kp-green);
+            color:#fff;
+        }
+
+        .kp-skor-b{
+            background:var(--kp-amber);
+            color:#fff;
+        }
+
+        .kp-skor-c{
+            background:var(--kp-rose);
+            color:#fff;
+        }
+
+        .kp-poin .num{
+            font-weight:700;
+            font-size:13.5px;
+            color:var(--kp-ink);
+        }
+
+
+        /* =========================================================
+           SPKLU TERDEKAT
+        ========================================================= */
+        .kp-spklu-item{
+            margin-bottom:8px;
+        }
+
+        .kp-spklu-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            margin-bottom:3px;
+        }
+
+        .kp-spklu-nama{
+            font-size:12px;
+            color:var(--kp-blue);
+            font-weight:600;
+            max-width:120px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .kp-jarak-badge{
+            font-size:11px;
+            font-weight:700;
+            color:var(--kp-ink);
+            background:#f1f5f9;
+            padding:2px 7px;
+            border-radius:6px;
+            flex-shrink:0;
+        }
+
+        .kp-spklu-bar{
+            height:5px;
+            border-radius:999px;
+            background:#e2e8f0;
+            overflow:hidden;
+            position:relative;
+        }
+
+        .kp-spklu-bar::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            border-radius:999px;
+        }
+
+        .kp-status-bagus::after{
+            background:var(--kp-green);
+            width:100%;
+        }
+
+        .kp-status-tidak::after{
+            background:var(--kp-rose);
+            width:100%;
+        }
+
+        .kp-status-belum::after{
+            background:var(--kp-amber);
+            width:60%;
+        }
+
+
+        /* =========================================================
+           LEGEND
+        ========================================================= */
+        .kp-legend{
+            display:flex;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:16px;
+            padding:14px 18px;
+            background:#f8fafc;
+            border-top:1px solid var(--kp-border);
+            font-size:12px;
+            color:var(--kp-sub);
+        }
+
+        .kp-legend strong{
+            color:var(--kp-ink);
+            font-size:12.5px;
+        }
+
+        .kp-legend span{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+        }
+
+        .kp-dot{
+            width:9px;
+            height:9px;
+            border-radius:50%;
+            display:inline-block;
+        }
+
+
+        /* =========================================================
+           EMPTY
+        ========================================================= */
+        .kp-empty{
+            text-align:center;
+            padding:40px 20px !important;
+            color:var(--kp-sub);
+            font-size:14px;
+        }
+
+
+        /* =========================================================
+           BUTTON INPUT JARAK
+        ========================================================= */
+        .kp-btn-input-jarak{
+            margin-top:8px;
+            width:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:7px;
+            font-size:12.5px;
+            font-weight:700;
+            padding:9px 10px;
+            border:none;
+            border-radius:8px;
+            background:linear-gradient(135deg,#3b82f6,#2563eb);
+            color:#fff;
+            cursor:pointer;
+            letter-spacing:.2px;
+            box-shadow:0 2px 6px rgba(37,99,235,.35);
+            transition:all .18s ease;
+        }
+
+        .kp-btn-input-jarak:hover{
+            background:linear-gradient(135deg,#2563eb,#1d4ed8);
+            box-shadow:0 4px 10px rgba(37,99,235,.45);
+            transform:translateY(-1px);
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media (max-width:1100px){
+            .kp-cards{
+                grid-template-columns:repeat(2,1fr);
+            }
+        }
+
+        @media (max-width:640px){
+            .kp-cards{
+                grid-template-columns:1fr;
+            }
+
+            .kp-strip{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .kp-filter-form{
+                flex-direction:column;
+            }
+
+            .kp-filter-form input[type="text"]{
+                min-width:0;
+            }
+        }
