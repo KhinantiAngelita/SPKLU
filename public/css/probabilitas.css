@@ -163,13 +163,20 @@ input:focus, select:focus, textarea:focus {
 .status-tahapan-label { flex: 1; font-weight: 500; }
 
 .riwayat-list { margin-bottom: 20px; }
-.riwayat-card { border: 1px solid #E5E9F0; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
-.riwayat-card-header { display: flex; justify-content: space-between; align-items: center; }
-.riwayat-tanggal { color: var(--teks-sekunder); font-size: 13px; }
-.riwayat-pic { font-size: 13px; margin-top: 4px; }
-.riwayat-catatan { font-size: 13px; color: var(--teks-sekunder); margin-top: 4px; }
-.riwayat-hapus { text-align: right; }
-.btn-icon-sm { background: none; border: none; cursor: pointer; font-size: 13px; }
+
+/* Card riwayat di dalam MODAL (dialog#modal-riwayat) — struktur flat dari JS buatKartuRiwayat() */
+.riwayat-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.riwayat-hapus {
+    text-align: right;
+    margin-top: 10px;
+}
 
 .empty-state { text-align: center; color: var(--teks-sekunder); padding: 24px; }
 
@@ -239,8 +246,6 @@ input:focus, select:focus, textarea:focus {
 }
 .modal-close-btn:hover { background: rgba(255,255,255,.25); }
 
-.modal-body-clean { padding: 22px 24px; }
-/* ===== Modal Tambah Lokasi ===== */
 .modal-body-clean { padding: 22px 24px; }
 
 .field-group { margin-bottom: 16px; }
@@ -472,4 +477,653 @@ input:focus, select:focus, textarea:focus {
     border: 1px solid #E5E9F0;
     border-radius: 10px;
     margin: 0;
+}
+
+/* =====================================================================
+   Riwayat — variabel warna
+   ===================================================================== */
+:root {
+    --riwayat-border: #e5e7eb;
+    --riwayat-text-muted: #6b7280;
+    --riwayat-blue: #2563eb;
+    --riwayat-hijau: #16a34a;
+    --riwayat-hijau-bg: #dcfce7;
+    --riwayat-kuning: #b45309;
+    --riwayat-kuning-bg: #fef3c7;
+    --riwayat-merah: #dc2626;
+    --riwayat-merah-bg: #fee2e2;
+}
+
+/* ===== Halaman Riwayat Lengkap ===== */
+.riwayat-page {
+    max-width: 860px;
+    margin: 24px auto 60px;
+    padding: 0 16px;
+}
+
+/* ---------- Outer card wrapper ---------- */
+.riwayat-page-card {
+    background: #fff;
+    border: 1px solid var(--riwayat-border);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 28px 32px 32px;
+}
+
+/* ---------- Header ---------- */
+.riwayat-page-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--riwayat-border);
+    color: #374151;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.btn-back-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+.btn-back:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    transform: translateX(-2px);
+}
+
+.riwayat-page-title {
+    flex: 1;
+    min-width: 0;
+}
+.riwayat-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--riwayat-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 3px;
+}
+.riwayat-page-title h1 {
+    font-size: 21px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 3px;
+    letter-spacing: -0.01em;
+    text-transform: capitalize;
+}
+.riwayat-page-sub {
+    font-size: 13px;
+    color: var(--riwayat-text-muted);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---------- Stats bar ---------- */
+.riwayat-stats {
+    display: flex;
+    align-items: center;
+    background: #f9fafb;
+    border: 1px solid var(--riwayat-border);
+    border-radius: 12px;
+    padding: 14px 8px;
+    margin-bottom: 26px;
+}
+.riwayat-stat {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.riwayat-stat-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+}
+.riwayat-stat-number.stat-hijau  { color: var(--riwayat-hijau); }
+.riwayat-stat-number.stat-kuning { color: var(--riwayat-kuning); }
+.riwayat-stat-number.stat-merah  { color: var(--riwayat-merah); }
+.riwayat-stat-label {
+    font-size: 10.5px;
+    color: var(--riwayat-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.riwayat-stat-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--riwayat-border);
+}
+
+/* ---------- Timeline list ---------- */
+.riwayat-page-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.riwayat-item {
+    display: flex;
+    gap: 14px;
+}
+.riwayat-item:not(:last-child) { padding-bottom: 16px; }
+
+.riwayat-item-rail {
+    position: relative;
+    width: 12px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+}
+.riwayat-item:not(:last-child) .riwayat-item-rail::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    bottom: -16px;
+    width: 2px;
+    background: var(--riwayat-border);
+}
+.riwayat-item-marker {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-top: 9px;
+    background: #9ca3af;
+    box-shadow: 0 0 0 3px #fff;
+}
+.riwayat-item-marker.badge-hijau  { background: var(--riwayat-hijau); }
+.riwayat-item-marker.badge-kuning { background: var(--riwayat-kuning); }
+.riwayat-item-marker.badge-merah  { background: var(--riwayat-merah); }
+
+.riwayat-card {
+    flex: 1;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid var(--riwayat-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+}
+.riwayat-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+}
+
+.riwayat-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.riwayat-card-top-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.badge-tahap {
+    display: inline-block;
+    width: fit-content;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+.badge-tahap.badge-hijau  { background: var(--riwayat-hijau-bg); color: var(--riwayat-hijau); }
+.badge-tahap.badge-kuning { background: var(--riwayat-kuning-bg); color: var(--riwayat-kuning); }
+.badge-tahap.badge-merah  { background: var(--riwayat-merah-bg); color: var(--riwayat-merah); }
+
+.riwayat-tanggal {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+}
+.riwayat-tanggal-relatif {
+    font-weight: 400;
+    color: var(--riwayat-text-muted);
+}
+
+/* Parent kartu — flex-column supaya margin child TIDAK collapse,
+   jadi jarak riwayat-pic <-> riwayat-catatan selalu presisi sesuai angka di bawah */
+.riwayat-card-body {
+    font-size: 13.5px;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+}
+
+.riwayat-pic {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.riwayat-pic-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.riwayat-catatan {
+    background: #f9fafb;
+    border-left: 3px solid #d1d5db;
+    padding: 9px 12px;
+    border-radius: 6px;
+    margin-top: 0;   /* sengaja 0 — jarak sudah dijamin dari margin-bottom .riwayat-pic di atasnya,
+                        hindari margin-collapse ambigu antara konteks modal (flat) & halaman (flex-column) */
+    line-height: 1.55;
+    white-space: pre-line;
+    color: #374151;
+}
+.link-riwayat-lengkap.btn-block {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+        text-decoration: none;
+    }
+
+/* ---------- Tombol hapus (ikon) ---------- */
+.btn-icon-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 7px;
+    color: #9ca3af;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+}
+.btn-icon-sm:hover {
+    color: var(--riwayat-merah);
+    background: var(--riwayat-merah-bg);
+}
+
+/* ---------- Empty state ---------- */
+.riwayat-empty {
+    text-align: center;
+    padding: 70px 20px;
+    color: #9ca3af;
+}
+.riwayat-empty-icon {
+    font-size: 34px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+.riwayat-empty p {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0 0 4px;
+}
+.riwayat-empty-sub {
+    font-size: 12.5px;
+}
+
+/* ---------- Modal konfirmasi hapus ---------- */
+.modal-hapus {
+    border: none;
+    border-radius: 16px;
+    padding: 28px 26px 24px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    text-align: center;
+}
+.modal-hapus::backdrop {
+    background: rgba(17, 24, 39, 0.5);
+    backdrop-filter: blur(1px);
+}
+
+.modal-hapus-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--riwayat-merah-bg);
+    color: var(--riwayat-merah);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-hapus h3 {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+}
+.modal-hapus p {
+    font-size: 13.5px;
+    color: var(--riwayat-text-muted);
+    line-height: 1.55;
+    margin: 0 0 22px;
+}
+.modal-hapus p strong {
+    color: #374151;
+}
+
+.modal-hapus-actions {
+    display: flex;
+    gap: 10px;
+}
+.modal-hapus-actions form {
+    flex: 1;
+}
+
+.btn-batal,
+.btn-hapus-confirm {
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.btn-batal {
+    flex: 1;
+    background: #fff;
+    border: 1px solid var(--riwayat-border);
+    color: #374151;
+}
+.btn-batal:hover {
+    background: #f3f4f6;
+}
+.btn-hapus-confirm {
+    border: none;
+    background: var(--riwayat-merah);
+    color: #fff;
+}
+.btn-hapus-confirm:hover {
+    background: #b91c1c;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+    .riwayat-page-card { padding: 20px 18px 24px; }
+    .riwayat-stat-label { font-size: 9.5px; }
+    .riwayat-stat-number { font-size: 16px; }
+    .riwayat-tanggal-relatif { display: block; }
+    .modal-hapus { margin: auto 16px; }
+}
+
+/* ===== Modal riwayat (di dalam dialog #modal-riwayat) ===== */
+.riwayat-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+}
+
+/* pastikan "Tambah Kunjungan Baru" pakai ukuran yang sama */
+.modal-body h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin: 20px 0 12px;
+}
+
+#riwayat-terakhir-wrap {
+    margin-bottom: 18px;
+}
+
+#riwayat-terakhir {
+    margin-bottom: 8px;
+}
+
+.btn-outline-riwayat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    margin-top: 0;
+    padding: 9px 14px;
+    background: #fff;
+    border: 1.5px solid #1e3a5f;
+    border-radius: 8px;
+    color: #1e3a5f;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-outline-riwayat:hover {
+    background: #1e3a5f;
+    color: #fff;
+    text-decoration: none;
+}
+
+.kandidat-form-page {
+        max-width: 640px;
+        margin: 24px auto 60px;
+        padding: 0 16px;
+    }
+    .kandidat-form-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .kandidat-form-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0A2E52, #3E82C4);
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .kandidat-form-header h1 {
+        font-size: 19px;
+        font-weight: 700;
+        color: #1E293B;
+        margin: 0;
+    }
+    .kandidat-form-header p {
+        font-size: 12.5px;
+        color: #64748B;
+        margin: 2px 0 0;
+    }
+
+    .kandidat-form-card {
+        background: #fff;
+        border: 1px solid #0A2E52;
+        border-radius: 14px;
+        padding: 26px 28px 28px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .kandidat-section-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #14508C;
+        letter-spacing: 0.03em;
+        margin: 0 0 18px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+        display: block;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #1E293B;
+        margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #F5F7FA;
+        font-size: 13.5px;
+        color: #1E293B;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #3E82C4;
+        background: #fff;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .form-error {
+        display: block;
+        font-size: 12px;
+        color: #C0392B;
+        margin-top: 4px;
+    }
+
+    .kandidat-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 24px;
+    }
+    .btn-secondary {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13.5px;
+        text-decoration: none;
+    }
+    .btn-secondary:hover { background: #f3f4f6; }
+
+    /* === Modal Detail Kandidat === */
+.detail-dialog {
+    width: 100%;
+    max-width: 460px;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.detail-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.detail-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-full {
+    width: 100%;
+}
+
+.detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #1e293b;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.detail-mono {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    background: #f1f5f9;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.detail-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0 -4px;
+}
+
+/* === Segmented Filter (pill toggle) === */
+.segmented-filter {
+    display: inline-flex;
+    align-items: center;
+    background: #eef1f5;
+    border-radius: 8px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.segmented-btn {
+    border: none;
+    background: transparent;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.segmented-btn:hover:not(.active) {
+    color: #475569;
+}
+
+.segmented-btn.active {
+    background: #f5a623;
+    color: #1e293b;
 }

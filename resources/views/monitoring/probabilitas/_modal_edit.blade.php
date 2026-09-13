@@ -3,13 +3,10 @@
         @csrf
         @method('PUT')
 
-        {{-- Identitas TIDAK ditampilkan sebagai input di modal ini (sesuai desain),
-             tapi tetap dikirim sebagai hidden field supaya tidak ke-null-kan saat update. --}}
+        {{-- Lokasi & koordinat tetap hidden (jarang diubah di modal ini) --}}
         <input type="hidden" name="lokasi" id="f-lokasi">
-        <input type="hidden" name="ulp" id="f-ulp">
         <input type="hidden" name="tikor_lat" id="f-lat">
         <input type="hidden" name="tikor_lng" id="f-lng">
-        <input type="hidden" name="skema" id="f-skema">
 
         <div class="modal-header-blue">
             <div>
@@ -22,19 +19,43 @@
         <div class="modal-body">
 
             <div class="edit-card">
+                <h3>Identitas Lokasi</h3>
+                <div class="form-row">
+                    <div>
+                        <label>ULP</label>
+                        <select name="ulp" id="f-ulp" required>
+                            <option value="">— Pilih ULP —</option>
+                            @foreach ($daftarUlp as $ulp)
+                                <option value="{{ $ulp->nama_penuh }}">{{ $ulp->nama_penuh }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label>Skema</label>
+                        <select name="skema" id="f-skema">
+                            <option value="">— Pilih Skema —</option>
+                            <option value="Mandiri">Mandiri</option>
+                            <option value="Kerjasama">Kerjasama</option>
+                            <option value="Kemitraan">Kemitraan</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="edit-card">
                 <h3>Kebutuhan Mesin (unit)</h3>
                 <div class="form-row form-row-6">
-                    <div><label>22kW</label><input type="number" min="0" name="kebutuhan_22kw" id="f-22kw"></div>
-                    <div><label>30kW</label><input type="number" min="0" name="kebutuhan_30kw" id="f-30kw"></div>
-                    <div><label>50kW</label><input type="number" min="0" name="kebutuhan_50kw" id="f-50kw"></div>
-                    <div><label>60kW</label><input type="number" min="0" name="kebutuhan_60kw" id="f-60kw"></div>
-                    <div><label>120kW</label><input type="number" min="0" name="kebutuhan_120kw" id="f-120kw"></div>
-                    <div><label>180kW</label><input type="number" min="0" name="kebutuhan_180kw" id="f-180kw"></div>
+                    <div><label>22kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_22kw" id="f-22kw" onfocus="this.select()"></div>
+                    <div><label>30kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_30kw" id="f-30kw" onfocus="this.select()"></div>
+                    <div><label>50kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_50kw" id="f-50kw" onfocus="this.select()"></div>
+                    <div><label>60kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_60kw" id="f-60kw" onfocus="this.select()"></div>
+                    <div><label>120kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_120kw" id="f-120kw" onfocus="this.select()"></div>
+                    <div><label>180kW</label><input type="number" min="0" placeholder="0" name="kebutuhan_180kw" id="f-180kw" onfocus="this.select()"></div>
                 </div>
 
                 <div class="form-row">
                     <div><label>Mitra Mesin</label><input type="text" name="mitra_mesin" id="f-mitra-mesin"></div>
-                    <div><label>Poin Perluasan Jaringan</label><input type="number" min="0" name="poin_perluasan_jaringan" id="f-poin-jaringan"></div>
+                    <div><label>Poin Perluasan Jaringan</label><input type="number" min="0" max="2" step="0.5" placeholder="0" name="poin_perluasan_jaringan" id="f-poin-jaringan" onfocus="this.select()"></div>
                 </div>
             </div>
 
@@ -100,7 +121,7 @@
 
             <div class="edit-card">
                 <h3>Status Tahapan</h3>
-                <p class="hint">Klik "Selesai" untuk mencatat kunjungan hari ini. Klik ikon status di tabel utama untuk lihat riwayat lengkap tiap tahap.</p>
+                <p class="hint">Klik salah satu tahap untuk lihat riwayat &amp; tambah kunjungan baru.</p>
                 <div id="edit-status-tahapan" class="tahap-quick-list">
                     {{-- diisi lewat JS --}}
                 </div>
@@ -138,19 +159,22 @@ window.isiModalEdit = function (data) {
     document.getElementById('edit-subjudul').textContent = `TIKOR : ${p.tikor_lat}, ${p.tikor_lng} . ULP ${p.ulp}`;
 
     document.getElementById('f-lokasi').value = p.lokasi;
-    document.getElementById('f-ulp').value = p.ulp;
     document.getElementById('f-lat').value = p.tikor_lat;
     document.getElementById('f-lng').value = p.tikor_lng;
+
+    document.getElementById('f-ulp').value = p.ulp ?? '';
     document.getElementById('f-skema').value = p.skema ?? '';
 
-    document.getElementById('f-22kw').value = p.kebutuhan_22kw;
-    document.getElementById('f-30kw').value = p.kebutuhan_30kw;
-    document.getElementById('f-50kw').value = p.kebutuhan_50kw;
-    document.getElementById('f-60kw').value = p.kebutuhan_60kw;
-    document.getElementById('f-120kw').value = p.kebutuhan_120kw;
-    document.getElementById('f-180kw').value = p.kebutuhan_180kw;
+    // Field angka: 0/kosong ditampilkan kosong (placeholder "0") supaya
+    // user bisa langsung ketik tanpa perlu hapus angka 0 dulu.
+    document.getElementById('f-22kw').value = p.kebutuhan_22kw || '';
+    document.getElementById('f-30kw').value = p.kebutuhan_30kw || '';
+    document.getElementById('f-50kw').value = p.kebutuhan_50kw || '';
+    document.getElementById('f-60kw').value = p.kebutuhan_60kw || '';
+    document.getElementById('f-120kw').value = p.kebutuhan_120kw || '';
+    document.getElementById('f-180kw').value = p.kebutuhan_180kw || '';
     document.getElementById('f-mitra-mesin').value = p.mitra_mesin ?? '';
-    document.getElementById('f-poin-jaringan').value = p.poin_perluasan_jaringan ?? '';
+    document.getElementById('f-poin-jaringan').value = p.poin_perluasan_jaringan || '';
     document.getElementById('f-keterangan').value = p.keterangan ?? '';
 
     document.getElementById('f-fas-ruang-tunggu').value = p.fasilitas_ruang_tunggu ? '1' : '0';
@@ -169,31 +193,21 @@ window.isiModalEdit = function (data) {
 
     const list = document.getElementById('edit-status-tahapan');
     list.innerHTML = '';
-    const hariIni = new Date().toISOString().slice(0, 10);
 
     Object.entries(TAHAPAN_LABELS).forEach(([key, label], idx) => {
         const b = badges[key];
         const selesai = b.warna === 'hijau';
-        const row = document.createElement('div');
+        const row = document.createElement('button');
+        row.type = 'button';
         row.className = 'tahap-quick-row' + (selesai ? ' tahap-quick-done' : '');
+        row.style.cssText = 'width:100%; text-align:left; cursor:pointer; background:none; border:none; padding:0;';
+        row.onclick = () => bukaRiwayat(p.id, key, label);
         row.innerHTML = `
             <div class="tahap-quick-header">
                 <span class="tahap-quick-checkbox ${selesai ? 'checked' : ''}"></span>
                 <span class="tahap-quick-nomor">${idx + 1}.</span>
                 <span class="tahap-quick-label">${label}</span>
-                <button type="button" class="btn-selesai" onclick="tambahKunjunganCepat('${key}', this)">
-                    ${selesai ? 'Selesai' : 'Tandai Selesai'}
-                </button>
-            </div>
-            <div class="tahap-quick-body">
-                <div>
-                    <label>Tanggal</label>
-                    <input type="date" class="tq-tanggal" value="${hariIni}">
-                </div>
-                <div>
-                    <label>Catatan</label>
-                    <input type="text" class="tq-catatan" placeholder="Opsional">
-                </div>
+                <span class="badge-tahap-mini" style="margin-left:auto; font-size:11px; color:#64748b;">${b.label}</span>
             </div>
         `;
         list.appendChild(row);
@@ -203,23 +217,4 @@ window.isiModalEdit = function (data) {
 
     document.getElementById('modal-edit').showModal();
 };
-
-function tambahKunjunganCepat(tahapKey, btn) {
-    const row = btn.closest('.tahap-quick-row');
-    const tanggal = row.querySelector('.tq-tanggal').value;
-    const catatan = row.querySelector('.tq-catatan').value;
-
-    fetch(`/monitoring/probabilitas/${CURRENT_PROBABILITAS_ID}/tahapan`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({ tahap: tahapKey, tanggal, hasil: 'berhasil', catatan }),
-    })
-    .then(r => r.json())
-    .then(() => bukaEdit(CURRENT_PROBABILITAS_ID)) // reload data biar badge & progres update
-    .catch(err => alert('Gagal menyimpan kunjungan: ' + err));
-}
 </script>

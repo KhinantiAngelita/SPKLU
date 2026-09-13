@@ -36,6 +36,17 @@
 .fsd-back{display:inline-flex;align-items:center;gap:4px;color:#64748B;font-size:13px;text-decoration:none;margin-bottom:14px}
 .fsd-bep-caption{font-size:12.5px;color:#64748B;margin-top:10px}
 .fsd-bep-caption strong{color:#0EA5B7}
+
+/* Riwayat Analisis */
+.fsd-riwayat-item{position:relative;padding:0 0 20px 22px;border-left:2px solid #E2E8F0}
+.fsd-riwayat-item:last-child{border-left-color:transparent;padding-bottom:0}
+.fsd-riwayat-item::before{content:'';position:absolute;left:-6px;top:2px;width:10px;height:10px;border-radius:999px;background:#0EA5B7}
+.fsd-riwayat-tanggal{font-size:12px;color:#94A3B8;margin-bottom:4px}
+.fsd-riwayat-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.fsd-riwayat-badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px}
+.fsd-riwayat-poin{font-size:12.5px;color:#64748B}
+.fsd-riwayat-narasi{font-size:13px;color:#475569;line-height:1.5;margin:0}
+.fsd-riwayat-empty{font-size:13px;color:#94A3B8;font-style:italic}
 </style>
 @endpush
 
@@ -86,6 +97,32 @@
                 <i data-lucide="alert-circle"></i> Status Kelayakan: {{ $fsSkema->status_kelayakan }}
             </div>
         </div>
+
+        {{-- RIWAYAT ANALISIS: log snapshot tiap kali FS Skema ini dibuat/dihitung ulang --}}
+        <div class="fsd-card" style="margin-bottom:0">
+            <h3>Riwayat Analisis</h3>
+
+            @if ($riwayatAnalisis->isEmpty())
+                <p class="fsd-riwayat-empty">Belum ada riwayat perhitungan untuk FS Skema ini.</p>
+            @else
+                @foreach ($riwayatAnalisis as $riwayat)
+                    <div class="fsd-riwayat-item">
+                        <div class="fsd-riwayat-tanggal">{{ $riwayat->created_at->translatedFormat('d M Y, H:i') }} WIB
+                            @if ($riwayat->pencatat) &middot; oleh {{ $riwayat->pencatat->name }} @endif
+                        </div>
+                        <div class="fsd-riwayat-head">
+                            <span class="fsd-riwayat-badge fsd-status-{{ $riwayat->status_kelayakan === 'Layak' ? 'hijau' : ($riwayat->status_kelayakan === 'Menjadi Pertimbangan' ? 'kuning' : 'merah') }}">
+                                {{ $riwayat->status_kelayakan }}
+                            </span>
+                            <span class="fsd-riwayat-poin">Total Poin: {{ $riwayat->total_poin }}/100 (Fasilitas {{ $riwayat->poin_fasilitas }}, Jaringan {{ $riwayat->poin_kesiapan_jaringan }}, Okupansi {{ $riwayat->poin_okupansi }})</span>
+                        </div>
+                        @if ($riwayat->narasi_analisis)
+                            <p class="fsd-riwayat-narasi">{{ $riwayat->narasi_analisis }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            @endif
+        </div>
     </div>
 
     {{-- KOLOM KANAN --}}
@@ -97,24 +134,22 @@
             @else
                 <table class="fsd-mini-table">
                     <thead>
-                        <tr><th>Nama SPKLU</th><th>Kapasitas</th><th>Jarak</th><th>Status Jarak</th><th>Rata² Transaksi kWh/bulan</th></tr>
+                        <tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr>
                     </thead>
                     <tbody>
                         @foreach ($spkluTerdekat as $s)
                             <tr>
                                 <td>{{ $s['nama'] }}</td>
-                                <td>{{ $s['kapasitas_kw'] ?? '—' }} kW</td>
                                 <td>{{ number_format($s['jarak_km'], 2) }} km</td>
                                 <td>
                                     @if ($s['status_jarak'] === 'Bagus')
                                         <span class="fsd-jarak-bagus">Bagus</span>
-                                    @elseif ($s['status_jarak'] === 'Tidak Bagus (berisiko kanibalisasi)')
+                                    @elseif (str_contains($s['status_jarak'], 'kanibalisasi'))
                                         <span class="fsd-jarak-risiko">Berisiko Kanibalisasi</span>
                                     @else
-                                        <span class="fsd-jarak-belum">Jarak ideal ULP belum diatur</span>
+                                        <span class="fsd-jarak-belum">{{ $s['status_jarak'] }}</span>
                                     @endif
                                 </td>
-                                <td>{{ number_format($s['rata_rata_transaksi_kwh_bulan'], 0, ',', '.') }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -176,7 +211,7 @@
         </div>
 
         <div class="fsd-card" style="margin-bottom:0">
-            <div class="fsd-narasi-title"><i data-lucide="sparkles"></i> Ringkasan Analisis</div>
+            <div class="fsd-narasi-title"><i data-lucide="sparkles"></i> Ringkasan Analisis Terkini</div>
             <p class="fsd-narasi">{{ $fsSkema->narasi_analisis }}</p>
         </div>
     </div>

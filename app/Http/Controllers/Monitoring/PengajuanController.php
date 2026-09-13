@@ -12,7 +12,9 @@ class PengajuanController extends Controller
 {
     public function index(Request $request)
     {
-        $semua = Probabilitas::with('riwayatTahapan')->orderBy('lokasi')->get();
+        $semua = Probabilitas::with('riwayatTahapan')
+            ->orderBy('lokasi')
+            ->get();
 
         $kolom = [
             'belum_mulai' => collect(),
@@ -33,14 +35,23 @@ class PengajuanController extends Controller
     }
 
     /**
-     * Eksekusi validasi integrasi: lokasi Probabilitas yang sudah tuntas 11 tahap
-     * dipindahkan resmi menjadi record baru di Master SPKLU (status langsung "aktif",
-     * sesuai keputusan sebelumnya — tanpa lewat validasi 2-tahap Super Admin lagi).
+     * Eksekusi validasi integrasi:
+     * lokasi Probabilitas yang sudah tuntas 11 tahap
+     * dipindahkan resmi menjadi record baru di Master SPKLU.
      */
     public function validasi(Request $request, Probabilitas $probabilitas)
     {
-        abort_if($probabilitas->sudahDivalidasi(), 400, 'Lokasi ini sudah pernah divalidasi sebelumnya.');
-        abort_unless($probabilitas->statusKanban() === 'selesai_integrasi', 400, 'Lokasi ini belum menyelesaikan tahap Integrasi.');
+        abort_if(
+            $probabilitas->sudahDivalidasi(),
+            400,
+            'Lokasi ini sudah pernah divalidasi sebelumnya.'
+        );
+
+        abort_unless(
+            $probabilitas->statusKanban() === 'selesai_integrasi',
+            400,
+            'Lokasi ini belum menyelesaikan tahap Integrasi.'
+        );
 
         $validated = $request->validate([
             'ulp_mapping_id' => 'required|exists:ulp_mappings,id',
@@ -54,7 +65,14 @@ class PengajuanController extends Controller
 
         $spklu = Spklu::create([
             ...$validated,
-            'id_spklu' => 'SPKLU-' . str_pad((string) $nomorUrut, 3, '0', STR_PAD_LEFT),
+
+            'id_spklu' => 'SPKLU-' . str_pad(
+                (string) $nomorUrut,
+                3,
+                '0',
+                STR_PAD_LEFT
+            ),
+
             'nama' => $probabilitas->lokasi,
             'latitude' => $probabilitas->tikor_lat,
             'longitude' => $probabilitas->tikor_lng,
@@ -69,6 +87,9 @@ class PengajuanController extends Controller
             'divalidasi_oleh' => $request->user()->id,
         ]);
 
-        return back()->with('success', "\"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi masuk Master SPKLU.");
+        return back()->with(
+            'success',
+            "\"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi masuk Master SPKLU."
+        );
     }
 }

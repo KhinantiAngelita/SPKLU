@@ -6,14 +6,19 @@
 @section('content')
 
 <style>
+    /* Header halaman */
     .pgj-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
     .pgj-page-subtitle { color:#64748B; margin:0; font-size:13.5px; }
+
+    /* Tombol */
     .pgj-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:9px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; transition:all .15s ease; text-decoration:none; }
     .pgj-btn svg { width:15px; height:15px; stroke-width:2.1; }
     .pgj-btn-primary { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
     .pgj-btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.32); }
     .pgj-btn-disabled { background:#eef1f5; color:#94a3b8; cursor:not-allowed; }
     .pgj-btn-disabled:hover { transform:none; }
+
+    /* Board & kolom kanban */
     .pgj-board { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; align-items:start; }
     .pgj-col { background:#f6f8fa; border-radius:16px; overflow:hidden; border:1px solid #eef1f5; }
     .pgj-col-head { padding:14px 18px; display:flex; align-items:center; justify-content:space-between; color:#fff; font-weight:700; font-size:14px; }
@@ -24,6 +29,8 @@
     .pgj-col-body { padding:14px; display:flex; flex-direction:column; gap:10px; max-height:640px; overflow-y:auto; }
     .pgj-col-body::-webkit-scrollbar { width:5px; }
     .pgj-col-body::-webkit-scrollbar-thumb { background:#dbe1e8; border-radius:4px; }
+
+    /* Kartu kandidat */
     .pgj-card { background:#fff; border-radius:12px; padding:14px 16px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; }
     .pgj-card-title { font-size:13.8px; font-weight:700; color:#0f172a; margin:0 0 2px; padding-right:70px; }
     .pgj-card-ulp { font-size:11.5px; color:#94a3b8; margin:0 0 10px; }
@@ -63,12 +70,18 @@
 
     @if (Route::has('monitoring.kandidat-baru.create'))
         <a href="{{ route('monitoring.kandidat-baru.create') }}" class="pgj-btn pgj-btn-primary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
             Tambah Kandidat Baru
         </a>
     @else
         <button type="button" class="pgj-btn pgj-btn-disabled" disabled title="Menunggu fitur Kandidat Baru selesai dibuat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
             Tambah Kandidat Baru
         </button>
     @endif
@@ -130,6 +143,7 @@
 
         <form method="POST" id="form-validasi">
             @csrf
+
             <div class="val-modal-body">
                 <label>Nama Lokasi</label>
                 <input type="text" id="val-nama-display" disabled style="background:#f8fafc; color:#64748B;">
@@ -182,27 +196,28 @@
 </div>
 
 <script>
-function bukaModalValidasi(id, lokasi, ulpAsli, estimasiKw, estimasiNozzle) {
-    document.getElementById('form-validasi').action = `/monitoring/pengajuan/${id}/validasi`;
-    document.getElementById('val-subjudul').textContent = `Lengkapi data teknis "${lokasi}" sebelum masuk Master SPKLU`;
-    document.getElementById('val-nama-display').value = lokasi;
-    document.getElementById('val-kw').value = estimasiKw;
-    document.getElementById('val-nozzle').value = estimasiNozzle > 0 ? estimasiNozzle : 1;
+    function bukaModalValidasi(id, lokasi, ulpAsli, estimasiKw, estimasiNozzle) {
+        document.getElementById('form-validasi').action = `/monitoring/pengajuan/${id}/validasi`;
+        document.getElementById('val-subjudul').textContent = `Lengkapi data teknis "${lokasi}" sebelum masuk Master SPKLU`;
+        document.getElementById('val-nama-display').value = lokasi;
+        document.getElementById('val-kw').value = estimasiKw;
+        document.getElementById('val-nozzle').value = estimasiNozzle > 0 ? estimasiNozzle : 1;
 
-    // Coba cocokkan ULP otomatis (case-insensitive, partial match)
-    const ulpSelect = document.getElementById('val-ulp');
-    ulpSelect.value = '';
-    const target = ulpAsli.toLowerCase();
-    for (const opt of ulpSelect.options) {
-        const namaOpt = opt.dataset.nama || '';
-        if (namaOpt && (namaOpt.includes(target) || target.includes(namaOpt))) {
-            ulpSelect.value = opt.value;
-            break;
+        // Coba cocokkan ULP otomatis (case-insensitive, partial match)
+        const ulpSelect = document.getElementById('val-ulp');
+        ulpSelect.value = '';
+
+        const target = ulpAsli.toLowerCase();
+        for (const opt of ulpSelect.options) {
+            const namaOpt = opt.dataset.nama || '';
+            if (namaOpt && (namaOpt.includes(target) || target.includes(namaOpt))) {
+                ulpSelect.value = opt.value;
+                break;
+            }
         }
-    }
 
-    document.getElementById('modal-validasi').classList.add('show');
-}
+        document.getElementById('modal-validasi').classList.add('show');
+    }
 </script>
 
 @endsection

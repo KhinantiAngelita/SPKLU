@@ -24,7 +24,7 @@ class FsSkemaCalculatorService
     /** Growth rate mobil/hari per tahun — TETAP sesuai dokumen FS, bukan input user. */
     protected const GROWTH_RATE_TAHUNAN = 0.10;
 
-    /** Potongan tetap PLN dari total keuntungan (Skema 3) — TETAP, tidak ditampilkan ke user. */
+    /** Potongan tetap PLN dari total keuntungan (Skema 3) — TETAP, dikonfirmasi 2%, tidak ditampilkan ke user. */
     protected const POTONGAN_PLN = 0.02;
 
     public function hitungPoinFasilitas(array $fasilitas): int
@@ -60,8 +60,8 @@ class FsSkemaCalculatorService
     }
 
     /**
-     * NOTE: ambang batas masih ASUMSI SEMENTARA (lihat dokumentasi) — Excel cuma
-     * kasih 2 contoh yang dua-duanya "Menjadi Pertimbangan" (85 & 75).
+     * NOTE: ambang batas masih ASUMSI SEMENTARA — Excel cuma kasih 2 contoh yang
+     * dua-duanya "Menjadi Pertimbangan" (85 & 75). Perlu dikonfirmasi ke pemilik proses.
      */
     public function tentukanStatusKelayakan(int $totalPoin): string
     {
@@ -70,62 +70,6 @@ class FsSkemaCalculatorService
             $totalPoin >= 60 => 'Menjadi Pertimbangan',
             default => 'Tidak Layak',
         };
-    }
-
-    /**
-     * Jarak antar 2 koordinat (km) — formula Haversine.
-     */
-    public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
-    {
-        $radiusBumiKm = 6371;
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLng = deg2rad($lng2 - $lng1);
-
-        $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $radiusBumiKm * $c;
-    }
-
-    /**
-     * 3 SPKLU terdekat dari koordinat yang diinput, lengkap status jarak
-     * (dibanding "Jarak Ideal" ULP tempat SPKLU itu berada) dan rata-rata
-     * transaksi kWh/bulan historis.
-     *
-     * @return array<int, array{nama:string, jarak_km:float, kapasitas_kw:float|null, status_jarak:string, rata_rata_transaksi_kwh_bulan:float}>
-     */
-    public function cari3SpkluTerdekat(float $lat, float $lng): array
-    {
-        $semuaSpklu = Spklu::aktif()->with('ulp')->whereNotNull('latitude')->whereNotNull('longitude')->get();
-
-        $denganJarak = $semuaSpklu->map(function ($spklu) use ($lat, $lng) {
-            $jarak = $this->hitungJarakKm($lat, $lng, (float) $spklu->latitude, (float) $spklu->longitude);
-
-            $jarakIdeal = $spklu->ulp->jarak_ideal_km ?? null;
-            $statusJarak = $jarakIdeal !== null
-                ? ($jarak < $jarakIdeal ? 'Tidak Bagus (berisiko kanibalisasi)' : 'Bagus')
-                : 'Jarak ideal ULP belum diatur';
-
-            $rataRataKwh = Transaksi::where('spklu_id', $spklu->id)
-                ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(energi_kwh) as total")
-                ->groupBy('bulan')
-                ->get();
-
-            $rataRataTransaksiKwhBulan = $rataRataKwh->isNotEmpty()
-                ? round($rataRataKwh->avg('total'), 2)
-                : 0.0;
-
-            return [
-                'nama' => $spklu->nama,
-                'jarak_km' => round($jarak, 3),
-                'kapasitas_kw' => $spklu->kw,
-                'status_jarak' => $statusJarak,
-                'rata_rata_transaksi_kwh_bulan' => $rataRataTransaksiKwhBulan,
-            ];
-        });
-
-        return $denganJarak->sortBy('jarak_km')->take(3)->values()->all();
     }
 
     /**
@@ -252,5 +196,67 @@ class FsSkemaCalculatorService
         }
 
         return null; // belum BEP dalam 5 tahun proyeksi
+    }
+
+    /**
+     * [TIDAK DIPAKAI SEJAK keputusan "3 SPKLU Terdekat numpang baca dari modul Kandidat"]
+     * Dulu dipakai FsSkemaController::show() untuk hitung jarak sendiri, tapi diputuskan
+     * pindah sumber data ke modul Kandidat (pakai Google Distance Matrix API — jarak rute
+     * kendaraan asli, bukan garis lurus). Method ini DISIMPAN cuma sebagai referensi/
+     * fallback darurat — JANGAN dipanggil dari alur aktif manapun sampai ada keputusan
+     * baru untuk mengaktifkannya lagi.
+     */
+    public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $radiusBumiKm = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+
+        $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $radiusBumiKm * $c;
+    }
+
+    /**
+     * [TIDAK DIPAKAI SEJAK keputusan "3 SPKLU Terdekat numpang baca dari modul Kandidat"]
+     * Lihat catatan di hitungJarakKm(). Disimpan utuh cuma buat referensi/fallback darurat.
+     *
+     * @return array<int, array{nama:string, latitude:float, longitude:float, jarak_km:float, kapasitas_kw:float|null, status_jarak:string, rata_rata_transaksi_kwh_bulan:float}>
+     */
+    public function cari3SpkluTerdekat(float $lat, float $lng): array
+    {
+        $semuaSpklu = Spklu::aktif()->with('ulp')->whereNotNull('latitude')->whereNotNull('longitude')->get();
+
+        $denganJarak = $semuaSpklu->map(function ($spklu) use ($lat, $lng) {
+            $jarak = $this->hitungJarakKm($lat, $lng, (float) $spklu->latitude, (float) $spklu->longitude);
+
+            $jarakIdeal = $spklu->ulp->jarak_ideal_km ?? null;
+            $statusJarak = $jarakIdeal !== null
+                ? ($jarak < $jarakIdeal ? 'Tidak Bagus (berisiko kanibalisasi)' : 'Bagus')
+                : 'Jarak ideal ULP belum diatur';
+
+            $rataRataKwh = Transaksi::where('spklu_id', $spklu->id)
+                ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(energi_kwh) as total")
+                ->groupBy('bulan')
+                ->get();
+
+            $rataRataTransaksiKwhBulan = $rataRataKwh->isNotEmpty()
+                ? round($rataRataKwh->avg('total'), 2)
+                : 0.0;
+
+            return [
+                'nama' => $spklu->nama,
+                'latitude' => (float) $spklu->latitude,
+                'longitude' => (float) $spklu->longitude,
+                'jarak_km' => round($jarak, 3),
+                'kapasitas_kw' => $spklu->kw,
+                'status_jarak' => $statusJarak,
+                'rata_rata_transaksi_kwh_bulan' => $rataRataTransaksiKwhBulan,
+            ];
+        });
+
+        return $denganJarak->sortBy('jarak_km')->take(3)->values()->all();
     }
 }

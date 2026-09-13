@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumb', 'FS Skema')
-@section('page-title', 'Tambah FS Skema')
+@section('page-title', 'Edit FS Skema')
 
 @push('styles')
 <style>
@@ -18,7 +18,7 @@
 .fsf-tab input{position:absolute;opacity:0;cursor:pointer}
 .fsf-tab span{display:block;padding:8px 22px;border-radius:8px;font-size:14px;font-weight:600;color:#64748B;cursor:pointer}
 .fsf-tab input:checked + span{background:#fff;color:#0EA5B7;box-shadow:0 1px 2px rgba(15,23,42,.08)}
-.fsf-section-title{font-size:15px;font-weight:700;color:#0F172A;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0EA5B7}
+.fsf-section-title{font-size:15px;font-weight:700;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0EA5B7}
 .fsf-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
 .fsf-field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
 .fsf-field input,.fsf-field select,.fsf-field textarea{width:100%;padding:10px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;color:#0F172A}
@@ -35,7 +35,6 @@
 .fsf-btn-primary{padding:10px 22px;border-radius:8px;border:none;background:#0EA5B7;color:#fff;font-weight:600;font-size:14px;cursor:pointer}
 .fsf-skema3-only{display:none}
 
-/* Panel kanan (live preview) */
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
 .fsp-card-header{background:#E0F7FA;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
 .fsp-card-body{padding:18px 20px}
@@ -61,15 +60,15 @@
 
 @section('content')
 <div class="fsf-header">
-    <h1>Tambah FS Skema</h1>
-    <p>Hitung kelayakan lokasi SPKLU baru</p>
+    <h1>Edit FS Skema</h1>
+    <p>{{ $fsSkema->nama_lokasi }}</p>
 </div>
 
 <div class="fsf-wrap">
-    {{-- KOLOM KIRI: FORM --}}
     <div class="fsf-card">
-        <form method="POST" action="{{ route('fs-skema.store') }}" id="form-fs-skema">
+        <form method="POST" action="{{ route('fs-skema.update', $fsSkema) }}" id="form-fs-skema">
             @csrf
+            @method('PUT')
 
             @if ($errors->any())
                 <div class="fsf-alert-error">
@@ -84,11 +83,11 @@
 
             <div class="fsf-tabs">
                 <label class="fsf-tab">
-                    <input type="radio" name="skema" value="skema_2" @checked(old('skema', 'skema_2') === 'skema_2') data-preview-trigger>
+                    <input type="radio" name="skema" value="skema_2" @checked(old('skema', $fsSkema->skema) === 'skema_2') data-preview-trigger>
                     <span>Skema 2</span>
                 </label>
                 <label class="fsf-tab">
-                    <input type="radio" name="skema" value="skema_3" @checked(old('skema') === 'skema_3') data-preview-trigger>
+                    <input type="radio" name="skema" value="skema_3" @checked(old('skema', $fsSkema->skema) === 'skema_3') data-preview-trigger>
                     <span>Skema 3</span>
                 </label>
             </div>
@@ -96,11 +95,11 @@
             <div class="fsf-row">
                 <div class="fsf-field">
                     <label>Nama Tempat/Lokasi (Nama SPKLU)</label>
-                    <input type="text" name="nama_lokasi" value="{{ old('nama_lokasi') }}" placeholder="Masukan nama lengkap" required>
+                    <input type="text" name="nama_lokasi" value="{{ old('nama_lokasi', $fsSkema->nama_lokasi) }}" required>
                 </div>
                 <div class="fsf-field">
                     <label>Titik Kordinat</label>
-                    <input type="text" name="titik_koordinat" value="{{ old('titik_koordinat') }}" placeholder="-6.1944, 106.8318" data-preview-trigger>
+                    <input type="text" name="titik_koordinat" value="{{ old('titik_koordinat', $fsSkema->titik_koordinat) }}" placeholder="-6.1944, 106.8318" data-preview-trigger>
                     <p class="fsf-hint">Format: lat, lng — dipakai buat hitung 3 SPKLU terdekat</p>
                 </div>
             </div>
@@ -111,7 +110,7 @@
                     <select name="kandidat_id">
                         <option value="">Tidak terhubung ke kandidat</option>
                         @foreach ($kandidatList as $k)
-                            <option value="{{ $k->id }}" @selected(old('kandidat_id') == $k->id)>
+                            <option value="{{ $k->id }}" @selected(old('kandidat_id', $fsSkema->kandidat_id) == $k->id)>
                                 {{ $k->nama_lokasi ?? $k->lokasi }}
                             </option>
                         @endforeach
@@ -121,44 +120,42 @@
                     <label>Layanan Listrik</label>
                     <select name="layanan_listrik" data-preview-trigger>
                         <option value="">Pilih jenis layanan...</option>
-                        <option value="TM" @selected(old('layanan_listrik') === 'TM')>TM</option>
-                        <option value="TR" @selected(old('layanan_listrik') === 'TR')>TR</option>
-                        <option value="LTR" @selected(old('layanan_listrik') === 'LTR')>LTR</option>
+                        <option value="TM" @selected(old('layanan_listrik', $fsSkema->layanan_listrik) === 'TM')>TM</option>
+                        <option value="TR" @selected(old('layanan_listrik', $fsSkema->layanan_listrik) === 'TR')>TR</option>
+                        <option value="LTR" @selected(old('layanan_listrik', $fsSkema->layanan_listrik) === 'LTR')>LTR</option>
                     </select>
                 </div>
             </div>
 
-            {{-- SKEMA 2 --}}
             <div id="blok-skema-2">
                 <div class="fsf-row">
                     <div class="fsf-field">
                         <label>Total RAB Investasi (Rp)</label>
-                        <input type="number" step="0.01" name="total_rab_investasi" value="{{ old('total_rab_investasi') }}" placeholder="Masukan Total RAB" data-preview-trigger>
+                        <input type="number" step="0.01" name="total_rab_investasi" value="{{ old('total_rab_investasi', $fsSkema->total_rab_investasi) }}" data-preview-trigger>
                     </div>
                     <div class="fsf-field">
                         <label>Mobil/hari</label>
-                        <input type="number" name="mobil_per_hari" value="{{ old('mobil_per_hari') }}" placeholder="Masukan asumsi mobil per hari" required data-preview-trigger>
+                        <input type="number" name="mobil_per_hari" value="{{ old('mobil_per_hari', $fsSkema->mobil_per_hari) }}" required data-preview-trigger>
                     </div>
                 </div>
             </div>
 
-            {{-- SKEMA 3 --}}
             <div id="blok-skema-3" class="fsf-skema3-only">
                 <div class="fsf-row">
                     <div class="fsf-field">
                         <label>RAB Mitra Mesin (Rp)</label>
-                        <input type="number" step="0.01" name="rab_mitra_mesin" value="{{ old('rab_mitra_mesin') }}" placeholder="Masukan RAB Mitra Mesin" data-preview-trigger>
+                        <input type="number" step="0.01" name="rab_mitra_mesin" value="{{ old('rab_mitra_mesin', $fsSkema->rab_mitra_mesin) }}" data-preview-trigger>
                     </div>
                     <div class="fsf-field">
                         <label>RAB Mitra Lahan (Rp)</label>
-                        <input type="number" step="0.01" name="rab_mitra_lahan" value="{{ old('rab_mitra_lahan') }}" placeholder="Masukan RAB Mitra Lahan" data-preview-trigger>
+                        <input type="number" step="0.01" name="rab_mitra_lahan" value="{{ old('rab_mitra_lahan', $fsSkema->rab_mitra_lahan) }}" data-preview-trigger>
                     </div>
                 </div>
                 <div class="fsf-row">
                     <div class="fsf-field">
                         <label>Sharing Profit Mitra Lahan</label>
-                        <input type="number" step="0.01" min="0" max="1" name="sharing_provit_mitra_lahan" value="{{ old('sharing_provit_mitra_lahan', 0.10) }}" placeholder="0.10" data-preview-trigger>
-                        <p class="fsf-hint">Nilai 0–1 (contoh 0.10 = 10%). Default 10% jika dikosongkan.</p>
+                        <input type="number" step="0.01" min="0" max="1" name="sharing_provit_mitra_lahan" value="{{ old('sharing_provit_mitra_lahan', $fsSkema->sharing_provit_mitra_lahan ?? 0.10) }}" data-preview-trigger>
+                        <p class="fsf-hint">Nilai 0–1 (contoh 0.10 = 10%).</p>
                     </div>
                     <div></div>
                 </div>
@@ -167,7 +164,7 @@
             <div class="fsf-row" id="row-mobil-skema3" style="display:none">
                 <div class="fsf-field">
                     <label>Mobil/hari</label>
-                    <input type="number" name="mobil_per_hari_skema3" value="" placeholder="Masukan asumsi mobil per hari" data-preview-trigger>
+                    <input type="number" name="mobil_per_hari_skema3" value="" data-preview-trigger>
                 </div>
                 <div></div>
             </div>
@@ -175,7 +172,7 @@
             <div class="fsf-row">
                 <div class="fsf-field">
                     <label>Transaksi kWh/Mobil</label>
-                    <input type="number" step="0.01" name="transaksi_kwh_per_mobil" value="{{ old('transaksi_kwh_per_mobil') }}" placeholder="Masukan Transaksi kWh/mobil" required data-preview-trigger>
+                    <input type="number" step="0.01" name="transaksi_kwh_per_mobil" value="{{ old('transaksi_kwh_per_mobil', $fsSkema->transaksi_kwh_per_mobil) }}" required data-preview-trigger>
                 </div>
                 <div></div>
             </div>
@@ -184,9 +181,10 @@
 
             <label class="fsf-label-group">Fasilitas (maks 40 poin)</label>
             <div class="fsf-chip-group">
+                @php $fasilitasLama = old('fasilitas', $fsSkema->fasilitas ?? []); @endphp
                 @foreach (['toilet' => 'Toilet', 'ruang_tunggu' => 'Ruang Tunggu', 'parkir' => 'Parkir', 'kafetaria' => 'Kafetaria'] as $val => $label)
                     <label class="fsf-chip">
-                        <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, old('fasilitas', []))) data-preview-trigger>
+                        <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, $fasilitasLama)) data-preview-trigger>
                         <span>{{ $label }}</span>
                     </label>
                 @endforeach
@@ -194,36 +192,34 @@
 
             <div class="fsf-field" style="margin-bottom:18px">
                 <label>Kesiapan Jaringan (maks 20 poin)</label>
-                <input type="text" name="kesiapan_jaringan" value="{{ old('kesiapan_jaringan') }}" placeholder="Masukan status jaringan" data-preview-trigger>
+                <input type="text" name="kesiapan_jaringan" value="{{ old('kesiapan_jaringan', $fsSkema->kesiapan_jaringan) }}" data-preview-trigger>
             </div>
 
             <label class="fsf-label-group">Okupansi (maks 40 poin)</label>
             <div class="fsf-chip-group">
+                @php $okupansiLama = old('okupansi', $fsSkema->okupansi ?? []); @endphp
                 @foreach (['dekat_perumahan' => 'Dekat Perumahan', 'pintu_tol' => 'Pintu Tol', 'pusat_keramaian' => 'Pusat Keramaian', 'ruas_jalan_protokol' => 'Ruas Jalan Protokol'] as $val => $label)
                     <label class="fsf-chip">
-                        <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, old('okupansi', []))) data-preview-trigger>
+                        <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, $okupansiLama)) data-preview-trigger>
                         <span>{{ $label }}</span>
                     </label>
                 @endforeach
             </div>
 
             <div class="fsf-actions">
-                <a href="{{ route('fs-skema.index') }}" class="fsf-btn-outline">Batal</a>
-                <button type="submit" class="fsf-btn-primary">Simpan</button>
+                <a href="{{ route('fs-skema.show', $fsSkema) }}" class="fsf-btn-outline">Batal</a>
+                <button type="submit" class="fsf-btn-primary">Simpan Perubahan</button>
             </div>
         </form>
     </div>
 
-    {{-- KOLOM KANAN: LIVE PREVIEW --}}
     <div>
         <div class="fsp-card">
             <div class="fsp-card-header">3 SPKLU Terdekat <span id="fsp-loading-spklu" class="fsp-loading" style="display:none">memuat…</span></div>
             <div class="fsp-card-body">
                 <div id="fsp-spklu-empty" class="fsp-empty">Isi Titik Kordinat untuk melihat SPKLU terdekat.</div>
                 <table class="fsp-table" id="fsp-spklu-table" style="display:none">
-                    <thead>
-                        <tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr>
-                    </thead>
+                    <thead><tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr></thead>
                     <tbody id="fsp-spklu-body"></tbody>
                 </table>
             </div>
@@ -300,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
     jalankanPreview();
 });
 
-// ===== LIVE PREVIEW (AJAX) =====
 const PREVIEW_URL = '{{ route('fs-skema.preview') }}';
 let timerPreview = null;
 
@@ -340,7 +335,7 @@ async function jalankanPreview() {
         renderRoi(data.proyeksi_roi);
         renderNarasi(data.narasi_analisis);
     } catch (e) {
-        // koneksi gagal — biarkan panel tetap menampilkan state terakhir
+        //
     } finally {
         document.getElementById('fsp-loading-spklu').style.display = 'none';
         document.getElementById('fsp-loading-roi').style.display = 'none';
