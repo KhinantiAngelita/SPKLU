@@ -10,7 +10,7 @@ class FsSkema extends Model
     protected $fillable = [
         'kandidat_id', 'skema', 'nama_lokasi', 'titik_koordinat',
         'total_rab_investasi', 'rab_mitra_mesin', 'rab_mitra_lahan', 'sharing_provit_mitra_lahan',
-        'mobil_per_hari', 'layanan_listrik', 'transaksi_kwh_per_mobil',
+        'mobil_per_hari', 'layanan_listrik', 'transaksi_kwh_per_mobil', 'masa_kontrak_tahun',
         'fasilitas', 'poin_fasilitas', 'kesiapan_jaringan', 'poin_kesiapan_jaringan',
         'okupansi', 'poin_okupansi', 'total_poin', 'status_kelayakan',
         'narasi_analisis', 'created_by',
@@ -24,6 +24,7 @@ class FsSkema extends Model
         'rab_mitra_lahan' => 'decimal:2',
         'sharing_provit_mitra_lahan' => 'decimal:4',
         'transaksi_kwh_per_mobil' => 'decimal:2',
+        'masa_kontrak_tahun' => 'integer',
     ];
 
     public function kandidat()
@@ -31,7 +32,6 @@ class FsSkema extends Model
         return $this->belongsTo(KandidatPrioritas::class, 'kandidat_id');
     }
 
-    // ⬇️ TAMBAHAN: ditaruh DI DALAM class, di antara method-method lain
     public function riwayat(): HasMany
     {
         return $this->hasMany(FsSkemaRiwayat::class);

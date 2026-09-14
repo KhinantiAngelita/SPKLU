@@ -76,6 +76,13 @@ return [
     ],
 
     [
+        'label' => 'Rekomendasi Lokasi',
+        'route' => 'rekomendasi-lokasi.index',
+        'icon'  => 'map-pin',
+        'roles' => ['super_admin', 'pemasaran', 'pengelola', 'manajemen'],
+    ],
+
+    [
         'label' => 'FS Skema',
         'route' => 'fs-skema.index',
         'icon'  => 'calculator',

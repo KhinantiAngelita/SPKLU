@@ -5,6 +5,8 @@
 
 @section('content')
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+
 <style>
     .up-page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
     .up-page-subtitle { color:#64748B; margin:4px 0 0; font-size:13.5px; }
@@ -108,14 +110,23 @@
 
     .up-modal-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.5); backdrop-filter:blur(2px); align-items:center; justify-content:center; z-index:50; }
     .up-modal-overlay.show { display:flex; }
-    .up-modal { background:#fff; border-radius:18px; padding:0; width:600px; max-width:92vw; box-shadow:0 24px 60px rgba(0,0,0,.25); max-height:90vh; overflow:hidden; display:flex; flex-direction:column; }
-    .up-modal-header { background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09)); padding:20px 24px; }
+    /* overflow:hidden DIHAPUS dari sini — itu yang bikin dropdown Choices.js kepotong/gak muncul.
+       Rounded corner dipindah ke header/footer supaya sudut modal tetap rapi tanpa overflow:hidden. */
+    .up-modal { background:#fff; border-radius:18px; padding:0; width:600px; max-width:92vw; box-shadow:0 24px 60px rgba(0,0,0,.25); max-height:90vh; display:flex; flex-direction:column; }
+    .up-modal-header { background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09)); padding:20px 24px; border-radius:18px 18px 0 0; }
     .up-modal-header h3 { margin:0 0 4px; font-size:16.5px; font-weight:800; color:#023E8A; }
     .up-modal-header p { margin:0; font-size:12.5px; color:#64748B; }
     .up-modal-body { padding:20px 24px; overflow-y:auto; }
-    .up-modal-footer { padding:16px 24px; border-top:1px solid #f1f5f9; }
+    .up-modal-footer { padding:16px 24px; border-top:1px solid #f1f5f9; border-radius:0 0 18px 18px; }
 
     .alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin-bottom:18px; }
+
+    /* Choices.js — samain tinggi & radius dengan dropdown lain di halaman ini */
+    .choices { margin-bottom:0; font-size:12.8px; }
+    .choices__inner { min-height:auto; padding:7px 10px; border-radius:7px; border:1px solid #e2e8f0; background:#fff; }
+    .up-alias-row .choices { flex:1; max-width:220px; }
+    .choices__list--dropdown { border-radius:8px; overflow:hidden; z-index:60; }
+    .choices__input { background:#fff; }
 </style>
 
 @error('file')
@@ -191,29 +202,32 @@
             </div>
             <div>
                 <h2>Nama SPKLU Belum Dipetakan ({{ $unmatchedList->count() }})</h2>
-                <p>Gabungan dari semua file — pakai ikon "Cocokkan Data" di tabel bawah untuk lihat per file spesifik.</p>
+                <p>Gabungan dari semua file. Pilih SPKLU untuk beberapa nama sekaligus, lalu klik "Simpan Semua" — gak perlu satu-satu.</p>
             </div>
         </div>
     </div>
     <div class="up-card-body">
-        @foreach ($unmatchedList as $item)
-            <form method="POST" action="{{ route('transaksi.alias.store') }}" class="up-alias-row">
-                @csrf
-                <input type="hidden" name="nama_asli" value="{{ $item->nama_asli }}">
-                <div class="up-alias-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <div id="alias-bulk-rows">
+            @foreach ($unmatchedList as $item)
+                <div class="up-alias-row" data-nama="{{ $item->nama_asli }}">
+                    <div class="up-alias-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <div class="up-alias-name">
+                        <strong>{{ $item->nama_asli }}</strong><br>
+                        <span style="color:#94a3b8; font-size:11.5px;">{{ number_format($item->jumlah_baris_total) }} baris (akumulasi)</span>
+                    </div>
+                    <select class="alias-searchable">
+                        <option value="">Pilih SPKLU yang benar...</option>
+                        @foreach ($spkluList as $s)<option value="{{ $s->id }}">{{ $s->nama }}</option>@endforeach
+                    </select>
                 </div>
-                <div class="up-alias-name">
-                    <strong>{{ $item->nama_asli }}</strong><br>
-                    <span style="color:#94a3b8; font-size:11.5px;">{{ number_format($item->jumlah_baris_total) }} baris (akumulasi)</span>
-                </div>
-                <select name="spklu_id" required>
-                    <option value="">Pilih SPKLU yang benar...</option>
-                    @foreach ($spkluList as $s)<option value="{{ $s->id }}">{{ $s->nama }}</option>@endforeach
-                </select>
-                <button type="submit" class="up-btn up-btn-primary" style="padding:7px 12px; font-size:12px;">Simpan</button>
-            </form>
-        @endforeach
+            @endforeach
+        </div>
+        <div style="margin-top:18px; display:flex; justify-content:flex-end; align-items:center; gap:12px;">
+            <span id="alias-bulk-info" style="font-size:12.5px; color:#94a3b8;"></span>
+            <button type="button" class="up-btn up-btn-primary" id="btn-simpan-alias-bulk">Simpan Semua yang Dipilih</button>
+        </div>
     </div>
 </div>
 @endif
@@ -226,7 +240,7 @@
             </div>
             <div>
                 <h2>Riwayat Upload</h2>
-                <p>Ikon kuning = masih ada nama belum cocok khusus dari file itu. Hapus riwayat akan ikut menghapus data transaksi terkait.</p>
+                <p>Ikon kuning = masih ada nama belum cocok khusus dari file itu. Ikon panah = upload ulang file ini (mengganti data lama dari riwayat ini). Hapus riwayat akan ikut menghapus data transaksi terkait.</p>
             </div>
         </div>
     </div>
@@ -290,6 +304,21 @@
                                             <span class="up-match-count">{{ $r->unresolvedUnmatched->count() }}</span>
                                         </button>
                                     @endif
+
+                                    @if ($r->path_file)
+                                        <button type="button" class="up-match-btn" title="Proses Ulang (pakai file yang sama, gak perlu pilih file lagi)" onclick="doReprocess({{ $r->id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+                                        </button>
+                                        <button type="button" class="up-match-btn" title="Ganti File (upload file lain untuk menggantikan)" onclick="triggerReupload({{ $r->id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        </button>
+                                    @else
+                                        <button type="button" class="up-match-btn" title="Upload Ulang File Ini (file asli sudah tidak tersimpan di server)" onclick="triggerReupload({{ $r->id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+                                        </button>
+                                    @endif
+                                    <input type="file" id="reupload-input-{{ $r->id }}" accept=".xlsx,.xls,.csv" style="display:none;" onchange="doReupload({{ $r->id }}, this)">
+
                                     <form method="POST" action="{{ route('transaksi.upload.destroy', $r) }}"
                                           data-confirm="Riwayat &quot;{{ $r->nama_file }}&quot; beserta SEMUA data transaksi dari file ini akan terhapus permanen dan tidak bisa dibatalkan."
                                           data-confirm-title="Hapus riwayat ini?"
@@ -327,16 +356,26 @@
             </div>
             <div>
                 <h2>Pemetaan Alias yang Sudah Selesai</h2>
-                <p>Otomatis dipakai untuk upload berikutnya.</p>
+                <p>Otomatis dipakai untuk upload berikutnya. Klik ikon pensil untuk ubah pemetaan.</p>
             </div>
         </div>
     </div>
     <div class="up-table-scroll">
         <table class="up-table" style="min-width:0;">
-            <thead><tr><th>Nama di File Sumber</th><th>Dipetakan ke SPKLU</th></tr></thead>
+            <thead><tr><th>Nama di File Sumber</th><th>Dipetakan ke SPKLU</th><th style="width:70px;">Aksi</th></tr></thead>
             <tbody>
                 @foreach ($aliasList as $alias)
-                    <tr><td>{{ $alias->nama_asli }}</td><td>{{ $alias->spklu->nama ?? '—' }}</td></tr>
+                    <tr data-alias-id="{{ $alias->id }}" data-alias-nama="{{ $alias->nama_asli }}" data-alias-spklu-id="{{ $alias->spklu_id }}">
+                        <td>{{ $alias->nama_asli }}</td>
+                        <td>{{ $alias->spklu->nama ?? '—' }}</td>
+                        <td>
+                            <div class="up-action-group">
+                                <button type="button" class="up-match-btn" title="Edit pemetaan" onclick="openEditAliasModal(this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -349,18 +388,46 @@
     <div class="up-modal">
         <div class="up-modal-header">
             <h3 id="modal-cocokkan-title">Cocokkan Data</h3>
-            <p>Nama SPKLU yang belum cocok, khusus dari file ini.</p>
+            <p>Nama SPKLU yang belum cocok, khusus dari file ini. Pilih beberapa sekaligus lalu simpan.</p>
         </div>
         <div class="up-modal-body">
             <div id="modal-cocokkan-list"></div>
         </div>
-        <div class="up-modal-footer">
-            <button type="button" class="up-btn" style="background:#fff; border:1px solid #e2e8f0; width:100%; justify-content:center;"
+        <div class="up-modal-footer" style="display:flex; gap:8px;">
+            <button type="button" class="up-btn" style="background:#fff; border:1px solid #e2e8f0; flex:1; justify-content:center;"
                     onclick="document.getElementById('modal-cocokkan').classList.remove('show')">Tutup</button>
+            <button type="button" class="up-btn up-btn-primary" style="flex:1; justify-content:center;" id="btn-simpan-modal-cocokkan">Simpan Semua yang Dipilih</button>
         </div>
     </div>
 </div>
 
+{{-- Modal Edit Pemetaan Alias --}}
+<div class="up-modal-overlay" id="modal-edit-alias">
+    <div class="up-modal" style="width:460px;">
+        <div class="up-modal-header">
+            <h3>Edit Pemetaan Alias</h3>
+            <p id="modal-edit-alias-subtitle">—</p>
+        </div>
+        <div class="up-modal-body">
+            <label style="display:block; font-size:12.5px; font-weight:600; color:#334155; margin-bottom:8px;">Dipetakan ke SPKLU</label>
+            <input type="text" id="modal-edit-alias-search" placeholder="Cari SPKLU..."
+                   style="width:100%; padding:9px 12px; border:1px solid #e2e8f0; border-radius:7px; font-size:12.8px; font-family:inherit; margin-bottom:8px; box-sizing:border-box;">
+            <select id="modal-edit-alias-select" size="6"
+                    style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:7px; font-size:12.8px; font-family:inherit; box-sizing:border-box;">
+                <option value="">Pilih SPKLU...</option>
+                @foreach ($spkluList as $s)<option value="{{ $s->id }}" data-nama="{{ strtolower($s->nama) }}">{{ $s->nama }}</option>@endforeach
+            </select>
+        </div>
+        <div class="up-modal-footer" style="display:flex; gap:8px;">
+            <button type="button" class="up-btn" style="background:#fff; border:1px solid #e2e8f0; flex:1; justify-content:center;"
+                    onclick="closeEditAliasModal()">Batal</button>
+            <button type="button" class="up-btn up-btn-primary" style="flex:1; justify-content:center;" id="btn-simpan-edit-alias">Simpan</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script>
 let fileQueue = [];
 
@@ -369,6 +436,22 @@ const dropzone = document.getElementById('dropzone-transaksi');
 const queueList = document.getElementById('file-queue-list');
 const btnSubmit = document.getElementById('btn-submit-upload');
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content ?? '{{ csrf_token() }}';
+
+// ===== Dropdown SPKLU searchable (Choices.js) — dipakai di card "Belum Dipetakan" & modal "Cocokkan Data" =====
+function initAliasChoices(scope) {
+    scope.querySelectorAll('select.alias-searchable').forEach(el => {
+        if (el.dataset.choicesInit) return;
+        el.dataset.choicesInit = '1';
+        new Choices(el, {
+            searchEnabled: true,
+            shouldSort: false,
+            itemSelectText: '',
+            placeholder: true,
+            searchPlaceholderValue: 'Cari SPKLU...',
+            noResultsText: 'SPKLU tidak ditemukan',
+        });
+    });
+}
 
 function formatBytes(bytes) {
     if (!bytes) return '';
@@ -549,6 +632,58 @@ function uploadOneFile(item) {
     });
 }
 
+// ===== Simpan alias sekaligus (bulk) — dipakai card "Belum Dipetakan" & modal "Cocokkan Data" =====
+async function submitAliasBulk(containerSelector, btn) {
+    const rows = document.querySelectorAll(`${containerSelector} .up-alias-row`);
+    const mappings = [];
+    rows.forEach(row => {
+        const select = row.querySelector('select.alias-searchable');
+        if (select && select.value) {
+            mappings.push({ nama_asli: row.dataset.nama, spklu_id: select.value });
+        }
+    });
+
+    if (mappings.length === 0) {
+        Swal.fire({ icon: 'info', title: 'Belum ada yang dipilih', text: 'Pilih SPKLU untuk minimal satu nama dulu.' });
+        return;
+    }
+
+    btn.disabled = true;
+    const teksAsli = btn.textContent;
+    btn.textContent = 'Menyimpan...';
+
+    try {
+        const res = await fetch('{{ route('transaksi.alias.bulk-store') }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+            body: JSON.stringify({ mappings }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            await Swal.fire({ icon: 'success', title: `${data.jumlah} pemetaan berhasil disimpan`, text: 'Halaman akan dimuat ulang.' });
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Gagal menyimpan');
+        }
+    } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Gagal menyimpan', text: e.message });
+        btn.disabled = false;
+        btn.textContent = teksAsli;
+    }
+}
+
+document.getElementById('btn-simpan-alias-bulk')?.addEventListener('click', function () {
+    submitAliasBulk('#alias-bulk-rows', this);
+});
+
+document.getElementById('btn-simpan-modal-cocokkan')?.addEventListener('click', function () {
+    submitAliasBulk('#modal-cocokkan-list', this);
+});
+
+// FIX: modal ditampilkan (classList.add('show')) DULU, baru Choices.js diinit
+// lewat requestAnimationFrame di frame berikutnya. Kalau Choices diinit saat
+// elemen masih display:none, ukurannya kehitung 0 dan dropdown-nya jadi
+// "rusak" (gak bisa diklik / opsi gak nongol) walau modal sudah kelihatan.
 function openMatchModal(btn) {
     const items = JSON.parse(btn.dataset.unmatched);
     const filename = btn.dataset.filename;
@@ -556,9 +691,7 @@ function openMatchModal(btn) {
     document.getElementById('modal-cocokkan-title').textContent = 'Cocokkan Data — ' + filename;
 
     document.getElementById('modal-cocokkan-list').innerHTML = items.map(item => `
-        <form method="POST" action="{{ route('transaksi.alias.store') }}" class="up-alias-row">
-            <input type="hidden" name="_token" value="${csrfToken}">
-            <input type="hidden" name="nama_asli" value="${item.nama}">
+        <div class="up-alias-row" data-nama="${item.nama}">
             <div class="up-alias-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </div>
@@ -566,16 +699,193 @@ function openMatchModal(btn) {
                 <strong>${item.nama}</strong><br>
                 <span style="color:#94a3b8; font-size:11.5px;">${item.jumlah.toLocaleString('id-ID')} baris di file ini</span>
             </div>
-            <select name="spklu_id" required>
+            <select class="alias-searchable">
                 <option value="">Pilih SPKLU yang benar...</option>
                 @foreach ($spkluList as $s)<option value="{{ $s->id }}">{{ $s->nama }}</option>@endforeach
             </select>
-            <button type="submit" class="up-btn up-btn-primary" style="padding:7px 12px; font-size:12px;">Simpan</button>
-        </form>
+        </div>
     `).join('');
 
     document.getElementById('modal-cocokkan').classList.add('show');
+
+    requestAnimationFrame(() => {
+        initAliasChoices(document.getElementById('modal-cocokkan-list'));
+    });
 }
+
+// ===== Edit alias — via modal =====
+// Sengaja PAKAI SELECT NATIVE (bukan Choices.js) untuk dropdown ini — supaya
+// gak ada lagi resiko masalah timing-init / z-index / overflow yang bikin
+// widget custom gak kepencet. Search-nya dibikin manual: input teks yang
+// nge-filter <option> dengan show/hide biasa.
+function openEditAliasModal(btn) {
+    const row = btn.closest('tr');
+    const aliasId = row.dataset.aliasId;
+    const namaAsli = row.dataset.aliasNama;
+    const spkluId = row.dataset.aliasSpkluId;
+
+    document.getElementById('modal-edit-alias-subtitle').textContent = namaAsli;
+
+    const select = document.getElementById('modal-edit-alias-select');
+    select.dataset.aliasId = aliasId;
+    select.value = spkluId || '';
+
+    const search = document.getElementById('modal-edit-alias-search');
+    search.value = '';
+    filterEditAliasOptions('');
+
+    document.getElementById('modal-edit-alias').classList.add('show');
+}
+
+function filterEditAliasOptions(keyword) {
+    const kw = keyword.trim().toLowerCase();
+    document.querySelectorAll('#modal-edit-alias-select option[data-nama]').forEach(opt => {
+        opt.hidden = kw !== '' && !opt.dataset.nama.includes(kw);
+    });
+}
+
+document.getElementById('modal-edit-alias-search')?.addEventListener('input', function () {
+    filterEditAliasOptions(this.value);
+});
+
+function closeEditAliasModal() {
+    document.getElementById('modal-edit-alias').classList.remove('show');
+}
+
+document.getElementById('btn-simpan-edit-alias')?.addEventListener('click', async function () {
+    const select = document.getElementById('modal-edit-alias-select');
+    const aliasId = select.dataset.aliasId;
+    const spkluId = select.value;
+
+    if (!spkluId) {
+        Swal.fire({ icon: 'info', title: 'Pilih SPKLU dulu' });
+        return;
+    }
+
+    const btn = this;
+    btn.disabled = true;
+    const teksAsli = btn.textContent;
+    btn.textContent = 'Menyimpan...';
+
+    try {
+        const res = await fetch(`/transaksi/alias/${aliasId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+            body: JSON.stringify({ spklu_id: spkluId }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Gagal menyimpan perubahan');
+        }
+    } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: e.message });
+        btn.disabled = false;
+        btn.textContent = teksAsli;
+    }
+});
+
+
+// ===== Proses ulang 1-klik: pakai file mentah yang sudah tersimpan di server =====
+// gak perlu pilih file lagi — cukup konfirmasi, server yang reprocess ulang
+// dari salinan file yang sama persis seperti waktu upload pertama.
+async function doReprocess(id) {
+    const konfirmasi = await Swal.fire({
+        icon: 'warning',
+        title: 'Proses ulang file ini?',
+        html: 'Data transaksi &amp; nama tidak cocok dari riwayat ini akan <b>dihapus dan diproses ulang</b> dari file yang sama persis seperti sebelumnya — cocok dipakai kalau ada alias baru yang perlu ikut diproses.',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, proses ulang',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#0081AB',
+    });
+
+    if (!konfirmasi.isConfirmed) return;
+
+    Swal.fire({
+        title: 'Memproses ulang...',
+        html: 'Jangan tutup atau refresh halaman ini selama proses berjalan.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+        const res = await fetch(`/transaksi/upload/${id}/reprocess`, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            await Swal.fire({ icon: 'success', title: 'Berhasil diproses ulang', text: data.message });
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Gagal memproses ulang');
+        }
+    } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: e.message });
+    }
+}
+
+// ===== Upload ulang file di riwayat (ganti dengan file lain) =====
+function triggerReupload(id) {
+    document.getElementById('reupload-input-' + id).click();
+}
+
+async function doReupload(id, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+
+    const konfirmasi = await Swal.fire({
+        icon: 'warning',
+        title: 'Upload ulang file ini?',
+        html: 'Data transaksi &amp; nama tidak cocok yang berasal dari riwayat ini akan <b>dihapus dan diganti</b> dengan hasil dari file baru.',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, upload ulang',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#0081AB',
+    });
+
+    if (!konfirmasi.isConfirmed) { inputEl.value = ''; return; }
+
+    Swal.fire({
+        title: 'Memproses ulang...',
+        html: 'Jangan tutup atau refresh halaman ini selama proses berjalan.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('_token', csrfToken);
+
+    try {
+        const res = await fetch(`/transaksi/upload/${id}/reupload`, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData,
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            await Swal.fire({ icon: 'success', title: 'Berhasil diupload ulang', text: data.message });
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Gagal memproses ulang');
+        }
+    } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Gagal', text: e.message });
+    } finally {
+        inputEl.value = '';
+    }
+}
+
+// Inisialisasi dropdown searchable yang udah ada di halaman saat load pertama
+// (card "Belum Dipetakan" — kalau ada). Modal "Cocokkan Data" diinit sendiri
+// saat dibuka (select-nya baru dibuat tiap kali lewat innerHTML). Modal
+// "Edit Pemetaan Alias" pakai select native, gak butuh Choices sama sekali.
+document.addEventListener('DOMContentLoaded', function () {
+    initAliasChoices(document);
+});
 </script>
 
 @endsection

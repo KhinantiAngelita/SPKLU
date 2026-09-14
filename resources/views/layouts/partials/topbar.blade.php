@@ -12,19 +12,13 @@
 
 <header class="topbar">
 
-    <div>
-        <p class="topbar-breadcrumb">@yield('breadcrumb', 'Menu')</p>
-        <h1 class="topbar-title">@yield('page-title', $title ?? 'Halaman')</h1>
+    <div class="topbar-search">
+        <i data-lucide="search"></i>
+        <input type="text" placeholder="Cari lokasi, SPKLU...">
+        <span class="topbar-search-kbd">⌘K</span>
     </div>
 
     <div class="topbar-actions">
-
-        <div class="topbar-search">
-            <i data-lucide="search"></i>
-            <input type="text" placeholder="Cari lokasi, SPKLU...">
-        </div>
-
-        <div class="topbar-divider"></div>
 
         {{-- Notifikasi --}}
         <div class="topbar-dropdown-wrap">
@@ -59,6 +53,8 @@
                 </div>
             </div>
         </div>
+
+        <div class="topbar-divider"></div>
 
         {{-- Profil user --}}
         <div class="topbar-dropdown-wrap">

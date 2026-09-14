@@ -1,21 +1,22 @@
 .kp-wrap{
-            --kp-blue-dark:#1d4ed8;
-            --kp-blue-soft:#eff6ff;
+            --kp-blue-dark:#023E8A;
+            --kp-blue:#0081AB;
+            --kp-blue-soft:#E6F4F8;
 
-            --kp-green:#16a34a;
-            --kp-green-soft:#f0fdf4;
+            --kp-green:#2E9E5B;
+            --kp-green-soft:#EAF7EF;
 
-            --kp-amber:#d97706;
-            --kp-amber-soft:#fffbeb;
+            --kp-amber:#E8A317;
+            --kp-amber-soft:#FEF6E7;
 
-            --kp-rose:#e11d48;
-            --kp-rose-soft:#fff1f2;
+            --kp-rose:#C0392B;
+            --kp-rose-soft:#FDECEA;
 
             --kp-ink:#0f172a;
             --kp-sub:#64748b;
             --kp-border:#e2e8f0;
 
-            --kp-radius:12px;
+            --kp-radius:14px;
         }
 
         .kp-wrap h1{
@@ -133,7 +134,7 @@
 
 
         /* =========================================================
-           STRIP: TITLE + FILTER
+           STRIP: TITLE + FILTER — SOFT (gradient lembut, bukan putih polos)
         ========================================================= */
         .kp-strip{
             display:flex;
@@ -141,7 +142,7 @@
             justify-content:space-between;
             flex-wrap:wrap;
             gap:10px;
-            background:#fff;
+            background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
             border:1px solid var(--kp-border);
             border-radius:var(--kp-radius) var(--kp-radius) 0 0;
             padding:14px 18px;
@@ -150,7 +151,7 @@
         .kp-strip-title{
             font-size:15px;
             font-weight:700;
-            color:var(--kp-ink);
+            color:var(--kp-blue-dark);
         }
 
         .kp-filter-form{
@@ -165,14 +166,14 @@
             font-size:13px;
             min-width:220px;
             outline:none;
-            background:#f8fafc;
+            background:#fff;
             transition:border-color .15s ease, box-shadow .15s ease;
         }
 
         .kp-filter-form input[type="text"]:focus{
             border-color:var(--kp-blue);
             background:#fff;
-            box-shadow:0 0 0 3px rgba(37,99,235,.12);
+            box-shadow:0 0 0 3px rgba(0,129,171,.12);
         }
 
         .kp-filter-form select{
@@ -180,7 +181,7 @@
             border:1px solid var(--kp-border);
             border-radius:999px;
             font-size:13px;
-            background:#f8fafc;
+            background:#fff;
             color:var(--kp-ink);
             outline:none;
             cursor:pointer;
@@ -215,18 +216,20 @@
             border-spacing:0;
         }
 
+        /* Header tabel — SOFT: background lembut + teks abu gelap,
+           bukan lagi solid navy (#0b2a4a) + teks putih */
         .kp-table thead th{
             position:sticky;
             top:0;
-            background:#0b2a4a;
-            color:#e2e8f0;
+            background:#F7FAFD;
+            color:var(--kp-sub);
             font-size:11.5px;
             font-weight:700;
             text-transform:uppercase;
             letter-spacing:.03em;
             text-align:left;
             padding:12px;
-            border-bottom:1px solid #0b2a4a;
+            border-bottom:2px solid #E5E9F0;
             white-space:nowrap;
         }
 
@@ -247,7 +250,7 @@
         }
 
         .kp-table tbody tr.kp-attn:hover{
-            background:#fef3c7;
+            background:#fdf0d9;
         }
 
         .kp-table tbody tr:last-child td{
@@ -286,11 +289,11 @@
             box-shadow:3px 0 5px rgba(0,0,0,.04) !important;
         }
 
-        /* Header sticky */
+        /* Header sticky — samain soft-nya juga */
         .kp-table thead th:nth-child(1),
         .kp-table thead th:nth-child(2){
             z-index:4 !important;
-            background:#0b2a4a !important;
+            background:#F7FAFD !important;
         }
 
         /* Background sticky normal */
@@ -313,7 +316,7 @@
 
         .kp-table tbody tr.kp-attn:hover td:nth-child(1),
         .kp-table tbody tr.kp-attn:hover td:nth-child(2){
-            background:#fef3c7 !important;
+            background:#fdf0d9 !important;
         }
 
 
@@ -355,19 +358,19 @@
         .kp-badge-a{
             background:var(--kp-green-soft);
             color:var(--kp-green);
-            border:1px solid #bbf7d0;
+            border:1px solid rgba(46,158,91,.35);
         }
 
         .kp-badge-b{
             background:var(--kp-amber-soft);
             color:var(--kp-amber);
-            border:1px solid #fde68a;
+            border:1px solid rgba(232,163,23,.35);
         }
 
         .kp-badge-c{
             background:var(--kp-rose-soft);
             color:var(--kp-rose);
-            border:1px solid #fecdd3;
+            border:1px solid rgba(192,57,43,.35);
         }
 
 
@@ -533,17 +536,17 @@
             padding:9px 10px;
             border:none;
             border-radius:8px;
-            background:linear-gradient(135deg,#3b82f6,#2563eb);
+            background:linear-gradient(135deg,#023E8A,#0081AB);
             color:#fff;
             cursor:pointer;
             letter-spacing:.2px;
-            box-shadow:0 2px 6px rgba(37,99,235,.35);
+            box-shadow:0 2px 6px rgba(2,62,138,.35);
             transition:all .18s ease;
         }
 
         .kp-btn-input-jarak:hover{
-            background:linear-gradient(135deg,#2563eb,#1d4ed8);
-            box-shadow:0 4px 10px rgba(37,99,235,.45);
+            background:linear-gradient(135deg,#012f68,#006e93);
+            box-shadow:0 4px 10px rgba(2,62,138,.45);
             transform:translateY(-1px);
         }
 

@@ -1,8 +1,8 @@
-/* Palet resmi — samakan dengan variabel di app.css utama kalau sudah ada */
+/* Palet resmi — disamakan dengan app.css utama (Dashboard/Transaksi) */
 :root {
-    --biru-gelap: #0A2E52;
-    --biru-menengah: #14508C;
-    --biru-muda: #3E82C4;
+    --biru-gelap: #023E8A;
+    --biru-menengah: #0081AB;
+    --biru-muda: #4FC3E0;
     --kuning-pln: #FFC629;
     --hijau: #2E9E5B;
     --kuning-redup: #E8A317;
@@ -11,6 +11,7 @@
     --bg: #F5F7FA;
     --teks-utama: #1E293B;
     --teks-sekunder: #64748B;
+    --soft-header-bg: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
 }
 
 /* ===== Table — sticky header/kolom + pembatas per kolom ===== */
@@ -44,18 +45,19 @@
 .table-probabilitas th:last-child,
 .table-probabilitas td:last-child { border-right: none; }
 
-/* Header sticky vertikal */
+/* Header sticky vertikal — SOFT: background lembut, bukan solid gelap */
 .table-probabilitas thead th {
     position: sticky;
     z-index: 3;
-    background: var(--biru-gelap);
-    color: #fff;
+    background: #F7FAFD;
+    color: var(--teks-sekunder);
     font-weight: 700;
     font-size: 11.5px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     vertical-align: middle;
-    border-right: 1px solid rgba(255,255,255,0.15);
+    border-right: 1px solid #E5E9F0;
+    border-bottom: 2px solid #E5E9F0;
 }
 .table-probabilitas thead tr:first-child th { top: 0; }
 .table-probabilitas thead tr:last-child th { top: var(--thead-row1-h, 40px); }
@@ -68,7 +70,7 @@
 .table-probabilitas thead th.col-sticky,
 .table-probabilitas thead th.sticky-right {
     z-index: 6;
-    background: var(--biru-gelap);
+    background: #F7FAFD;
 }
 .table-probabilitas thead th.col-lokasi { box-shadow: 3px 0 6px rgba(0,0,0,0.08); }
 .table-probabilitas thead th.sticky-right { box-shadow: -3px 0 6px rgba(0,0,0,0.08); }
@@ -81,12 +83,12 @@
 
 /* Pembatas TEBAL di ujung tiap section (lebih tegas dari border kolom biasa) */
 .group-end { border-right: 2px solid #B9C4D1 !important; }
-thead .group-end { border-right: 2px solid rgba(255,255,255,0.35) !important; }
+thead .group-end { border-right: 2px solid #D9E1EC !important; }
 
 /* Tint lembut per-section biar section kebutuhan mesin/fasilitas/okupansi/tahapan gampang dibedakan */
 .group-alt { background: #F7FAFD; }
 tbody tr:nth-child(even) .group-alt { background: #EFF4F9; }
-thead .group-alt { background: rgba(255,255,255,0.08); }
+thead .group-alt { background: #EEF2F7; }
 
 .group-header { text-align: center; }
 
@@ -94,7 +96,7 @@ thead .group-alt { background: rgba(255,255,255,0.08); }
 .table-probabilitas tbody tr:nth-child(even) { background: #FBFCFE; }
 .table-probabilitas tbody tr:nth-child(even) .col-sticky,
 .table-probabilitas tbody tr:nth-child(even) .sticky-right { background: #FBFCFE; }
-.table-probabilitas tbody tr:hover { background: rgba(20,80,140,0.05) !important; }
+.table-probabilitas tbody tr:hover { background: rgba(0,129,171,0.05) !important; }
 .table-probabilitas tbody tr:hover .col-sticky,
 .table-probabilitas tbody tr:hover .sticky-right { background: #EAF1F8 !important; }
 
@@ -123,16 +125,20 @@ thead .group-alt { background: rgba(255,255,255,0.08); }
 .toolbar-filters { display: flex; gap: 8px; }
 .toolbar-filters input, .toolbar-filters select { padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; }
 
-/* ===== Modal umum ===== */
+/* =====================================================================
+   Modal umum — SOFT: header gradient lembut + teks biru gelap
+   (sebelumnya solid biru + teks putih)
+   ===================================================================== */
 .modal { border: none; border-radius: 12px; padding: 0; width: 480px; max-width: 92vw; box-shadow: 0 8px 30px rgba(0,0,0,.2); }
 .modal-lg { width: 720px; }
 .modal-header-blue {
-    background: linear-gradient(135deg, var(--biru-gelap), var(--biru-menengah));
-    color: #fff; padding: 20px 24px; display: flex; justify-content: space-between; align-items: flex-start;
+    background: var(--soft-header-bg);
+    color: var(--biru-gelap); padding: 20px 24px; display: flex; justify-content: space-between; align-items: flex-start;
 }
-.modal-header-blue h2 { margin: 0; font-size: 18px; }
-.modal-header-blue p { margin: 4px 0 0; font-size: 13px; opacity: .85; }
-.modal-close { background: rgba(255,255,255,.15); color: #fff; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.modal-header-blue h2 { margin: 0; font-size: 18px; color: var(--biru-gelap); }
+.modal-header-blue p { margin: 4px 0 0; font-size: 13px; color: var(--teks-sekunder); }
+.modal-close { background: rgba(2,62,138,.08); color: var(--biru-gelap); border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.modal-close:hover { background: rgba(2,62,138,.16); }
 .modal-body { padding: 20px 24px; max-height: 70vh; overflow-y: auto; }
 
 .modal-hint, .hint { color: var(--teks-sekunder); font-size: 13px; margin: 0 0 16px; }
@@ -153,7 +159,7 @@ input[type=text], input[type=number], input[type=date], select, textarea {
 }
 input:focus, select:focus, textarea:focus {
     outline: none; border-color: var(--biru-menengah);
-    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+    box-shadow: 0 0 0 3px rgba(0,129,171,0.12);
 }
 
 .status-tahapan-list { border: 1px solid #E5E9F0; border-radius: 8px; overflow: hidden; }
@@ -216,7 +222,7 @@ input:focus, select:focus, textarea:focus {
 .tahap-quick-body > div { flex: 1; }
 .tahap-quick-body label { font-size: 12px; }
 
-/* ===== Modal Tambah Lokasi (dialog-clean) ===== */
+/* ===== Modal Tambah Lokasi (dialog-clean) — SOFT header ===== */
 .dialog-clean {
     border: none;
     border-radius: 14px;
@@ -231,20 +237,20 @@ input:focus, select:focus, textarea:focus {
 }
 
 .modal-header-gradient {
-    background: linear-gradient(135deg, var(--biru-gelap), var(--biru-menengah));
-    color: #fff;
+    background: var(--soft-header-bg);
+    color: var(--biru-gelap);
     padding: 20px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.modal-header-gradient h2 { margin: 0; font-size: 17px; font-weight: 600; }
+.modal-header-gradient h2 { margin: 0; font-size: 17px; font-weight: 700; color: var(--biru-gelap); }
 .modal-close-btn {
-    background: rgba(255,255,255,.15);
-    color: #fff; border: none; border-radius: 6px;
+    background: rgba(2,62,138,.08);
+    color: var(--biru-gelap); border: none; border-radius: 6px;
     width: 28px; height: 28px; cursor: pointer; font-size: 14px;
 }
-.modal-close-btn:hover { background: rgba(255,255,255,.25); }
+.modal-close-btn:hover { background: rgba(2,62,138,.16); }
 
 .modal-body-clean { padding: 22px 24px; }
 
@@ -272,7 +278,7 @@ input:focus, select:focus, textarea:focus {
 .field-group select:focus {
     outline: none;
     border-color: var(--biru-menengah);
-    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+    box-shadow: 0 0 0 3px rgba(0,129,171,0.12);
 }
 
 .field-hint {
@@ -311,7 +317,7 @@ input:focus, select:focus, textarea:focus {
 }
 .modal-body-clean input:focus, .modal-body-clean select:focus {
     outline: none; border-color: var(--biru-menengah);
-    box-shadow: 0 0 0 3px rgba(20,80,140,0.1);
+    box-shadow: 0 0 0 3px rgba(0,129,171,0.12);
 }
 .field-hint { font-size: 12px; color: var(--teks-sekunder); margin: 4px 0 0; }
 
@@ -480,18 +486,18 @@ input:focus, select:focus, textarea:focus {
 }
 
 /* =====================================================================
-   Riwayat — variabel warna
+   Riwayat — variabel warna (disamakan dengan palet PLN)
    ===================================================================== */
 :root {
     --riwayat-border: #e5e7eb;
     --riwayat-text-muted: #6b7280;
-    --riwayat-blue: #2563eb;
-    --riwayat-hijau: #16a34a;
-    --riwayat-hijau-bg: #dcfce7;
-    --riwayat-kuning: #b45309;
-    --riwayat-kuning-bg: #fef3c7;
-    --riwayat-merah: #dc2626;
-    --riwayat-merah-bg: #fee2e2;
+    --riwayat-blue: #0081AB;
+    --riwayat-hijau: #2E9E5B;
+    --riwayat-hijau-bg: rgba(46,158,91,0.14);
+    --riwayat-kuning: #92660F;
+    --riwayat-kuning-bg: rgba(232,163,23,0.14);
+    --riwayat-merah: #C0392B;
+    --riwayat-merah-bg: rgba(192,57,43,0.14);
 }
 
 /* ===== Halaman Riwayat Lengkap ===== */
@@ -861,7 +867,7 @@ input:focus, select:focus, textarea:focus {
     color: #fff;
 }
 .btn-hapus-confirm:hover {
-    background: #b91c1c;
+    background: #a5301f;
 }
 
 /* ---------- Responsive ---------- */
@@ -906,9 +912,9 @@ input:focus, select:focus, textarea:focus {
     margin-top: 0;
     padding: 9px 14px;
     background: #fff;
-    border: 1.5px solid #1e3a5f;
+    border: 1.5px solid var(--biru-gelap);
     border-radius: 8px;
-    color: #1e3a5f;
+    color: var(--biru-gelap);
     font-size: 13.5px;
     font-weight: 600;
     text-decoration: none;
@@ -917,7 +923,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-outline-riwayat:hover {
-    background: #1e3a5f;
+    background: var(--biru-gelap);
     color: #fff;
     text-decoration: none;
 }
@@ -931,13 +937,15 @@ input:focus, select:focus, textarea:focus {
         display: flex;
         align-items: center;
         gap: 14px;
-        margin-bottom: 20px;
+        padding: 20px 24px;
+        background: var(--soft-header-bg);
+        border-radius: 14px 14px 0 0;
     }
     .kandidat-form-icon {
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        background: linear-gradient(135deg, #0A2E52, #3E82C4);
+        background: linear-gradient(135deg, var(--biru-gelap), var(--biru-menengah));
         color: #fff;
         font-size: 20px;
         font-weight: 700;
@@ -949,27 +957,31 @@ input:focus, select:focus, textarea:focus {
     .kandidat-form-header h1 {
         font-size: 19px;
         font-weight: 700;
-        color: #1E293B;
+        color: var(--biru-gelap);
         margin: 0;
     }
     .kandidat-form-header p {
         font-size: 12.5px;
-        color: #64748B;
+        color: var(--teks-sekunder);
         margin: 2px 0 0;
     }
 
     .kandidat-form-card {
         background: #fff;
-        border: 1px solid #0A2E52;
+        border: 1px solid #E5E9F0;
         border-radius: 14px;
-        padding: 26px 28px 28px;
+        overflow: hidden;
         box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .kandidat-form-body {
+        padding: 26px 28px 28px;
     }
 
     .kandidat-section-title {
         font-size: 12.5px;
         font-weight: 700;
-        color: #14508C;
+        color: var(--biru-menengah);
         letter-spacing: 0.03em;
         margin: 0 0 18px;
     }
@@ -995,7 +1007,7 @@ input:focus, select:focus, textarea:focus {
     .form-group input:focus,
     .form-group select:focus {
         outline: none;
-        border-color: #3E82C4;
+        border-color: var(--biru-muda);
         background: #fff;
     }
     .form-row {
@@ -1028,7 +1040,7 @@ input:focus, select:focus, textarea:focus {
     }
     .btn-secondary:hover { background: #f3f4f6; }
 
-    /* === Modal Detail Kandidat === */
+    /* === Modal Detail Kandidat — SOFT header === */
 .detail-dialog {
     width: 100%;
     max-width: 460px;
@@ -1124,6 +1136,6 @@ input:focus, select:focus, textarea:focus {
 }
 
 .segmented-btn.active {
-    background: #f5a623;
-    color: #1e293b;
+    background: var(--kuning-pln);
+    color: var(--biru-gelap);
 }

@@ -27,6 +27,9 @@ class FsSkemaCalculatorService
     /** Potongan tetap PLN dari total keuntungan (Skema 3) — TETAP, dikonfirmasi 2%, tidak ditampilkan ke user. */
     protected const POTONGAN_PLN = 0.02;
 
+    /** Default masa kontrak (tahun) kalau data lama belum punya nilai ini. */
+    protected const DEFAULT_MASA_KONTRAK_TAHUN = 5;
+
     public function hitungPoinFasilitas(array $fasilitas): int
     {
         return min(count($fasilitas) * 10, 40);
@@ -60,22 +63,39 @@ class FsSkemaCalculatorService
     }
 
     /**
-     * NOTE: ambang batas masih ASUMSI SEMENTARA — Excel cuma kasih 2 contoh yang
-     * dua-duanya "Menjadi Pertimbangan" (85 & 75). Perlu dikonfirmasi ke pemilik proses.
+     * Sesuai rumus Excel resmi:
+     *   =IF(AND(E22>=85,E19>30,E20>10,E21>30), "Layak",
+     *      IF(OR(E22>=70, AND(E19>=20,E19<=30,E21>=20,E21<=30,E20>10)),
+     *         "Menjadi Pertimbangan", "Kurang Direkomendasikan"))
+     * Pemetaan: E19=poin Fasilitas (maks 40), E20=poin Kesiapan Jaringan (maks 20),
+     * E21=poin Okupansi (maks 40), E22=Total Poin (maks 100).
      */
-    public function tentukanStatusKelayakan(int $totalPoin): string
+    public function tentukanStatusKelayakan(int $totalPoin, int $poinFasilitas, int $poinKesiapanJaringan, int $poinOkupansi): string
     {
-        return match (true) {
-            $totalPoin >= 90 => 'Layak',
-            $totalPoin >= 60 => 'Menjadi Pertimbangan',
-            default => 'Tidak Layak',
-        };
+        $layak = $totalPoin >= 85
+            && $poinFasilitas > 30
+            && $poinKesiapanJaringan > 10
+            && $poinOkupansi > 30;
+
+        if ($layak) {
+            return 'Layak';
+        }
+
+        $menjadiPertimbangan = $totalPoin >= 70
+            || (
+                $poinFasilitas >= 20 && $poinFasilitas <= 30
+                && $poinOkupansi >= 20 && $poinOkupansi <= 30
+                && $poinKesiapanJaringan > 10
+            );
+
+        return $menjadiPertimbangan ? 'Menjadi Pertimbangan' : 'Kurang Direkomendasikan';
     }
 
     /**
-     * Proyeksi ROI 5 tahun. Untuk Skema 2 (tanpa split RAB): pendapatan penuh
-     * masuk ke satu pihak. Untuk Skema 3: dipecah Mitra Mesin/Mitra Lahan/PLN,
-     * BEP dicek TERPISAH per pihak terhadap RAB masing-masing.
+     * Proyeksi ROI sepanjang masa_kontrak_tahun (fallback 5 tahun kalau kosong,
+     * untuk data lama sebelum kolom ini ada). Untuk Skema 2 (tanpa split RAB):
+     * pendapatan penuh masuk ke satu pihak. Untuk Skema 3: dipecah Mitra
+     * Mesin/Mitra Lahan/PLN, BEP dicek TERPISAH per pihak terhadap RAB masing-masing.
      */
     public function hitungProyeksiROI(FsSkema $fsSkema): array
     {
@@ -84,16 +104,32 @@ class FsSkemaCalculatorService
             : $this->hitungProyeksiRoiSkema2($fsSkema);
     }
 
+    /**
+     * Ambil masa kontrak dari FsSkema, dibatasi 1–20 tahun (sinkron dengan
+     * validasi form) supaya input aneh/kosong tidak bikin loop tak wajar.
+     */
+    protected function ambilMasaKontrakTahun(FsSkema $fsSkema): int
+    {
+        $nilai = (int) ($fsSkema->masa_kontrak_tahun ?? self::DEFAULT_MASA_KONTRAK_TAHUN);
+
+        if ($nilai < 1) {
+            return self::DEFAULT_MASA_KONTRAK_TAHUN;
+        }
+
+        return min($nilai, 20);
+    }
+
     protected function hitungProyeksiRoiSkema2(FsSkema $fsSkema): array
     {
         $keuntunganPerKwh = self::TARIF_KEUNTUNGAN_KWH[strtoupper($fsSkema->layanan_listrik ?? 'TR')] ?? self::TARIF_KEUNTUNGAN_KWH['TR'];
         $rab = (float) ($fsSkema->total_rab_investasi ?? 0);
+        $masaKontrakTahun = $this->ambilMasaKontrakTahun($fsSkema);
 
         $hasil = [];
         $mobilPerHari = $fsSkema->mobil_per_hari;
         $kumulatif = 0;
 
-        for ($tahun = 1; $tahun <= 5; $tahun++) {
+        for ($tahun = 1; $tahun <= $masaKontrakTahun; $tahun++) {
             $transaksiPerTahun = $mobilPerHari * 365;
             $energiKwhPerTahun = $transaksiPerTahun * $fsSkema->transaksi_kwh_per_mobil;
             $pendapatanTahunIni = $energiKwhPerTahun * $keuntunganPerKwh;
@@ -114,6 +150,7 @@ class FsSkemaCalculatorService
 
         return [
             'tipe' => 'skema_2',
+            'masa_kontrak_tahun' => $masaKontrakTahun,
             'tahunan' => $hasil,
             'estimasi_bep' => $this->estimasiBulanBep($hasil, $rab, 'pendapatan_mitra', 'kumulatif'),
         ];
@@ -124,6 +161,7 @@ class FsSkemaCalculatorService
         $keuntunganPerKwh = self::TARIF_KEUNTUNGAN_KWH[strtoupper($fsSkema->layanan_listrik ?? 'TR')] ?? self::TARIF_KEUNTUNGAN_KWH['TR'];
         $sharingLahan = (float) ($fsSkema->sharing_provit_mitra_lahan ?? 0.10);
         $sharingMesin = 1 - self::POTONGAN_PLN - $sharingLahan;
+        $masaKontrakTahun = $this->ambilMasaKontrakTahun($fsSkema);
 
         $rabMesin = (float) ($fsSkema->rab_mitra_mesin ?? 0);
         $rabLahan = (float) ($fsSkema->rab_mitra_lahan ?? 0);
@@ -133,7 +171,7 @@ class FsSkemaCalculatorService
         $kumulatifMesin = 0;
         $kumulatifLahan = 0;
 
-        for ($tahun = 1; $tahun <= 5; $tahun++) {
+        for ($tahun = 1; $tahun <= $masaKontrakTahun; $tahun++) {
             $transaksiPerTahun = $mobilPerHari * 365;
             $energiKwhPerTahun = $transaksiPerTahun * $fsSkema->transaksi_kwh_per_mobil;
             $totalKeuntunganTahunIni = $energiKwhPerTahun * $keuntunganPerKwh;
@@ -162,6 +200,7 @@ class FsSkemaCalculatorService
 
         return [
             'tipe' => 'skema_3',
+            'masa_kontrak_tahun' => $masaKontrakTahun,
             'tahunan' => $hasil,
             'estimasi_bep_mesin' => $this->estimasiBulanBep($hasil, $rabMesin, 'pendapatan_mesin', 'kumulatif_mesin'),
             'estimasi_bep_lahan' => $this->estimasiBulanBep($hasil, $rabLahan, 'pendapatan_lahan', 'kumulatif_lahan'),
@@ -171,7 +210,7 @@ class FsSkemaCalculatorService
     /**
      * Estimasi "bulan ke-" BEP tercapai — cari tahun pertama kumulatif >= RAB,
      * lalu interpolasi linear di dalam tahun itu buat estimasi bulannya.
-     * Null kalau belum BEP sampai tahun ke-5.
+     * Null kalau belum BEP sampai akhir masa kontrak.
      */
     protected function estimasiBulanBep(array $dataTahunan, float $rab, string $kolomPendapatan, string $kolomKumulatif): ?int
     {
@@ -195,7 +234,7 @@ class FsSkemaCalculatorService
             $kumulatifSebelumnya = $baris[$kolomKumulatif];
         }
 
-        return null; // belum BEP dalam 5 tahun proyeksi
+        return null; // belum BEP dalam masa kontrak
     }
 
     /**

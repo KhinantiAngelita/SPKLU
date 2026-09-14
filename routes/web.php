@@ -13,6 +13,7 @@ use App\Http\Controllers\MasterSpkluController;
 use App\Http\Controllers\Monitoring\PengajuanController;
 use App\Http\Controllers\Monitoring\ProbabilitasController;
 use App\Http\Controllers\PenjadwalanController;
+use App\Http\Controllers\RekomendasiLokasiController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\KandidatSpkluTerdekatController;
 use App\Http\Controllers\KandidatPeringkatController;
@@ -151,6 +152,16 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin')
             ->name('upload.destroy');
 
+        // Upload ulang file untuk riwayat yang sudah ada
+        Route::post('upload/{transaksiUpload}/reupload', [TransaksiController::class, 'reupload'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('upload.reupload');
+
+        // Diperbaiki: Path & nama route tidak double, ditambah middleware role
+        Route::post('upload/{transaksiUpload}/reprocess', [TransaksiController::class, 'reprocess'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('upload.reprocess');
+
         Route::get('export', [TransaksiController::class, 'export'])
             ->name('export');
 
@@ -161,6 +172,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('alias', [TransaksiController::class, 'storeAlias'])
             ->middleware('role:super_admin,pengelola')
             ->name('alias.store');
+
+        Route::put('alias/{spkluAlias}', [TransaksiController::class, 'updateAlias'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('alias.update');
+
+        Route::post('alias/bulk', [TransaksiController::class, 'storeAliasBulk'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('alias.bulk-store');
     });
 
 
@@ -266,6 +285,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kandidat-peringkat', [KandidatPeringkatController::class, 'index2'])
     ->name('kandidat-peringkat.index');   
 
+    // ============ REKOMENDASI LOKASI ============
+
+    Route::get('/rekomendasi-lokasi', [RekomendasiLokasiController::class, 'index'])
+        ->name('rekomendasi-lokasi.index');
+
     // ============ MONITORING PENGAJUAN ============
 
     Route::prefix('monitoring/pengajuan')
@@ -296,9 +320,6 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/', [FsSkemaController::class, 'store'])
                 ->name('store');
 
-            // ⬇️ TAMBAHAN: harus di ATAS route GET /{fsSkema} di bawah ini,
-            // kalau ditaruh di bawah, "preview" akan ketangkep sebagai
-            // {fsSkema} dan Laravel akan coba cari FsSkema dengan id="preview" → 404.
             Route::post('/preview', [FsSkemaController::class, 'preview'])
                 ->name('preview');
 

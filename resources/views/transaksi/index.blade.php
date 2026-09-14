@@ -16,7 +16,6 @@
     .trx-btn-export { background:linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; box-shadow:0 2px 10px rgba(220,38,38,.28); }
     .trx-btn-export:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(220,38,38,.34); }
 
-    /* ===== Filter — satu baris, wrap otomatis di layar sempit, dropdown SPKLU dibatasi lebarnya ===== */
     .trx-filter-form { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
 
     .trx-select {
@@ -26,6 +25,7 @@
         background-repeat:no-repeat; background-position:right 14px center; transition:all .15s ease;
     }
     .trx-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
+    .trx-select-sm { width:118px; padding:8px 28px 8px 12px; font-size:12.4px; background-position:right 10px center; }
 
     .trx-pill-group { display:inline-flex; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:3px; gap:2px; flex-shrink:0; }
     .trx-pill { border:none; background:none; padding:7px 13px; border-radius:7px; font-size:12.8px; font-weight:700; color:#64748B; cursor:pointer; transition:all .15s ease; white-space:nowrap; }
@@ -36,7 +36,6 @@
     .trx-daterange:focus-within { border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
     .trx-daterange input { border:none; padding:0; font-size:12.8px; color:#1E293B; width:106px; font-family:inherit; }
     .trx-daterange input:focus { outline:none; }
-    /* Recolor ikon kalender bawaan browser jadi biru brand, biar gak abu-abu polos */
     .trx-daterange input::-webkit-calendar-picker-indicator {
         filter: invert(28%) sepia(97%) saturate(1226%) hue-rotate(175deg) brightness(94%) contrast(101%);
         cursor: pointer;
@@ -47,8 +46,6 @@
     }
     .trx-daterange input::-webkit-calendar-picker-indicator:hover { background-color: rgba(0,129,171,.1); opacity: 1; }
     .trx-daterange-sep { color:#cbd5e1; font-size:12px; flex-shrink:0; }
-
-    .trx-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); margin-bottom:20px; }
 
     .trx-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px; }
     .trx-summary-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); transition:transform .18s ease, box-shadow .18s ease; }
@@ -75,6 +72,37 @@
     .trx-table tbody tr:hover { background:rgba(0,129,171,.05); }
     .trx-table tbody tr:last-child td { border-bottom:none; }
     .trx-empty { text-align:center; padding:48px 20px; color:#94a3b8; font-size:13.5px; }
+
+    .trx-year-filter { display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding:14px 20px; border-bottom:1px solid #f1f5f9; }
+    .trx-year-checkbox { display:inline-flex; align-items:center; gap:6px; font-size:12.8px; font-weight:600; color:#334155; cursor:pointer; }
+    .trx-year-checkbox input { accent-color:#0081AB; cursor:pointer; }
+
+    .trx-data-table-wrap { overflow-x:auto; border-top:1px solid #f1f5f9; }
+    .trx-data-table { width:100%; border-collapse:collapse; min-width:760px; }
+    .trx-data-table th { text-align:right; font-size:10.5px; font-weight:700; color:#94a3b8; padding:9px 12px; border-bottom:1px solid #eef1f5; white-space:nowrap; }
+    .trx-data-table th:first-child { text-align:left; }
+    .trx-data-table td { text-align:right; font-size:12.3px; color:#334155; padding:8px 12px; border-bottom:1px solid #f5f7fa; white-space:nowrap; }
+    .trx-data-table td:first-child { text-align:left; font-weight:700; color:#1E293B; display:flex; align-items:center; }
+    .trx-data-table td.total-col, .trx-data-table th.total-col { font-weight:800; color:#023E8A; background:#fafbfc; }
+    .trx-data-table tr:last-child td { border-bottom:none; }
+
+    .trx-line-swatch {
+        display:inline-block; width:22px; height:8px; position:relative;
+        margin-right:7px; vertical-align:middle; flex-shrink:0;
+    }
+    .trx-line-swatch::before {
+        content:''; position:absolute; top:50%; left:0; right:0; height:2px;
+        background:currentColor; transform:translateY(-50%);
+    }
+    .trx-line-swatch::after {
+        content:''; position:absolute; top:50%; left:50%; width:6px; height:6px;
+        border-radius:50%; background:currentColor; transform:translate(-50%,-50%);
+    }
+    .trx-tren-legend {
+        display:flex; justify-content:center; align-items:center; gap:22px;
+        flex-wrap:wrap; padding:14px 20px 18px; font-size:12.5px; font-weight:700; color:#334155;
+    }
+    .trx-tren-legend span.trx-legend-item { display:inline-flex; align-items:center; }
 </style>
 
 <div class="trx-page-header">
@@ -114,12 +142,6 @@
             <button type="button" class="trx-pill {{ $satuan === 'kali' ? 'active' : '' }}" onclick="setSatuan('kali')">Kali</button>
             <button type="button" class="trx-pill {{ $satuan === 'kwh' ? 'active' : '' }}" onclick="setSatuan('kwh')">kWh</button>
             <button type="button" class="trx-pill {{ $satuan === 'rp' ? 'active' : '' }}" onclick="setSatuan('rp')">Rp</button>
-        </div>
-
-        <input type="hidden" name="tampilan" id="input-tampilan" value="{{ $tampilan }}">
-        <div class="trx-pill-group">
-            <button type="button" class="trx-pill {{ $tampilan === 'bulanan' ? 'active' : '' }}" onclick="setTampilan('bulanan')">Bulanan</button>
-            <button type="button" class="trx-pill {{ $tampilan === 'kumulatif' ? 'active' : '' }}" onclick="setTampilan('kumulatif')">Kumulatif</button>
         </div>
 
         <div class="filter-divider"></div>
@@ -196,19 +218,97 @@
     </div>
 </div>
 
-<div class="surface-card">
+@php
+    $paletWarnaTren = ['#023E8A', '#E8A317', '#2E9E5B', '#C0392B', '#6D5DD3', '#0EA5B7'];
+    $namaBulanSingkat = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sept','Okt','Nop','Des'];
+    $namaBulanPenuh = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    $bulanSingkatTerpilih = array_slice($namaBulanSingkat, $bulanAwal - 1, $bulanAkhir - $bulanAwal + 1);
+@endphp
+
+<div class="surface-card" style="margin-bottom: 20px;">
     <div class="section-header-bar">
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div>
                 <h2>Visualisasi Tren Transaksi</h2>
-                <p>{{ \Carbon\Carbon::parse($dari)->translatedFormat('M Y') }} – {{ \Carbon\Carbon::parse($sampai)->translatedFormat('M Y') }}</p>
+                <p>Perbandingan antar tahun, per bulan{{ $spkluTerpilih ? ' — ' . ($spkluList->firstWhere('id', $spkluTerpilih)->nama ?? '') : '' }} · Satuan: {{ strtoupper($satuan) }}</p>
             </div>
         </div>
     </div>
+
+    <form method="GET" id="form-filter-tren" class="trx-year-filter">
+        <input type="hidden" name="spklu_id" value="{{ $spkluTerpilih }}">
+        <input type="hidden" name="satuan" value="{{ $satuan }}">
+        <input type="hidden" name="dari" value="{{ $dari }}">
+        <input type="hidden" name="sampai" value="{{ $sampai }}">
+
+        @foreach ($tahunTersedia as $tahun)
+            <label class="trx-year-checkbox">
+                <input type="checkbox" name="tahun[]" value="{{ $tahun }}"
+                    {{ in_array($tahun, $tahunDipilih) ? 'checked' : '' }}
+                    onchange="document.getElementById('form-filter-tren').submit()">
+                {{ $tahun }}
+            </label>
+        @endforeach
+
+        <span style="display:inline-flex; align-items:center; gap:8px; margin-left:auto;">
+            <select name="bulan_awal" class="trx-select trx-select-sm" onchange="document.getElementById('form-filter-tren').submit()">
+                @foreach ($namaBulanPenuh as $i => $nama)
+                    <option value="{{ $i + 1 }}" {{ $bulanAwal == $i + 1 ? 'selected' : '' }}>{{ $nama }}</option>
+                @endforeach
+            </select>
+            <span class="trx-daterange-sep">—</span>
+            <select name="bulan_akhir" class="trx-select trx-select-sm" onchange="document.getElementById('form-filter-tren').submit()">
+                @foreach ($namaBulanPenuh as $i => $nama)
+                    <option value="{{ $i + 1 }}" {{ $bulanAkhir == $i + 1 ? 'selected' : '' }}>{{ $nama }}</option>
+                @endforeach
+            </select>
+        </span>
+    </form>
+
     <div style="padding:22px 24px;">
-        <canvas id="chart-transaksi" height="75"></canvas>
+        <canvas id="chart-tren-per-tahun" height="95"></canvas>
     </div>
+
+    <div class="trx-data-table-wrap">
+        <table class="trx-data-table">
+            <thead>
+                <tr>
+                    <th>Tahun</th>
+                    @foreach ($bulanSingkatTerpilih as $bulan)
+                        <th>{{ $bulan }}</th>
+                    @endforeach
+                    <th class="total-col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($trenPerTahun as $tahun => $dataBulanan)
+                    @php $warnaBaris = $paletWarnaTren[$loop->index % count($paletWarnaTren)]; @endphp
+                    <tr>
+                        <td>
+                            <span class="trx-line-swatch" style="color: {{ $warnaBaris }};"></span>{{ $tahun }}
+                        </td>
+                        @foreach ($dataBulanan as $nilai)
+                            <td>{{ $nilai != 0 ? number_format($nilai, 0, ',', '.') : '—' }}</td>
+                        @endforeach
+                        <td class="total-col">{{ number_format(array_sum($dataBulanan), 0, ',', '.') }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="{{ count($bulanSingkatTerpilih) + 2 }}" style="text-align:center; color:#94a3b8;">Belum ada data transaksi.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @if (count($trenPerTahun) > 0)
+    <div class="trx-tren-legend">
+        @foreach ($trenPerTahun as $tahun => $dataBulanan)
+            <span class="trx-legend-item">
+                <span class="trx-line-swatch" style="color: {{ $paletWarnaTren[$loop->index % count($paletWarnaTren)] }};"></span>{{ $tahun }}
+            </span>
+        @endforeach
+    </div>
+    @endif
 </div>
 
 <div class="surface-card">
@@ -271,39 +371,69 @@
     Chart.register(ChartDataLabels);
 
     function setSatuan(v) { document.getElementById('input-satuan').value = v; document.getElementById('form-filter').submit(); }
-    function setTampilan(v) { document.getElementById('input-tampilan').value = v; document.getElementById('form-filter').submit(); }
 
     const satuanAktif = '{{ $satuan }}';
+    const trenPerTahun = @json($trenPerTahun ?? []);
+    const bulanLabelTren = @json($bulanSingkatTerpilih);
+    const paletWarnaTren = ['#023E8A', '#E8A317', '#2E9E5B', '#C0392B', '#6D5DD3', '#0EA5B7'];
 
-    new Chart(document.getElementById('chart-transaksi'), {
+    function formatSatuan(v) {
+        if (satuanAktif === 'rp') return 'Rp' + new Intl.NumberFormat('id-ID').format(v);
+        if (satuanAktif === 'kwh') return new Intl.NumberFormat('id-ID').format(v) + ' kWh';
+        return new Intl.NumberFormat('id-ID').format(v) + 'x';
+    }
+
+    const datasetsTren = Object.keys(trenPerTahun).map((tahun, i) => ({
+        label: tahun,
+        data: trenPerTahun[tahun],
+        borderColor: paletWarnaTren[i % paletWarnaTren.length],
+        backgroundColor: paletWarnaTren[i % paletWarnaTren.length],
+        tension: 0.3,
+        fill: false,
+        pointRadius: 4,
+        borderWidth: 2.5,
+    }));
+
+    new Chart(document.getElementById('chart-tren-per-tahun'), {
         type: 'line',
-        data: {
-            labels: {!! json_encode($chartData->pluck('bulan')) !!},
-            datasets: [{
-                label: '{{ strtoupper($satuan) }}',
-                data: {!! json_encode($chartData->pluck('total')) !!},
-                borderColor: '#0081AB', backgroundColor: 'rgba(0,129,171,0.1)',
-                tension: 0.35, fill: true, pointRadius: 4, pointBackgroundColor: '#023E8A',
-                pointHoverRadius: 6, borderWidth: 2.5,
-            }]
-        },
+        data: { labels: bulanLabelTren, datasets: datasetsTren },
         options: {
             plugins: {
                 legend: { display: false },
                 datalabels: {
+                    display: function(context) {
+                        // Hanya tampilkan label jika nilainya di atas 0 agar tidak terlalu ramai
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
                     align: 'top',
                     anchor: 'end',
-                    color: '#023E8A',
-                    font: { weight: '700', size: 11 },
-                    formatter: (value) => {
-                        if (satuanAktif === 'rp') return 'Rp' + new Intl.NumberFormat('id-ID', { notation: 'compact' }).format(value);
-                        return new Intl.NumberFormat('id-ID').format(value);
+                    font: {
+                        size: 10,
+                        weight: 'bold',
+                        family: 'inherit'
                     },
-                }
+                    color: '#334155',
+                    formatter: function(value) {
+                        if (satuanAktif === 'rp') {
+                            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                            if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                            return value;
+                        }
+                        return new Intl.NumberFormat('id-ID').format(value);
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.dataset.label + ': ' + formatSatuan(ctx.parsed.y),
+                    },
+                },
             },
-            scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, grace: '15%' }, x: { grid: { display: false } } },
-            interaction: { intersect: false, mode: 'index' },
-            layout: { padding: { top: 20 } }
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: v => new Intl.NumberFormat('id-ID').format(v) },
+                },
+            },
         }
     });
 </script>

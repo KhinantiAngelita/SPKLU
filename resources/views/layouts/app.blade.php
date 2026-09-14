@@ -218,10 +218,12 @@
         .sidebar-logout-form button:hover { color: #fff; background-color: rgba(192,57,43,0.28); }
         .sidebar-logout-form i, .sidebar-logout-form svg { width: 16px; height: 16px; }
 
-        /* ===== Topbar ===== */
+        /* =====================================================================
+           Topbar — dua grup: search rata kiri, notif+user rata kanan.
+           ===================================================================== */
 
         .topbar {
-            background: #fff; padding: 15px 28px; display: flex; align-items: center; justify-content: space-between;
+            background: #fff; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid #eef1f5;
             box-shadow: 0 1px 0 rgba(15,23,42,.02);
             position: relative; z-index: 20;
@@ -232,8 +234,6 @@
             opacity: .55;
         }
 
-        .topbar-breadcrumb { font-size: 11.5px; color: var(--text-secondary); margin: 0 0 5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
-        .topbar-title { font-size: 20px; font-weight: 800; margin: 0; color: var(--text-primary); letter-spacing: -0.015em; }
         .topbar-actions { display: flex; align-items: center; gap: 8px; }
 
         .topbar-search {
@@ -241,15 +241,41 @@
             display: flex;
             align-items: center;
         }
-        .topbar-search input {
-            padding: 10px 16px 10px 40px; font-size: 13.5px; border-radius: 12px; border: 1px solid #e7ebf0;
-            background-color: var(--bg-page); width: 280px; transition: all .2s ease;
+        /* FIX: dinaikkan specificity-nya (.topbar .topbar-search input) supaya
+           gak kalah tie-break lawan rule global (mis. input[type=text]) di CSS
+           modul halaman manapun yang di-load belakangan (probabilitas.css, dst) */
+        .topbar .topbar-search input {
+            padding: 11px 54px 11px 42px;
+            font-size: 13.6px;
+            border-radius: 999px;
+            border: 1.5px solid #e7ebf0;
+            background-color: var(--bg-page);
+            width: 300px;
+            transition: width .22s ease, border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
         }
-        .topbar-search input:focus { outline: none; border-color: var(--brand-light); box-shadow: 0 0 0 4px rgba(0,129,171,0.1); background: #fff; }
+        .topbar-search input::placeholder { color: #9aa6b5; }
+        .topbar-search input:focus {
+            outline: none;
+            border-color: var(--brand-light);
+            box-shadow: 0 0 0 4px rgba(0,129,171,0.12);
+            background: #fff;
+            width: 360px;
+        }
+        .topbar-search:focus-within .topbar-search-kbd { opacity: 0; }
         /* FIX: cover "i" (sebelum diganti) DAN "svg" (setelah lucide.createIcons() jalan) */
         .topbar-search i, .topbar-search svg {
-            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
             width: 16px; height: 16px; color: var(--text-secondary); pointer-events: none;
+            transition: color .2s ease;
+        }
+        .topbar-search:focus-within i,
+        .topbar-search:focus-within svg { color: var(--brand-mid); }
+        .topbar-search-kbd {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            font-size: 10.5px; font-weight: 700; color: var(--text-secondary);
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 6px;
+            padding: 2px 7px; pointer-events: none; letter-spacing: .02em;
+            transition: opacity .15s ease;
         }
 
         .topbar-divider { width: 1px; height: 26px; background: #eef1f5; margin: 0 6px; flex-shrink: 0; }

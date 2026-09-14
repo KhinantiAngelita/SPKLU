@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FsSkema;
-use App\Models\KandidatPrioritas;
+use App\Models\Probabilitas;
 use App\Services\FsSkemaCalculatorService;
 use App\Services\NarasiGeneratorService;
 use App\Services\SpkluTerdekatService;
@@ -29,9 +29,9 @@ class FsSkemaController extends Controller
 
     public function create()
     {
-        $kandidatList = KandidatPrioritas::all();
+        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
 
-        return view('fs-skema.create', compact('kandidatList'));
+        return view('fs-skema.create', compact('probabilitasList'));
     }
 
     public function store(Request $request)
@@ -56,9 +56,9 @@ class FsSkemaController extends Controller
 
     public function edit(FsSkema $fsSkema)
     {
-        $kandidatList = KandidatPrioritas::all();
+        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
 
-        return view('fs-skema.edit', compact('fsSkema', 'kandidatList'));
+        return view('fs-skema.edit', compact('fsSkema', 'probabilitasList'));
     }
 
     public function update(Request $request, FsSkema $fsSkema)
@@ -108,6 +108,7 @@ class FsSkemaController extends Controller
             'sharing_provit_mitra_lahan' => 'nullable|numeric|min:0|max:1',
             'mobil_per_hari' => 'nullable|integer|min:0',
             'transaksi_kwh_per_mobil' => 'nullable|numeric|min:0',
+            'masa_kontrak_tahun' => 'nullable|integer|min:1|max:20',
             'fasilitas' => 'nullable|array',
             'kesiapan_jaringan' => 'nullable|string',
             'okupansi' => 'nullable|array',
@@ -158,6 +159,7 @@ class FsSkemaController extends Controller
             'layanan_listrik' => 'nullable|in:TM,TR,LTR',
             'mobil_per_hari' => 'required|integer|min:0',
             'transaksi_kwh_per_mobil' => 'required|numeric|min:0',
+            'masa_kontrak_tahun' => 'required|integer|min:1|max:20',
             'fasilitas' => 'nullable|array',
             'kesiapan_jaringan' => 'nullable|string',
             'okupansi' => 'nullable|array',
@@ -205,7 +207,7 @@ class FsSkemaController extends Controller
         $jaringan = $this->calculator->hitungPoinKesiapanJaringan($data['kesiapan_jaringan'] ?? null);
         $okupansi = $this->calculator->hitungPoinOkupansi($data['okupansi'] ?? []);
         $total = $this->calculator->hitungTotalPoin($fasilitas, $jaringan, $okupansi);
-        $status = $this->calculator->tentukanStatusKelayakan($total);
+        $status = $this->calculator->tentukanStatusKelayakan($total, $fasilitas, $jaringan, $okupansi);
 
         return compact('fasilitas', 'jaringan', 'okupansi', 'total', 'status');
     }
@@ -223,5 +225,19 @@ class FsSkemaController extends Controller
         }
 
         return $this->spkluTerdekatService->cariTerdekat((float) $bagian[0], (float) $bagian[1], 3);
+    }
+
+    /**
+     * Daftar lokasi dari Probabilitas untuk dropdown pencarian "Nama
+     * Tempat/Lokasi" di form FS Skema. Eager-load kandidatPrioritas
+     * (hasOne) supaya pas satu lokasi dipilih di combobox, kandidat_id
+     * yang sudah tersambung bisa langsung auto-terisi (hidden field,
+     * tidak lagi ada dropdown kandidat terpisah untuk diisi manual).
+     */
+    protected function ambilProbabilitasUntukDropdown()
+    {
+        return Probabilitas::with('kandidatPrioritas:id,probabilitas_id')
+            ->orderBy('lokasi')
+            ->get(['id', 'lokasi', 'tikor_lat', 'tikor_lng']);
     }
 }

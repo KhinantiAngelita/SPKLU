@@ -60,7 +60,7 @@
     .jadwal-badge-offline { background:#eef2f7; color:#64748B; }
     .dsh-empty-inline { text-align:center; padding:16px 10px; color:#94a3b8; font-size:12.5px; }
 
-    /* Filter bulanan untuk Tren Transaksi — cuma range bulan, tanpa spklu/satuan/tampilan */
+    /* Filter bulanan untuk Tren Transaksi — cuma range bulan */
     .dsh-month-range { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:2px 10px; flex-shrink:0; }
     .dsh-month-range input { border:none; padding:9px 2px; font-size:12.8px; color:#1E293B; width:126px; font-family:inherit; }
     .dsh-month-range input:focus { outline:none; }
@@ -84,9 +84,54 @@
     .progress-bar-fill.amber { background:#E8A317; }
     .progress-bar-fill.red { background:#C0392B; }
     .progress-bar-value { font-weight:800; font-size:13px; width:30px; text-align:right; }
+
+    /* ===== Pengajuan Terbaru ===== */
+    .dsh-pengajuan-item { display:flex; align-items:center; gap:12px; padding:12px 20px; border-bottom:1px solid #f5f7fa; }
+    .dsh-pengajuan-item:last-child { border-bottom:none; }
+    .dsh-pengajuan-icon { width:36px; height:36px; border-radius:10px; background:rgba(2,62,138,.1); color:#023E8A; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .dsh-pengajuan-icon svg { width:16px; height:16px; }
+    .dsh-pengajuan-info { flex:1; min-width:0; }
+    .dsh-pengajuan-nama { font-weight:700; font-size:13.3px; color:#1E293B; }
+    .dsh-pengajuan-meta { font-size:11.5px; color:#94a3b8; margin-top:1px; }
+    .dsh-pengajuan-badge { font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; flex-shrink:0; }
+    .dsh-pengajuan-badge-belum { background:#eef2f7; color:#64748B; }
+    .dsh-pengajuan-badge-progress { background:rgba(232,163,23,.14); color:#92660f; }
+    .dsh-pengajuan-badge-selesai { background:rgba(46,158,91,.14); color:#2E9E5B; }
+
+    /* ===== Ringkasan Keuangan & Rekomendasi Lokasi ===== */
+    .dsh-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; align-items:stretch; }
+    @media (max-width:900px) { .dsh-info-grid { grid-template-columns:1fr; } }
+    .dsh-info-grid > .surface-card { display:flex; flex-direction:column; }
+
+    .dsh-keuangan-body { padding:20px 22px; display:flex; gap:22px; flex:1; }
+    .dsh-keuangan-item { flex:1; }
+    .dsh-keuangan-label { font-size:12px; font-weight:600; color:#94a3b8; margin:0 0 6px; text-transform:uppercase; letter-spacing:.03em; }
+    .dsh-keuangan-value { font-size:22px; font-weight:800; color:#0f172a; margin:0; }
+    .dsh-keuangan-divider { width:1px; background:#f1f5f9; }
+
+    .dsh-zona-body { padding:18px 22px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+    .dsh-zona-bar { display:flex; height:10px; border-radius:999px; overflow:hidden; margin-bottom:12px; background:#f1f5f9; }
+    .dsh-zona-legend { display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:#64748B; margin-bottom:14px; }
+    .dsh-zona-legend-item { display:flex; align-items:center; gap:5px; }
+    .dsh-zona-legend-dot { width:8px; height:8px; border-radius:50%; }
+    .dsh-zona-headline { background:#F8FAFC; border-radius:10px; padding:12px 14px; font-size:12.5px; color:#334155; }
+    .dsh-zona-headline strong { color:#023E8A; }
 </style>
 
-<p class="dsh-subtitle">Ringkasan Sistem SPKLU</p>
+{{-- =========================================================
+      HEADER (Inline Style - Tanpa tambah CSS terpisah)
+    ========================================================= --}}
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #eef1f5;"> 
+    <div>
+        <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; margin: 0;">Dashboard</h1>
+        <p style="color: #64748B; font-size: 13.5px; margin: 4px 0 0; font-weight: 500;">Ringkasan Sistem SPKLU</p>
+    </div>
+
+    <div style="font-size: 12.5px; color: #64748B; font-weight: 600; background: #fff; padding: 6px 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 2px;">
+        {{ now()->translatedFormat('l, d F Y') }}
+    </div>
+</div>
+
 
 <div class="dsh-card-grid">
     <div class="dsh-card">
@@ -131,6 +176,113 @@
             <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(147,51,234,.14), rgba(147,51,234,.06)); color:#9333ea;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
         </div>
         <span class="dsh-trend dsh-trend-neutral">minggu ini</span>
+    </div>
+</div>
+
+{{-- Pengajuan Terbaru — paling actionable, ditaruh di atas --}}
+<div class="surface-card" style="margin-bottom:20px;">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div>
+                <h2>Pengajuan Terbaru</h2>
+                <p>5 kandidat SPKLU yang baru saja diajukan</p>
+            </div>
+        </div>
+        <a href="{{ route('monitoring.probabilitas.index') }}" class="link-btn">Lihat Semua</a>
+    </div>
+
+    @forelse ($pengajuanTerbaru as $p)
+        @php
+            $badgeClass = match ($p->status_kanban) {
+                'selesai_integrasi' => 'dsh-pengajuan-badge-selesai',
+                'on_progress' => 'dsh-pengajuan-badge-progress',
+                default => 'dsh-pengajuan-badge-belum',
+            };
+            $badgeLabel = match ($p->status_kanban) {
+                'selesai_integrasi' => 'Selesai Integrasi',
+                'on_progress' => 'On Progress',
+                default => 'Belum Mulai',
+            };
+        @endphp
+        <div class="dsh-pengajuan-item">
+            <div class="dsh-pengajuan-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            <div class="dsh-pengajuan-info">
+                <p class="dsh-pengajuan-nama">{{ $p->lokasi }}</p>
+                <p class="dsh-pengajuan-meta">{{ $p->ulp ?? 'ULP belum diisi' }} &middot; Tahap saat ini: {{ $p->tahap_saat_ini }} &middot; {{ $p->diajukan_pada->diffForHumans() }}</p>
+            </div>
+            <span class="dsh-pengajuan-badge {{ $badgeClass }}">{{ $badgeLabel }}</span>
+        </div>
+    @empty
+        <div class="dsh-empty-inline" style="padding:32px 20px;">Belum ada pengajuan kandidat.</div>
+    @endforelse
+</div>
+
+{{-- Ringkasan Keuangan & Energi + Ringkasan Rekomendasi Lokasi --}}
+<div class="dsh-info-grid">
+    <div class="surface-card">
+        <div class="section-header-bar">
+            <div class="section-header-bar-left">
+                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div>
+                    <h2>Keuangan & Energi</h2>
+                    <p>{{ $ringkasanKeuangan['nama_bulan'] }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="dsh-keuangan-body">
+            <div class="dsh-keuangan-item">
+                <p class="dsh-keuangan-label">Pendapatan Bulan Ini</p>
+                <p class="dsh-keuangan-value">Rp {{ number_format($ringkasanKeuangan['pendapatan_bulan_ini'] / 1000000, 2) }}M</p>
+                <span class="dsh-trend {{ $ringkasanKeuangan['tren_pendapatan_persen'] >= 0 ? 'dsh-trend-up' : 'dsh-trend-down' }}">
+                    {{ $ringkasanKeuangan['tren_pendapatan_persen'] >= 0 ? '↑' : '↓' }} {{ abs($ringkasanKeuangan['tren_pendapatan_persen']) }}% vs bulan lalu
+                </span>
+            </div>
+            <div class="dsh-keuangan-divider"></div>
+            <div class="dsh-keuangan-item">
+                <p class="dsh-keuangan-label">Energi Tersalur Bulan Ini</p>
+                <p class="dsh-keuangan-value">{{ number_format($ringkasanKeuangan['energi_bulan_ini'] / 1000, 1) }}k kWh</p>
+                <span class="dsh-trend {{ $ringkasanKeuangan['tren_energi_persen'] >= 0 ? 'dsh-trend-up' : 'dsh-trend-down' }}">
+                    {{ $ringkasanKeuangan['tren_energi_persen'] >= 0 ? '↑' : '↓' }} {{ abs($ringkasanKeuangan['tren_energi_persen']) }}% vs bulan lalu
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="surface-card">
+        <div class="section-header-bar">
+            <div class="section-header-bar-left">
+                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div>
+                    <h2>Rekomendasi Lokasi</h2>
+                    <p>Zona kanibalisasi SPKLU existing</p>
+                </div>
+            </div>
+            <a href="{{ route('rekomendasi-lokasi.index') }}" class="link-btn">Lihat Peta</a>
+        </div>
+        <div class="dsh-zona-body">
+            @php $totalZona = max($ringkasanZona['total_spklu'], 1); @endphp
+            <div>
+                <div class="dsh-zona-bar">
+                    <div style="width:{{ $ringkasanZona['hijau'] / $totalZona * 100 }}%; background:#2E9E5B;"></div>
+                    <div style="width:{{ $ringkasanZona['kuning'] / $totalZona * 100 }}%; background:#E8A317;"></div>
+                    <div style="width:{{ $ringkasanZona['merah'] / $totalZona * 100 }}%; background:#C0392B;"></div>
+                    <div style="width:{{ $ringkasanZona['belum_ada_data'] / $totalZona * 100 }}%; background:#CBD5E1;"></div>
+                </div>
+                <div class="dsh-zona-legend">
+                    <span class="dsh-zona-legend-item"><span class="dsh-zona-legend-dot" style="background:#2E9E5B;"></span> {{ $ringkasanZona['hijau'] }} Aman</span>
+                    <span class="dsh-zona-legend-item"><span class="dsh-zona-legend-dot" style="background:#E8A317;"></span> {{ $ringkasanZona['kuning'] }} Waspada</span>
+                    <span class="dsh-zona-legend-item"><span class="dsh-zona-legend-dot" style="background:#C0392B;"></span> {{ $ringkasanZona['merah'] }} Padat</span>
+                </div>
+            </div>
+            <div class="dsh-zona-headline">
+                @if ($wilayahPotensialTop)
+                    Wilayah paling potensial buat ekspansi: <strong>{{ $wilayahPotensialTop['ulp'] }}</strong> ({{ $wilayahPotensialTop['persen_hijau'] }}% zona hijau)
+                @else
+                    Belum cukup data untuk rekomendasi wilayah.
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 
@@ -253,7 +405,7 @@
             <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
             <div>
                 <h2>Top 5 Kandidat Prioritas</h2>
-                <p>Berdasarkan skor potensi pemasangan SPKLU</p>
+                <p>Berdasarkan skor akhir (Progres, Kapasitas, Demand ULP, Kebutuhan, Okupansi)</p>
             </div>
         </div>
     </div>

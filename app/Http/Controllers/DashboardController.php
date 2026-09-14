@@ -3,13 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jadwal;
+use App\Models\Probabilitas;
 use App\Models\Spklu;
 use App\Models\Transaksi;
+use App\Services\KandidatPeringkatService;
+use App\Services\RekomendasiLokasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private KandidatPeringkatService $peringkatService,
+        private RekomendasiLokasiService $rekomendasiLokasiService,
+    ) {
+    }
+
     public function index(Request $request)
     {
         $dariBulan = $request->dari_bulan ?: now()->subMonths(5)->format('Y-m');
@@ -20,19 +29,64 @@ class DashboardController extends Controller
 
         $trenTransaksi = $this->buildTrenTransaksi($mulai, $sampai);
 
+        // ===== Kandidat & Pengajuan — tersambung ke Probabilitas =====
+        $probabilitasAktif = Probabilitas::whereNull('spklu_id')
+            ->with('riwayatTahapan')
+            ->get();
+
+        $kandidatAktif = $probabilitasAktif->count();
+
+        $kandidatButuhTindakLanjut = $probabilitasAktif->filter(function ($p) {
+            return collect($p->badgePerTahap())->contains(fn ($b) => $b['warna'] === 'kuning');
+        })->count();
+
+        $pengajuanOnProgress = $probabilitasAktif->filter(
+            fn ($p) => $p->statusKanban() === 'on_progress'
+        )->count();
+
+        $topKandidat = $this->peringkatService->top(5)->map(fn ($k) => (object) [
+            'nama' => $k->nama_lokasi,
+            'wilayah' => $k->ulpMapping->nama_penuh ?? '-',
+            'skor' => $k->skor_akhir,
+        ]);
+
+        $pengajuanTerbaru = Probabilitas::with('riwayatTahapan')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($p) => (object) [
+                'lokasi' => $p->lokasi,
+                'ulp' => $p->ulp,
+                'tahap_saat_ini' => $p->tahapSaatIni(),
+                'status_kanban' => $p->statusKanban(),
+                'diajukan_pada' => $p->created_at,
+            ]);
+
+        // ===== Ringkasan Keuangan & Energi bulan berjalan vs bulan lalu =====
+        $ringkasanKeuangan = $this->buildRingkasanKeuangan();
+
+        // ===== Ringkasan Rekomendasi Lokasi (bagian "murah", tanpa grid scan) =====
+        $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
+        $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
+
         return view('dashboard.index', [
             'totalSpkluTerpasang' => Spklu::aktif()->count(),
             'spkluBaruBulanIni' => Spklu::aktif()->whereMonth('created_at', now()->month)->count(),
 
-            'pengajuanOnProgress' => 0,   // ganti: app(PengajuanService::class)->countOnProgress()
-            'kandidatAktif' => 0,         // ganti: app(SkorKandidatService::class)->countAktif()
-            'kandidatButuhTindakLanjut' => 0,
+            'pengajuanOnProgress' => $pengajuanOnProgress,
+            'kandidatAktif' => $kandidatAktif,
+            'kandidatButuhTindakLanjut' => $kandidatButuhTindakLanjut,
 
             'jadwalHariIni' => Jadwal::whereDate('waktu_mulai', today())->orderBy('waktu_mulai')->get(),
             'jadwalBesok' => Jadwal::whereDate('waktu_mulai', today()->addDay())->orderBy('waktu_mulai')->get(),
             'kalenderBulanIni' => $this->buildKalenderData(),
 
-            'topKandidat' => [], // nanti diisi array of object {nama, wilayah, skor} dari Service Person B
+            'topKandidat' => $topKandidat,
+            'pengajuanTerbaru' => $pengajuanTerbaru,
+
+            'ringkasanKeuangan' => $ringkasanKeuangan,
+            'ringkasanZona' => $zonaSpklu['ringkasan'],
+            'wilayahPotensialTop' => $wilayahPotensialTop,
 
             'dariBulan' => $dariBulan,
             'sampaiBulan' => $sampaiBulan,
@@ -40,6 +94,49 @@ class DashboardController extends Controller
             'trenTransaksiLabels' => $trenTransaksi['labels'],
             'trenTransaksiData' => $trenTransaksi['data'],
         ]);
+    }
+
+    /**
+     * Pendapatan & energi bulan berjalan vs bulan lalu — sebelumnya
+     * Dashboard sama sekali gak nampilin angka uang/energi (cuma ada di
+     * halaman Transaksi terpisah), padahal itu KPI inti buat manajemen.
+     */
+    private function buildRingkasanKeuangan(): array
+    {
+        $bulanIni = now();
+        $bulanLalu = $bulanIni->copy()->subMonth();
+
+        $agregatBulanIni = Transaksi::query()
+            ->whereMonth('tanggal', $bulanIni->month)
+            ->whereYear('tanggal', $bulanIni->year)
+            ->selectRaw('SUM(pendapatan_rp) as pendapatan, SUM(energi_kwh) as energi')
+            ->first();
+
+        $agregatBulanLalu = Transaksi::query()
+            ->whereMonth('tanggal', $bulanLalu->month)
+            ->whereYear('tanggal', $bulanLalu->year)
+            ->selectRaw('SUM(pendapatan_rp) as pendapatan, SUM(energi_kwh) as energi')
+            ->first();
+
+        $pendapatanBulanIni = (float) ($agregatBulanIni->pendapatan ?? 0);
+        $pendapatanBulanLalu = (float) ($agregatBulanLalu->pendapatan ?? 0);
+        $energiBulanIni = (float) ($agregatBulanIni->energi ?? 0);
+        $energiBulanLalu = (float) ($agregatBulanLalu->energi ?? 0);
+
+        $hitungTren = function ($sekarang, $dulu) {
+            if (! $dulu || $dulu == 0) {
+                return $sekarang > 0 ? 100.0 : 0.0;
+            }
+            return round((($sekarang - $dulu) / $dulu) * 100, 1);
+        };
+
+        return [
+            'pendapatan_bulan_ini' => $pendapatanBulanIni,
+            'tren_pendapatan_persen' => $hitungTren($pendapatanBulanIni, $pendapatanBulanLalu),
+            'energi_bulan_ini' => $energiBulanIni,
+            'tren_energi_persen' => $hitungTren($energiBulanIni, $energiBulanLalu),
+            'nama_bulan' => $bulanIni->translatedFormat('F Y'),
+        ];
     }
 
     /**
