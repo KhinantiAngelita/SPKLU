@@ -34,10 +34,9 @@
 .fsd-narasi-title{display:flex;align-items:center;gap:6px;font-weight:700;color:#B45309;margin-bottom:8px;font-size:14px}
 .fsd-bep-tag{font-size:11px;background:#0EA5B7;color:#fff;padding:2px 8px;border-radius:999px;font-weight:600;margin-left:6px}
 .fsd-back{display:inline-flex;align-items:center;gap:4px;color:#64748B;font-size:13px;text-decoration:none;margin-bottom:14px}
-.fsd-bep-caption{font-size:12.5px;color:#64748B;margin-top:10px}
-.fsd-bep-caption strong{color:#0EA5B7}
+.fsd-estimasi-roi{margin-top:14px;padding:12px 14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#334155;line-height:1.7}
+.fsd-estimasi-roi strong{color:#0F172A}
 
-/* Riwayat Analisis */
 .fsd-riwayat-item{position:relative;padding:0 0 20px 22px;border-left:2px solid #E2E8F0}
 .fsd-riwayat-item:last-child{border-left-color:transparent;padding-bottom:0}
 .fsd-riwayat-item::before{content:'';position:absolute;left:-6px;top:2px;width:10px;height:10px;border-radius:999px;background:#0EA5B7}
@@ -79,6 +78,8 @@
 
             <div class="fsd-detail-row"><span>Mobil/hari</span><span>{{ $fsSkema->mobil_per_hari }}</span></div>
             <div class="fsd-detail-row"><span>Transaksi kWh/Mobil</span><span>{{ $fsSkema->transaksi_kwh_per_mobil }}</span></div>
+            <div class="fsd-detail-row"><span>Masa Kontrak</span><span>{{ $fsSkema->masa_kontrak_tahun ?? 5 }} Tahun</span></div>
+            <div class="fsd-detail-row"><span>Kesiapan Jaringan</span><span>{{ $fsSkema->kesiapan_jaringan ?? '—' }}</span></div>
         </div>
 
         <div class="fsd-card">
@@ -158,7 +159,7 @@
         </div>
 
         <div class="fsd-card">
-            <h3>Proyeksi ROI 5 Tahun</h3>
+            <h3>Proyeksi ROI {{ $proyeksiRoi['masa_kontrak_tahun'] }} Tahun</h3>
 
             @if ($proyeksiRoi['tipe'] === 'skema_2')
                 <table class="fsd-mini-table">
@@ -176,14 +177,11 @@
                     </tbody>
                 </table>
 
-                <p class="fsd-bep-caption">
-                    Estimasi BEP:
-                    @if ($proyeksiRoi['estimasi_bep'])
-                        <strong>bulan ke-{{ $proyeksiRoi['estimasi_bep'] }}</strong>
-                    @else
-                        <span style="color:#94A3B8">belum tercapai dalam proyeksi 5 tahun</span>
-                    @endif
-                </p>
+                <div style="margin-top:16px"><canvas id="fsd-roi-chart" height="220"></canvas></div>
+
+                <div class="fsd-estimasi-roi">
+                    <strong>Estimasi ROI:</strong> {{ $proyeksiRoi['estimasi_roi_teks'] }}
+                </div>
             @else
                 <table class="fsd-mini-table">
                     <thead><tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Kumulatif Mesin</th><th>Pendpt. Lahan</th><th>Kumulatif Lahan</th></tr></thead>
@@ -201,12 +199,12 @@
                     </tbody>
                 </table>
 
-                <p class="fsd-bep-caption">
-                    Estimasi BEP Mitra Mesin:
-                    <strong>{{ $proyeksiRoi['estimasi_bep_mesin'] ? 'bulan ke-'.$proyeksiRoi['estimasi_bep_mesin'] : 'belum tercapai' }}</strong>
-                    &nbsp;|&nbsp; Mitra Lahan:
-                    <strong>{{ $proyeksiRoi['estimasi_bep_lahan'] ? 'bulan ke-'.$proyeksiRoi['estimasi_bep_lahan'] : 'belum tercapai' }}</strong>
-                </p>
+                <div style="margin-top:16px"><canvas id="fsd-roi-chart" height="220"></canvas></div>
+
+                <div class="fsd-estimasi-roi">
+                    <strong>Estimasi ROI Mitra Mesin:</strong> {{ $proyeksiRoi['estimasi_roi_mesin_teks'] }}<br>
+                    <strong>Estimasi ROI Mitra Lahan:</strong> {{ $proyeksiRoi['estimasi_roi_lahan_teks'] }}
+                </div>
             @endif
         </div>
 
@@ -217,3 +215,59 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const roi = @json($proyeksiRoi);
+    const canvas = document.getElementById('fsd-roi-chart');
+    if (!canvas || !roi) return;
+
+    const labelsTahun = roi.tahunan.map(r => 'Tahun ' + r.tahun);
+
+    const datasets = roi.tipe === 'skema_2'
+        ? [{
+            label: 'Progres BEP (%)',
+            data: roi.tahunan.map(r => r.persen_progres),
+            borderColor: '#0EA5B7',
+            backgroundColor: 'rgba(14,165,183,0.15)',
+            tension: 0.3,
+            fill: true,
+        }]
+        : [
+            {
+                label: 'Progres BEP Mitra Mesin (%)',
+                data: roi.tahunan.map(r => r.persen_progres_mesin),
+                borderColor: '#0EA5B7',
+                backgroundColor: 'rgba(14,165,183,0.15)',
+                tension: 0.3,
+                fill: true,
+            },
+            {
+                label: 'Progres BEP Mitra Lahan (%)',
+                data: roi.tahunan.map(r => r.persen_progres_lahan),
+                borderColor: '#F59E0B',
+                backgroundColor: 'rgba(245,158,11,0.12)',
+                tension: 0.3,
+                fill: true,
+            },
+        ];
+
+    new Chart(canvas, {
+        type: 'line',
+        data: { labels: labelsTahun, datasets },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: { callback: v => v + '%' },
+                    title: { display: true, text: 'Progres menuju BEP (%)' },
+                },
+            },
+            plugins: { legend: { display: true, position: 'bottom' } },
+        },
+    });
+});
+</script>
+@endpush

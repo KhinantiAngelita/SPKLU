@@ -8,12 +8,18 @@ use App\Models\Transaksi;
 
 class FsSkemaCalculatorService
 {
+    /**
+     * Sumber: "Tabel Tarif Keuntungan/kWh per Layanan Listrik", sheet
+     * "Input Koordinat Baru" FS Skema 3, nilai diberikan user (2026-09-02).
+     * SUDAH DIKONFIRMASI sama persis dengan spreadsheet.
+     */
     protected const TARIF_KEUNTUNGAN_KWH = [
         'TM' => 1752.68,
         'TR' => 1022.08,
         'LTR' => 822.26,
     ];
 
+    /** Dicocokkan case-insensitive terhadap pilihan dropdown Kesiapan Jaringan. */
     protected const POIN_KESIAPAN_JARINGAN = [
         'siap sambung' => 20,
         'perluasan sutm' => 15,
@@ -21,15 +27,59 @@ class FsSkemaCalculatorService
         'perluasan rumit' => 5,
     ];
 
-    /** Growth rate mobil/hari per tahun — TETAP sesuai dokumen FS, bukan input user. */
-    protected const GROWTH_RATE_TAHUNAN = 0.10;
+    /**
+     * Sumber "TABEL POIN KESIAPAN JARINGAN" di sheet yang sama — satu
+     * sumber kebenaran dipakai juga oleh dropdown di Blade, supaya label
+     * yang tampil & yang tersimpan di database selalu sinkron.
+     */
+    public const OPSI_KESIAPAN_JARINGAN = [
+        'Siap sambung' => 20,
+        'Perluasan SUTM (mudah)' => 15,
+        'Perluasan SKTM (gardu tembok)' => 10,
+        'Perluasan rumit' => 5,
+    ];
 
-    /** Potongan tetap PLN dari total keuntungan (Skema 3) — TETAP, dikonfirmasi 2%, tidak ditampilkan ke user. */
+    /** Dipakai juga oleh NarasiGeneratorService & Blade (create/edit). */
+    public const LABEL_FASILITAS = [
+        'toilet' => 'Toilet',
+        'ruang_tunggu' => 'Ruang Tunggu',
+        'parkir' => 'Parkir',
+        'kafetaria' => 'Kafetaria',
+    ];
+
+    /**
+     * PENTING: "Dekat Pintu Tol" (bukan cuma "Pintu Tol") — sesuai teks
+     * persis di sheet "Input Koordinat Baru".
+     */
+    public const LABEL_OKUPANSI = [
+        'dekat_perumahan' => 'Dekat Perumahan',
+        'pintu_tol' => 'Dekat Pintu Tol',
+        'pusat_keramaian' => 'Pusat Keramaian',
+        'ruas_jalan_protokol' => 'Ruas Jalan Protokol',
+    ];
+
+    protected const GROWTH_RATE_TAHUNAN = 0.10;
     protected const POTONGAN_PLN = 0.02;
+    protected const MASA_KONTRAK_DEFAULT = 5;
 
     public function hitungPoinFasilitas(array $fasilitas): int
     {
         return min(count($fasilitas) * 10, 40);
+    }
+
+    /** "Toilet, Ruang Tunggu, Parkir" — urutan ikut LABEL_FASILITAS, bukan urutan klik user. */
+    public function labelFasilitasTerpilih(array $fasilitas): string
+    {
+        $label = collect(self::LABEL_FASILITAS)->only($fasilitas)->values();
+
+        return $label->isNotEmpty() ? $label->implode(', ') : 'tidak ada fasilitas yang tercatat';
+    }
+
+    public function labelOkupansiTerpilih(array $okupansi): string
+    {
+        $label = collect(self::LABEL_OKUPANSI)->only($okupansi)->values();
+
+        return $label->isNotEmpty() ? $label->implode(', ') : 'tidak ada kondisi okupansi yang tercatat';
     }
 
     public function hitungPoinKesiapanJaringan(?string $kesiapanJaringan): int
@@ -41,7 +91,7 @@ class FsSkemaCalculatorService
         $input = strtolower(trim($kesiapanJaringan));
 
         foreach (self::POIN_KESIAPAN_JARINGAN as $label => $poin) {
-            if (str_contains($input, $label) || str_contains($label, $input)) {
+            if (str_contains($input, $label)) {
                 return $poin;
             }
         }
@@ -59,10 +109,6 @@ class FsSkemaCalculatorService
         return $poinFasilitas + $poinJaringan + $poinOkupansi;
     }
 
-    /**
-     * NOTE: ambang batas masih ASUMSI SEMENTARA — Excel cuma kasih 2 contoh yang
-     * dua-duanya "Menjadi Pertimbangan" (85 & 75). Perlu dikonfirmasi ke pemilik proses.
-     */
     public function tentukanStatusKelayakan(int $totalPoin): string
     {
         return match (true) {
@@ -73,18 +119,20 @@ class FsSkemaCalculatorService
     }
 
     /**
-     * Proyeksi ROI 5 tahun. Untuk Skema 2 (tanpa split RAB): pendapatan penuh
-     * masuk ke satu pihak. Untuk Skema 3: dipecah Mitra Mesin/Mitra Lahan/PLN,
-     * BEP dicek TERPISAH per pihak terhadap RAB masing-masing.
+     * Proyeksi ROI sepanjang Masa Kontrak (tahun) — sebelumnya hardcode 5
+     * tahun, sekarang ikut input user (fallback 5 untuk data lama yang
+     * belum punya kolom masa_kontrak_tahun).
      */
     public function hitungProyeksiROI(FsSkema $fsSkema): array
     {
+        $masaKontrak = (int) ($fsSkema->masa_kontrak_tahun ?: self::MASA_KONTRAK_DEFAULT);
+
         return $fsSkema->isSkema3()
-            ? $this->hitungProyeksiRoiSkema3($fsSkema)
-            : $this->hitungProyeksiRoiSkema2($fsSkema);
+            ? $this->hitungProyeksiRoiSkema3($fsSkema, $masaKontrak)
+            : $this->hitungProyeksiRoiSkema2($fsSkema, $masaKontrak);
     }
 
-    protected function hitungProyeksiRoiSkema2(FsSkema $fsSkema): array
+    protected function hitungProyeksiRoiSkema2(FsSkema $fsSkema, int $masaKontrak): array
     {
         $keuntunganPerKwh = self::TARIF_KEUNTUNGAN_KWH[strtoupper($fsSkema->layanan_listrik ?? 'TR')] ?? self::TARIF_KEUNTUNGAN_KWH['TR'];
         $rab = (float) ($fsSkema->total_rab_investasi ?? 0);
@@ -93,7 +141,7 @@ class FsSkemaCalculatorService
         $mobilPerHari = $fsSkema->mobil_per_hari;
         $kumulatif = 0;
 
-        for ($tahun = 1; $tahun <= 5; $tahun++) {
+        for ($tahun = 1; $tahun <= $masaKontrak; $tahun++) {
             $transaksiPerTahun = $mobilPerHari * 365;
             $energiKwhPerTahun = $transaksiPerTahun * $fsSkema->transaksi_kwh_per_mobil;
             $pendapatanTahunIni = $energiKwhPerTahun * $keuntunganPerKwh;
@@ -107,19 +155,24 @@ class FsSkemaCalculatorService
                 'pendapatan_mitra' => round($pendapatanTahunIni),
                 'kumulatif' => round($kumulatif),
                 'sudah_bep' => $kumulatif >= $rab,
+                'persen_progres' => $rab > 0 ? round(min($kumulatif / $rab, 9.99) * 100, 1) : 0,
             ];
 
             $mobilPerHari *= (1 + self::GROWTH_RATE_TAHUNAN);
         }
 
+        $estimasi = $this->estimasiBulanBep($hasil, $rab, 'pendapatan_mitra', 'kumulatif');
+
         return [
             'tipe' => 'skema_2',
+            'masa_kontrak_tahun' => $masaKontrak,
             'tahunan' => $hasil,
-            'estimasi_bep' => $this->estimasiBulanBep($hasil, $rab, 'pendapatan_mitra', 'kumulatif'),
+            'estimasi_bep' => $estimasi,
+            'estimasi_roi_teks' => $this->formatEstimasiRoi($estimasi, $masaKontrak),
         ];
     }
 
-    protected function hitungProyeksiRoiSkema3(FsSkema $fsSkema): array
+    protected function hitungProyeksiRoiSkema3(FsSkema $fsSkema, int $masaKontrak): array
     {
         $keuntunganPerKwh = self::TARIF_KEUNTUNGAN_KWH[strtoupper($fsSkema->layanan_listrik ?? 'TR')] ?? self::TARIF_KEUNTUNGAN_KWH['TR'];
         $sharingLahan = (float) ($fsSkema->sharing_provit_mitra_lahan ?? 0.10);
@@ -133,7 +186,7 @@ class FsSkemaCalculatorService
         $kumulatifMesin = 0;
         $kumulatifLahan = 0;
 
-        for ($tahun = 1; $tahun <= 5; $tahun++) {
+        for ($tahun = 1; $tahun <= $masaKontrak; $tahun++) {
             $transaksiPerTahun = $mobilPerHari * 365;
             $energiKwhPerTahun = $transaksiPerTahun * $fsSkema->transaksi_kwh_per_mobil;
             $totalKeuntunganTahunIni = $energiKwhPerTahun * $keuntunganPerKwh;
@@ -152,28 +205,44 @@ class FsSkemaCalculatorService
                 'pendapatan_mesin' => round($pendapatanMesinTahunIni),
                 'kumulatif_mesin' => round($kumulatifMesin),
                 'sudah_bep_mesin' => $kumulatifMesin >= $rabMesin,
+                'persen_progres_mesin' => $rabMesin > 0 ? round(min($kumulatifMesin / $rabMesin, 9.99) * 100, 1) : 0,
                 'pendapatan_lahan' => round($pendapatanLahanTahunIni),
                 'kumulatif_lahan' => round($kumulatifLahan),
                 'sudah_bep_lahan' => $kumulatifLahan >= $rabLahan,
+                'persen_progres_lahan' => $rabLahan > 0 ? round(min($kumulatifLahan / $rabLahan, 9.99) * 100, 1) : 0,
             ];
 
             $mobilPerHari *= (1 + self::GROWTH_RATE_TAHUNAN);
         }
 
+        $estimasiMesin = $this->estimasiBulanBep($hasil, $rabMesin, 'pendapatan_mesin', 'kumulatif_mesin');
+        $estimasiLahan = $this->estimasiBulanBep($hasil, $rabLahan, 'pendapatan_lahan', 'kumulatif_lahan');
+
         return [
             'tipe' => 'skema_3',
+            'masa_kontrak_tahun' => $masaKontrak,
             'tahunan' => $hasil,
-            'estimasi_bep_mesin' => $this->estimasiBulanBep($hasil, $rabMesin, 'pendapatan_mesin', 'kumulatif_mesin'),
-            'estimasi_bep_lahan' => $this->estimasiBulanBep($hasil, $rabLahan, 'pendapatan_lahan', 'kumulatif_lahan'),
+            'estimasi_bep_mesin' => $estimasiMesin,
+            'estimasi_bep_lahan' => $estimasiLahan,
+            'estimasi_roi_mesin_teks' => $this->formatEstimasiRoi($estimasiMesin, $masaKontrak),
+            'estimasi_roi_lahan_teks' => $this->formatEstimasiRoi($estimasiLahan, $masaKontrak),
         ];
     }
 
     /**
-     * Estimasi "bulan ke-" BEP tercapai — cari tahun pertama kumulatif >= RAB,
-     * lalu interpolasi linear di dalam tahun itu buat estimasi bulannya.
-     * Null kalau belum BEP sampai tahun ke-5.
+     * Cari tahun (baris tabel) pertama kumulatif >= RAB, interpolasi
+     * linear DI DALAM tahun itu buat estimasi total bulan.
+     *
+     * ⚠️ BELUM DIKONFIRMASI sama persis dengan rumus tersembunyi di
+     * spreadsheet (kolom bantu "Estimasi Bulan ke-" di sana kasih angka
+     * beda dari interpolasi linear standar ini). Yang SUDAH pasti sama:
+     * "tahun" (baris BEP pertama tercapai) — itu murni look-up tabel.
+     * Begitu rumus bulan yang pasti dikonfirmasi, cuma bagian
+     * $bulanDalamTahunIni yang perlu diganti, field 'tahun' tetap sama.
+     *
+     * @return array{tahun:int, total_bulan:int}|null null kalau belum BEP.
      */
-    protected function estimasiBulanBep(array $dataTahunan, float $rab, string $kolomPendapatan, string $kolomKumulatif): ?int
+    protected function estimasiBulanBep(array $dataTahunan, float $rab, string $kolomPendapatan, string $kolomKumulatif): ?array
     {
         if ($rab <= 0) {
             return null;
@@ -189,22 +258,37 @@ class FsSkemaCalculatorService
                 $bulanDalamTahunIni = $pendapatanPerBulan > 0 ? (int) ceil($sisaKebutuhan / $pendapatanPerBulan) : 12;
                 $bulanDalamTahunIni = min($bulanDalamTahunIni, 12);
 
-                return (($baris['tahun'] - 1) * 12) + $bulanDalamTahunIni;
+                return [
+                    'tahun' => $baris['tahun'],
+                    'total_bulan' => (($baris['tahun'] - 1) * 12) + $bulanDalamTahunIni,
+                ];
             }
 
             $kumulatifSebelumnya = $baris[$kolomKumulatif];
         }
 
-        return null; // belum BEP dalam 5 tahun proyeksi
+        return null;
+    }
+
+    /** Format "Tahun ke-2 (24 bulan / 2 tahun 0 bulan)" — sama pola teks spreadsheet. */
+    public function formatEstimasiRoi(?array $estimasi, int $masaKontrak): string
+    {
+        if ($estimasi === null) {
+            return "belum tercapai dalam proyeksi {$masaKontrak} tahun";
+        }
+
+        $tahun = $estimasi['tahun'];
+        $totalBulan = $estimasi['total_bulan'];
+        $sisaTahun = intdiv($totalBulan, 12);
+        $sisaBulan = $totalBulan % 12;
+
+        return "Tahun ke-{$tahun} ({$totalBulan} bulan / {$sisaTahun} tahun {$sisaBulan} bulan)";
     }
 
     /**
-     * [TIDAK DIPAKAI SEJAK keputusan "3 SPKLU Terdekat numpang baca dari modul Kandidat"]
-     * Dulu dipakai FsSkemaController::show() untuk hitung jarak sendiri, tapi diputuskan
-     * pindah sumber data ke modul Kandidat (pakai Google Distance Matrix API — jarak rute
-     * kendaraan asli, bukan garis lurus). Method ini DISIMPAN cuma sebagai referensi/
-     * fallback darurat — JANGAN dipanggil dari alur aktif manapun sampai ada keputusan
-     * baru untuk mengaktifkannya lagi.
+     * [TIDAK DIPAKAI — dipertahankan sebagai referensi/fallback darurat,
+     * lihat catatan di versi controller sebelumnya. Tidak diubah oleh
+     * revisi ini.]
      */
     public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
@@ -219,12 +303,7 @@ class FsSkemaCalculatorService
         return $radiusBumiKm * $c;
     }
 
-    /**
-     * [TIDAK DIPAKAI SEJAK keputusan "3 SPKLU Terdekat numpang baca dari modul Kandidat"]
-     * Lihat catatan di hitungJarakKm(). Disimpan utuh cuma buat referensi/fallback darurat.
-     *
-     * @return array<int, array{nama:string, latitude:float, longitude:float, jarak_km:float, kapasitas_kw:float|null, status_jarak:string, rata_rata_transaksi_kwh_bulan:float}>
-     */
+    /** [TIDAK DIPAKAI — lihat catatan di hitungJarakKm().] */
     public function cari3SpkluTerdekat(float $lat, float $lng): array
     {
         $semuaSpklu = Spklu::aktif()->with('ulp')->whereNotNull('latitude')->whereNotNull('longitude')->get();

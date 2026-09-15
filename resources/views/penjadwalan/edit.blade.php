@@ -104,8 +104,23 @@
         </div>
         <input type="hidden" name="mode" id="input-mode" value="{{ old('mode', $jadwal->mode) }}" required>
 
-        <label>Lokasi <span id="label-wajib" style="display:none;color:#C0392B;">*</span></label>
-        <input type="text" name="lokasi" value="{{ old('lokasi', $jadwal->lokasi) }}" placeholder="Alamat lokasi kunjungan">
+                <div id="blok-lokasi-offline">
+            <label>Lokasi <span id="label-wajib-lokasi" style="display:none;color:#C0392B;">*</span></label>
+            <input type="text" name="lokasi" value="{{ old('lokasi', $jadwal->lokasi) }}" placeholder="Alamat lokasi kunjungan">
+        </div>
+
+        <div id="blok-online" style="display:none">
+            <label>Platform</label>
+            <select name="platform">
+                <option value="">Pilih platform...</option>
+                <option value="Zoom" @selected(old('platform', $jadwal->platform) === 'Zoom')>Zoom</option>
+                <option value="Google Meet" @selected(old('platform', $jadwal->platform) === 'Google Meet')>Google Meet</option>
+                <option value="Lainnya" @selected(old('platform', $jadwal->platform) === 'Lainnya')>Lainnya</option>
+            </select>
+
+            <label>Link Pertemuan</label>
+            <input type="text" name="link_pertemuan" value="{{ old('link_pertemuan', $jadwal->link_pertemuan) }}" placeholder="https://zoom.us/j/xxxxxxxxxx">
+        </div>
 
         <label>Penanggung Jawab</label>
         <select name="penanggung_jawab">
@@ -134,7 +149,10 @@ function pilihMode(mode) {
     document.getElementById('input-mode').value = mode;
     document.getElementById('pill-online').classList.toggle('active-online', mode === 'online');
     document.getElementById('pill-offline').classList.toggle('active-offline', mode === 'offline');
-    document.getElementById('label-wajib').style.display = mode === 'offline' ? 'inline' : 'none';
+
+    document.getElementById('blok-lokasi-offline').style.display = mode === 'offline' ? 'block' : 'none';
+    document.getElementById('blok-online').style.display = mode === 'online' ? 'block' : 'none';
+    document.getElementById('label-wajib-lokasi').style.display = mode === 'offline' ? 'inline' : 'none';
 }
 document.addEventListener('DOMContentLoaded', () => {
     pilihMode(document.getElementById('input-mode').value || 'offline');

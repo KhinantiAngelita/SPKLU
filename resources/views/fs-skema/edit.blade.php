@@ -23,6 +23,7 @@
 .fsf-field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
 .fsf-field input,.fsf-field select,.fsf-field textarea{width:100%;padding:10px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;color:#0F172A}
 .fsf-field input:focus,.fsf-field select:focus{outline:none;border-color:#0EA5B7;box-shadow:0 0 0 3px rgba(14,165,183,.12)}
+.fsf-field input[readonly]{background:#F1F5F9;color:#64748B;cursor:not-allowed}
 .fsf-hint{font-size:12px;color:#94A3B8;margin-top:4px}
 .fsf-label-group{font-size:13px;font-weight:600;color:#334155;margin-bottom:10px;display:block}
 .fsf-chip-group{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
@@ -55,6 +56,8 @@
 .fsp-narasi{font-size:13.5px;color:#475569;line-height:1.6;margin:0}
 .fsp-narasi-placeholder{color:#94A3B8;font-style:italic;font-size:13px}
 .fsp-loading{font-size:12px;color:#0EA5B7;font-weight:600}
+.fsp-estimasi-roi{margin-top:14px;padding:12px 14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#334155;line-height:1.7}
+.fsp-estimasi-roi strong{color:#0F172A}
 </style>
 @endpush
 
@@ -99,8 +102,19 @@
                 </div>
                 <div class="fsf-field">
                     <label>Titik Kordinat</label>
-                    <input type="text" name="titik_koordinat" value="{{ old('titik_koordinat', $fsSkema->titik_koordinat) }}" placeholder="-6.1944, 106.8318" data-preview-trigger>
+                    <input type="text" name="titik_koordinat" id="input-titik-koordinat" value="{{ old('titik_koordinat', $fsSkema->titik_koordinat) }}" placeholder="-6.1944, 106.8318" data-preview-trigger>
                     <p class="fsf-hint">Format: lat, lng — dipakai buat hitung 3 SPKLU terdekat</p>
+                </div>
+            </div>
+
+            <div class="fsf-row">
+                <div class="fsf-field">
+                    <label>Latitude (terbaca otomatis)</label>
+                    <input type="text" id="input-latitude-otomatis" value="" readonly placeholder="—">
+                </div>
+                <div class="fsf-field">
+                    <label>Longitude (terbaca otomatis)</label>
+                    <input type="text" id="input-longitude-otomatis" value="" readonly placeholder="—">
                 </div>
             </div>
 
@@ -174,7 +188,11 @@
                     <label>Transaksi kWh/Mobil</label>
                     <input type="number" step="0.01" name="transaksi_kwh_per_mobil" value="{{ old('transaksi_kwh_per_mobil', $fsSkema->transaksi_kwh_per_mobil) }}" required data-preview-trigger>
                 </div>
-                <div></div>
+                <div class="fsf-field">
+                    <label>Masa Kontrak (Tahun)</label>
+                    <input type="number" name="masa_kontrak_tahun" value="{{ old('masa_kontrak_tahun', $fsSkema->masa_kontrak_tahun ?? 5) }}" min="1" max="30" required data-preview-trigger>
+                    <p class="fsf-hint">Menentukan panjang proyeksi ROI.</p>
+                </div>
             </div>
 
             <div class="fsf-section-title">Penilaian Lokasi</div>
@@ -182,7 +200,7 @@
             <label class="fsf-label-group">Fasilitas (maks 40 poin)</label>
             <div class="fsf-chip-group">
                 @php $fasilitasLama = old('fasilitas', $fsSkema->fasilitas ?? []); @endphp
-                @foreach (['toilet' => 'Toilet', 'ruang_tunggu' => 'Ruang Tunggu', 'parkir' => 'Parkir', 'kafetaria' => 'Kafetaria'] as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_FASILITAS as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, $fasilitasLama)) data-preview-trigger>
                         <span>{{ $label }}</span>
@@ -192,13 +210,20 @@
 
             <div class="fsf-field" style="margin-bottom:18px">
                 <label>Kesiapan Jaringan (maks 20 poin)</label>
-                <input type="text" name="kesiapan_jaringan" value="{{ old('kesiapan_jaringan', $fsSkema->kesiapan_jaringan) }}" data-preview-trigger>
+                <select name="kesiapan_jaringan" data-preview-trigger>
+                    <option value="">Pilih kesiapan jaringan...</option>
+                    @foreach (\App\Services\FsSkemaCalculatorService::OPSI_KESIAPAN_JARINGAN as $label => $poinMax)
+                        <option value="{{ $label }}" @selected(old('kesiapan_jaringan', $fsSkema->kesiapan_jaringan) === $label)>
+                            {{ $label }} ({{ $poinMax }} poin)
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
             <label class="fsf-label-group">Okupansi (maks 40 poin)</label>
             <div class="fsf-chip-group">
                 @php $okupansiLama = old('okupansi', $fsSkema->okupansi ?? []); @endphp
-                @foreach (['dekat_perumahan' => 'Dekat Perumahan', 'pintu_tol' => 'Pintu Tol', 'pusat_keramaian' => 'Pusat Keramaian', 'ruas_jalan_protokol' => 'Ruas Jalan Protokol'] as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_OKUPANSI as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, $okupansiLama)) data-preview-trigger>
                         <span>{{ $label }}</span>
@@ -237,13 +262,19 @@
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Proyeksi ROI 5 Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
             <div class="fsp-card-body">
                 <div id="fsp-roi-empty" class="fsp-empty">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
-                <table class="fsp-table" id="fsp-roi-table" style="display:none">
-                    <thead id="fsp-roi-head"></thead>
-                    <tbody id="fsp-roi-body"></tbody>
-                </table>
+                <div id="fsp-roi-content" style="display:none">
+                    <table class="fsp-table" id="fsp-roi-table">
+                        <thead id="fsp-roi-head"></thead>
+                        <tbody id="fsp-roi-body"></tbody>
+                    </table>
+                    <div style="margin-top:16px">
+                        <canvas id="fsp-roi-chart" height="220"></canvas>
+                    </div>
+                    <div class="fsp-estimasi-roi" id="fsp-estimasi-roi"></div>
+                </div>
             </div>
         </div>
 
@@ -256,10 +287,27 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script>
-// Tandai kedua field mobil/hari SEKALI pakai data-role, supaya pencarian
-// elemen tidak lagi bergantung pada attribute `name` yang berubah-ubah
-// tiap kali tab diganti (itu penyebab bug-nya).
+function perbaruiLatLng() {
+    const nilai = document.getElementById('input-titik-koordinat').value;
+    const bagian = nilai.split(',').map(s => s.trim());
+    const lat = document.getElementById('input-latitude-otomatis');
+    const lng = document.getElementById('input-longitude-otomatis');
+
+    if (bagian.length === 2 && !isNaN(bagian[0]) && !isNaN(bagian[1]) && bagian[0] !== '' && bagian[1] !== '') {
+        lat.value = bagian[0];
+        lng.value = bagian[1];
+    } else {
+        lat.value = '';
+        lng.value = '';
+    }
+}
+document.getElementById('input-titik-koordinat').addEventListener('input', perbaruiLatLng);
+
 function tandaiFieldMobil() {
     document.querySelectorAll('input[name="mobil_per_hari"], input[name="mobil_per_hari_disabled"]')
         .forEach(el => { if (!el.dataset.role) el.dataset.role = 'mobil-skema2'; });
@@ -278,6 +326,7 @@ function toggleSkema(val) {
     const mobilSkema3 = document.querySelector('[data-role="mobil-skema3"]');
 
     if (val === 'skema_3') {
+        if (!mobilSkema3.value) mobilSkema3.value = mobilSkema2.value;
         mobilSkema3.name = 'mobil_per_hari';
         mobilSkema2.name = 'mobil_per_hari_disabled';
     } else {
@@ -293,11 +342,13 @@ document.querySelectorAll('input[name="skema"]').forEach(el => {
 document.addEventListener('DOMContentLoaded', () => {
     const dipilih = document.querySelector('input[name="skema"]:checked')?.value || 'skema_2';
     toggleSkema(dipilih);
+    perbaruiLatLng();
     jalankanPreview();
 });
 
 const PREVIEW_URL = '{{ route('fs-skema.preview') }}';
 let timerPreview = null;
+let chartRoi = null;
 
 function jadwalkanPreview() {
     clearTimeout(timerPreview);
@@ -385,18 +436,21 @@ function renderSpklu(list) {
 
 function renderRoi(roi) {
     const empty = document.getElementById('fsp-roi-empty');
-    const table = document.getElementById('fsp-roi-table');
+    const content = document.getElementById('fsp-roi-content');
     const head = document.getElementById('fsp-roi-head');
     const body = document.getElementById('fsp-roi-body');
+    const labelTahun = document.getElementById('fsp-roi-tahun-label');
 
     if (!roi) {
         empty.style.display = 'block';
-        table.style.display = 'none';
+        content.style.display = 'none';
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
         return;
     }
 
     empty.style.display = 'none';
-    table.style.display = 'table';
+    content.style.display = 'block';
+    labelTahun.textContent = roi.masa_kontrak_tahun;
 
     if (roi.tipe === 'skema_2') {
         head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
@@ -407,6 +461,9 @@ function renderRoi(roi) {
             <td>${formatRupiah(r.pendapatan_mitra)}</td>
             <td>${formatRupiah(r.kumulatif)}</td>
         </tr>`).join('');
+
+        document.getElementById('fsp-estimasi-roi').innerHTML =
+            `<strong>Estimasi ROI:</strong> ${roi.estimasi_roi_teks}`;
     } else {
         head.innerHTML = '<tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
@@ -415,7 +472,68 @@ function renderRoi(roi) {
             <td>${formatRupiah(r.pendapatan_mesin)}${r.sudah_bep_mesin ? ' ✓BEP' : ''}</td>
             <td>${formatRupiah(r.pendapatan_lahan)}${r.sudah_bep_lahan ? ' ✓BEP' : ''}</td>
         </tr>`).join('');
+
+        document.getElementById('fsp-estimasi-roi').innerHTML =
+            `<strong>Estimasi ROI Mitra Mesin:</strong> ${roi.estimasi_roi_mesin_teks}<br>`
+            + `<strong>Estimasi ROI Mitra Lahan:</strong> ${roi.estimasi_roi_lahan_teks}`;
     }
+
+    renderChartRoi(roi);
+}
+
+function renderChartRoi(roi) {
+    const canvas = document.getElementById('fsp-roi-chart');
+    const labelsTahun = roi.tahunan.map(r => 'Tahun ' + r.tahun);
+
+    const datasets = roi.tipe === 'skema_2'
+        ? [{
+            label: 'Progres BEP (%)',
+            data: roi.tahunan.map(r => r.persen_progres),
+            borderColor: '#0EA5B7',
+            backgroundColor: 'rgba(14,165,183,0.15)',
+            tension: 0.3,
+            fill: true,
+        }]
+        : [
+            {
+                label: 'Progres BEP Mitra Mesin (%)',
+                data: roi.tahunan.map(r => r.persen_progres_mesin),
+                borderColor: '#0EA5B7',
+                backgroundColor: 'rgba(14,165,183,0.15)',
+                tension: 0.3,
+                fill: true,
+            },
+            {
+                label: 'Progres BEP Mitra Lahan (%)',
+                data: roi.tahunan.map(r => r.persen_progres_lahan),
+                borderColor: '#F59E0B',
+                backgroundColor: 'rgba(245,158,11,0.12)',
+                tension: 0.3,
+                fill: true,
+            },
+        ];
+
+    if (chartRoi) {
+        chartRoi.data.labels = labelsTahun;
+        chartRoi.data.datasets = datasets;
+        chartRoi.update();
+        return;
+    }
+
+    chartRoi = new Chart(canvas, {
+        type: 'line',
+        data: { labels: labelsTahun, datasets },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: { callback: v => v + '%' },
+                    title: { display: true, text: 'Progres menuju BEP (%)' },
+                },
+            },
+            plugins: { legend: { display: true, position: 'bottom' } },
+        },
+    });
 }
 
 function renderNarasi(narasi) {
@@ -431,4 +549,4 @@ function renderNarasi(narasi) {
     }
 }
 </script>
-@endsection
+@endpush

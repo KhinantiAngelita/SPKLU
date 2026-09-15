@@ -111,6 +111,8 @@ class PenjadwalanController extends Controller
             'waktu_mulai' => 'required|date',
             'mode' => 'required|in:online,offline',
             'lokasi' => 'nullable|string|required_if:mode,offline',
+            'platform' => 'nullable|in:Zoom,Google Meet,Lainnya|required_if:mode,online',
+            'link_pertemuan' => 'nullable|url|required_if:mode,online',
             'penanggung_jawab' => 'nullable|exists:users,id',
         ]);
     }

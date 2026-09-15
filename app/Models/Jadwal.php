@@ -8,7 +8,7 @@ class Jadwal extends Model
 {
     protected $fillable = [
         'judul', 'deskripsi', 'waktu_mulai', 'mode', 'lokasi', 'dibuat_oleh',
-        'pengajuan_id', 'probabilitas_id', 'penanggung_jawab', 'status',
+        'pengajuan_id', 'probabilitas_id', 'penanggung_jawab', 'status','platform','link_pertemuan',
     ];
 
     protected $casts = [

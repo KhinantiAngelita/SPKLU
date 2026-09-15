@@ -108,7 +108,16 @@
                         </td>
                         <td style="white-space:nowrap;">{{ $j->waktu_mulai->translatedFormat('d M Y, H:i') }}</td>
                         <td><span class="jdi-pill {{ $j->mode === 'online' ? 'jdi-mode-online' : 'jdi-mode-offline' }}">{{ ucfirst($j->mode) }}</span></td>
-                        <td>{{ $j->lokasi ?? '—' }}</td>
+                                                <td>
+                            @if ($j->mode === 'online')
+                                {{ $j->platform ?? '—' }}
+                                @if ($j->link_pertemuan)
+                                    <a href="{{ $j->link_pertemuan }}" target="_blank" rel="noopener" style="margin-left:6px;color:#1D4ED8;font-size:12px;">Buka link</a>
+                                @endif
+                            @else
+                                {{ $j->lokasi ?? '—' }}
+                            @endif
+                        </td>
                         <td>{{ $j->penanggungJawab->name ?? '—' }}</td>
                         <td><span class="jdi-pill jdi-status-{{ $j->status }}">{{ ucfirst($j->status) }}</span></td>
                         <td style="text-align:right">
@@ -143,7 +152,7 @@
             </tbody>
         </table>
     </div>
-
+    
     <div style="padding:16px 22px;">{{ $jadwals->links() }}</div>
 </div>
 @endsection
