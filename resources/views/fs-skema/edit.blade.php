@@ -36,6 +36,11 @@
 .fsf-btn-primary{padding:10px 22px;border-radius:8px;border:none;background:#0EA5B7;color:#fff;font-weight:600;font-size:14px;cursor:pointer}
 .fsf-skema3-only{display:none}
 
+/* Ringkasan Kelayakan Lokasi -- versi tertanam di kolom kiri (bawah Penilaian Lokasi) */
+.fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
+.fsf-mini-card-header{background:#E0F7FA;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-body{padding:18px 20px}
+
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
 .fsp-card-header{background:#E0F7FA;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
 .fsp-card-body{padding:18px 20px}
@@ -58,6 +63,7 @@
 .fsp-loading{font-size:12px;color:#0EA5B7;font-weight:600}
 .fsp-estimasi-roi{margin-top:14px;padding:12px 14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#334155;line-height:1.7}
 .fsp-estimasi-roi strong{color:#0F172A}
+.fsp-chart-error{color:#B91C1C;font-size:12.5px;line-height:1.6}
 </style>
 @endpush
 
@@ -167,20 +173,15 @@
                 </div>
                 <div class="fsf-row">
                     <div class="fsf-field">
+                        <label>Mobil/hari</label>
+                        <input type="number" name="mobil_per_hari_skema3" value="" data-preview-trigger>
+                    </div>
+                    <div class="fsf-field">
                         <label>Sharing Profit Mitra Lahan</label>
                         <input type="number" step="0.01" min="0" max="1" name="sharing_provit_mitra_lahan" value="{{ old('sharing_provit_mitra_lahan', $fsSkema->sharing_provit_mitra_lahan ?? 0.10) }}" data-preview-trigger>
                         <p class="fsf-hint">Nilai 0–1 (contoh 0.10 = 10%).</p>
                     </div>
-                    <div></div>
                 </div>
-            </div>
-
-            <div class="fsf-row" id="row-mobil-skema3" style="display:none">
-                <div class="fsf-field">
-                    <label>Mobil/hari</label>
-                    <input type="number" name="mobil_per_hari_skema3" value="" data-preview-trigger>
-                </div>
-                <div></div>
             </div>
 
             <div class="fsf-row">
@@ -231,6 +232,19 @@
                 @endforeach
             </div>
 
+            {{-- Ringkasan Kelayakan Lokasi — dipindah ke kiri, tepat di bawah
+                 Penilaian Lokasi supaya nyambung sama input poin di atasnya. --}}
+            <div class="fsf-mini-card">
+                <div class="fsf-mini-card-header">Ringkasan Kelayakan Lokasi</div>
+                <div class="fsf-mini-card-body">
+                    <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
+                    <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
+                    <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">0 / 40</span></div>
+                    <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">0 / 100</span></div>
+                    <div class="fsp-status-box fsp-status-netral" id="fsp-status-box">Status Kelayakan: —</div>
+                </div>
+            </div>
+
             <div class="fsf-actions">
                 <a href="{{ route('fs-skema.show', $fsSkema) }}" class="fsf-btn-outline">Batal</a>
                 <button type="submit" class="fsf-btn-primary">Simpan Perubahan</button>
@@ -250,17 +264,7 @@
             </div>
         </div>
 
-        <div class="fsp-card">
-            <div class="fsp-card-header">Ringkasan Kelayakan Lokasi</div>
-            <div class="fsp-card-body">
-                <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
-                <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
-                <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">0 / 40</span></div>
-                <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">0 / 100</span></div>
-                <div class="fsp-status-box fsp-status-netral" id="fsp-status-box">Status Kelayakan: —</div>
-            </div>
-        </div>
-
+        {{-- CARD 1/2: detail data Proyeksi ROI (tabel + estimasi teks) --}}
         <div class="fsp-card">
             <div class="fsp-card-header">Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
             <div class="fsp-card-body">
@@ -270,10 +274,18 @@
                         <thead id="fsp-roi-head"></thead>
                         <tbody id="fsp-roi-body"></tbody>
                     </table>
-                    <div style="margin-top:16px">
-                        <canvas id="fsp-roi-chart" height="220"></canvas>
-                    </div>
                     <div class="fsp-estimasi-roi" id="fsp-estimasi-roi"></div>
+                </div>
+            </div>
+        </div>
+
+        {{-- CARD 2/2: grafik Proyeksi ROI, persis di bawah card detail di atas --}}
+        <div class="fsp-card">
+            <div class="fsp-card-header">Grafik Proyeksi ROI</div>
+            <div class="fsp-card-body">
+                <div id="fsp-roi-chart-empty" class="fsp-empty">Grafik akan tampil setelah data Proyeksi ROI di atas terisi.</div>
+                <div id="fsp-roi-chart-wrap" style="display:none">
+                    <canvas id="fsp-roi-chart" height="220"></canvas>
                 </div>
             </div>
         </div>
@@ -290,7 +302,20 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+{{--
+    PENTING: script Chart.js diambil dari CDN eksternal. Kalau server/browser
+    tidak punya akses internet ke cdnjs.cloudflare.com (mis. jaringan
+    intranet/kantor yang dibatasi), variabel global `Chart` tidak akan
+    pernah ada dan grafik akan tampak "kosong" walau card-nya kelihatan.
+    Atribut onerror di bawah menandai kegagalan itu supaya JS bisa kasih
+    pesan yang jelas ke user, bukan diam-diam gagal.
+
+    REKOMENDASI JANGKA PANJANG: download file ini dan simpan lokal di
+    public/vendor/chartjs/chart.umd.min.js, lalu ganti src di bawah jadi
+    {{ asset('vendor/chartjs/chart.umd.min.js') }} supaya nggak bergantung
+    sama akses internet ke CDN sama sekali.
+--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="window.__chartJsGagalDimuat = true"></script>
 <script>
 function perbaruiLatLng() {
     const nilai = document.getElementById('input-titik-koordinat').value;
@@ -318,7 +343,6 @@ function tandaiFieldMobil() {
 function toggleSkema(val) {
     document.getElementById('blok-skema-2').style.display = val === 'skema_2' ? 'block' : 'none';
     document.getElementById('blok-skema-3').classList.toggle('fsf-skema3-only', val !== 'skema_3');
-    document.getElementById('row-mobil-skema3').style.display = val === 'skema_3' ? 'grid' : 'none';
 
     tandaiFieldMobil();
 
@@ -349,6 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
 const PREVIEW_URL = '{{ route('fs-skema.preview') }}';
 let timerPreview = null;
 let chartRoi = null;
+
+// Cek apakah library Chart.js benar-benar tersedia di window.
+function chartJsSiap() {
+    return typeof Chart !== 'undefined' && !window.__chartJsGagalDimuat;
+}
 
 function jadwalkanPreview() {
     clearTimeout(timerPreview);
@@ -386,7 +415,7 @@ async function jalankanPreview() {
         renderRoi(data.proyeksi_roi);
         renderNarasi(data.narasi_analisis);
     } catch (e) {
-        //
+        console.error('Preview FS Skema gagal:', e);
     } finally {
         document.getElementById('fsp-loading-spklu').style.display = 'none';
         document.getElementById('fsp-loading-roi').style.display = 'none';
@@ -441,9 +470,16 @@ function renderRoi(roi) {
     const body = document.getElementById('fsp-roi-body');
     const labelTahun = document.getElementById('fsp-roi-tahun-label');
 
+    const chartEmpty = document.getElementById('fsp-roi-chart-empty');
+    const chartWrap = document.getElementById('fsp-roi-chart-wrap');
+
     if (!roi) {
         empty.style.display = 'block';
         content.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik akan tampil setelah data Proyeksi ROI di atas terisi.';
+        chartEmpty.classList.remove('fsp-chart-error');
+        chartWrap.style.display = 'none';
         if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
         return;
     }
@@ -482,58 +518,84 @@ function renderRoi(roi) {
 }
 
 function renderChartRoi(roi) {
-    const canvas = document.getElementById('fsp-roi-chart');
-    const labelsTahun = roi.tahunan.map(r => 'Tahun ' + r.tahun);
+    const chartEmpty = document.getElementById('fsp-roi-chart-empty');
+    const chartWrap = document.getElementById('fsp-roi-chart-wrap');
 
-    const datasets = roi.tipe === 'skema_2'
-        ? [{
-            label: 'Progres BEP (%)',
-            data: roi.tahunan.map(r => r.persen_progres),
-            borderColor: '#0EA5B7',
-            backgroundColor: 'rgba(14,165,183,0.15)',
-            tension: 0.3,
-            fill: true,
-        }]
-        : [
-            {
-                label: 'Progres BEP Mitra Mesin (%)',
-                data: roi.tahunan.map(r => r.persen_progres_mesin),
+    // Guard #1: library Chart.js belum/gagal dimuat (mis. tidak ada akses
+    // internet ke CDN). Tampilkan pesan yang jelas, jangan diam-diam kosong.
+    if (!chartJsSiap()) {
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
+        chartWrap.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik tidak bisa ditampilkan: library Chart.js gagal dimuat dari CDN. Cek koneksi internet ke cdnjs.cloudflare.com, atau hubungi admin untuk meng-host Chart.js secara lokal.';
+        chartEmpty.classList.add('fsp-chart-error');
+        return;
+    }
+
+    try {
+        chartEmpty.style.display = 'none';
+        chartWrap.style.display = 'block';
+
+        const canvas = document.getElementById('fsp-roi-chart');
+        const labelsTahun = roi.tahunan.map(r => 'Tahun ' + r.tahun);
+
+        const datasets = roi.tipe === 'skema_2'
+            ? [{
+                label: 'Progres BEP (%)',
+                data: roi.tahunan.map(r => r.persen_progres),
                 borderColor: '#0EA5B7',
                 backgroundColor: 'rgba(14,165,183,0.15)',
                 tension: 0.3,
                 fill: true,
-            },
-            {
-                label: 'Progres BEP Mitra Lahan (%)',
-                data: roi.tahunan.map(r => r.persen_progres_lahan),
-                borderColor: '#F59E0B',
-                backgroundColor: 'rgba(245,158,11,0.12)',
-                tension: 0.3,
-                fill: true,
-            },
-        ];
-
-    if (chartRoi) {
-        chartRoi.data.labels = labelsTahun;
-        chartRoi.data.datasets = datasets;
-        chartRoi.update();
-        return;
-    }
-
-    chartRoi = new Chart(canvas, {
-        type: 'line',
-        data: { labels: labelsTahun, datasets },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    ticks: { callback: v => v + '%' },
-                    title: { display: true, text: 'Progres menuju BEP (%)' },
+            }]
+            : [
+                {
+                    label: 'Progres BEP Mitra Mesin (%)',
+                    data: roi.tahunan.map(r => r.persen_progres_mesin),
+                    borderColor: '#0EA5B7',
+                    backgroundColor: 'rgba(14,165,183,0.15)',
+                    tension: 0.3,
+                    fill: true,
                 },
+                {
+                    label: 'Progres BEP Mitra Lahan (%)',
+                    data: roi.tahunan.map(r => r.persen_progres_lahan),
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245,158,11,0.12)',
+                    tension: 0.3,
+                    fill: true,
+                },
+            ];
+
+        if (chartRoi) {
+            chartRoi.data.labels = labelsTahun;
+            chartRoi.data.datasets = datasets;
+            chartRoi.update();
+            return;
+        }
+
+        chartRoi = new Chart(canvas, {
+            type: 'line',
+            data: { labels: labelsTahun, datasets },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: { callback: v => v + '%' },
+                        title: { display: true, text: 'Progres menuju BEP (%)' },
+                    },
+                },
+                plugins: { legend: { display: true, position: 'bottom' } },
             },
-            plugins: { legend: { display: true, position: 'bottom' } },
-        },
-    });
+        });
+    } catch (e) {
+        console.error('Gagal membuat grafik ROI:', e);
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
+        chartWrap.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik gagal ditampilkan karena kesalahan teknis. Cek console browser (F12) untuk detail error.';
+        chartEmpty.classList.add('fsp-chart-error');
+    }
 }
 
 function renderNarasi(narasi) {
