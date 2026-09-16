@@ -6,41 +6,49 @@ use App\Models\FsSkema;
 
 class NarasiGeneratorService
 {
+    public function __construct(protected FsSkemaCalculatorService $calculator) {}
+
     /**
-     * Narasi ringkasan analisis — versi template sederhana, BUKAN AI-generated.
-     * Excel dulu bikin ini lewat Apps Script terpisah; ini penggantinya di sistem
-     * (native, tanpa script tempelan), tapi logikanya masih dasar (template isi
-     * variabel), belum sekompleks aslinya.
+     * Ringkasan analisis — pola kalimat persis contoh di sheet "Input
+     * Koordinat Baru" FS Skema 3.
+     *
+     * $proyeksiRoi WAJIB hasil dari FsSkemaCalculatorService::hitungProyeksiROI()
+     * untuk $fsSkema yang sama — dihitung sekali di controller, dilempar ke sini
+     * supaya tidak dihitung dua kali.
      */
-    public function buatNarasi(FsSkema $fsSkema): string
+    public function buatNarasi(FsSkema $fsSkema, array $proyeksiRoi): string
     {
-        $namaSkema = $fsSkema->skema === 'skema_2' ? 'Skema 2 (Curah TR)' : 'Skema 3 (Mitra Mesin & Mitra Lahan)';
+        $fasilitas = $this->calculator->labelFasilitasTerpilih($fsSkema->fasilitas ?? []);
+        $okupansi = $this->calculator->labelOkupansiTerpilih($fsSkema->okupansi ?? []);
+        $kesiapan = $fsSkema->kesiapan_jaringan ?: 'belum diketahui';
 
-        $kekuatan = [];
-        $kelemahan = [];
+        $bagianPoin = "Lokasi {$fsSkema->nama_lokasi} memiliki fasilitas berupa {$fasilitas} dengan skor {$fsSkema->poin_fasilitas}/40. "
+            . "Dari sisi kesiapan jaringan, lokasi ini berada pada kondisi '{$kesiapan}' dengan skor {$fsSkema->poin_kesiapan_jaringan}/20. "
+            . "Sementara itu, dari sisi okupansi kawasan, lokasi ini berada dekat dengan {$okupansi}, memperoleh skor {$fsSkema->poin_okupansi}/40. "
+            . "Secara keseluruhan, lokasi ini mendapat skor kelayakan total {$fsSkema->total_poin}/100 dan dikategorikan {$fsSkema->status_kelayakan} untuk pengembangan SPKLU.";
 
-        if ($fsSkema->poin_fasilitas >= 30) {
-            $kekuatan[] = 'fasilitas pendukung yang cukup lengkap';
-        } elseif ($fsSkema->poin_fasilitas <= 10) {
-            $kelemahan[] = 'fasilitas pendukung yang masih minim';
+        $bagianEkonomi = $fsSkema->isSkema3()
+            ? "Dari sisi keekonomian, estimasi balik modal (payback period) Mitra Mesin berada pada {$proyeksiRoi['estimasi_roi_mesin_teks']}, sementara Mitra Lahan diperkirakan "
+                . $this->bandingkanKecepatanBep($proyeksiRoi) . " pada {$proyeksiRoi['estimasi_roi_lahan_teks']}."
+            : "Dari sisi keekonomian, estimasi balik modal (payback period) berada pada {$proyeksiRoi['estimasi_roi_teks']}.";
+
+        return $bagianPoin . ' ' . $bagianEkonomi;
+    }
+
+    /** "lebih cepat balik modal" vs "lebih lambat balik modal", dibanding total_bulan Mesin vs Lahan. */
+    protected function bandingkanKecepatanBep(array $proyeksiRoi): string
+    {
+        $bulanMesin = $proyeksiRoi['estimasi_bep_mesin']['total_bulan'] ?? null;
+        $bulanLahan = $proyeksiRoi['estimasi_bep_lahan']['total_bulan'] ?? null;
+
+        if ($bulanLahan === null) {
+            return 'lebih lambat balik modal';
         }
 
-        if ($fsSkema->poin_kesiapan_jaringan >= 15) {
-            $kekuatan[] = 'kesiapan jaringan listrik yang baik';
-        } elseif ($fsSkema->poin_kesiapan_jaringan <= 5) {
-            $kelemahan[] = 'kesiapan jaringan listrik yang masih perlu perluasan';
+        if ($bulanMesin === null) {
+            return 'lebih cepat balik modal';
         }
 
-        if ($fsSkema->poin_okupansi >= 30) {
-            $kekuatan[] = 'okupansi lokasi yang strategis';
-        } elseif ($fsSkema->poin_okupansi <= 10) {
-            $kelemahan[] = 'okupansi lokasi yang kurang ramai';
-        }
-
-        $teksKekuatan = $kekuatan ? implode(', ', $kekuatan) : 'tidak ada keunggulan menonjol yang tercatat';
-        $teksKelemahan = $kelemahan ? ' Namun perlu diperhatikan ' . implode(', ', $kelemahan) . '.' : '';
-
-        return "Lokasi {$fsSkema->nama_lokasi} dianalisis menggunakan {$namaSkema}, memperoleh total skor {$fsSkema->total_poin}/100 dengan status rekomendasi \"{$fsSkema->status_kelayakan}\". "
-            . "Lokasi ini memiliki {$teksKekuatan}.{$teksKelemahan}";
+        return $bulanLahan <= $bulanMesin ? 'lebih cepat balik modal' : 'lebih lambat balik modal';
     }
 }

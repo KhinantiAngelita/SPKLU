@@ -19,6 +19,28 @@ use Symfony\Component\Process\Process;
 
 class TransaksiController extends Controller
 {
+    /**
+     * Data historis 2024 & 2025 — FAKTA PERMANEN, bukan parameter yang bisa
+     * diubah admin, jadi sengaja di-hardcode di sini (bukan di tabel
+     * transaksis) buat menghindari masalah skema Spklu (id_spklu custom PK
+     * yang gak auto-increment) kalau dipaksa lewat SPKLU dummy di database.
+     * Cuma dipakai kalau satuan aktif = kWh; kalau satuan lain (Kali/Rp),
+     * 2 tahun ini gak ditampilkan karena datanya emang cuma ada buat kWh.
+     * Key bulan 2 digit ('01'..'12'), biar sejajar sama format DB asli.
+     */
+    protected const DATA_HISTORIS_KWH = [
+        2024 => [
+            '01' => 6333, '02' => 9542, '03' => 9091, '04' => 11806,
+            '05' => 13019, '06' => 13605, '07' => 19166, '08' => 22393,
+            '09' => 29073, '10' => 40290, '11' => 40647, '12' => 45362,
+        ],
+        2025 => [
+            '01' => 47599.96, '02' => 47792.15, '03' => 67349.23, '04' => 95173.60,
+            '05' => 118398.55, '06' => 132797.12, '07' => 153255.16, '08' => 140356.97,
+            '09' => 179959.67, '10' => 198571.53, '11' => 216287.45, '12' => 253080.26,
+        ],
+    ];
+
     public function index(Request $request)
     {
         $spkluId = $request->spklu_id;
@@ -77,10 +99,6 @@ class TransaksiController extends Controller
 
         $aliasList = SpkluAlias::with('spklu')->orderBy('nama_asli')->get();
 
-        // ===== Visualisasi Tren Transaksi — multi-tahun, filter tahun + rentang bulan =====
-        // Ikut filter spklu_id yang sama dengan bagian atas, biar konsisten
-        // kalau user lagi fokus ke satu SPKLU tertentu. Kolom yang dijumlah
-        // ikut satuan aktif (kali / kwh / rp) dari pill filter atas.
         $tahunTersedia = Transaksi::query()
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->selectRaw('DISTINCT YEAR(tanggal) as tahun')
@@ -89,12 +107,22 @@ class TransaksiController extends Controller
             ->map(fn ($t) => (int) $t)
             ->values();
 
+        // Tahun historis (2024/2025) cuma relevan buat satuan kWh, dan cuma
+        // kalau TIDAK sedang difilter ke SPKLU tertentu (datanya agregat
+        // seluruh SPKLU, bukan punya satu SPKLU spesifik).
+        if ($kolom === 'energi_kwh' && ! $spkluId) {
+            $tahunTersedia = $tahunTersedia
+                ->concat(array_keys(self::DATA_HISTORIS_KWH))
+                ->unique()
+                ->sort()
+                ->values();
+        }
+
         $tahunDipilih = $request->has('tahun')
             ? array_map('intval', (array) $request->input('tahun'))
             : $tahunTersedia->toArray();
         sort($tahunDipilih);
 
-        // Rentang bulan (1-12), auto-swap kalau kebalik
         $bulanAwal = max(1, min(12, (int) ($request->bulan_awal ?? 1)));
         $bulanAkhir = max(1, min(12, (int) ($request->bulan_akhir ?? 12)));
         if ($bulanAwal > $bulanAkhir) {
@@ -139,14 +167,26 @@ class TransaksiController extends Controller
      * tahun yang dipilih, dibatasi rentang bulan tertentu — dipakai untuk
      * grafik + tabel data "Visualisasi Tren Transaksi" (multi-tahun).
      *
-     * $kolom hanya bisa berisi 'jumlah_transaksi' | 'energi_kwh' | 'pendapatan_rp'
-     * (dibatasi match() di index()), jadi aman diinterpolasi ke selectRaw().
+     * Tahun yang ada di DATA_HISTORIS_KWH (dan kolom aktifnya energi_kwh serta
+     * TIDAK sedang difilter per-SPKLU) diambil langsung dari constant, gak
+     * query DB sama sekali — data itu emang gak pernah ada di tabel transaksis.
      */
     private function buildTrenPerTahunBulanan(array $tahunList, $spkluId, string $kolom, int $bulanAwal, int $bulanAkhir): array
     {
         $hasil = [];
 
         foreach ($tahunList as $tahun) {
+            if ($kolom === 'energi_kwh' && ! $spkluId && isset(self::DATA_HISTORIS_KWH[$tahun])) {
+                $bulanan = self::DATA_HISTORIS_KWH[$tahun];
+
+                $hasil[$tahun] = collect(range($bulanAwal, $bulanAkhir))
+                    ->map(fn ($b) => (float) ($bulanan[str_pad($b, 2, '0', STR_PAD_LEFT)] ?? 0))
+                    ->values()
+                    ->toArray();
+
+                continue;
+            }
+
             $perBulan = Transaksi::query()
                 ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
                 ->whereYear('tanggal', $tahun)
@@ -170,7 +210,6 @@ class TransaksiController extends Controller
 
         $riwayat = TransaksiUpload::with(['diuploadOleh', 'unmatchedNames'])->latest()->paginate(15);
 
-        // Buat tiap baris riwayat: hitung nama yang MASIH belum dipetakan, khusus dari file itu
         $riwayat->getCollection()->transform(function ($upload) use ($namaSudahDialias) {
             $upload->unresolvedUnmatched = $upload->unmatchedNames
                 ->filter(fn ($u) => ! in_array($u->nama_asli, $namaSudahDialias))
@@ -229,20 +268,11 @@ class TransaksiController extends Controller
             'diupload_oleh' => $request->user()->id,
         ]);
 
-        // Simpan salinan file mentah supaya nanti bisa "Proses Ulang" 1-klik
-        // tanpa perlu pilih file lagi dari komputer.
         $this->simpanFileMentah($uploadedFile, $uploadLog);
 
         return $this->processImportFile($request, $uploadedFile->getRealPath(), $extension, $uploadLog, $namaFileAsli);
     }
 
-    /**
-     * Upload ulang file untuk riwayat yang sudah ada — dipakai saat user
-     * memang mau GANTI dengan file lain (misal file pertama ternyata salah/
-     * kurang lengkap). Data transaksi & nama-tidak-cocok dari riwayat ini
-     * dihapus dulu, salinan file mentah lama diganti dengan yang baru, lalu
-     * diproses ulang dari awal supaya tidak ada data dobel.
-     */
     public function reupload(Request $request, TransaksiUpload $transaksiUpload)
     {
         $request->validate([
@@ -266,7 +296,6 @@ class TransaksiController extends Controller
             $transaksiUpload->unmatchedNames()->delete();
         });
 
-        // Buang salinan file mentah yang lama, nanti diganti yang baru
         if ($transaksiUpload->path_file) {
             Storage::delete($transaksiUpload->path_file);
         }
@@ -284,17 +313,6 @@ class TransaksiController extends Controller
         return $this->processImportFile($request, $uploadedFile->getRealPath(), $extension, $transaksiUpload, $namaFileAsli);
     }
 
-    /**
-     * "Proses Ulang" 1-KLIK: dipakai saat user cuma mau reprocess file yang
-     * SAMA PERSIS seperti yang sudah diupload sebelumnya (mis. baru bikin
-     * alias baru, jadi mau baris yang dulu ke-skip diproses ulang) — TANPA
-     * perlu pilih file lagi. Pakai salinan file mentah yang tersimpan dari
-     * upload/reupload terakhir (kolom path_file).
-     *
-     * Kalau file mentahnya sudah gak ada (riwayat lama sebelum fitur ini
-     * ada, atau kehapus manual dari storage), tolak dan arahkan user pakai
-     * "Ganti File" (reupload manual) sebagai gantinya.
-     */
     public function reprocess(Request $request, TransaksiUpload $transaksiUpload)
     {
         if (! $transaksiUpload->path_file || ! Storage::exists($transaksiUpload->path_file)) {
@@ -330,13 +348,6 @@ class TransaksiController extends Controller
         return $this->processImportFile($request, $pathAbsolut, $extension, $transaksiUpload, $transaksiUpload->nama_file);
     }
 
-    /**
-     * Simpan salinan permanen dari file yang baru diupload, supaya nanti
-     * bisa dipakai lagi oleh reprocess() tanpa user perlu pilih file ulang.
-     * Kalau gagal simpan (mis. disk penuh), gak fatal — upload tetap lanjut
-     * seperti biasa, cuma fitur "Proses Ulang" 1-klik gak akan tersedia
-     * untuk file ini nanti (fallback ke "Ganti File").
-     */
     private function simpanFileMentah($uploadedFile, TransaksiUpload $uploadLog): void
     {
         try {
@@ -352,14 +363,6 @@ class TransaksiController extends Controller
         }
     }
 
-    /**
-     * Logika inti pemrosesan file (konversi, delimiter, Excel::import,
-     * simpan hasil + nama tidak cocok, update log). Dipakai bareng oleh
-     * import() (upload baru), reupload() (ganti isi riwayat lama dengan
-     * file baru), dan reprocess() (proses ulang file lama yang tersimpan,
-     * tanpa upload baru) — makanya nerima path + extension langsung,
-     * bukan objek UploadedFile (karena reprocess() gak selalu punya itu).
-     */
     private function processImportFile(Request $request, string $pathToImport, string $extension, TransaksiUpload $uploadLog, string $namaFileAsli)
     {
         $csvHasilConversi = null;
@@ -405,7 +408,6 @@ class TransaksiController extends Controller
 
         $totalTersimpan = $import->flushToDatabase($request->user()->id, $uploadLog->id);
 
-        // Simpan nama tidak cocok: akumulasi GLOBAL + catatan SPESIFIK per file ini
         foreach ($import->unmatched as $nama => $jumlah) {
             $existing = TransaksiUnmatchedName::where('nama_asli', $nama)->first();
             if ($existing) {
@@ -469,12 +471,6 @@ class TransaksiController extends Controller
         return back()->with('success', 'Alias berhasil disimpan. Upload ulang file yang sama untuk memproses baris yang tadinya terlewat.');
     }
 
-    /**
-     * Simpan banyak pemetaan alias sekaligus dalam satu request (dari card
-     * "Belum Dipetakan" atau modal "Cocokkan Data"). Pakai updateOrCreate
-     * (bukan create + unique) supaya aman kalau nama itu ternyata sudah
-     * pernah dipetakan sebelumnya — otomatis di-update, bukan error.
-     */
     public function storeAliasBulk(Request $request)
     {
         $request->validate([
@@ -500,10 +496,6 @@ class TransaksiController extends Controller
         return back()->with('success', "{$disimpan} pemetaan alias berhasil disimpan sekaligus. Upload ulang file terkait untuk memproses baris yang tadinya terlewat.");
     }
 
-    /**
-     * Edit satu pemetaan alias yang sudah ada (dari card "Pemetaan Alias
-     * yang Sudah Selesai").
-     */
     public function updateAlias(Request $request, SpkluAlias $spkluAlias)
     {
         $request->validate([

@@ -18,11 +18,12 @@
 .fsf-tab input{position:absolute;opacity:0;cursor:pointer}
 .fsf-tab span{display:block;padding:8px 22px;border-radius:8px;font-size:14px;font-weight:600;color:#64748B;cursor:pointer}
 .fsf-tab input:checked + span{background:#fff;color:#0EA5B7;box-shadow:0 1px 2px rgba(15,23,42,.08)}
-.fsf-section-title{font-size:15px;font-weight:700;color:#0F172A;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0EA5B7}
+.fsf-section-title{font-size:15px;font-weight:700;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0EA5B7}
 .fsf-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
 .fsf-field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
 .fsf-field input,.fsf-field select,.fsf-field textarea{width:100%;padding:10px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;color:#0F172A}
 .fsf-field input:focus,.fsf-field select:focus{outline:none;border-color:#0EA5B7;box-shadow:0 0 0 3px rgba(14,165,183,.12)}
+.fsf-field input[readonly]{background:#F1F5F9;color:#64748B;cursor:not-allowed}
 .fsf-hint{font-size:12px;color:#94A3B8;margin-top:4px}
 .fsf-label-group{font-size:13px;font-weight:600;color:#334155;margin-bottom:10px;display:block}
 .fsf-chip-group{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
@@ -70,11 +71,11 @@
 .fsf-combobox-option.selected { background:rgba(14,165,183,.12); color:#0C8A9A; font-weight:600; }
 .fsf-combobox-empty { display:none; padding:16px 12px; font-size:13px; color:#94A3B8; text-align:center; }
 
-/* Field lebar-setengah berdiri sendiri (tanpa pasangan kosong di sebelahnya) */
-.fsf-field-half { max-width: calc(50% - 9px); margin-bottom:18px; }
-@media (max-width:640px){ .fsf-field-half{ max-width:100%; } }
+/* Ringkasan Kelayakan Lokasi -- versi tertanam di kolom kiri (bawah Penilaian Lokasi) */
+.fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
+.fsf-mini-card-header{background:#E0F7FA;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-body{padding:18px 20px}
 
-/* Panel kanan (live preview) */
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
 .fsp-card-header{background:#ECF4F8;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .fsp-card-body{padding:18px 20px}
@@ -95,7 +96,9 @@
 .fsp-narasi{font-size:13.5px;color:#475569;line-height:1.6;margin:0}
 .fsp-narasi-placeholder{color:#94A3B8;font-style:italic;font-size:13px}
 .fsp-loading{font-size:12px;color:#0EA5B7;font-weight:600}
-.fsp-chart-wrap{position:relative;height:220px}
+.fsp-estimasi-roi{margin-top:14px;padding:12px 14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#334155;line-height:1.7}
+.fsp-estimasi-roi strong{color:#0F172A}
+.fsp-chart-error{color:#B91C1C;font-size:12.5px;line-height:1.6}
 </style>
 @endpush
 
@@ -165,6 +168,19 @@
                     <label>Titik Kordinat</label>
                     <input type="text" name="titik_koordinat" id="input-titik-koordinat" value="{{ old('titik_koordinat') }}" placeholder="-6.1944, 106.8318" data-preview-trigger>
                     <p class="fsf-hint">Terisi otomatis saat pilih lokasi, tapi tetap bisa diedit manual.</p>
+                    <p class="fsf-hint">Format: lat, lng — dipakai buat hitung 3 SPKLU terdekat</p>
+                </div>
+            </div>
+
+            {{-- Latitude/Longitude readonly — otomatis kepecah dari Titik Kordinat di atas --}}
+            <div class="fsf-row">
+                <div class="fsf-field">
+                    <label>Latitude (terbaca otomatis)</label>
+                    <input type="text" id="input-latitude-otomatis" value="" readonly placeholder="—">
+                </div>
+                <div class="fsf-field">
+                    <label>Longitude (terbaca otomatis)</label>
+                    <input type="text" id="input-longitude-otomatis" value="" readonly placeholder="—">
                 </div>
             </div>
 
@@ -211,27 +227,34 @@
                 </div>
                 <div class="fsf-row">
                     <div class="fsf-field">
+                        <label>Mobil/hari</label>
+                        <input type="number" name="mobil_per_hari_skema3" value="{{ old('mobil_per_hari') }}" placeholder="Masukan asumsi mobil per hari" data-preview-trigger>
+                    </div>
+                    <div class="fsf-field">
                         <label>Sharing Profit Mitra Lahan</label>
                         <input type="number" step="0.01" min="0" max="1" name="sharing_provit_mitra_lahan" value="{{ old('sharing_provit_mitra_lahan', 0.10) }}" placeholder="0.10" data-preview-trigger>
                         <p class="fsf-hint">Nilai 0–1 (contoh 0.10 = 10%). Default 10% jika dikosongkan.</p>
                     </div>
-                    <div class="fsf-field">
-                        <label>Mobil/hari</label>
-                        <input type="number" name="mobil_per_hari_skema3" value="{{ old('mobil_per_hari') }}" placeholder="Masukan asumsi mobil per hari" data-preview-trigger>
-                    </div>
                 </div>
             </div>
 
-            <div class="fsf-field-half">
-                <label>Transaksi kWh/Mobil</label>
-                <input type="number" step="0.01" name="transaksi_kwh_per_mobil" value="{{ old('transaksi_kwh_per_mobil') }}" placeholder="Masukan Transaksi kWh/mobil" required data-preview-trigger>
+            <div class="fsf-row">
+                <div class="fsf-field">
+                    <label>Transaksi kWh/Mobil</label>
+                    <input type="number" step="0.01" name="transaksi_kwh_per_mobil" value="{{ old('transaksi_kwh_per_mobil') }}" placeholder="Masukan Transaksi kWh/mobil" required data-preview-trigger>
+                </div>
+                <div class="fsf-field">
+                    <label>Masa Kontrak (Tahun)</label>
+                    <input type="number" name="masa_kontrak_tahun" value="{{ old('masa_kontrak_tahun', 5) }}" min="1" max="30" required data-preview-trigger>
+                    <p class="fsf-hint">Menentukan panjang proyeksi ROI (misal 5 = ROI dihitung 5 tahun ke depan).</p>
+                </div>
             </div>
 
             <div class="fsf-section-title">Penilaian Lokasi</div>
 
             <label class="fsf-label-group">Fasilitas (maks 40 poin)</label>
             <div class="fsf-chip-group">
-                @foreach (['toilet' => 'Toilet', 'ruang_tunggu' => 'Ruang Tunggu', 'parkir' => 'Parkir', 'kafetaria' => 'Kafetaria'] as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_FASILITAS as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, old('fasilitas', []))) data-preview-trigger>
                         <span>{{ $label }}</span>
@@ -239,25 +262,39 @@
                 @endforeach
             </div>
 
-            <div class="fsf-field-half">
+            <div class="fsf-field-half" style="max-width: calc(50% - 9px); margin-bottom:18px;">
                 <label>Kesiapan Jaringan (maks 20 poin)</label>
                 <select name="kesiapan_jaringan" data-preview-trigger>
-                    <option value="">Pilih status jaringan...</option>
-                    <option value="Siap sambung" @selected(old('kesiapan_jaringan') === 'Siap sambung')>Siap sambung — 20 poin</option>
-                    <option value="Perluasan SUTM (mudah)" @selected(old('kesiapan_jaringan') === 'Perluasan SUTM (mudah)')>Perluasan SUTM (mudah) — 15 poin</option>
-                    <option value="Perluasan SKTM (gardu tembok)" @selected(old('kesiapan_jaringan') === 'Perluasan SKTM (gardu tembok)')>Perluasan SKTM (gardu tembok) — 10 poin</option>
-                    <option value="Perluasan rumit" @selected(old('kesiapan_jaringan') === 'Perluasan rumit')>Perluasan rumit — 5 poin</option>
+                    <option value="">Pilih kesiapan jaringan...</option>
+                    @foreach (\App\Services\FsSkemaCalculatorService::OPSI_KESIAPAN_JARINGAN as $label => $poinMax)
+                        <option value="{{ $label }}" @selected(old('kesiapan_jaringan') === $label)>
+                            {{ $label }} ({{ $poinMax }} poin)
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
             <label class="fsf-label-group">Okupansi (maks 40 poin)</label>
             <div class="fsf-chip-group">
-                @foreach (['dekat_perumahan' => 'Dekat Perumahan', 'pintu_tol' => 'Pintu Tol', 'pusat_keramaian' => 'Pusat Keramaian', 'ruas_jalan_protokol' => 'Ruas Jalan Protokol'] as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_OKUPANSI as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, old('okupansi', []))) data-preview-trigger>
                         <span>{{ $label }}</span>
                     </label>
                 @endforeach
+            </div>
+
+            {{-- Ringkasan Kelayakan Lokasi — dipindah ke kiri, tepat di bawah
+                 Penilaian Lokasi supaya nyambung sama input poin di atasnya. --}}
+            <div class="fsf-mini-card">
+                <div class="fsf-mini-card-header">Ringkasan Kelayakan Lokasi</div>
+                <div class="fsf-mini-card-body">
+                    <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
+                    <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
+                    <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">0 / 40</span></div>
+                    <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">0 / 100</span></div>
+                    <div class="fsp-status-box fsp-status-netral" id="fsp-status-box">Status Kelayakan: —</div>
+                </div>
             </div>
 
             <div class="fsf-actions">
@@ -274,33 +311,35 @@
             <div class="fsp-card-body">
                 <div id="fsp-spklu-empty" class="fsp-empty">Isi Titik Kordinat untuk melihat SPKLU terdekat.</div>
                 <table class="fsp-table" id="fsp-spklu-table" style="display:none">
-                    <thead>
-                        <tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr>
-                    </thead>
+                    <thead><tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr></thead>
                     <tbody id="fsp-spklu-body"></tbody>
                 </table>
             </div>
         </div>
 
+        {{-- Proyeksi ROI: tabel detail + estimasi teks --}}
         <div class="fsp-card">
-            <div class="fsp-card-header">Ringkasan Kelayakan Lokasi</div>
+            <div class="fsp-card-header">Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
             <div class="fsp-card-body">
-                <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
-                <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
-                <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">0 / 40</span></div>
-                <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">0 / 100</span></div>
-                <div class="fsp-status-box fsp-status-netral" id="fsp-status-box">Status Kelayakan: —</div>
+                <div id="fsp-roi-empty" class="fsp-empty">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
+                <div id="fsp-roi-content" style="display:none">
+                    <table class="fsp-table" id="fsp-roi-table">
+                        <thead id="fsp-roi-head"></thead>
+                        <tbody id="fsp-roi-body"></tbody>
+                    </table>
+                    <div class="fsp-estimasi-roi" id="fsp-estimasi-roi"></div>
+                </div>
             </div>
         </div>
 
+        {{-- Grafik Proyeksi ROI --}}
         <div class="fsp-card">
-            <div class="fsp-card-header"><span id="fsp-roi-title">Proyeksi ROI</span> <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">Grafik Proyeksi ROI</div>
             <div class="fsp-card-body">
-                <div id="fsp-roi-empty" class="fsp-empty">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
-                <table class="fsp-table" id="fsp-roi-table" style="display:none">
-                    <thead id="fsp-roi-head"></thead>
-                    <tbody id="fsp-roi-body"></tbody>
-                </table>
+                <div id="fsp-roi-chart-empty" class="fsp-empty">Grafik akan tampil setelah data Proyeksi ROI di atas terisi.</div>
+                <div id="fsp-roi-chart-wrap" style="display:none">
+                    <canvas id="fsp-roi-chart" height="220"></canvas>
+                </div>
             </div>
         </div>
 
@@ -313,10 +352,42 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
+{{--
+    PENTING: script Chart.js diambil dari CDN eksternal. Kalau server/browser
+    tidak punya akses internet ke cdnjs.cloudflare.com (mis. jaringan
+    intranet/kantor yang dibatasi), variabel global `Chart` tidak akan
+    pernah ada dan grafik akan tampak "kosong" walau card-nya kelihatan.
+    Atribut onerror di bawah menandai kegagalan itu supaya JS bisa kasih
+    pesan yang jelas ke user, bukan diam-diam gagal.
+
+    REKOMENDASI JANGKA PANJANG: download file ini dan simpan lokal di
+    public/vendor/chartjs/chart.umd.min.js, lalu ganti src di bawah jadi
+    {{ asset('vendor/chartjs/chart.umd.min.js') }} supaya nggak bergantung
+    sama akses internet ke CDN sama sekali.
+--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="window.__chartJsGagalDimuat = true"></script>
 <script>
-// Tandai kedua field Mobil/hari SEKALI pakai data-role, supaya pencarian
-// elemen tidak bergantung pada attribute `name` yang berubah-ubah tiap
-// kali tab diganti.
+// ===== Field readonly Latitude/Longitude (parsing dari Titik Kordinat) =====
+function perbaruiLatLng() {
+    const nilai = document.getElementById('input-titik-koordinat').value;
+    const bagian = nilai.split(',').map(s => s.trim());
+    const lat = document.getElementById('input-latitude-otomatis');
+    const lng = document.getElementById('input-longitude-otomatis');
+
+    if (bagian.length === 2 && !isNaN(bagian[0]) && !isNaN(bagian[1]) && bagian[0] !== '' && bagian[1] !== '') {
+        lat.value = bagian[0];
+        lng.value = bagian[1];
+    } else {
+        lat.value = '';
+        lng.value = '';
+    }
+}
+document.getElementById('input-titik-koordinat').addEventListener('input', perbaruiLatLng);
+
+// ===== Toggle Skema 2 / Skema 3 =====
 function tandaiFieldMobil() {
     document.querySelectorAll('input[name="mobil_per_hari"], input[name="mobil_per_hari_disabled"]')
         .forEach(el => { if (!el.dataset.role) el.dataset.role = 'mobil-skema2'; });
@@ -351,6 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleSkema(dipilih);
     initComboboxLokasi();
     initRupiahFormatter();
+    perbaruiLatLng();
     jalankanPreview();
 });
 
@@ -441,6 +513,7 @@ function initComboboxLokasi() {
             hiddenKandidat.value = this.dataset.kandidatId || '';
 
             closePanel();
+            perbaruiLatLng();
             jadwalkanPreview();
         });
     });
@@ -462,6 +535,12 @@ document.getElementById('form-fs-skema').addEventListener('submit', function (e)
 // ===== LIVE PREVIEW (AJAX) =====
 const PREVIEW_URL = '{{ route('fs-skema.preview') }}';
 let timerPreview = null;
+let chartRoi = null;
+
+// Cek apakah library Chart.js benar-benar tersedia di window.
+function chartJsSiap() {
+    return typeof Chart !== 'undefined' && !window.__chartJsGagalDimuat;
+}
 
 function jadwalkanPreview() {
     clearTimeout(timerPreview);
@@ -500,6 +579,7 @@ async function jalankanPreview() {
         renderNarasi(data.narasi_analisis);
     } catch (e) {
         // koneksi gagal — biarkan panel tetap menampilkan state terakhir
+        console.error('Preview FS Skema gagal:', e);
     } finally {
         document.getElementById('fsp-loading-spklu').style.display = 'none';
         document.getElementById('fsp-loading-roi').style.display = 'none';
@@ -547,93 +627,29 @@ function renderSpklu(list) {
     }).join('');
 }
 
-let roiChart = null;
-
-function renderRoiChart(roi) {
-    const wrap = document.getElementById('fsp-roi-chart-wrap');
-    const empty = document.getElementById('fsp-roi-chart-empty');
-    const canvas = document.getElementById('fsp-roi-chart');
-
-    if (!roi || !roi.tahunan || roi.tahunan.length === 0) {
-        if (roiChart) { roiChart.destroy(); roiChart = null; }
-        wrap.style.display = 'none';
-        empty.style.display = 'block';
-        return;
-    }
-
-    wrap.style.display = 'block';
-    empty.style.display = 'none';
-
-    const labels = roi.tahunan.map(r => 'Tahun ' + r.tahun);
-    let datasets;
-
-    if (roi.tipe === 'skema_2') {
-        datasets = [{
-            label: 'Kumulatif Pendapatan',
-            data: roi.tahunan.map(r => r.kumulatif),
-            borderColor: '#0EA5B7',
-            backgroundColor: 'rgba(14,165,183,0.12)',
-            fill: true,
-            tension: 0.3,
-        }];
-    } else {
-        datasets = [
-            {
-                label: 'Pendapatan Mitra Mesin',
-                data: roi.tahunan.map(r => r.pendapatan_mesin),
-                borderColor: '#0EA5B7',
-                backgroundColor: 'rgba(14,165,183,0.12)',
-                fill: false,
-                tension: 0.3,
-            },
-            {
-                label: 'Pendapatan Mitra Lahan',
-                data: roi.tahunan.map(r => r.pendapatan_lahan),
-                borderColor: '#F59E0B',
-                backgroundColor: 'rgba(245,158,11,0.12)',
-                fill: false,
-                tension: 0.3,
-            },
-        ];
-    }
-
-    if (roiChart) roiChart.destroy();
-    roiChart = new Chart(canvas.getContext('2d'), {
-        type: 'line',
-        data: { labels, datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: roi.tipe !== 'skema_2', labels: { font: { size: 11 } } },
-                tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + formatRupiah(ctx.parsed.y) } },
-            },
-            scales: {
-                y: { ticks: { callback: v => formatRupiah(v) } },
-            },
-        },
-    });
-}
-
 function renderRoi(roi) {
     const empty = document.getElementById('fsp-roi-empty');
-    const table = document.getElementById('fsp-roi-table');
+    const content = document.getElementById('fsp-roi-content');
     const head = document.getElementById('fsp-roi-head');
     const body = document.getElementById('fsp-roi-body');
-    const title = document.getElementById('fsp-roi-title');
+    const labelTahun = document.getElementById('fsp-roi-tahun-label');
+    const chartEmpty = document.getElementById('fsp-roi-chart-empty');
+    const chartWrap = document.getElementById('fsp-roi-chart-wrap');
 
     if (!roi) {
         empty.style.display = 'block';
-        table.style.display = 'none';
-        title.textContent = 'Proyeksi ROI';
-        renderRoiChart(null);
+        content.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik akan tampil setelah data Proyeksi ROI di atas terisi.';
+        chartEmpty.classList.remove('fsp-chart-error');
+        chartWrap.style.display = 'none';
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
         return;
     }
 
     empty.style.display = 'none';
-    table.style.display = 'table';
-    title.textContent = `Proyeksi ROI ${roi.tahunan.length} Tahun`;
-    renderRoiChart(roi);
+    content.style.display = 'block';
+    labelTahun.textContent = roi.masa_kontrak_tahun;
 
     if (roi.tipe === 'skema_2') {
         head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
@@ -644,6 +660,9 @@ function renderRoi(roi) {
             <td>${formatRupiah(r.pendapatan_mitra)}</td>
             <td>${formatRupiah(r.kumulatif)}</td>
         </tr>`).join('');
+
+        document.getElementById('fsp-estimasi-roi').innerHTML =
+            `<strong>Estimasi ROI:</strong> ${roi.estimasi_roi_teks}`;
     } else {
         head.innerHTML = '<tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
@@ -652,6 +671,96 @@ function renderRoi(roi) {
             <td>${formatRupiah(r.pendapatan_mesin)}${r.sudah_bep_mesin ? ' ✓BEP' : ''}</td>
             <td>${formatRupiah(r.pendapatan_lahan)}${r.sudah_bep_lahan ? ' ✓BEP' : ''}</td>
         </tr>`).join('');
+
+        document.getElementById('fsp-estimasi-roi').innerHTML =
+            `<strong>Estimasi ROI Mitra Mesin:</strong> ${roi.estimasi_roi_mesin_teks}<br>`
+            + `<strong>Estimasi ROI Mitra Lahan:</strong> ${roi.estimasi_roi_lahan_teks}`;
+    }
+
+    renderChartRoi(roi);
+}
+
+function renderChartRoi(roi) {
+    const chartEmpty = document.getElementById('fsp-roi-chart-empty');
+    const chartWrap = document.getElementById('fsp-roi-chart-wrap');
+
+    // Guard #1: library Chart.js belum/gagal dimuat (mis. tidak ada akses
+    // internet ke CDN). Tampilkan pesan yang jelas, jangan diam-diam kosong.
+    if (!chartJsSiap()) {
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
+        chartWrap.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik tidak bisa ditampilkan: library Chart.js gagal dimuat dari CDN. Cek koneksi internet ke cdnjs.cloudflare.com, atau hubungi admin untuk meng-host Chart.js secara lokal.';
+        chartEmpty.classList.add('fsp-chart-error');
+        return;
+    }
+
+    try {
+        chartEmpty.style.display = 'none';
+        chartWrap.style.display = 'block';
+
+        const canvas = document.getElementById('fsp-roi-chart');
+        const labelsTahun = roi.tahunan.map(r => 'Tahun ' + r.tahun);
+
+        const datasets = roi.tipe === 'skema_2'
+            ? [{
+                label: 'Progres BEP (%)',
+                data: roi.tahunan.map(r => r.persen_progres),
+                borderColor: '#0EA5B7',
+                backgroundColor: 'rgba(14,165,183,0.15)',
+                tension: 0.3,
+                fill: true,
+            }]
+            : [
+                {
+                    label: 'Progres BEP Mitra Mesin (%)',
+                    data: roi.tahunan.map(r => r.persen_progres_mesin),
+                    borderColor: '#0EA5B7',
+                    backgroundColor: 'rgba(14,165,183,0.15)',
+                    tension: 0.3,
+                    fill: true,
+                },
+                {
+                    label: 'Progres BEP Mitra Lahan (%)',
+                    data: roi.tahunan.map(r => r.persen_progres_lahan),
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245,158,11,0.12)',
+                    tension: 0.3,
+                    fill: true,
+                },
+            ];
+
+        if (chartRoi) {
+            chartRoi.data.labels = labelsTahun;
+            chartRoi.data.datasets = datasets;
+            chartRoi.update();
+            return;
+        }
+
+        chartRoi = new Chart(canvas, {
+            type: 'line',
+            data: { labels: labelsTahun, datasets },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: { callback: v => v + '%' },
+                        title: { display: true, text: 'Progres menuju BEP (%)' },
+                    },
+                },
+                plugins: { legend: { display: true, position: 'bottom' } },
+            },
+        });
+    } catch (e) {
+        // Guard #2: data valid & library ada, tapi tetap gagal render
+        // (mis. versi Chart.js beda / breaking change). Jangan biarkan
+        // kosong senyap — kasih tahu & catat ke console buat debugging.
+        console.error('Gagal membuat grafik ROI:', e);
+        if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
+        chartWrap.style.display = 'none';
+        chartEmpty.style.display = 'block';
+        chartEmpty.textContent = 'Grafik gagal ditampilkan karena kesalahan teknis. Cek console browser (F12) untuk detail error.';
+        chartEmpty.classList.add('fsp-chart-error');
     }
 }
 
@@ -668,4 +777,4 @@ function renderNarasi(narasi) {
     }
 }
 </script>
-@endsection
+@endpush

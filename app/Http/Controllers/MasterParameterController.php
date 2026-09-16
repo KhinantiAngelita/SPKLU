@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuditLogHelper;
 use App\Models\PoinKesiapanJaringan;
 use App\Models\TargetTahunan;
 use App\Models\TarifListrik;
@@ -22,13 +23,16 @@ class MasterParameterController extends Controller
     {
         $request->validate(['tarif_per_kwh' => 'required|numeric|min:0']);
 
-        // Audit log otomatis nilai lama -> baru sebelum diubah
-        AuditLogHelper::record($tarif, 'updated', $request->user());
+        // Ambil nilai LAMA dulu sebelum diubah — setelah update(), getOriginal()
+        // sudah ke-sync ke nilai baru, jadi harus ditangkap di sini.
+        $nilaiLama = $tarif->only(['tarif_per_kwh']);
 
         $tarif->update([
             'tarif_per_kwh' => $request->tarif_per_kwh,
             'updated_by' => $request->user()->id,
         ]);
+
+        AuditLogHelper::record($tarif, 'updated', $request->user(), $nilaiLama, $tarif->only(['tarif_per_kwh']));
 
         return back()->with('success', "Tarif {$tarif->kode} berhasil diperbarui.");
     }
@@ -37,10 +41,14 @@ class MasterParameterController extends Controller
     {
         $request->validate(['poin' => 'required|integer|min:0|max:20']);
 
+        $nilaiLama = $poin->only(['poin']);
+
         $poin->update([
             'poin' => $request->poin,
             'updated_by' => $request->user()->id,
         ]);
+
+        AuditLogHelper::record($poin, 'updated', $request->user(), $nilaiLama, $poin->only(['poin']));
 
         return back()->with('success', 'Poin kesiapan jaringan berhasil diperbarui.');
     }
@@ -52,10 +60,12 @@ class MasterParameterController extends Controller
             'target_jumlah_spklu' => 'required|integer|min:0',
         ]);
 
-        TargetTahunan::create([
+        $target = TargetTahunan::create([
             ...$request->only('tahun', 'target_jumlah_spklu'),
             'updated_by' => $request->user()->id,
         ]);
+
+        AuditLogHelper::record($target, 'created', $request->user(), [], $target->only(['tahun', 'target_jumlah_spklu']));
 
         return back()->with('success', 'Target tahunan berhasil ditambahkan.');
     }

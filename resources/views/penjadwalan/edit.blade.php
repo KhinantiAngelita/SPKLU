@@ -6,75 +6,66 @@
 @section('content')
 
 <style>
-    .jde-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
-    .jde-page-header h1 { font-size:20px; font-weight:700; color:#0F172A; margin:0; }
-    .jde-page-header p { color:#64748B; margin:4px 0 0; font-size:13.5px; }
-    .jde-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:9px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; text-decoration:none; }
-    .jde-btn svg { width:15px; height:15px; stroke-width:2.1; }
-    .jde-btn-outline { background:#fff; color:#1E293B; border:1px solid #E2E8F0; }
-    .jde-btn-outline:hover { background:#F8FAFC; border-color:#CBD5E1; }
-    .jde-btn-primary { background:#F5B301; color:#78350F; box-shadow:0 2px 10px rgba(245,179,1,.25); border:none; }
-    .jde-btn-primary:hover { background:#E5A700; }
+    .jdf-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:10px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; text-decoration:none; transition:all .15s ease; }
+    .jdf-btn svg { width:15px; height:15px; stroke-width:2.1; }
+    .jdf-btn-outline { background:#fff; color:#1E293B; border:1px solid #E2E8F0; }
+    .jdf-btn-outline:hover { background:#F8FAFC; border-color:#CBD5E1; }
+    .jdf-btn-primary { background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); border:none; }
+    .jdf-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
 
-    .jde-alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin-bottom:18px; }
+    .jdf-alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin:0 auto 18px; max-width:520px; }
 
-    .jde-card { background:#fff; border-radius:14px; box-shadow:0 1px 3px rgba(15,23,42,.08); max-width:640px; }
-    .jde-card-head { display:flex; align-items:center; gap:10px; padding:20px 22px; border-bottom:1px solid #F1F5F9; }
-    .jde-icon-box { width:34px; height:34px; border-radius:9px; background:#FEF3C7; color:#B45309; display:flex; align-items:center; justify-content:center; }
-    .jde-icon-box svg { width:17px; height:17px; }
-    .jde-card-head h2 { font-size:15px; margin:0; color:#0F172A; }
-    .jde-card-head p { font-size:12.5px; margin:2px 0 0; color:#94A3B8; }
+    .jdf-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); max-width:520px; margin:0 auto; overflow:hidden; }
 
-    .jde-form-body { padding:20px 22px 24px; }
-    .jde-form-body label { display:block; font-size:12.5px; font-weight:700; color:#475569; margin:16px 0 7px; }
-    .jde-form-body label:first-child { margin-top:0; }
-    .jde-form-body input[type="text"], .jde-form-body input[type="date"], .jde-form-body input[type="time"], .jde-form-body select {
-        width:100%; padding:10px 12px; border-radius:9px; border:1px solid #E2E8F0; font-size:13.5px; font-family:inherit; background:#fff; color:#334155;
+    .jdf-form-head { display:flex; align-items:center; gap:14px; padding:22px 24px; background:linear-gradient(150deg, rgba(2,62,138,.06), rgba(0,129,171,.10)); border-bottom:1px solid #F1F5F9; }
+    .jdf-icon-box { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
+    .jdf-icon-box svg { width:20px; height:20px; stroke-width:2.3; }
+    .jdf-form-head strong { font-size:17px; font-weight:800; color:#023E8A; display:block; letter-spacing:-.01em; }
+    .jdf-form-head span { font-size:12.5px; color:#64748B; }
+
+    .jdf-section-title { font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#0081AB; margin:0 0 14px; }
+
+    .jdf-form-body { padding:20px 24px 26px; }
+    .jdf-form-body label { display:block; font-size:12.5px; font-weight:700; color:#475569; margin:16px 0 7px; }
+    .jdf-form-body > label:first-child { margin-top:0; }
+    .jdf-form-body input[type="text"], .jdf-form-body input[type="date"], .jdf-form-body input[type="time"], .jdf-form-body select {
+        width:100%; padding:10px 12px; border-radius:10px; border:1px solid #E2E8F0; font-size:13.5px; font-family:inherit; background:#F8FAFC; color:#334155; transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .jde-form-body input:focus, .jde-form-body select:focus { outline:none; border-color:#1D4ED8; box-shadow:0 0 0 3px rgba(29,78,216,.12); }
-    .jde-form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .jdf-form-body input:focus, .jdf-form-body select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); background:#fff; }
+    .jdf-form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
-    .jde-mode-group { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .jde-mode-pill { text-align:center; padding:10px; border-radius:9px; font-size:13.5px; font-weight:700; color:#94A3B8; background:#F1F5F9; cursor:pointer; border:1px solid transparent; }
-    .jde-mode-pill.active-online { background:rgba(46,158,91,.14); color:#2E9E5B; border-color:rgba(46,158,91,.3); }
-    .jde-mode-pill.active-offline { background:rgba(29,78,216,.12); color:#1D4ED8; border-color:rgba(29,78,216,.3); }
+    .jdf-mode-group { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .jdf-mode-pill { text-align:center; padding:11px; border-radius:10px; font-size:13.5px; font-weight:700; color:#94A3B8; background:#F1F5F9; cursor:pointer; border:1.5px solid transparent; transition:all .15s ease; }
+    .jdf-mode-pill.active-online { background:rgba(46,158,91,.12); color:#2E9E5B; border-color:rgba(46,158,91,.3); }
+    .jdf-mode-pill.active-offline { background:rgba(2,62,138,.08); color:#023E8A; border-color:rgba(2,62,138,.25); }
 
-    .jde-form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:26px; padding-top:20px; border-top:1px solid #F1F5F9; }
+    .jdf-form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:26px; padding-top:20px; border-top:1px solid #F1F5F9; }
 </style>
 
-<div class="jde-page-header">
-    <div>
-        <h1>Edit Jadwal</h1>
-        <p>Perbarui detail jadwal — {{ $jadwal->judul }}</p>
-    </div>
-    <a href="{{ route('penjadwalan.index') }}" class="jde-btn jde-btn-outline">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Kembali
-    </a>
-</div>
-
 @if ($errors->any())
-    <div class="jde-alert-error">
+    <div class="jdf-alert-error">
         <ul style="margin:0; padding-left:18px;">
             @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
         </ul>
     </div>
 @endif
 
-<div class="jde-card">
-    <div class="jde-card-head">
-        <div class="jde-icon-box">
+<div class="jdf-card">
+    <div class="jdf-form-head">
+        <div class="jdf-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
         </div>
         <div>
-            <h2>Edit Jadwal</h2>
-            <p>Perbarui waktu, mode, atau status jadwal</p>
+            <strong>Edit Jadwal</strong>
+            <span>Perbarui detail jadwal — {{ $jadwal->judul }}</span>
         </div>
     </div>
 
-    <form method="POST" action="{{ route('penjadwalan.update', $jadwal) }}" id="form-jadwal-edit" class="jde-form-body">
+    <form method="POST" action="{{ route('penjadwalan.update', $jadwal) }}" id="form-jadwal-edit" class="jdf-form-body">
         @csrf
         @method('PUT')
+
+        <div class="jdf-section-title">Detail Jadwal</div>
 
         <label>Pilih Permohonan</label>
         <select name="probabilitas_id" required>
@@ -91,21 +82,36 @@
             $tanggalAwal = $waktuAwal ? \Illuminate\Support\Carbon::parse($waktuAwal)->format('Y-m-d') : '';
             $jamAwal = $waktuAwal ? \Illuminate\Support\Carbon::parse($waktuAwal)->format('H:i') : '';
         @endphp
-        <div class="jde-form-row">
+        <div class="jdf-form-row">
             <div><label>Tanggal</label><input type="date" id="input-tanggal" value="{{ $tanggalAwal }}" required></div>
             <div><label>Jam</label><input type="time" id="input-jam" value="{{ $jamAwal }}" required></div>
         </div>
         <input type="hidden" name="waktu_mulai" id="input-waktu-mulai" value="{{ $waktuAwal }}">
 
-        <label>Mode</label>
-        <div class="jde-mode-group">
-            <div class="jde-mode-pill" id="pill-online" onclick="pilihMode('online')">Online</div>
-            <div class="jde-mode-pill" id="pill-offline" onclick="pilihMode('offline')">Offline</div>
+        <label>Mode Pertemuan</label>
+        <div class="jdf-mode-group">
+            <div class="jdf-mode-pill" id="pill-online" onclick="pilihMode('online')">Online</div>
+            <div class="jdf-mode-pill" id="pill-offline" onclick="pilihMode('offline')">Offline</div>
         </div>
         <input type="hidden" name="mode" id="input-mode" value="{{ old('mode', $jadwal->mode) }}" required>
 
-        <label>Lokasi <span id="label-wajib" style="display:none;color:#C0392B;">*</span></label>
-        <input type="text" name="lokasi" value="{{ old('lokasi', $jadwal->lokasi) }}" placeholder="Alamat lokasi kunjungan">
+        <div id="blok-lokasi-offline">
+            <label>Lokasi <span id="label-wajib-lokasi" style="display:none;color:#C0392B;">*</span></label>
+            <input type="text" name="lokasi" value="{{ old('lokasi', $jadwal->lokasi) }}" placeholder="Alamat lokasi kunjungan">
+        </div>
+
+        <div id="blok-online" style="display:none">
+            <label>Platform</label>
+            <select name="platform">
+                <option value="">Pilih platform...</option>
+                <option value="Zoom" @selected(old('platform', $jadwal->platform) === 'Zoom')>Zoom</option>
+                <option value="Google Meet" @selected(old('platform', $jadwal->platform) === 'Google Meet')>Google Meet</option>
+                <option value="Lainnya" @selected(old('platform', $jadwal->platform) === 'Lainnya')>Lainnya</option>
+            </select>
+
+            <label>Link Pertemuan</label>
+            <input type="text" name="link_pertemuan" value="{{ old('link_pertemuan', $jadwal->link_pertemuan) }}" placeholder="https://zoom.us/j/xxxxxxxxxx">
+        </div>
 
         <label>Penanggung Jawab</label>
         <select name="penanggung_jawab">
@@ -122,9 +128,9 @@
             @endforeach
         </select>
 
-        <div class="jde-form-actions">
-            <a href="{{ route('penjadwalan.index') }}" class="jde-btn jde-btn-outline">Batal</a>
-            <button type="submit" class="jde-btn jde-btn-primary">Simpan Perubahan</button>
+        <div class="jdf-form-actions">
+            <a href="{{ route('penjadwalan.index') }}" class="jdf-btn jdf-btn-outline">Batal</a>
+            <button type="submit" class="jdf-btn jdf-btn-primary">Simpan Perubahan</button>
         </div>
     </form>
 </div>
@@ -134,7 +140,10 @@ function pilihMode(mode) {
     document.getElementById('input-mode').value = mode;
     document.getElementById('pill-online').classList.toggle('active-online', mode === 'online');
     document.getElementById('pill-offline').classList.toggle('active-offline', mode === 'offline');
-    document.getElementById('label-wajib').style.display = mode === 'offline' ? 'inline' : 'none';
+
+    document.getElementById('blok-lokasi-offline').style.display = mode === 'offline' ? 'block' : 'none';
+    document.getElementById('blok-online').style.display = mode === 'online' ? 'block' : 'none';
+    document.getElementById('label-wajib-lokasi').style.display = mode === 'offline' ? 'inline' : 'none';
 }
 document.addEventListener('DOMContentLoaded', () => {
     pilihMode(document.getElementById('input-mode').value || 'offline');
@@ -145,7 +154,7 @@ document.getElementById('form-jadwal-edit').addEventListener('submit', function 
     if (!tanggal || !jam) {
         e.preventDefault();
         if (window.Swal) {
-            Swal.fire({ icon: 'warning', title: 'Lengkapi dulu', text: 'Tanggal dan Jam wajib diisi.', confirmButtonColor: '#0081AB' });
+            Swal.fire({ icon: 'warning', title: 'Lengkapi dulu', text: 'Tanggal dan Jam wajib diisi.', confirmButtonColor: '#023E8A' });
         } else {
             alert('Tanggal dan Jam wajib diisi.');
         }

@@ -1,215 +1,165 @@
 @extends('layouts.app')
 
 @section('breadcrumb', 'Penjadwalan')
-@section('page-title', 'Penjadwalan')
+@section('page-title', 'Buat Jadwal')
 
 @section('content')
 
 <style>
-    .jdc-page-header { margin-bottom:18px; }
-    .jdc-page-header h1 { font-size:20px; font-weight:700; color:#0F172A; margin:0; }
-    .jdc-page-header p { color:#64748B; margin:4px 0 0; font-size:13.5px; }
+    .jdf-section-title { font-size:11.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:#0081AB; margin:0 0 14px; }
 
-    .jdc-layout { display:grid; grid-template-columns:400px 1fr; gap:20px; align-items:start; }
-    @media (max-width:1000px){ .jdc-layout{ grid-template-columns:1fr; } }
+    .jdf-alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13px; margin:0 auto 18px; max-width:460px; }
 
-    .jdc-card { background:#fff; border-radius:14px; box-shadow:0 1px 3px rgba(15,23,42,.08); }
-    .jdc-alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13px; margin-bottom:18px; }
+    .jdf-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); max-width:460px; margin:0 auto 20px; overflow:hidden; }
 
-    .jdc-form-head { display:flex; align-items:center; gap:10px; padding:20px 22px 4px; }
-    .jdc-form-head .jdc-icon-box { width:30px; height:30px; border-radius:8px; background:#DBEAFE; color:#1D4ED8; display:flex; align-items:center; justify-content:center; }
-    .jdc-form-head .jdc-icon-box svg { width:16px; height:16px; }
-    .jdc-form-head strong { font-size:15px; color:#0F172A; }
-    .jdc-form-body { padding:16px 22px 24px; }
-    .jdc-form-body label { display:block; font-size:12.5px; font-weight:700; color:#475569; margin:16px 0 7px; }
-    .jdc-form-body label:first-child { margin-top:0; }
-    .jdc-form-body select, .jdc-form-body input[type="text"] {
-        width:100%; padding:10px 12px; border-radius:9px; border:1px solid #e2e8f0; font-size:13.5px; background:#F8FAFC; color:#334155;
+    .jdf-form-head { display:flex; align-items:center; gap:14px; padding:22px 24px; background:linear-gradient(150deg, rgba(2,62,138,.06), rgba(0,129,171,.10)); border-bottom:1px solid #F1F5F9; }
+    .jdf-icon-box { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
+    .jdf-icon-box svg { width:20px; height:20px; stroke-width:2.3; }
+    .jdf-form-head strong { font-size:17px; font-weight:800; color:#023E8A; display:block; letter-spacing:-.01em; }
+    .jdf-form-head span { font-size:12.5px; color:#64748B; }
+
+    .jdf-form-body { padding:20px 24px 26px; }
+    .jdf-form-body label { display:block; font-size:12.5px; font-weight:700; color:#475569; margin:16px 0 7px; }
+    .jdf-form-body > label:first-child { margin-top:0; }
+    .jdf-form-body select, .jdf-form-body input[type="text"], .jdf-form-body input[type="date"], .jdf-form-body input[type="time"] {
+        width:100%; padding:10px 12px; border-radius:10px; border:1px solid #e2e8f0; font-size:13.5px; font-family:inherit; background:#F8FAFC; color:#334155; transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .jdc-form-body select:focus, .jdc-form-body input:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); background:#fff; }
-    .jdc-hint { font-size:11px; color:#94a3b8; margin-top:4px; }
+    .jdf-form-body select:focus, .jdf-form-body input:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); background:#fff; }
+    .jdf-hint { font-size:11px; color:#94a3b8; margin-top:5px; }
 
-    .jdc-mini-cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-    .jdc-mini-cal-head strong { font-size:13.5px; color:#0F172A; }
-    .jdc-mini-cal-nav button { width:26px; height:26px; border-radius:7px; border:1px solid #e2e8f0; background:#fff; color:#64748B; cursor:pointer; }
-    .jdc-mini-cal-nav button:hover { background:#F1F5F9; }
-    .jdc-mini-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
-    .jdc-mini-grid .dow { font-size:10.5px; font-weight:700; color:#94A3B8; padding-bottom:6px; }
-    .jdc-mini-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12.5px; color:#334155; border-radius:8px; cursor:pointer; background:transparent; border:none; }
-    .jdc-mini-day:hover { background:#F1F5F9; }
-    .jdc-mini-day.selected { background:#1D4ED8; color:#fff; font-weight:700; }
-    .jdc-mini-day.blank { visibility:hidden; cursor:default; }
+    .jdf-mini-cal { background:#F8FAFC; border:1px solid #EEF1F5; border-radius:12px; padding:12px; }
+    .jdf-mini-cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .jdf-mini-cal-head strong { font-size:13px; color:#0F172A; margin:0; }
+    .jdf-mini-cal-nav button { width:24px; height:24px; border-radius:7px; border:1px solid #e2e8f0; background:#fff; color:#64748B; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .jdf-mini-cal-nav button:hover { background:#F1F5F9; }
+    .jdf-mini-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; text-align:center; }
+    .jdf-mini-grid .dow { font-size:10px; font-weight:700; color:#94A3B8; padding-bottom:4px; }
+    .jdf-mini-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:12px; color:#334155; border-radius:7px; cursor:pointer; background:transparent; border:none; transition:background .12s ease; }
+    .jdf-mini-day:hover { background:#EEF2FF; }
+    .jdf-mini-day.selected { background:#023E8A; color:#fff; font-weight:700; }
+    .jdf-mini-day.blank { visibility:hidden; cursor:default; }
 
-    .jdc-mode-group { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .jdc-mode-pill { text-align:center; padding:10px; border-radius:9px; font-size:13.5px; font-weight:700; color:#94A3B8; background:#F1F5F9; cursor:pointer; border:1px solid transparent; }
-    .jdc-mode-pill.active { background:#fff; color:#0F172A; border-color:#e2e8f0; box-shadow:0 1px 3px rgba(15,23,42,.08); }
+    .jdf-mode-group { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .jdf-mode-pill { text-align:center; padding:11px; border-radius:10px; font-size:13.5px; font-weight:700; color:#94A3B8; background:#F1F5F9; cursor:pointer; border:1.5px solid transparent; transition:all .15s ease; }
+    .jdf-mode-pill.active-online { background:rgba(46,158,91,.12); color:#2E9E5B; border-color:rgba(46,158,91,.3); }
+    .jdf-mode-pill.active-offline { background:rgba(2,62,138,.08); color:#023E8A; border-color:rgba(2,62,138,.25); }
 
-    .jdc-btn-submit { width:100%; margin-top:22px; padding:13px; border:none; border-radius:10px; background:#F5B301; color:#78350F; font-weight:700; font-size:14px; cursor:pointer; }
-    .jdc-btn-submit:hover { background:#E5A700; }
-
-    .jdc-cal-head { display:flex; align-items:center; justify-content:space-between; padding:20px 22px; }
-    .jdc-cal-head strong { font-size:16px; color:#0F172A; }
-    .jdc-cal-nav-group { display:flex; gap:6px; }
-    .jdc-cal-nav-group button { padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; background:#fff; color:#475569; font-size:12.5px; font-weight:600; cursor:pointer; }
-    .jdc-cal-nav-group button:hover { background:#F8FAFC; }
-
-    .jdc-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid #F1F5F9; }
-    .jdc-cal-dow { text-align:center; font-size:11px; font-weight:700; color:#94A3B8; padding:10px 0; border-bottom:1px solid #F1F5F9; }
-    .jdc-cal-cell { min-height:82px; border-right:1px solid #F8FAFC; border-bottom:1px solid #F8FAFC; padding:8px; cursor:pointer; }
-    .jdc-cal-cell:hover { background:#FAFBFC; }
-    .jdc-cal-cell.selected { background:#EFF6FF; }
-    .jdc-cal-cell .num { font-size:12.5px; color:#334155; }
-    .jdc-cal-cell.selected .num { background:#1D4ED8; color:#fff; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-
-    .jdc-cal-time-pill { display:block; font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:5px; margin-top:3px; background:#DBEAFE; color:#1D4ED8; white-space:nowrap; }
-    .jdc-cal-time-pill.offline { background:#DCFCE7; color:#15803D; }
-    .jdc-cal-more { font-size:9px; color:#94A3B8; margin-top:2px; }
-
-    /* ===== Jadwal Hari Ini (section TETAP, selalu hari ini, tidak ikut klik kalender) ===== */
-    .jdc-hariini-title { display:flex; align-items:center; justify-content:space-between; padding:18px 22px 10px; }
-    .jdc-hariini-title strong { font-size:15px; font-weight:700; color:#0F172A; }
-    .jdc-hariini-title span { font-size:12px; color:#94A3B8; }
-    .jdc-hariini-list { padding:0 22px 22px; display:flex; flex-direction:column; gap:12px; }
-    .jdc-hariini-item {
-        display:flex; align-items:center; gap:16px;
-        border:1px solid #E2E8F0; border-left:4px solid #1D4ED8; border-radius:12px;
-        padding:14px 18px; background:#fff;
-    }
-    .jdc-hariini-item.offline { border-left-color:#2E9E5B; }
-    .jdc-hariini-time {
-        flex-shrink:0; width:56px; text-align:center;
-        background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:13px;
-        padding:8px 6px; border-radius:9px; white-space:nowrap;
-    }
-    .jdc-hariini-item.offline .jdc-hariini-time { background:#EAFAF1; color:#2E9E5B; }
-    .jdc-hariini-body { flex:1; min-width:0; }
-    .jdc-hariini-body strong { font-size:14px; color:#0F172A; display:block; }
-    .jdc-hariini-desc { font-size:12px; color:#94A3B8; display:block; margin-top:2px; }
-    .jdc-hariini-badge {
-        flex-shrink:0; font-size:11.5px; font-weight:700; padding:5px 14px; border-radius:999px;
-        background:#DBEAFE; color:#1D4ED8; white-space:nowrap;
-    }
-    .jdc-hariini-item.offline .jdc-hariini-badge { background:#DCFCE7; color:#15803D; }
-    .jdc-hariini-empty { text-align:center; color:#94A3B8; font-size:13px; padding:24px; }
+    .jdf-btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:none; border-radius:11px; font-size:13.5px; font-weight:700; padding:13px 20px; cursor:pointer; text-decoration:none; transition:all .15s ease; }
+    .jdf-btn-outline { background:#fff; color:#475569; border:1px solid #E2E8F0; }
+    .jdf-btn-outline:hover { background:#F8FAFC; border-color:#CBD5E1; }
+    .jdf-btn-primary { flex:1; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); border:none; }
+    .jdf-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
+    .jdf-form-actions { display:flex; gap:10px; margin-top:24px; }
 </style>
 
-<div class="jdc-page-header">
-    <h1>Penjadwalan</h1>
-    <p>Kelola Jadwal Kunjungan Anda</p>
-</div>
-
 @if ($errors->any())
-    <div class="jdc-alert-error">
+    <div class="jdf-alert-error">
         <ul style="margin:0; padding-left:18px;">
             @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
         </ul>
     </div>
 @endif
 
-<div class="jdc-layout">
-    <div class="jdc-card">
-        <div class="jdc-form-head">
-            <div class="jdc-icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </div>
+<div class="jdf-card">
+    <div class="jdf-form-head">
+        <div class="jdf-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div>
             <strong>Buat Jadwal Baru</strong>
+            <span>Jadwalkan kunjungan atau pertemuan baru</span>
         </div>
-
-        <form method="POST" action="{{ route('penjadwalan.store') }}" id="form-jadwal" class="jdc-form-body">
-            @csrf
-
-            <label>Pilih Permohonan</label>
-            <select name="probabilitas_id" required>
-                <option value="">Pilih Permohonan</option>
-                @foreach ($probabilitasList as $p)
-                    <option value="{{ $p->id }}" @selected(old('probabilitas_id') == $p->id)>
-                        {{ $p->lokasi }} — ULP {{ $p->ulp }}
-                    </option>
-                @endforeach
-            </select>
-
-            <label>Pilih Tanggal</label>
-            <div class="jdc-mini-cal-head">
-                <div class="jdc-mini-cal-nav"><button type="button" onclick="ubahBulanForm(-1)">&lsaquo;</button></div>
-                <strong id="mini-cal-label"></strong>
-                <div class="jdc-mini-cal-nav"><button type="button" onclick="ubahBulanForm(1)">&rsaquo;</button></div>
-            </div>
-            <div class="jdc-mini-grid" id="mini-cal-grid"></div>
-            <input type="hidden" name="tanggal_pilihan" id="input-tanggal" value="{{ old('tanggal_pilihan') }}">
-            <p class="jdc-hint" id="mini-cal-hint">Klik salah satu tanggal di atas.</p>
-
-            <label>Pilih Jam</label>
-            <select id="input-jam" required>
-                <option value="">Pilih Jam Kunjungan</option>
-                @foreach (['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'] as $jam)
-                    <option value="{{ $jam }}" @selected(old('jam') === $jam)>{{ $jam }}</option>
-                @endforeach
-            </select>
-            <input type="hidden" name="waktu_mulai" id="input-waktu-mulai" value="{{ old('waktu_mulai') }}">
-
-            <label>Mode Pertemuan</label>
-            <div class="jdc-mode-group">
-                <div class="jdc-mode-pill" id="pill-online" onclick="pilihMode('online')">Online</div>
-                <div class="jdc-mode-pill" id="pill-offline" onclick="pilihMode('offline')">Offline</div>
-            </div>
-            <input type="hidden" name="mode" id="input-mode" value="{{ old('mode', 'offline') }}" required>
-
-            <label>Lokasi/Platform <span id="label-wajib" style="display:none;color:#C0392B;">*</span></label>
-            <input type="text" name="lokasi" value="{{ old('lokasi') }}" placeholder="Masukan Lokasi atau pilih platform">
-
-            <label>Penanggung Jawab</label>
-            <select name="penanggung_jawab">
-                <option value="">Belum ditentukan</option>
-                @foreach ($users as $u)
-                    <option value="{{ $u->id }}" @selected(old('penanggung_jawab') == $u->id)>{{ $u->name }}</option>
-                @endforeach
-            </select>
-
-            <button type="submit" class="jdc-btn-submit">Simpan Jadwal</button>
-        </form>
     </div>
 
-    <div class="jdc-card">
-        <div class="jdc-cal-head">
-            <strong id="cal-besar-label"></strong>
-            <div class="jdc-cal-nav-group">
-                <button type="button" onclick="ubahBulanBesar(-1)">&lsaquo;</button>
-                <button type="button" onclick="pilihHariIni()">Hari Ini</button>
-                <button type="button" onclick="ubahBulanBesar(1)">&rsaquo;</button>
-            </div>
-        </div>
+    <form method="POST" action="{{ route('penjadwalan.store') }}" id="form-jadwal" class="jdf-form-body">
+        @csrf
 
-        <div class="jdc-cal-grid">
-            @foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $d)
-                <div class="jdc-cal-dow">{{ $d }}</div>
+        <div class="jdf-section-title">Detail Jadwal</div>
+
+        <label>Pilih Permohonan</label>
+        <select name="probabilitas_id" required>
+            <option value="">Pilih Permohonan</option>
+            @foreach ($probabilitasList as $p)
+                <option value="{{ $p->id }}" @selected(old('probabilitas_id') == $p->id)>
+                    {{ $p->lokasi }} — ULP {{ $p->ulp }}
+                </option>
             @endforeach
-        </div>
-        <div class="jdc-cal-grid" id="cal-besar-grid"></div>
+        </select>
 
-        {{-- ===== JADWAL HARI INI — section tetap, selalu tanggal hari ini ===== --}}
-        <div class="jdc-hariini-title">
-            <strong>Jadwal Hari Ini</strong>
-            <span id="hariini-tanggal-label"></span>
+        <label>Pilih Tanggal</label>
+        <div class="jdf-mini-cal">
+            <div class="jdf-mini-cal-head">
+                <div class="jdf-mini-cal-nav"><button type="button" onclick="ubahBulanForm(-1)">&lsaquo;</button></div>
+                <strong id="mini-cal-label"></strong>
+                <div class="jdf-mini-cal-nav"><button type="button" onclick="ubahBulanForm(1)">&rsaquo;</button></div>
+            </div>
+            <div class="jdf-mini-grid" id="mini-cal-grid"></div>
         </div>
-        <div class="jdc-hariini-list" id="list-jadwal-hariini"></div>
-    </div>
+        <input type="hidden" name="tanggal_pilihan" id="input-tanggal" value="{{ old('tanggal_pilihan') }}">
+        <p class="jdf-hint" id="mini-cal-hint">Klik salah satu tanggal di atas.</p>
+
+        <label>Pilih Jam</label>
+        <select id="input-jam" required>
+            <option value="">Pilih Jam Kunjungan</option>
+            @foreach (['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00'] as $jam)
+                <option value="{{ $jam }}" @selected(old('jam') === $jam)>{{ $jam }}</option>
+            @endforeach
+        </select>
+        <input type="hidden" name="waktu_mulai" id="input-waktu-mulai" value="{{ old('waktu_mulai') }}">
+
+        <label>Mode Pertemuan</label>
+        <div class="jdf-mode-group">
+            <div class="jdf-mode-pill" id="pill-online" onclick="pilihMode('online')">Online</div>
+            <div class="jdf-mode-pill" id="pill-offline" onclick="pilihMode('offline')">Offline</div>
+        </div>
+        <input type="hidden" name="mode" id="input-mode" value="{{ old('mode', 'offline') }}" required>
+
+        {{-- OFFLINE: Lokasi kunjungan --}}
+        <div id="blok-lokasi-offline">
+            <label>Lokasi <span id="label-wajib-lokasi" style="display:none;color:#C0392B;">*</span></label>
+            <input type="text" name="lokasi" value="{{ old('lokasi') }}" placeholder="Masukan alamat lokasi kunjungan">
+        </div>
+
+        {{-- ONLINE: Platform + Link Pertemuan --}}
+        <div id="blok-online" style="display:none">
+            <label>Platform</label>
+            <select name="platform">
+                <option value="">Pilih platform...</option>
+                <option value="Zoom" @selected(old('platform') === 'Zoom')>Zoom</option>
+                <option value="Google Meet" @selected(old('platform') === 'Google Meet')>Google Meet</option>
+                <option value="Lainnya" @selected(old('platform') === 'Lainnya')>Lainnya</option>
+            </select>
+
+            <label>Link Pertemuan</label>
+            <input type="text" name="link_pertemuan" value="{{ old('link_pertemuan') }}" placeholder="https://zoom.us/j/xxxxxxxxxx">
+        </div>
+
+        <label>Penanggung Jawab</label>
+        <select name="penanggung_jawab">
+            <option value="">Belum ditentukan</option>
+            @foreach ($users as $u)
+                <option value="{{ $u->id }}" @selected(old('penanggung_jawab') == $u->id)>{{ $u->name }}</option>
+            @endforeach
+        </select>
+
+        <div class="jdf-form-actions">
+            <a href="{{ route('penjadwalan.index') }}" class="jdf-btn jdf-btn-outline">Batal</a>
+            <button type="submit" class="jdf-btn jdf-btn-primary">Simpan Jadwal</button>
+        </div>
+    </form>
 </div>
 
 <script>
-const jadwalSebulan = @json($jadwalSebulan);
-const bulanAwal = "{{ $bulanTampil->format('Y-m-01') }}";
+// Kalau datang dari klik "+ Tambah Jadwal" di modal kalender (index), tanggal
+// bisa ke-prefill lewat ?tanggal=YYYY-MM-DD di URL.
+const tanggalDariQuery = new URLSearchParams(window.location.search).get('tanggal');
 
-let miniCalCursor = new Date(bulanAwal);
-let besarCalCursor = new Date(bulanAwal);
-let tanggalTerpilih = "{{ old('tanggal_pilihan', now()->format('Y-m-d')) }}";
-const tanggalHariIni = new Date().toISOString().slice(0, 10); // FIXED, tidak berubah walau kalender dinavigasi
+let miniCalCursor = new Date();
+let tanggalTerpilih = "{{ old('tanggal_pilihan') }}" || tanggalDariQuery || new Date().toISOString().slice(0, 10);
 
 const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-const namaHari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const MAKS_PIL_PER_SEL = 2;
 
 function jumlahHari(y, m) { return new Date(y, m + 1, 0).getDate(); }
-function hariPertama(y, m) { const d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; }
 
 function renderMiniCal() {
     const y = miniCalCursor.getFullYear(), m = miniCalCursor.getMonth();
@@ -219,71 +169,14 @@ function renderMiniCal() {
     ['MIN','SEN','SEL','RAB','KAM','JUM','SAB'].forEach(d => grid.innerHTML += `<div class="dow">${d}</div>`);
 
     const offsetMinggu = new Date(y, m, 1).getDay();
-    for (let i = 0; i < offsetMinggu; i++) grid.innerHTML += `<div class="jdc-mini-day blank"></div>`;
+    for (let i = 0; i < offsetMinggu; i++) grid.innerHTML += `<div class="jdf-mini-day blank"></div>`;
 
     const totalHari = jumlahHari(y, m);
     for (let tgl = 1; tgl <= totalHari; tgl++) {
         const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(tgl).padStart(2,'0')}`;
         const aktif = iso === tanggalTerpilih ? 'selected' : '';
-        grid.innerHTML += `<button type="button" class="jdc-mini-day ${aktif}" onclick="pilihTanggal('${iso}')">${tgl}</button>`;
+        grid.innerHTML += `<button type="button" class="jdf-mini-day ${aktif}" onclick="pilihTanggal('${iso}')">${tgl}</button>`;
     }
-}
-
-function renderCalBesar() {
-    const y = besarCalCursor.getFullYear(), m = besarCalCursor.getMonth();
-    document.getElementById('cal-besar-label').textContent = `${namaBulan[m]} ${y}`;
-    const grid = document.getElementById('cal-besar-grid');
-    grid.innerHTML = '';
-
-    const offset = hariPertama(y, m);
-    for (let i = 0; i < offset; i++) grid.innerHTML += `<div class="jdc-cal-cell" style="visibility:hidden"></div>`;
-
-    const totalHari = jumlahHari(y, m);
-    for (let tgl = 1; tgl <= totalHari; tgl++) {
-        const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(tgl).padStart(2,'0')}`;
-        const itemHariItu = jadwalSebulan.filter(j => j.tanggal === iso).sort((a,b) => a.jam.localeCompare(b.jam));
-        const aktif = iso === tanggalTerpilih ? 'selected' : '';
-
-        let pilHtml = itemHariItu.slice(0, MAKS_PIL_PER_SEL).map(j =>
-            `<span class="jdc-cal-time-pill ${j.mode}">${j.jam} · ${j.mode === 'online' ? 'On' : 'Off'}</span>`
-        ).join('');
-
-        if (itemHariItu.length > MAKS_PIL_PER_SEL) {
-            pilHtml += `<div class="jdc-cal-more">+${itemHariItu.length - MAKS_PIL_PER_SEL} lagi</div>`;
-        }
-
-        grid.innerHTML += `
-            <div class="jdc-cal-cell ${aktif}" onclick="pilihTanggal('${iso}')">
-                <div class="num">${tgl}</div>
-                ${pilHtml}
-            </div>`;
-    }
-}
-
-// Section "Jadwal Hari Ini" — SELALU pakai tanggalHariIni, tidak dipengaruhi navigasi kalender/klik tanggal
-function renderJadwalHariIni() {
-    const d = new Date(tanggalHariIni);
-    document.getElementById('hariini-tanggal-label').textContent =
-        `${namaHari[d.getDay()]}, ${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
-
-    const items = jadwalSebulan.filter(j => j.tanggal === tanggalHariIni).sort((a,b) => a.jam.localeCompare(b.jam));
-    const wrap = document.getElementById('list-jadwal-hariini');
-
-    if (items.length === 0) {
-        wrap.innerHTML = `<div class="jdc-hariini-empty">Belum ada jadwal untuk hari ini.</div>`;
-        return;
-    }
-
-    wrap.innerHTML = items.map(j => `
-        <div class="jdc-hariini-item ${j.mode}">
-            <div class="jdc-hariini-time">${j.jam}</div>
-            <div class="jdc-hariini-body">
-                <strong>${j.lokasi_nama}</strong>
-                <span class="jdc-hariini-desc">${j.deskripsi ? j.deskripsi : 'Kunjungan ke lokasi ini'}</span>
-            </div>
-            <span class="jdc-hariini-badge">${j.mode === 'online' ? 'Online' : 'Offline'}</span>
-        </div>
-    `).join('');
 }
 
 function pilihTanggal(iso) {
@@ -291,26 +184,19 @@ function pilihTanggal(iso) {
     document.getElementById('input-tanggal').value = iso;
     document.getElementById('mini-cal-hint').textContent = `Tanggal dipilih: ${iso}`;
     renderMiniCal();
-    renderCalBesar();
     gabungkanWaktu();
-    // renderJadwalHariIni() SENGAJA TIDAK dipanggil di sini — section ini fixed hari ini
 }
 
 function ubahBulanForm(delta) { miniCalCursor.setMonth(miniCalCursor.getMonth() + delta); renderMiniCal(); }
-function ubahBulanBesar(delta) { besarCalCursor.setMonth(besarCalCursor.getMonth() + delta); renderCalBesar(); }
-
-function pilihHariIni() {
-    const hariIni = new Date().toISOString().slice(0, 10);
-    besarCalCursor = new Date();
-    miniCalCursor = new Date();
-    pilihTanggal(hariIni);
-}
 
 function pilihMode(mode) {
     document.getElementById('input-mode').value = mode;
-    document.getElementById('pill-online').classList.toggle('active', mode === 'online');
-    document.getElementById('pill-offline').classList.toggle('active', mode === 'offline');
-    document.getElementById('label-wajib').style.display = mode === 'offline' ? 'inline' : 'none';
+    document.getElementById('pill-online').classList.toggle('active-online', mode === 'online');
+    document.getElementById('pill-offline').classList.toggle('active-offline', mode === 'offline');
+
+    document.getElementById('blok-lokasi-offline').style.display = mode === 'offline' ? 'block' : 'none';
+    document.getElementById('blok-online').style.display = mode === 'online' ? 'block' : 'none';
+    document.getElementById('label-wajib-lokasi').style.display = mode === 'offline' ? 'inline' : 'none';
 }
 
 function gabungkanWaktu() {
@@ -319,24 +205,23 @@ function gabungkanWaktu() {
     if (tgl && jam) document.getElementById('input-waktu-mulai').value = `${tgl} ${jam}:00`;
 }
 
-    document.getElementById('input-jam').addEventListener('change', gabungkanWaktu);
+document.getElementById('input-jam').addEventListener('change', gabungkanWaktu);
 
-    document.getElementById('form-jadwal').addEventListener('submit', function (e) {
-        if (!document.getElementById('input-tanggal').value || !document.getElementById('input-jam').value) {
-            e.preventDefault();
-            if (window.Swal) {
-                Swal.fire({ icon: 'warning', title: 'Lengkapi dulu', text: 'Tanggal dan Jam wajib diisi.', confirmButtonColor: '#0081AB' });
-            } else {
-                alert('Tanggal dan Jam wajib diisi.');
-            }
+document.getElementById('form-jadwal').addEventListener('submit', function (e) {
+    if (!document.getElementById('input-tanggal').value || !document.getElementById('input-jam').value) {
+        e.preventDefault();
+        if (window.Swal) {
+            Swal.fire({ icon: 'warning', title: 'Lengkapi dulu', text: 'Tanggal dan Jam wajib diisi.', confirmButtonColor: '#023E8A' });
+        } else {
+            alert('Tanggal dan Jam wajib diisi.');
         }
-    });
+    }
+});
 
-    document.addEventListener('DOMContentLoaded', () => {
-        pilihMode(document.getElementById('input-mode').value || 'offline');
-        if (!tanggalTerpilih) tanggalTerpilih = new Date().toISOString().slice(0, 10);
-        pilihTanggal(tanggalTerpilih);
-        renderJadwalHariIni();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    pilihMode(document.getElementById('input-mode').value || 'offline');
+    miniCalCursor = new Date(tanggalTerpilih);
+    pilihTanggal(tanggalTerpilih);
+});
 </script>
-@endsection    
+@endsection

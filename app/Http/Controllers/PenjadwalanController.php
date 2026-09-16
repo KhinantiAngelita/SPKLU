@@ -17,16 +17,11 @@ class PenjadwalanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('penjadwalan.index', compact('jadwals'));
-    }
-
-    public function create()
-    {
-        $probabilitasList = $this->probabilitasBisaDijadwalkan();
-        $users = User::orderBy('name')->get();
-
-        $bulanTampil = request('bulan')
-            ? \Illuminate\Support\Carbon::parse(request('bulan'))
+        // Data kalender bulan berjalan — dipindah kesini dari create(), supaya
+        // kalender & "Jadwal Hari Ini" tampil di halaman Daftar Jadwal
+        // (di atas tabel), bukan lagi di form Buat Jadwal.
+        $bulanTampil = $request->bulan
+            ? \Illuminate\Support\Carbon::parse($request->bulan)
             : now();
 
         $jadwalSebulan = Jadwal::with('probabilitas')
@@ -45,12 +40,15 @@ class PenjadwalanController extends Controller
                 'deskripsi' => $j->deskripsi,
             ]);
 
-        return view('penjadwalan.create', compact(
-            'probabilitasList',
-            'users',
-            'jadwalSebulan',
-            'bulanTampil'
-        ));
+        return view('penjadwalan.index', compact('jadwals', 'jadwalSebulan', 'bulanTampil'));
+    }
+
+    public function create()
+    {
+        $probabilitasList = $this->probabilitasBisaDijadwalkan();
+        $users = User::orderBy('name')->get();
+
+        return view('penjadwalan.create', compact('probabilitasList', 'users'));
     }
 
     public function store(Request $request)
@@ -111,6 +109,8 @@ class PenjadwalanController extends Controller
             'waktu_mulai' => 'required|date',
             'mode' => 'required|in:online,offline',
             'lokasi' => 'nullable|string|required_if:mode,offline',
+            'platform' => 'nullable|in:Zoom,Google Meet,Lainnya|required_if:mode,online',
+            'link_pertemuan' => 'nullable|url|required_if:mode,online',
             'penanggung_jawab' => 'nullable|exists:users,id',
         ]);
     }

@@ -75,7 +75,8 @@ class FsSkemaController extends Controller
             'status_kelayakan' => $poin['status'],
         ]);
 
-        $narasi = $this->narasiGenerator->buatNarasi($fsSkema);
+        $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
+        $narasi = $this->narasiGenerator->buatNarasi($fsSkema, $proyeksiRoi);
         $fsSkema->update(['narasi_analisis' => $narasi]);
 
         $this->catatRiwayat($fsSkema, $poin, $narasi, $request);
@@ -91,10 +92,6 @@ class FsSkemaController extends Controller
         return redirect()->route('fs-skema.index')->with('success', 'FS Skema berhasil dihapus.');
     }
 
-    /**
-     * Endpoint AJAX untuk panel kanan (dipanggil live saat isi form,
-     * sebelum data disimpan). Tidak menulis apa pun ke database.
-     */
     public function preview(Request $request)
     {
         $data = $request->validate([
@@ -108,7 +105,7 @@ class FsSkemaController extends Controller
             'sharing_provit_mitra_lahan' => 'nullable|numeric|min:0|max:1',
             'mobil_per_hari' => 'nullable|integer|min:0',
             'transaksi_kwh_per_mobil' => 'nullable|numeric|min:0',
-            'masa_kontrak_tahun' => 'nullable|integer|min:1|max:20',
+            'masa_kontrak_tahun' => 'nullable|integer|min:1|max:30',
             'fasilitas' => 'nullable|array',
             'kesiapan_jaringan' => 'nullable|string',
             'okupansi' => 'nullable|array',
@@ -131,10 +128,13 @@ class FsSkemaController extends Controller
 
         $spkluTerdekat = $this->hitungSpkluTerdekatDariKoordinat($data['titik_koordinat'] ?? null);
 
-        try {
-            $narasi = $this->narasiGenerator->buatNarasi($fsSkemaSementara);
-        } catch (\Throwable $e) {
-            $narasi = null;
+        $narasi = null;
+        if ($proyeksiRoi !== null) {
+            try {
+                $narasi = $this->narasiGenerator->buatNarasi($fsSkemaSementara, $proyeksiRoi);
+            } catch (\Throwable $e) {
+                $narasi = null;
+            }
         }
 
         return response()->json([
@@ -159,7 +159,7 @@ class FsSkemaController extends Controller
             'layanan_listrik' => 'nullable|in:TM,TR,LTR',
             'mobil_per_hari' => 'required|integer|min:0',
             'transaksi_kwh_per_mobil' => 'required|numeric|min:0',
-            'masa_kontrak_tahun' => 'required|integer|min:1|max:20',
+            'masa_kontrak_tahun' => 'required|integer|min:1|max:30',
             'fasilitas' => 'nullable|array',
             'kesiapan_jaringan' => 'nullable|string',
             'okupansi' => 'nullable|array',
@@ -180,7 +180,8 @@ class FsSkemaController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        $narasi = $this->narasiGenerator->buatNarasi($fsSkema);
+        $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
+        $narasi = $this->narasiGenerator->buatNarasi($fsSkema, $proyeksiRoi);
         $fsSkema->update(['narasi_analisis' => $narasi]);
 
         $this->catatRiwayat($fsSkema, $poin, $narasi, $request);

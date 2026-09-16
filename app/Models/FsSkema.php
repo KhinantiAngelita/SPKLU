@@ -14,6 +14,7 @@ class FsSkema extends Model
         'fasilitas', 'poin_fasilitas', 'kesiapan_jaringan', 'poin_kesiapan_jaringan',
         'okupansi', 'poin_okupansi', 'total_poin', 'status_kelayakan',
         'narasi_analisis', 'created_by',
+        'masa_kontrak_tahun',
     ];
 
     protected $casts = [

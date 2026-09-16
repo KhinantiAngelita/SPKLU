@@ -78,31 +78,38 @@
     .trx-year-checkbox input { accent-color:#0081AB; cursor:pointer; }
 
     .trx-data-table-wrap { overflow-x:auto; border-top:1px solid #f1f5f9; }
-    .trx-data-table { width:100%; border-collapse:collapse; min-width:760px; }
-    .trx-data-table th { text-align:right; font-size:10.5px; font-weight:700; color:#94a3b8; padding:9px 12px; border-bottom:1px solid #eef1f5; white-space:nowrap; }
+    .trx-data-table { width:100%; border-collapse:collapse; min-width:800px; }
+    .trx-data-table th { text-align:right; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; padding:11px 14px; border-bottom:1.5px solid #eef1f5; white-space:nowrap; }
     .trx-data-table th:first-child { text-align:left; }
-    .trx-data-table td { text-align:right; font-size:12.3px; color:#334155; padding:8px 12px; border-bottom:1px solid #f5f7fa; white-space:nowrap; }
-    .trx-data-table td:first-child { text-align:left; font-weight:700; color:#1E293B; display:flex; align-items:center; }
-    .trx-data-table td.total-col, .trx-data-table th.total-col { font-weight:800; color:#023E8A; background:#fafbfc; }
+    .trx-data-table td { text-align:right; font-size:12.5px; color:#334155; padding:10px 14px; border-bottom:1px solid #f5f7fa; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .trx-data-table td:first-child { text-align:left; padding:8px 14px; }
+    .trx-data-table tbody tr:nth-child(even) { background:#fbfcfd; }
+    .trx-data-table tbody tr:hover { background:rgba(0,129,171,.05); }
+    .trx-data-table td.total-col, .trx-data-table th.total-col { font-weight:800; color:#023E8A; background:#F0F7FA; }
+    .trx-data-table tbody tr:nth-child(even) td.total-col { background:#EAF3F7; }
     .trx-data-table tr:last-child td { border-bottom:none; }
 
+    .trx-tahun-chip {
+        display:inline-flex; align-items:center; gap:7px; padding:5px 12px 5px 9px; border-radius:999px;
+        font-weight:800; font-size:12.5px; background:#F8FAFC; border:1px solid #EEF1F5;
+    }
     .trx-line-swatch {
-        display:inline-block; width:22px; height:8px; position:relative;
-        margin-right:7px; vertical-align:middle; flex-shrink:0;
+        display:inline-block; width:20px; height:8px; position:relative; flex-shrink:0;
     }
     .trx-line-swatch::before {
-        content:''; position:absolute; top:50%; left:0; right:0; height:2px;
-        background:currentColor; transform:translateY(-50%);
+        content:''; position:absolute; top:50%; left:0; right:0; height:2.5px;
+        background:currentColor; border-radius:2px; transform:translateY(-50%);
     }
     .trx-line-swatch::after {
         content:''; position:absolute; top:50%; left:50%; width:6px; height:6px;
         border-radius:50%; background:currentColor; transform:translate(-50%,-50%);
+        box-shadow:0 0 0 2px #fff;
     }
     .trx-tren-legend {
-        display:flex; justify-content:center; align-items:center; gap:22px;
-        flex-wrap:wrap; padding:14px 20px 18px; font-size:12.5px; font-weight:700; color:#334155;
+        display:flex; justify-content:center; align-items:center; gap:10px;
+        flex-wrap:wrap; padding:14px 20px 18px; border-top:1px solid #f1f5f9;
     }
-    .trx-tren-legend span.trx-legend-item { display:inline-flex; align-items:center; }
+    .trx-tren-legend .trx-tahun-chip { color:#334155; }
 </style>
 
 <div class="trx-page-header">
@@ -220,7 +227,8 @@
 
 @php
     $paletWarnaTren = ['#023E8A', '#E8A317', '#2E9E5B', '#C0392B', '#6D5DD3', '#0EA5B7'];
-    $namaBulanSingkat = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sept','Okt','Nop','Des'];
+    // Konsisten 3 huruf semua (sebelumnya "Sept" 4 huruf, beda pola dari yang lain)
+    $namaBulanSingkat = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nop','Des'];
     $namaBulanPenuh = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     $bulanSingkatTerpilih = array_slice($namaBulanSingkat, $bulanAwal - 1, $bulanAkhir - $bulanAwal + 1);
 @endphp
@@ -286,7 +294,9 @@
                     @php $warnaBaris = $paletWarnaTren[$loop->index % count($paletWarnaTren)]; @endphp
                     <tr>
                         <td>
-                            <span class="trx-line-swatch" style="color: {{ $warnaBaris }};"></span>{{ $tahun }}
+                            <span class="trx-tahun-chip" style="color: {{ $warnaBaris }};">
+                                <span class="trx-line-swatch"></span>{{ $tahun }}
+                            </span>
                         </td>
                         @foreach ($dataBulanan as $nilai)
                             <td>{{ $nilai != 0 ? number_format($nilai, 0, ',', '.') : '—' }}</td>
@@ -303,8 +313,8 @@
     @if (count($trenPerTahun) > 0)
     <div class="trx-tren-legend">
         @foreach ($trenPerTahun as $tahun => $dataBulanan)
-            <span class="trx-legend-item">
-                <span class="trx-line-swatch" style="color: {{ $paletWarnaTren[$loop->index % count($paletWarnaTren)] }};"></span>{{ $tahun }}
+            <span class="trx-tahun-chip" style="color: {{ $paletWarnaTren[$loop->index % count($paletWarnaTren)] }};">
+                <span class="trx-line-swatch"></span>{{ $tahun }}
             </span>
         @endforeach
     </div>
@@ -402,7 +412,6 @@
                 legend: { display: false },
                 datalabels: {
                     display: function(context) {
-                        // Hanya tampilkan label jika nilainya di atas 0 agar tidak terlalu ramai
                         return context.dataset.data[context.dataIndex] > 0;
                     },
                     align: 'top',
@@ -419,7 +428,7 @@
                             if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
                             return value;
                         }
-                        return new Intl.NumberFormat('id-ID').format(value);
+                        return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(value);
                     }
                 },
                 tooltip: {
