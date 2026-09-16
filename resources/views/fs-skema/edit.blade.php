@@ -380,7 +380,7 @@
     {{ asset('vendor/chartjs/chart.umd.min.js') }} supaya nggak bergantung
     sama akses internet ke CDN sama sekali.
 --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="window.__chartJsGagalDimuat = true"></script>
+<script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}" onerror="window.__chartJsGagalDimuat = true"></script>
 <script>
 function perbaruiLatLng() {
     const nilai = document.getElementById('input-titik-koordinat').value;

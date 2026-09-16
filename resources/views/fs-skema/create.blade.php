@@ -356,19 +356,11 @@
 
 @push('scripts')
 {{--
-    PENTING: script Chart.js diambil dari CDN eksternal. Kalau server/browser
-    tidak punya akses internet ke cdnjs.cloudflare.com (mis. jaringan
-    intranet/kantor yang dibatasi), variabel global `Chart` tidak akan
-    pernah ada dan grafik akan tampak "kosong" walau card-nya kelihatan.
-    Atribut onerror di bawah menandai kegagalan itu supaya JS bisa kasih
-    pesan yang jelas ke user, bukan diam-diam gagal.
-
-    REKOMENDASI JANGKA PANJANG: download file ini dan simpan lokal di
-    public/vendor/chartjs/chart.umd.min.js, lalu ganti src di bawah jadi
-    {{ asset('vendor/chartjs/chart.umd.min.js') }} supaya nggak bergantung
-    sama akses internet ke CDN sama sekali.
+    Chart.js sekarang di-host LOKAL (public/vendor/chartjs/chart.umd.min.js),
+    bukan dari CDN cdnjs.cloudflare.com lagi — supaya gak bergantung sama
+    akses internet ke CDN (yang sempat gagal dimuat di jaringan ini).
 --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="window.__chartJsGagalDimuat = true"></script>
+<script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}" onerror="window.__chartJsGagalDimuat = true"></script>
 <script>
 // ===== Field readonly Latitude/Longitude (parsing dari Titik Kordinat) =====
 function perbaruiLatLng() {
@@ -578,7 +570,6 @@ async function jalankanPreview() {
         renderRoi(data.proyeksi_roi);
         renderNarasi(data.narasi_analisis);
     } catch (e) {
-        // koneksi gagal — biarkan panel tetap menampilkan state terakhir
         console.error('Preview FS Skema gagal:', e);
     } finally {
         document.getElementById('fsp-loading-spklu').style.display = 'none';
@@ -684,13 +675,11 @@ function renderChartRoi(roi) {
     const chartEmpty = document.getElementById('fsp-roi-chart-empty');
     const chartWrap = document.getElementById('fsp-roi-chart-wrap');
 
-    // Guard #1: library Chart.js belum/gagal dimuat (mis. tidak ada akses
-    // internet ke CDN). Tampilkan pesan yang jelas, jangan diam-diam kosong.
     if (!chartJsSiap()) {
         if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
         chartWrap.style.display = 'none';
         chartEmpty.style.display = 'block';
-        chartEmpty.textContent = 'Grafik tidak bisa ditampilkan: library Chart.js gagal dimuat dari CDN. Cek koneksi internet ke cdnjs.cloudflare.com, atau hubungi admin untuk meng-host Chart.js secara lokal.';
+        chartEmpty.textContent = 'Grafik tidak bisa ditampilkan: library Chart.js gagal dimuat. Pastikan file public/vendor/chartjs/chart.umd.min.js ada.';
         chartEmpty.classList.add('fsp-chart-error');
         return;
     }
@@ -752,9 +741,6 @@ function renderChartRoi(roi) {
             },
         });
     } catch (e) {
-        // Guard #2: data valid & library ada, tapi tetap gagal render
-        // (mis. versi Chart.js beda / breaking change). Jangan biarkan
-        // kosong senyap — kasih tahu & catat ke console buat debugging.
         console.error('Gagal membuat grafik ROI:', e);
         if (chartRoi) { chartRoi.destroy(); chartRoi = null; }
         chartWrap.style.display = 'none';
