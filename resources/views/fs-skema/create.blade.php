@@ -178,11 +178,6 @@
                         <option value="LTR" @selected(old('layanan_listrik') === 'LTR')>LTR</option>
                     </select>
                 </div>
-                <div class="fsf-field">
-                    <label>Masa Kontrak (Tahun)</label>
-                    <input type="number" name="masa_kontrak_tahun" min="1" max="20" value="{{ old('masa_kontrak_tahun', 5) }}" placeholder="5" required data-preview-trigger>
-                    <p class="fsf-hint">Menentukan panjang proyeksi ROI di panel kanan.</p>
-                </div>
             </div>
 
             {{-- SKEMA 2 --}}

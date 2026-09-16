@@ -12,6 +12,12 @@ use Illuminate\Support\Collection;
  * bareng Dashboard (ringkasan singkat) tanpa duplikasi rumus skor gabungan,
  * dan supaya bagian "murah" (hitung zona) terpisah dari bagian "mahal"
  * (grid scan titik rekomendasi) — Dashboard cukup panggil yang murah.
+ *
+ * Skor kepadatan sekarang gabungan JUMLAH TRANSAKSI + DURASI PAKAI (bukan
+ * cuma jumlah transaksi seperti sebelumnya). Alasannya: jumlah transaksi
+ * tinggi tapi durasi pendek beda kondisi dengan jumlah transaksi sedang
+ * tapi durasi panjang (yang kedua ini justru lebih berisiko bikin antrian,
+ * walau jumlah transaksinya kelihatan biasa saja).
  */
 class RekomendasiLokasiService
 {
@@ -22,6 +28,17 @@ class RekomendasiLokasiService
 
     private const BOBOT_KEPADATAN = 0.65;
     private const BOBOT_TREN = 0.35;
+
+    // Kepadatan sekarang gabungan dua sinyal: seberapa SERING (jumlah
+    // transaksi) dan seberapa LAMA (durasi) unit itu dipakai per bulan.
+    private const BOBOT_FREKUENSI = 0.5;
+    private const BOBOT_DURASI = 0.5;
+
+    // Ambang kapasitas buat nentuin rekomendasi tindak lanjut SPKLU zona
+    // merah: di bawah ini disarankan "Ganti Mesin" (upgrade kapasitas),
+    // di atas/sama dengan ini disarankan "Tambah Unit" (kapasitas udah
+    // besar, jadi penambahan charge point baru lebih make sense).
+    private const AMBANG_KW_GANTI_MESIN = 60;
 
     private const GRID_SPASI_KM = 1.5;
     private const MAX_GRID_TITIK = 2500;
@@ -52,6 +69,7 @@ class RekomendasiLokasiService
             $radiusKm = $analisis['radiusById']->get($spklu->id, self::RADIUS_FALLBACK_KM);
 
             $status = $this->tentukanStatus($skor, $analisis['ambangBawah'], $analisis['ambangAtas']);
+            $kapasitasKw = (float) ($spklu->kw ?? 0);
 
             return [
                 'id' => $spklu->id,
@@ -60,11 +78,14 @@ class RekomendasiLokasiService
                 'latitude' => (float) $spklu->latitude,
                 'longitude' => (float) $spklu->longitude,
                 'radius_km' => $radiusKm,
-                'rata_rata_transaksi_bulan' => $data && $data['rata_rata'] !== null ? round($data['rata_rata'], 1) : null,
+                'kapasitas_kw' => $kapasitasKw,
+                'rata_rata_transaksi_bulan' => $data && $data['rata_rata_jumlah'] !== null ? round($data['rata_rata_jumlah'], 1) : null,
+                'rata_rata_durasi_menit_bulan' => $data && $data['rata_rata_durasi'] !== null ? round($data['rata_rata_durasi'], 0) : null,
                 'tren_persen' => $data['tren_persen'] ?? null,
                 'tren_label' => $data['tren_label'] ?? null,
                 'skor_gabungan' => $skor !== null ? round($skor * 100, 1) : null,
                 'status' => $status,
+                'rekomendasi_tindak_lanjut' => $this->tentukanRekomendasiTindakLanjut($status, $kapasitasKw),
             ];
         })->values();
 
@@ -122,6 +143,23 @@ class RekomendasiLokasiService
             })
             ->sortByDesc('persen_hijau')
             ->take(5)
+            ->values();
+    }
+
+    /**
+     * SPKLU existing berstatus merah (padat), dikelompokkan berdasarkan
+     * rekomendasi tindak lanjut yang disaranin ("ganti_mesin" / "tambah_unit").
+     * Dipakai buat panel terpisah di halaman Rekomendasi Lokasi, biar beda
+     * jelas dengan "titik rekomendasi lokasi baru" (yang itu buat lahan
+     * kosong, ini buat SPKLU yang UDAH ADA tapi kewalahan).
+     *
+     * @param Collection $titikPeta hasil hitungZonaSpklu()['titikPeta']
+     */
+    public function hitungSpkluPerluTindakLanjut(Collection $titikPeta): Collection
+    {
+        return $titikPeta
+            ->filter(fn ($t) => $t['status'] === 'merah' && $t['rekomendasi_tindak_lanjut'] !== null)
+            ->sortByDesc('skor_gabungan')
             ->values();
     }
 
@@ -240,8 +278,9 @@ class RekomendasiLokasiService
     }
 
     /**
-     * Rata-rata transaksi/bulan (N bulan terakhir) + tren 3 bulan terakhir
-     * vs 3 bulan sebelumnya, PER SPKLU.
+     * Rata-rata transaksi/bulan DAN rata-rata durasi/bulan (N bulan
+     * terakhir), + tren 3 bulan terakhir vs 3 bulan sebelumnya (berbasis
+     * jumlah transaksi), PER SPKLU.
      */
     private function hitungDataUtilisasi(Collection $spkluIds): Collection
     {
@@ -254,21 +293,22 @@ class RekomendasiLokasiService
         $bulananPerSpklu = Transaksi::query()
             ->whereIn('spklu_id', $spkluIds)
             ->where('tanggal', '>=', $sejak)
-            ->selectRaw("spklu_id, DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(jumlah_transaksi) as total_bulan")
+            ->selectRaw("spklu_id, DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(jumlah_transaksi) as total_jumlah, SUM(total_durasi_menit) as total_durasi")
             ->groupBy('spklu_id', 'bulan')
             ->get()
             ->groupBy('spklu_id');
 
         return $bulananPerSpklu->map(function ($rows) {
             $terurut = $rows->sortBy('bulan')->values();
-            $rataRata = $terurut->avg('total_bulan');
+            $rataRataJumlah = $terurut->avg('total_jumlah');
+            $rataRataDurasi = $terurut->avg('total_durasi');
 
             $trenPersen = null;
             $trenLabel = null;
 
             if ($terurut->count() >= self::BULAN_TREN * 2) {
-                $terakhir = $terurut->slice(-self::BULAN_TREN)->avg('total_bulan');
-                $sebelumnya = $terurut->slice(-self::BULAN_TREN * 2, self::BULAN_TREN)->avg('total_bulan');
+                $terakhir = $terurut->slice(-self::BULAN_TREN)->avg('total_jumlah');
+                $sebelumnya = $terurut->slice(-self::BULAN_TREN * 2, self::BULAN_TREN)->avg('total_jumlah');
 
                 if ($sebelumnya > 0) {
                     $trenPersen = round((($terakhir - $sebelumnya) / $sebelumnya) * 100, 1);
@@ -280,7 +320,8 @@ class RekomendasiLokasiService
             }
 
             return [
-                'rata_rata' => $rataRata,
+                'rata_rata_jumlah' => $rataRataJumlah,
+                'rata_rata_durasi' => $rataRataDurasi,
                 'tren_persen' => $trenPersen,
                 'tren_label' => $trenLabel,
             ];
@@ -298,19 +339,58 @@ class RekomendasiLokasiService
             return $radius > 0 ? $radius : self::RADIUS_FALLBACK_KM;
         });
 
-        $metrikKepadatan = $ids->mapWithKeys(function ($id) use ($dataUtilisasi, $radiusById) {
+        // Metrik frekuensi: seberapa sering dipakai per bulan, disesuaikan
+        // jarak ideal ULP (biar area urban vs jarang dibandingkan adil).
+        $metrikFrekuensi = $ids->mapWithKeys(function ($id) use ($dataUtilisasi, $radiusById) {
             $data = $dataUtilisasi->get($id);
 
-            if (! $data) {
+            if (! $data || $data['rata_rata_jumlah'] === null) {
                 return [$id => null];
             }
 
             $radius = $radiusById->get($id, self::RADIUS_FALLBACK_KM);
 
-            return [$id => $data['rata_rata'] / $radius];
+            return [$id => $data['rata_rata_jumlah'] / $radius];
         });
 
-        $skorKepadatan = $this->normalisasiMinMax($metrikKepadatan);
+        // Metrik durasi: seberapa LAMA dipakai per bulan (total menit),
+        // disesuaikan jarak ideal ULP dengan cara yang sama.
+        $metrikDurasi = $ids->mapWithKeys(function ($id) use ($dataUtilisasi, $radiusById) {
+            $data = $dataUtilisasi->get($id);
+
+            if (! $data || $data['rata_rata_durasi'] === null) {
+                return [$id => null];
+            }
+
+            $radius = $radiusById->get($id, self::RADIUS_FALLBACK_KM);
+
+            return [$id => $data['rata_rata_durasi'] / $radius];
+        });
+
+        $skorFrekuensi = $this->normalisasiMinMax($metrikFrekuensi);
+        $skorDurasi = $this->normalisasiMinMax($metrikDurasi);
+
+        // Skor kepadatan = gabungan frekuensi & durasi. Kalau salah satu
+        // datanya kosong, pakai yang ada aja (jangan sampai satu data
+        // kosong bikin seluruh skor kepadatan hilang).
+        $skorKepadatan = $ids->mapWithKeys(function ($id) use ($skorFrekuensi, $skorDurasi) {
+            $frek = $skorFrekuensi->get($id);
+            $dur = $skorDurasi->get($id);
+
+            if ($frek === null && $dur === null) {
+                return [$id => null];
+            }
+
+            if ($frek === null) {
+                return [$id => $dur];
+            }
+
+            if ($dur === null) {
+                return [$id => $frek];
+            }
+
+            return [$id => (self::BOBOT_FREKUENSI * $frek) + (self::BOBOT_DURASI * $dur)];
+        });
 
         $skorTren = $ids->mapWithKeys(function ($id) use ($dataUtilisasi) {
             $tren = $dataUtilisasi->get($id)['tren_persen'] ?? null;
@@ -408,6 +488,22 @@ class RekomendasiLokasiService
         }
 
         return 'merah';
+    }
+
+    /**
+     * Cuma dievaluasi buat status "merah". Heuristik sementara pakai
+     * kapasitas kW existing sebagai proxy "masih ada ruang upgrade atau
+     * enggak" — belum mempertimbangkan ketersediaan lahan fisik (data itu
+     * belum ada di sistem). Kalau nanti ada data luas lahan/slot parkir
+     * tersedia, ini bisa diperhalus lebih lanjut.
+     */
+    private function tentukanRekomendasiTindakLanjut(string $status, float $kapasitasKw): ?string
+    {
+        if ($status !== 'merah') {
+            return null;
+        }
+
+        return $kapasitasKw < self::AMBANG_KW_GANTI_MESIN ? 'ganti_mesin' : 'tambah_unit';
     }
 
     private function jarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float

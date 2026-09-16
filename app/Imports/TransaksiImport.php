@@ -69,12 +69,14 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
                     'jumlah' => 0,
                     'kwh' => 0.0,
                     'rp' => 0.0,
+                    'durasi_menit' => 0.0,
                 ];
             }
 
             $this->aggregates[$key]['jumlah']++;
             $this->aggregates[$key]['kwh'] += $this->parseAngka($row['kwh'] ?? 0);
             $this->aggregates[$key]['rp'] += $this->parseAngka($row['rppakai'] ?? 0);
+            $this->aggregates[$key]['durasi_menit'] += $this->parseDurasiMenit($row['durasi'] ?? '');
         }
     }
 
@@ -148,6 +150,33 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
         return (float) str_replace(',', '.', $value);
     }
 
+    /**
+     * Kolom DURASI di file sumber formatnya "HH:MM:SS" (misal "00:53:01"
+     * = 53 menit 1 detik). Dikonversi ke total menit (float) supaya gampang
+     * di-SUM/AVG di query nanti. Format "MM:SS" (2 bagian) juga di-cover
+     * jaga-jaga kalau ada file dengan format beda.
+     */
+    protected function parseDurasiMenit($value): float
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return 0.0;
+        }
+
+        $bagian = explode(':', $value);
+
+        if (count($bagian) === 3) {
+            [$jam, $menit, $detik] = array_map('intval', $bagian);
+        } elseif (count($bagian) === 2) {
+            $jam = 0;
+            [$menit, $detik] = array_map('intval', $bagian);
+        } else {
+            return 0.0;
+        }
+
+        return ($jam * 60) + $menit + ($detik / 60);
+    }
+
     public function chunkSize(): int
     {
         return 5000;
@@ -170,6 +199,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
                 'tanggal' => $agg['tanggal'],
                 'jumlah_transaksi' => $agg['jumlah'],
                 'energi_kwh' => round($agg['kwh'], 2),
+                'total_durasi_menit' => round($agg['durasi_menit'], 2),
                 'pendapatan_rp' => round($agg['rp'], 2),
                 'diupload_oleh' => $uploadedBy,
                 'transaksi_upload_id' => $transaksiUploadId,
@@ -182,7 +212,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
             DB::table('transaksis')->upsert(
                 $chunk,
                 ['spklu_id', 'tanggal'],
-                ['jumlah_transaksi', 'energi_kwh', 'pendapatan_rp', 'diupload_oleh', 'transaksi_upload_id', 'updated_at']
+                ['jumlah_transaksi', 'energi_kwh', 'total_durasi_menit', 'pendapatan_rp', 'diupload_oleh', 'transaksi_upload_id', 'updated_at']
             );
         }
 

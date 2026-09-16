@@ -10,7 +10,9 @@
     .rl-page-subtitle { color:#64748B; margin:0; font-size:13.5px; }
 
     .rl-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:20px; }
-    .rl-card { background:#fff; border-radius:16px; padding:20px 22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); display:flex; align-items:center; gap:14px; }
+    .rl-card { background:#fff; border-radius:16px; padding:20px 22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); display:flex; align-items:center; gap:14px; cursor:pointer; transition:box-shadow .15s ease, border-color .15s ease; }
+    .rl-card:hover { box-shadow:0 4px 10px rgba(15,23,42,.08), 0 10px 24px rgba(15,23,42,.08); }
+    .rl-card.rl-card-active { border-color:currentColor; }
     .rl-card-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
     .rl-card-value { font-size:24px; font-weight:800; color:#0f172a; margin:0; }
     .rl-card-label { font-size:12px; font-weight:600; color:#94a3b8; margin:2px 0 0; }
@@ -22,6 +24,8 @@
         background-repeat:no-repeat; background-position:right 12px center;
     }
     .rl-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
+
+    .rl-filter-group { display:flex; align-items:center; gap:8px; }
 
     .rl-peta-wrapper { margin-bottom:20px; }
 
@@ -36,7 +40,9 @@
     #peta-rekomendasi { height:560px; width:100%; border-radius:0 0 16px 16px; }
 
     .rl-legend { display:flex; gap:16px; flex-wrap:wrap; padding:14px 20px; border-bottom:1px solid #f1f5f9; font-size:12.5px; }
-    .rl-legend-item { display:flex; align-items:center; gap:7px; color:#334155; }
+    .rl-legend-item { display:flex; align-items:center; gap:7px; color:#334155; cursor:pointer; padding:4px 8px; border-radius:6px; transition:background .15s ease; }
+    .rl-legend-item:hover { background:#f8fafc; }
+    .rl-legend-item.rl-legend-item-off { opacity:.35; }
     .rl-legend-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
     .rl-legend-dot.rl-legend-plus { background:#2563EB; position:relative; }
 
@@ -69,6 +75,19 @@
     .rl-info-box { display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:#0369a1; background:rgba(0,129,171,.07); border:1px solid rgba(0,129,171,.15); border-radius:9px; padding:12px 14px; margin-bottom:16px; }
     .rl-info-box svg { width:15px; height:15px; min-width:15px; margin-top:1px; color:#0081AB; }
 
+    .rl-tindak-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+    .rl-tindak-badge.ganti-mesin { background:rgba(192,57,43,.1); color:#C0392B; }
+    .rl-tindak-badge.tambah-unit { background:rgba(0,129,171,.1); color:#0081AB; }
+
+    .rl-tindak-item { display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid #f5f7fa; }
+    .rl-tindak-item:last-child { border-bottom:none; }
+    .rl-tindak-rank { width:24px; height:24px; border-radius:50%; background:#FEF2F2; color:#C0392B; font-size:11.5px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .rl-tindak-nama { font-weight:700; font-size:13px; color:#1E293B; }
+    .rl-tindak-meta { font-size:11.5px; color:#94a3b8; margin-top:2px; }
+    .rl-tindak-skor { text-align:center; flex-shrink:0; }
+    .rl-tindak-skor-nilai { font-size:15px; font-weight:800; color:#C0392B; }
+    .rl-tindak-skor-label { font-size:9.5px; color:#94a3b8; text-transform:uppercase; }
+
     .rl-marker-rekomendasi-inner {
         width:24px; height:24px; border-radius:50%; background:#2563EB; border:2px solid #fff;
         box-shadow:0 2px 6px rgba(37,99,235,.5); display:flex; align-items:center; justify-content:center;
@@ -85,29 +104,30 @@
     <span>Warna zona dari <strong>skor gabungan</strong>: rata-rata transaksi bulanan (12 bulan) yang disesuaikan jarak ideal ULP (biar area urban vs jarang dibandingkan adil), dipadukan tren 3 bulan terakhir. Titik biru (+) di peta adalah <strong>rekomendasi otomatis</strong> — koordinat yang paling potensial nampung demand tanpa masuk zona padat. Klik "Jadikan Kandidat Baru" buat langsung masukin ke pipeline Probabilitas.</span>
 </div>
 
+{{-- Klik kartu buat filter zona di peta --}}
 <div class="rl-card-grid">
-    <div class="rl-card">
+    <div class="rl-card" data-kategori="hijau" onclick="toggleFilterKartu('hijau')">
         <span class="rl-card-dot" style="background:#2E9E5B;"></span>
         <div>
             <p class="rl-card-value">{{ $ringkasan['hijau'] }}</p>
             <p class="rl-card-label">Zona Aman (Hijau)</p>
         </div>
     </div>
-    <div class="rl-card">
+    <div class="rl-card" data-kategori="kuning" onclick="toggleFilterKartu('kuning')">
         <span class="rl-card-dot" style="background:#E8A317;"></span>
         <div>
             <p class="rl-card-value">{{ $ringkasan['kuning'] }}</p>
             <p class="rl-card-label">Zona Waspada (Kuning)</p>
         </div>
     </div>
-    <div class="rl-card">
+    <div class="rl-card" data-kategori="merah" onclick="toggleFilterKartu('merah')">
         <span class="rl-card-dot" style="background:#C0392B;"></span>
         <div>
             <p class="rl-card-value">{{ $ringkasan['merah'] }}</p>
             <p class="rl-card-label">Zona Padat (Merah)</p>
         </div>
     </div>
-    <div class="rl-card">
+    <div class="rl-card" data-kategori="_rekomendasi" onclick="toggleFilterKartu('_rekomendasi')">
         <span class="rl-card-dot" style="background:#2563EB;"></span>
         <div>
             <p class="rl-card-value">{{ $titikRekomendasi->count() }}</p>
@@ -122,26 +142,85 @@
             <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
             <div><h2>Peta Zona SPKLU</h2></div>
         </div>
-        <form method="GET">
-            <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()">
-                <option value="">Semua ULP</option>
-                @foreach ($daftarUlp as $ulp)
-                    <option value="{{ $ulp->id }}" {{ (string) $ulpTerpilih === (string) $ulp->id ? 'selected' : '' }}>{{ $ulp->nama_penuh }}</option>
-                @endforeach
+
+        <div class="rl-filter-group">
+            {{-- Filter kategori zona — client-side, gak reload halaman --}}
+            <select id="rl-filter-kategori" class="rl-select" onchange="filterKategoriPeta(this.value)">
+                <option value="">Semua Kategori</option>
+                <option value="hijau">🟢 Hijau — Aman</option>
+                <option value="kuning">🟡 Kuning — Waspada</option>
+                <option value="merah">🔴 Merah — Padat</option>
+                <option value="belum_ada_data">⚪ Belum Ada Data</option>
             </select>
-        </form>
+
+            <form method="GET">
+                <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()">
+                    <option value="">Semua ULP</option>
+                    @foreach ($daftarUlp as $ulp)
+                        <option value="{{ $ulp->id }}" {{ (string) $ulpTerpilih === (string) $ulp->id ? 'selected' : '' }}>{{ $ulp->nama_penuh }}</option>
+                    @endforeach
+                </select>
+            </form>
+        </div>
     </div>
 
     <div class="rl-legend">
-        <span class="rl-legend-item"><span class="rl-legend-dot" style="background:#2E9E5B;"></span> Hijau — aman, skor gabungan rendah</span>
-        <span class="rl-legend-item"><span class="rl-legend-dot" style="background:#E8A317;"></span> Kuning — waspada, cek dulu</span>
-        <span class="rl-legend-item"><span class="rl-legend-dot" style="background:#C0392B;"></span> Merah — padat, hindari terlalu dekat</span>
-        <span class="rl-legend-item"><span class="rl-legend-dot" style="background:#94A3B8;"></span> Abu — belum ada data transaksi</span>
-        <span class="rl-legend-item"><span class="rl-legend-dot rl-legend-plus" style="background:#2563EB;"></span> Biru (+) — titik rekomendasi otomatis</span>
+        <span class="rl-legend-item" data-kategori="hijau" onclick="toggleFilterLegenda('hijau')"><span class="rl-legend-dot" style="background:#2E9E5B;"></span> Hijau — aman, skor gabungan rendah</span>
+        <span class="rl-legend-item" data-kategori="kuning" onclick="toggleFilterLegenda('kuning')"><span class="rl-legend-dot" style="background:#E8A317;"></span> Kuning — waspada, cek dulu</span>
+        <span class="rl-legend-item" data-kategori="merah" onclick="toggleFilterLegenda('merah')"><span class="rl-legend-dot" style="background:#C0392B;"></span> Merah — padat, hindari terlalu dekat</span>
+        <span class="rl-legend-item" data-kategori="belum_ada_data" onclick="toggleFilterLegenda('belum_ada_data')"><span class="rl-legend-dot" style="background:#94A3B8;"></span> Abu — belum ada data transaksi</span>
+        <span class="rl-legend-item" data-kategori="_rekomendasi" onclick="toggleFilterLegenda('_rekomendasi')"><span class="rl-legend-dot rl-legend-plus" style="background:#2563EB;"></span> Biru (+) — titik rekomendasi otomatis</span>
     </div>
 
     <div id="peta-rekomendasi"></div>
 </div>
+
+{{-- SPKLU EXISTING yang statusnya merah (padat) & butuh tindak lanjut --}}
+@if ($spkluPerluTindakLanjut->isNotEmpty())
+<div class="surface-card" style="margin-bottom:20px;">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div>
+                <h2>SPKLU Perlu Tindak Lanjut</h2>
+                <p>Lokasi existing berstatus padat (merah) — bukan lahan kosong, tapi unit yang udah ada kewalahan</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="rl-card-scroll" style="height:340px;">
+        @foreach ($spkluPerluTindakLanjut as $s)
+            <div class="rl-tindak-item">
+                <span class="rl-tindak-rank">{{ $loop->iteration }}</span>
+                <div style="flex:1; min-width:0;">
+                    <p class="rl-tindak-nama">{{ $s['nama'] }}</p>
+                    <p class="rl-tindak-meta">
+                        {{ $s['ulp'] ?? '-' }} &middot;
+                        {{ $s['kapasitas_kw'] }} kW &middot;
+                        {{ $s['rata_rata_transaksi_bulan'] ?? '-' }} transaksi/bulan &middot;
+                        {{ $s['rata_rata_durasi_menit_bulan'] !== null ? number_format($s['rata_rata_durasi_menit_bulan'] / 60, 1) . ' jam' : '-' }} durasi/bulan
+                    </p>
+                </div>
+                <div class="rl-tindak-skor">
+                    <div class="rl-tindak-skor-nilai">{{ $s['skor_gabungan'] }}</div>
+                    <div class="rl-tindak-skor-label">Skor</div>
+                </div>
+                @if ($s['rekomendasi_tindak_lanjut'] === 'ganti_mesin')
+                    <span class="rl-tindak-badge ganti-mesin">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        Ganti Mesin
+                    </span>
+                @else
+                    <span class="rl-tindak-badge tambah-unit">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tambah Unit
+                    </span>
+                @endif
+            </div>
+        @endforeach
+    </div>
+</div>
+@endif
 
 <div class="rl-bottom-grid">
     <div class="surface-card">
@@ -254,10 +333,14 @@
 
     const batasSemuaTitik = [];
 
+    // Nyimpen referensi tiap layer zona (circle + circleMarker) beserta kategorinya,
+    // supaya bisa di-toggle tampil/sembunyi tanpa reload/refetch data.
+    const zonaLayers = [];
+
     titikPeta.forEach(t => {
         const warna = warnaStatus[t.status] || '#94A3B8';
 
-        L.circle([t.latitude, t.longitude], {
+        const circle = L.circle([t.latitude, t.longitude], {
             radius: t.radius_km * 1000,
             color: warna,
             fillColor: warna,
@@ -265,7 +348,7 @@
             weight: 1.5,
         }).addTo(peta);
 
-        L.circleMarker([t.latitude, t.longitude], {
+        const marker = L.circleMarker([t.latitude, t.longitude], {
             radius: 6,
             color: '#fff',
             weight: 2,
@@ -281,6 +364,7 @@
             Radius zona: ${t.radius_km} km
         `);
 
+        zonaLayers.push({ status: t.status, circle, marker });
         batasSemuaTitik.push([t.latitude, t.longitude]);
     });
 
@@ -291,8 +375,11 @@
         iconAnchor: [12, 12],
     });
 
+    // Titik rekomendasi (biru +) dianggap kategori khusus "_rekomendasi" biar bisa di-toggle juga
+    const rekomendasiLayers = [];
+
     titikRekomendasi.forEach((t, i) => {
-        L.marker([t.latitude, t.longitude], { icon: iconRekomendasi })
+        const marker = L.marker([t.latitude, t.longitude], { icon: iconRekomendasi })
             .addTo(peta)
             .bindPopup(`
                 <strong>Rekomendasi #${i + 1}</strong><br>
@@ -303,11 +390,72 @@
                 <a href="/monitoring/kandidat/create?tikor=${t.latitude},${t.longitude}" style="color:#2563EB; font-weight:700;">Jadikan Kandidat Baru →</a>
             `);
 
+        rekomendasiLayers.push(marker);
         batasSemuaTitik.push([t.latitude, t.longitude]);
     });
 
     if (batasSemuaTitik.length > 1) {
         peta.fitBounds(batasSemuaTitik, { padding: [30, 30] });
+    }
+
+    /* =========================================================
+       FILTER KATEGORI (dropdown, kartu ringkasan, & legenda)
+       Semua saling sinkron ke satu sumber: kategoriAktif
+    ========================================================= */
+
+    let kategoriAktif = '';
+
+    function terapkanFilter() {
+        // Toggle zona (hijau/kuning/merah/belum_ada_data)
+        zonaLayers.forEach(({ status, circle, marker }) => {
+            const tampil = !kategoriAktif || kategoriAktif === status;
+
+            if (tampil) {
+                if (!peta.hasLayer(circle)) circle.addTo(peta);
+                if (!peta.hasLayer(marker)) marker.addTo(peta);
+            } else {
+                if (peta.hasLayer(circle)) peta.removeLayer(circle);
+                if (peta.hasLayer(marker)) peta.removeLayer(marker);
+            }
+        });
+
+        // Toggle titik rekomendasi (kategori khusus "_rekomendasi")
+        const tampilRekomendasi = !kategoriAktif || kategoriAktif === '_rekomendasi';
+        rekomendasiLayers.forEach(marker => {
+            if (tampilRekomendasi) {
+                if (!peta.hasLayer(marker)) marker.addTo(peta);
+            } else {
+                if (peta.hasLayer(marker)) peta.removeLayer(marker);
+            }
+        });
+
+        // Sinkronisasi tampilan dropdown
+        document.getElementById('rl-filter-kategori').value = kategoriAktif;
+
+        // Sinkronisasi highlight kartu ringkasan
+        document.querySelectorAll('.rl-card[data-kategori]').forEach(card => {
+            card.classList.toggle('rl-card-active', kategoriAktif && card.dataset.kategori === kategoriAktif);
+        });
+
+        // Sinkronisasi highlight legenda
+        document.querySelectorAll('.rl-legend-item[data-kategori]').forEach(item => {
+            item.classList.toggle('rl-legend-item-off', kategoriAktif && item.dataset.kategori !== kategoriAktif);
+        });
+    }
+
+    function filterKategoriPeta(kategori) {
+        kategoriAktif = kategori;
+        terapkanFilter();
+    }
+
+    function toggleFilterKartu(kategori) {
+        kategoriAktif = (kategoriAktif === kategori) ? '' : kategori;
+        terapkanFilter();
+    }
+
+    function toggleFilterLegenda(kategori) {
+        kategoriAktif = (kategoriAktif === kategori) ? '' : kategori;
+        terapkanFilter();
     }
 </script>
 

@@ -282,6 +282,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('kandidat-prioritas/{kandidat}/spklu-terdekat', [KandidatSpkluTerdekatController::class, 'store'])
         ->name('kandidat-prioritas.spklu-terdekat.store');
 
+    Route::post('kandidat-prioritas/{kandidat}/spklu-terdekat/otomatis', [KandidatSpkluTerdekatController::class, 'ambilOtomatis'])
+        ->name('kandidat-prioritas.spklu-terdekat.otomatis');
+
     Route::get('/kandidat-peringkat', [KandidatPeringkatController::class, 'index2'])
     ->name('kandidat-peringkat.index');   
 

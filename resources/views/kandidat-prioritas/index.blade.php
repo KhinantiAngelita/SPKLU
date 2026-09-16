@@ -11,6 +11,22 @@
 <div class="kp-wrap">
 
     {{-- =========================================================
+         FLASH MESSAGE
+    ========================================================= --}}
+    @if (session('success'))
+        <div style="background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 16px; border-radius:8px; margin-bottom:14px; font-size:13px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 16px; border-radius:8px; margin-bottom:14px; font-size:13px;">
+            {{ session('error') }}
+        </div>
+    @endif
+
+
+    {{-- =========================================================
          HEADER
     ========================================================= --}}
     <div>
@@ -360,30 +376,88 @@
                                 @endforelse
 
 
-                                {{-- BUTTON INPUT JARAK --}}
-                                <button
-                                    type="button"
-                                    class="kp-btn-input-jarak"
-                                    onclick="bukaModalJarak({{ $kandidat->id }})"
-                                >
+                                {{-- TOMBOL AKSI: INPUT MANUAL & AMBIL OTOMATIS --}}
+                                <div style="display:flex; gap:5px; flex-wrap:nowrap; margin-top:6px;">
 
-                                    <svg
-                                        width="14"
-                                        height="14"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2.2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
+                                    <button
+                                        type="button"
+                                        onclick="bukaModalJarak({{ $kandidat->id }})"
+                                        style="
+                                            flex:1;
+                                            display:flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            gap:4px;
+                                            padding:6px 8px;
+                                            border-radius:7px;
+                                            border:1px solid #e2e8f0;
+                                            background:#f8fafc;
+                                            color:#475569;
+                                            font-size:11px;
+                                            font-weight:600;
+                                            white-space:nowrap;
+                                            cursor:pointer;
+                                            transition:background .15s ease;
+                                        "
+                                        onmouseover="this.style.background='#f1f5f9'"
+                                        onmouseout="this.style.background='#f8fafc'"
                                     >
-                                        <path d="M12 20h9"/>
-                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                                    </svg>
 
-                                    Input Jarak REAL
+                                        <svg
+                                            width="12"
+                                            height="12"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            style="flex-shrink:0;"
+                                        >
+                                            <path d="M12 20h9"/>
+                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                                        </svg>
 
-                                </button>
+                                        Manual
+
+                                    </button>
+
+                                    <form method="POST"
+                                          action="{{ route('kandidat-prioritas.spklu-terdekat.otomatis', $kandidat->id) }}"
+                                          class="form-ambil-otomatis"
+                                          style="flex:1; margin:0;">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            style="
+                                                width:100%;
+                                                display:flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                                gap:4px;
+                                                padding:6px 8px;
+                                                border-radius:7px;
+                                                border:1px solid rgba(2,62,138,.18);
+                                                background:rgba(2,62,138,.07);
+                                                color:#023E8A;
+                                                font-size:11px;
+                                                font-weight:600;
+                                                white-space:nowrap;
+                                                cursor:pointer;
+                                                transition:background .15s ease;
+                                            "
+                                            onmouseover="this.style.background='rgba(2,62,138,.13)'"
+                                            onmouseout="this.style.background='rgba(2,62,138,.07)'"
+                                        >
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                                            </svg>
+                                            Otomatis
+                                        </button>
+                                    </form>
+
+                                </div>
 
                             </td>
 
@@ -763,6 +837,26 @@
 
         const SPKLU_DATA = @json($spkluDataJs ?? []);
 
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: @json(session('success')),
+                confirmButtonColor: '#023E8A',
+                timer: 3500,
+                timerProgressBar: true,
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: @json(session('error')),
+                confirmButtonColor: '#023E8A',
+            });
+        @endif
+
 
         function bukaModalJarak(kandidatId)
         {
@@ -823,6 +917,48 @@
                 }
 
             });
+
+
+        /* Konfirmasi "Ambil Otomatis" pakai SweetAlert2, ganti native confirm() */
+        document.querySelectorAll('.form-ambil-otomatis').forEach(function (form) {
+
+            form.addEventListener('submit', function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Ambil Jarak Otomatis?',
+                    html: 'Jarak akan dihitung ulang lewat <strong>Google Routes API</strong> dan menimpa data jarak yang ada sekarang.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Ambil Sekarang',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#023E8A',
+                    cancelButtonColor: '#94a3b8',
+                    reverseButtons: true,
+                    borderRadius: '14px',
+                }).then(function (result) {
+
+                    if (result.isConfirmed) {
+
+                        Swal.fire({
+                            title: 'Mengambil jarak dari Google...',
+                            html: 'Mohon tunggu sebentar',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
 
     </script>
 

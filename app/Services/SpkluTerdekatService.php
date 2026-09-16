@@ -6,14 +6,12 @@ use App\Models\Spklu;
 use App\Models\Probabilitas;
 use App\Models\KandidatPrioritas;
 
-/**
- * SENGAJA dihitung on-the-fly (tidak pernah disimpan ke kolom database)
- * karena Master SPKLU bisa nambah lokasi baru kapan saja lewat
- * replace-on-import — sama alasan seperti fitur "3 SPKLU Terdekat" di FS
- * Skema.
- */
 class SpkluTerdekatService
 {
+    public function __construct(private DistanceMatrixService $distanceMatrixService)
+    {
+    }
+
     public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $bumiRadiusKm = 6371;
@@ -30,13 +28,7 @@ class SpkluTerdekatService
     }
 
     /**
-     * ASUMSI SKEMA (sesuaikan kalau beda di project kamu):
-     *   - tabel `master_spklus`: nama_lokasi, status ('aktif'/...),
-     *     latitude, longitude, ulp_mapping_id
-     *   - model MasterSpklu punya relasi ulpMapping()
-     *   - UlpMapping punya kolom jarak_ideal_km & nama_ulp
-     *
-     * @return array<int, array{nama:string, jarak_km:float, latitude:float, longitude:float, ulp:?string, status_jarak:string}>
+     * @return array<int, array{nama:string, jarak_km:float, kapasitas_kw:?float, latitude:float, longitude:float, ulp:?string, status_jarak:string}>
      */
     public function cariTerdekat(float $lat, float $lng, int $jumlah = 3): array
     {
@@ -61,6 +53,7 @@ class SpkluTerdekatService
             return [
                 'nama' => $spklu->nama,
                 'jarak_km' => $jarak,
+                'kapasitas_kw' => $spklu->kw,
                 'latitude' => (float) $spklu->latitude,
                 'longitude' => (float) $spklu->longitude,
                 'ulp' => $spklu->ulp->nama_penuh ?? null,
@@ -71,12 +64,61 @@ class SpkluTerdekatService
         return $hasil->sortBy('jarak_km')->take($jumlah)->values()->all();
     }
 
+    /**
+     * Sama seperti cariTerdekat(), tapi jarak_km hasil akhirnya adalah jarak
+     * JALAN REAL dari Google Routes API — bukan garis lurus. Haversine
+     * dipakai sebagai pre-filter (ambil $preFilterJumlah kandidat terdekat
+     * garis lurus dulu) supaya tidak perlu hitung real distance ke SELURUH
+     * SPKLU aktif (boros kuota API).
+     *
+     * @return array<int, array{nama:string, jarak_km:float, kapasitas_kw:?float, latitude:float, longitude:float, ulp:?string, status_jarak:string, durasi_menit:?float}>
+     */
+    public function cariTerdekatViaApi(float $lat, float $lng, int $jumlah = 3, int $preFilterJumlah = 10): array
+    {
+        $kandidatAwal = collect($this->cariTerdekat($lat, $lng, $preFilterJumlah));
+
+        if ($kandidatAwal->isEmpty()) {
+            return [];
+        }
+
+        $destinations = $kandidatAwal->map(fn ($s) => [
+            'lat' => $s['latitude'],
+            'lng' => $s['longitude'],
+        ])->all();
+
+        $hasilApi = $this->distanceMatrixService->hitungJarak(
+            ['lat' => $lat, 'lng' => $lng],
+            $destinations
+        );
+
+        $gabungan = $kandidatAwal->values()->map(function ($spklu, $i) use ($hasilApi) {
+            $apiRow = $hasilApi[$i] ?? null;
+
+            return array_merge($spklu, [
+                'jarak_km_real' => $apiRow['jarak_km'] ?? null,
+                'durasi_menit' => $apiRow['durasi_menit'] ?? null,
+            ]);
+        });
+
+        $valid = $gabungan->filter(fn ($s) => $s['jarak_km_real'] !== null);
+
+        return $valid->sortBy('jarak_km_real')
+            ->take($jumlah)
+            ->map(function ($s) {
+                $s['jarak_km'] = $s['jarak_km_real'];
+                unset($s['jarak_km_real']);
+                return $s;
+            })
+            ->values()
+            ->all();
+    }
+
     public function hitungSkorKebutuhan(KandidatPrioritas $kandidat, ?float $jarakIdealUlp): float
     {
         $tiga = $kandidat->spkluTerdekat()->orderBy('id')->limit(3)->get();
 
         if ($tiga->count() < 3 || $jarakIdealUlp === null) {
-            return 0; // sama seperti Excel: data belum lengkap -> 0
+            return 0;
         }
 
         $bobot = [0.5, 0.3, 0.2];
@@ -92,10 +134,6 @@ class SpkluTerdekatService
         return round($totalSkor, 1);
     }
 
-    /**
-     * Skor Jarak: murni jarak REAL ke 3 SPKLU terdekat dibanding jarak ideal ULP.
-     * Bobot 50/30/20 sesuai urutan terdekat. Return null kalau data belum lengkap.
-     */
     public function hitungSkorJarak(array $jarakReal, ?float $jarakIdealUlp): ?float
     {
         if ($jarakIdealUlp === null || in_array(null, $jarakReal, true) || count($jarakReal) < 3) {
@@ -112,10 +150,6 @@ class SpkluTerdekatService
         return round($total * 100, 1);
     }
 
-    /**
-     * Poin Kapasitas per 1 kelas kW, hasil interpolasi linear antar titik acuan
-     * dari config kapasitas_poin.php. Kapasitas > titik tertinggi di-cap ke 1.0.
-     */
     public function poinDariKapasitas(float $kw): float
     {
         $referensi = config('kapasitas_poin.referensi');
@@ -137,7 +171,6 @@ class SpkluTerdekatService
                 $poinBawah = $referensi[$batasBawah];
                 $poinAtas = $referensi[$batasAtas];
 
-                // interpolasi linear antar 2 titik acuan terdekat
                 $rasio = ($kw - $batasBawah) / ($batasAtas - $batasBawah);
 
                 return round($poinBawah + $rasio * ($poinAtas - $poinBawah), 4);
@@ -147,10 +180,6 @@ class SpkluTerdekatService
         return 1.0;
     }
 
-    /**
-     * Skor Poin Okupansi + Fasilitas + Perluasan Jaringan (0-100).
-     * Sama seperti hitungSkorPrioritas() lama di model KandidatPrioritas.
-     */
     public function hitungSkorPoinOkupansi(float $poinFasilitas, float $poinJaringan, float $poinOkupasi): float
     {
         return round(($poinFasilitas + $poinJaringan + $poinOkupasi) * 10, 1);
@@ -159,7 +188,7 @@ class SpkluTerdekatService
     public function hitungSkorPrioritasAkhir(?float $skorJarak, ?float $skorPoinKapasitas, float $skorPoinOkupansi): ?float
     {
         if ($skorJarak === null || $skorPoinKapasitas === null) {
-            return null; // sama seperti Excel: kalau salah satu kosong, W jadi ""
+            return null;
         }
 
         return round(($skorJarak + $skorPoinKapasitas + $skorPoinOkupansi) / 3, 1);
@@ -183,7 +212,7 @@ class SpkluTerdekatService
         $totalUnit = array_sum($unit);
 
         if ($totalUnit == 0) {
-            return null; // belum ada unit mesin diajukan sama sekali
+            return null;
         }
 
         $totalPoin = 0;
@@ -191,7 +220,7 @@ class SpkluTerdekatService
             $totalPoin += $jumlah * $this->poinDariKapasitas($kw);
         }
 
-        $poinRataRata = $totalPoin / $totalUnit; // rata-rata tertimbang per unit
+        $poinRataRata = $totalPoin / $totalUnit;
 
         return round($poinRataRata * 100, 1);
     }
