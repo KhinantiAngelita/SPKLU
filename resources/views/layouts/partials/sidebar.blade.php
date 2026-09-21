@@ -18,7 +18,7 @@
 
     <div class="sidebar-logo">
         <div class="sidebar-logo-icon">
-            <i data-lucide="zap"></i>
+            <img src="{{ asset('images/logo-revolution.png') }}" alt="Logo rEVolution">
         </div>
         <div class="sidebar-logo-text">
             <p class="title">SPKLU</p>
@@ -41,6 +41,7 @@
                     type="button"
                     class="sidebar-link sidebar-group-toggle {{ $isParentActive ? 'open' : '' }}"
                     data-toggle-submenu="{{ $submenuId }}"
+                    title="{{ $item['label'] }}"
                 >
                     <span class="sidebar-link-content">
                         <i data-lucide="{{ $item['icon'] }}"></i>
@@ -62,7 +63,7 @@
             @else
 
                 @php $active = request()->routeIs($item['route'].'*'); @endphp
-                <a href="{{ route($item['route']) }}" class="sidebar-link {{ $active ? 'active' : '' }}">
+                <a href="{{ route($item['route']) }}" class="sidebar-link {{ $active ? 'active' : '' }}" title="{{ $item['label'] }}">
                     <i data-lucide="{{ $item['icon'] }}"></i>
                     {{ $item['label'] }}
                 </a>
@@ -73,14 +74,14 @@
     </nav>
 
     <div class="sidebar-footer">
-        <div class="sidebar-user">
+        <div class="sidebar-user" title="{{ auth()->user()->name }}">
             <div class="sidebar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
             <p class="sidebar-user-name">{{ auth()->user()->name }}</p>
         </div>
 
         <form class="sidebar-logout-form" method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit">
+            <button type="submit" title="Keluar">
                 <i data-lucide="log-out"></i>
                 Keluar
             </button>

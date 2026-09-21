@@ -123,6 +123,14 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin,pengelola')
             ->name('import');
 
+        // BARU: dipanggil via AJAX dari form Tambah/Edit SPKLU saat dropdown
+        // ULP diganti — nyariin kode_unit yang paling sering dipakai SPKLU
+        // lain di ULP yang sama (lihat MasterSpkluController::kodeUnitByUlp).
+        // Sengaja gak dikasih middleware role tambahan, sama kayak 'index' —
+        // read-only, siapa aja yang bisa buka Master SPKLU boleh manggil ini.
+        Route::get('kode-unit-by-ulp/{ulpMapping}', [MasterSpkluController::class, 'kodeUnitByUlp'])
+            ->name('kode-unit-by-ulp');
+
         Route::middleware('role:super_admin')->group(function () {
 
             Route::get('validasi', [MasterSpkluController::class, 'validasiIndex'])
@@ -161,6 +169,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('upload/{transaksiUpload}/reprocess', [TransaksiController::class, 'reprocess'])
             ->middleware('role:super_admin,pengelola')
             ->name('upload.reprocess');
+
+        // Dipoll dari frontend untuk cek status import yang jalan di
+        // background lewat queue (ProcessTransaksiImport).
+        Route::get('upload/{transaksiUpload}/status', [TransaksiController::class, 'uploadStatus'])
+            ->name('upload.status');
 
         Route::get('export', [TransaksiController::class, 'export'])
             ->name('export');

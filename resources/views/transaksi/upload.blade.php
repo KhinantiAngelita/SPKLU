@@ -5,7 +5,11 @@
 
 @section('content')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+@php
+    $upAdaSedangDiproses = $riwayat->contains(fn($r) => $r->status === 'diproses');
+@endphp
+
+<link rel="stylesheet" href="{{ asset('vendor/choices/choices.min.css') }}">
 
 <style>
     .up-page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
@@ -82,6 +86,8 @@
     .up-badge-success { background:rgba(46,158,91,.14); color:#2E9E5B; }
     .up-badge-error { background:rgba(192,57,43,.14); color:#C0392B; }
     .up-badge-warn { background:rgba(232,163,23,.14); color:#92660f; }
+    .up-badge-processing { background:rgba(232,163,23,.14); color:#92660f; display:inline-flex; align-items:center; gap:6px; }
+    .up-badge-processing .up-badge-dot { width:6px; height:6px; border-radius:50%; background:#E8A317; animation:uqPulse 1.2s ease-in-out infinite; }
 
     /* Badge tanggal - satu baris, background abu terang, senada dengan badge "Tidak Cocok" */
     .up-date-badge { display:inline-flex; align-items:center; background:#f1f5f9; color:#475569; padding:5px 10px; border-radius:7px; font-size:12.3px; font-weight:600; white-space:nowrap; }
@@ -127,6 +133,18 @@
     .up-alias-row .choices { flex:1; max-width:220px; }
     .choices__list--dropdown { border-radius:8px; overflow:hidden; z-index:60; }
     .choices__input { background:#fff; }
+
+    /* FIX: .surface-card (didefinisikan di layout utama) kemungkinan overflow:hidden
+       buat jaga rounded corner — ini motong render dropdown Choices.js yang posisinya
+       absolute, bikin dropdown "SPKLU Belum Dipetakan" keliatan gak aktif/gak bisa
+       diklik walau Choices.js-nya sendiri sudah ke-attach dengan benar. Bug yang sama
+       yang udah pernah kejadian & difix di modal "Cocokkan Data" (lihat komentar
+       overflow:hidden DIHAPUS di atas), sekarang muncul lagi di card ini karena card
+       ini pakai wrapper beda (.surface-card, bukan .up-modal). */
+    .surface-card:has(#alias-bulk-rows),
+    .surface-card:has(#modal-cocokkan-list) {
+        overflow: visible;
+    }
 </style>
 
 @error('file')
@@ -288,6 +306,8 @@
                         <td>
                             @if ($r->status === 'berhasil')
                                 <span class="up-badge up-badge-success">Berhasil</span>
+                            @elseif ($r->status === 'diproses')
+                                <span class="up-badge up-badge-processing"><span class="up-badge-dot"></span>Sedang Diproses</span>
                             @else
                                 <span class="up-badge up-badge-error" title="{{ $r->pesan_error }}">Gagal</span>
                             @endif
@@ -427,7 +447,7 @@
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="{{ asset('vendor/choices/choices.min.js') }}"></script>
 <script>
 let fileQueue = [];
 
@@ -572,8 +592,8 @@ btnSubmit.addEventListener('click', async function () {
 
     await Swal.fire({
         icon: gagal === 0 ? 'success' : 'warning',
-        title: gagal === 0 ? 'Semua file berhasil diproses!' : 'Sebagian file gagal diproses',
-        html: `<b>${sukses}</b> berhasil${gagal > 0 ? `, <b style="color:#C0392B">${gagal}</b> gagal` : ''}. Halaman akan dimuat ulang.`,
+        title: gagal === 0 ? 'Semua file berhasil diupload!' : 'Sebagian file gagal diupload',
+        html: `<b>${sukses}</b> berhasil diupload${gagal > 0 ? `, <b style="color:#C0392B">${gagal}</b> gagal` : ''}. File yang berhasil diupload masih diproses di background — cek status terbaru di Riwayat Upload. Halaman akan dimuat ulang.`,
         confirmButtonText: 'OK',
         confirmButtonColor: '#0081AB',
     });
@@ -817,7 +837,7 @@ async function doReprocess(id) {
         });
         const data = await res.json();
         if (res.ok && data.success) {
-            await Swal.fire({ icon: 'success', title: 'Berhasil diproses ulang', text: data.message });
+            await Swal.fire({ icon: 'success', title: 'Diproses ulang di background', text: data.message });
             location.reload();
         } else {
             throw new Error(data.message || 'Gagal memproses ulang');
@@ -849,8 +869,8 @@ async function doReupload(id, inputEl) {
     if (!konfirmasi.isConfirmed) { inputEl.value = ''; return; }
 
     Swal.fire({
-        title: 'Memproses ulang...',
-        html: 'Jangan tutup atau refresh halaman ini selama proses berjalan.',
+        title: 'Mengupload...',
+        html: 'Jangan tutup atau refresh halaman ini selama upload berjalan.',
         allowOutsideClick: false,
         didOpen: () => Swal.showLoading(),
     });
@@ -867,7 +887,7 @@ async function doReupload(id, inputEl) {
         });
         const data = await res.json();
         if (res.ok && data.success) {
-            await Swal.fire({ icon: 'success', title: 'Berhasil diupload ulang', text: data.message });
+            await Swal.fire({ icon: 'success', title: 'Diupload, sedang diproses di background', text: data.message });
             location.reload();
         } else {
             throw new Error(data.message || 'Gagal memproses ulang');
@@ -886,6 +906,14 @@ async function doReupload(id, inputEl) {
 document.addEventListener('DOMContentLoaded', function () {
     initAliasChoices(document);
 });
+
+// ===== Auto-refresh selagi masih ada riwayat berstatus "diproses" =====
+// Biar status "Sedang Diproses" otomatis kecek ulang tanpa perlu refresh
+// manual. Berhenti dengan sendirinya begitu tidak ada lagi baris 'diproses'
+// (karena $upAdaSedangDiproses jadi false setelah reload berikutnya).
+@if($upAdaSedangDiproses)
+setTimeout(() => location.reload(), 10000);
+@endif
 </script>
 
 @endsection

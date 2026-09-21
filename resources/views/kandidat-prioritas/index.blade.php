@@ -4,6 +4,23 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/kandidat.css') }}">
+    <style>
+        /* FIX: pagination default Laravel nganggep Tailwind ada (SVG panah
+           Prev/Next pakai class h-5 w-5 yang gak ngefek tanpa Tailwind,
+           jatuh ke ukuran default browser ~300px). Dirapiin di sini biar
+           konsisten sama desain sistem, tanpa perlu ganti default view
+           Laravel-nya lewat provider. */
+        nav[role="navigation"] { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 18px; flex-wrap: wrap; font-size: 13.3px; }
+        nav[role="navigation"] svg { width: 16px !important; height: 16px !important; display: inline-block; vertical-align: middle; }
+        nav[role="navigation"] a, nav[role="navigation"] span {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 34px; height: 34px; padding: 0 10px; border-radius: 9px;
+            font-weight: 600; color: #64748B; text-decoration: none; transition: all .15s ease;
+        }
+        nav[role="navigation"] a:hover { background: #F6F8FA; color: #0081AB; }
+        nav[role="navigation"] span[aria-current="page"] { background: linear-gradient(135deg, #023E8A, #0081AB); color: #fff; }
+        nav[role="navigation"] .hidden, nav[role="navigation"] .sr-only { display: none !important; }
+    </style>
 @endpush
 
 @section('content')

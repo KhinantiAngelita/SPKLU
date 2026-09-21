@@ -12,10 +12,19 @@
 
 <header class="topbar">
 
-    <div class="topbar-search">
-        <i data-lucide="search"></i>
-        <input type="text" placeholder="Cari lokasi, SPKLU...">
-        <span class="topbar-search-kbd">⌘K</span>
+    <div class="topbar-left">
+        {{-- BARU: tombol minimize/expand sidebar. Statenya (collapsed atau
+             enggak) disimpan ke localStorage lewat script di app.blade.php,
+             jadi nempel walau pindah halaman. --}}
+        <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Perkecil/perbesar sidebar">
+            <i data-lucide="panel-left"></i>
+        </button>
+
+        <div class="topbar-search">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Cari lokasi, SPKLU...">
+            <span class="topbar-search-kbd">⌘K</span>
+        </div>
     </div>
 
     <div class="topbar-actions">

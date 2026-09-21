@@ -129,6 +129,8 @@
     .msp-modal-body label:first-child { margin-top:0; }
     .msp-modal-body input, .msp-modal-body select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13.5px; font-family:inherit; }
     .msp-modal-body input:focus, .msp-modal-body select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); }
+    .msp-hint { font-size:11.5px; color:#94a3b8; margin:4px 0 0; }
+    .msp-hint.msp-hint-active { color:#0081AB; font-weight:600; }
 
     .msp-import-info { background:#f8fafc; border:1px solid #eef1f5; border-radius:10px; padding:12px 14px; font-size:12.3px; color:#64748B; line-height:1.6; margin-bottom:16px; }
     .msp-import-info code { background:#eef2f7; color:#023E8A; padding:1px 5px; border-radius:5px; font-size:11.5px; }
@@ -399,11 +401,16 @@
                 <input type="text" name="nama" required>
 
                 <label>ULP</label>
-                <select name="ulp_mapping_id" required>
+                <select name="ulp_mapping_id" id="tambah-ulp" required>
+                    <option value="">Pilih ULP...</option>
                     @foreach ($ulpList as $ulp)
                         <option value="{{ $ulp->id }}">{{ $ulp->nama_penuh }}</option>
                     @endforeach
                 </select>
+
+                <label>Kode Unit</label>
+                <input type="text" name="kode_unit" id="tambah-kode-unit" placeholder="Otomatis terisi saat ULP dipilih">
+                <p class="msp-hint" id="tambah-kode-unit-hint">Kode kantor unit PLN — biasanya sama untuk semua SPKLU di 1 ULP yang sama.</p>
 
                 <label>Type</label>
                 <select name="type" required>
@@ -503,6 +510,10 @@
                     @endforeach
                 </select>
 
+                <label>Kode Unit</label>
+                <input type="text" name="kode_unit" id="edit-kode-unit" placeholder="Otomatis terisi saat ULP diganti (kalau masih kosong)">
+                <p class="msp-hint" id="edit-kode-unit-hint">Kode kantor unit PLN — biasanya sama untuk semua SPKLU di 1 ULP yang sama.</p>
+
                 <label>Type</label>
                 <select name="type" id="edit-type" required>
                     <option value="AC">AC</option>
@@ -550,6 +561,7 @@ function bukaModalEdit(spklu) {
     document.getElementById('form-edit-spklu').action = '/master-spklu/' + spklu.id;
     document.getElementById('edit-nama').value = spklu.nama ?? '';
     document.getElementById('edit-ulp').value = spklu.ulp_mapping_id ?? '';
+    document.getElementById('edit-kode-unit').value = spklu.kode_unit ?? '';
     document.getElementById('edit-type').value = spklu.type ?? '';
     document.getElementById('edit-kw').value = spklu.kw ?? '';
     document.getElementById('edit-kw-detail').value = spklu.kw_detail ?? '';
@@ -562,6 +574,61 @@ function bukaModalEdit(spklu) {
     document.getElementById('edit-longitude').value = spklu.longitude ?? '';
     document.getElementById('modal-edit-spklu').style.display = 'flex';
 }
+
+/* =====================================================================
+   Auto-suggest Kode Unit berdasarkan ULP yang dipilih — nyariin kode_unit
+   yang paling sering dipakai SPKLU lain di ULP yang sama (endpoint
+   MasterSpkluController::kodeUnitByUlp). Tetap bisa diedit manual abis
+   keisi otomatis, ini cuma bantuan biar gak perlu ngetik ulang tiap kali.
+   ===================================================================== */
+async function ambilKodeUnitUntukUlp(ulpId) {
+    if (!ulpId) return null;
+    try {
+        const res = await fetch(`/master-spklu/kode-unit-by-ulp/${ulpId}`, {
+            headers: { 'Accept': 'application/json' },
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.kode_unit ?? null;
+    } catch (e) {
+        console.warn('Gagal ambil kode_unit untuk ULP ini:', e);
+        return null;
+    }
+}
+
+document.getElementById('tambah-ulp')?.addEventListener('change', async function () {
+    const kodeUnitInput = document.getElementById('tambah-kode-unit');
+    const hint = document.getElementById('tambah-kode-unit-hint');
+
+    const kodeUnit = await ambilKodeUnitUntukUlp(this.value);
+
+    if (kodeUnit) {
+        kodeUnitInput.value = kodeUnit;
+        hint.textContent = `Otomatis diisi dari SPKLU lain di ULP yang sama (${kodeUnit}) — bisa diubah manual kalau perlu.`;
+        hint.classList.add('msp-hint-active');
+    } else {
+        kodeUnitInput.value = '';
+        hint.textContent = 'Belum ada SPKLU lain di ULP ini yang punya Kode Unit — isi manual.';
+        hint.classList.remove('msp-hint-active');
+    }
+});
+
+document.getElementById('edit-ulp')?.addEventListener('change', async function () {
+    const kodeUnitInput = document.getElementById('edit-kode-unit');
+    const hint = document.getElementById('edit-kode-unit-hint');
+
+    // Di edit, cuma auto-isi kalau field-nya emang masih kosong — biar gak
+    // nimpa kode_unit yang udah bener cuma gara-gara ULP-nya diutak-atik.
+    if (kodeUnitInput.value.trim() !== '') return;
+
+    const kodeUnit = await ambilKodeUnitUntukUlp(this.value);
+
+    if (kodeUnit) {
+        kodeUnitInput.value = kodeUnit;
+        hint.textContent = `Otomatis diisi dari SPKLU lain di ULP yang sama (${kodeUnit}) — bisa diubah manual kalau perlu.`;
+        hint.classList.add('msp-hint-active');
+    }
+});
 </script>
 
 @endsection

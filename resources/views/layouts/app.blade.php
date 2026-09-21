@@ -35,7 +35,7 @@
         a { text-decoration: none; color: inherit; }
 
         .app-shell { display: flex; height: 100vh; overflow: hidden; }
-        .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
         .app-content { flex: 1; overflow-y: auto; padding: 26px 28px; animation: contentFadeIn .35s ease; }
 
         @keyframes contentFadeIn {
@@ -116,21 +116,28 @@
             width: 252px; flex-shrink: 0; color: #fff; display: flex; flex-direction: column;
             background: linear-gradient(160deg, #023E8A 0%, #034d9e 35%, #0081AB 100%);
             position: relative;
+            transition: width .25s cubic-bezier(.4,0,.2,1);
         }
         .sidebar::after {
             content: ''; position: absolute; inset: 0; pointer-events: none;
             background: radial-gradient(circle at 85% 0%, rgba(255,255,255,0.07), transparent 45%);
         }
 
-        .sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 26px 22px 22px; position: relative; z-index: 1; }
+        .sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 26px 22px 22px; position: relative; z-index: 1; transition: padding .25s ease, justify-content .25s ease; }
+
+        /* BARU: badge logo jadi lingkaran putih solid berisi logo rEVolution
+           asli — sama konsepnya kayak badge di halaman login, cuma
+           ukurannya disesuaikan lebih kecil supaya pas di sidebar. */
         .sidebar-logo-icon {
-            width: 40px; height: 40px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent-yellow), #ffab00);
+            width: 44px; height: 44px; border-radius: 50%;
+            background: #fff;
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(255,198,41,.35);
+            box-shadow: 0 3px 10px rgba(0,0,0,.18);
+            padding: 3px;
+            transition: width .25s ease, height .25s ease;
         }
-        /* FIX: "i" diganti lucide jadi <svg>, jadi selector harus cover keduanya */
-        .sidebar-logo-icon i, .sidebar-logo-icon svg { width: 21px; height: 21px; color: var(--brand-dark); }
+        .sidebar-logo-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+        .sidebar-logo-text { transition: opacity .15s ease; white-space: nowrap; overflow: hidden; }
         .sidebar-logo-text .title { font-weight: 800; font-size: 15px; letter-spacing: -0.01em; line-height: 1.2; margin: 0; }
         .sidebar-logo-text .subtitle { font-size: 11.5px; color: rgba(255,255,255,0.65); line-height: 1.2; margin: 2px 0 0; font-weight: 500; }
 
@@ -159,7 +166,7 @@
             display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px; border-radius: 11px;
             font-size: 13.8px; font-weight: 500; color: rgba(255,255,255,0.75);
             margin-bottom: 4px; cursor: pointer; border: none; background: none; width: 100%; text-align: left;
-            transition: background-color .2s ease, color .2s ease, transform .15s ease, padding-left .2s ease;
+            transition: background-color .2s ease, color .2s ease, transform .15s ease, padding .2s ease, justify-content .2s ease;
             position: relative;
         }
         .sidebar-link:hover { color: #fff; background-color: rgba(255,255,255,0.09); transform: translateX(2px); }
@@ -173,6 +180,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            transition: gap .2s ease, justify-content .2s ease;
         }
         .sidebar-link i, .sidebar-link svg {
             width: 17px; height: 17px; flex-shrink: 0; transition: transform .2s ease, filter .2s ease;
@@ -181,7 +189,7 @@
         .sidebar-link.active i, .sidebar-link.active svg { filter: drop-shadow(0 0 5px rgba(255,198,41,.55)); }
 
         .sidebar-group-toggle { display: flex; align-items: center; justify-content: space-between; }
-        .sidebar-group-toggle .chevron { width: 14px; height: 14px; transition: transform 0.25s cubic-bezier(.4,0,.2,1); opacity: 0.7; }
+        .sidebar-group-toggle .chevron { width: 14px; height: 14px; transition: transform 0.25s cubic-bezier(.4,0,.2,1), opacity .15s ease; opacity: 0.7; }
         .sidebar-group-toggle.open .chevron { transform: rotate(180deg); }
 
         .sidebar-submenu {
@@ -202,21 +210,54 @@
         }
 
         .sidebar-footer { padding: 14px 14px 18px; border-top: 1px solid rgba(255,255,255,0.12); position: relative; z-index: 1; }
-        .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 10px; transition: background-color .15s ease; }
+        .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 10px; transition: background-color .15s ease, padding .2s ease, justify-content .2s ease; }
         .sidebar-user:hover { background-color: rgba(255,255,255,.05); }
         .sidebar-avatar {
             width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.15);
             display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; flex-shrink: 0;
             border: 1.5px solid rgba(255,255,255,0.3);
         }
-        .sidebar-user-name { font-size: 13.5px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-user-name { font-size: 13.5px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .15s ease; }
         .sidebar-logout-form button {
             display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; border-radius: 10px;
             font-size: 13.3px; color: rgba(255,255,255,0.62); background: none; border: none; cursor: pointer;
-            transition: background-color .15s ease, color .15s ease; margin-top: 4px;
+            transition: background-color .15s ease, color .15s ease, padding .2s ease, justify-content .2s ease; margin-top: 4px;
         }
         .sidebar-logout-form button:hover { color: #fff; background-color: rgba(192,57,43,0.28); }
-        .sidebar-logout-form i, .sidebar-logout-form svg { width: 16px; height: 16px; }
+        .sidebar-logout-form i, .sidebar-logout-form svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* =====================================================================
+           Sidebar minimize/collapse — dikontrol lewat class "sidebar-collapsed"
+           di <body>, di-toggle dari tombol di topbar dan disimpan ke
+           localStorage supaya statenya nempel walau pindah halaman (server-
+           rendered, bukan SPA, jadi tiap load halaman baru perlu dibaca ulang
+           dari localStorage — lihat script kecil tepat setelah <body> yang
+           nge-apply class ini SEBELUM sidebar sempat digambar, biar gak ada
+           kedipan sidebar full lebar sesaat sebelum ke-collapse).
+           ===================================================================== */
+        body.sidebar-collapsed .sidebar { width: 76px; }
+
+        body.sidebar-collapsed .sidebar-logo { justify-content: center; padding: 26px 0 22px; }
+        body.sidebar-collapsed .sidebar-logo-text { display: none; }
+
+        body.sidebar-collapsed .sidebar-link,
+        body.sidebar-collapsed .sidebar-group-toggle {
+            justify-content: center; padding: 10px 0;
+        }
+        body.sidebar-collapsed .sidebar-link.active { padding-left: 0; border-left: none; }
+        body.sidebar-collapsed .sidebar-link-content { justify-content: center; gap: 0; }
+        /* Trik: font-size:0 bikin teks label (text node biasa, nempel
+           langsung setelah ikon di markup) visually hilang tanpa perlu
+           bungkus ulang tiap label ke <span> terpisah di blade. Ikon svg/i
+           gak kena efek karena ukurannya di-set eksplisit px, bukan em. */
+        body.sidebar-collapsed .sidebar-link,
+        body.sidebar-collapsed .sidebar-link-content { font-size: 0; }
+        body.sidebar-collapsed .chevron,
+        body.sidebar-collapsed .sidebar-submenu { display: none !important; }
+
+        body.sidebar-collapsed .sidebar-user { justify-content: center; padding: 8px 0; }
+        body.sidebar-collapsed .sidebar-user-name { display: none; }
+        body.sidebar-collapsed .sidebar-logout-form button { justify-content: center; padding: 9px 0; font-size: 0; }
 
         /* =====================================================================
            Topbar — dua grup: search rata kiri, notif+user rata kanan.
@@ -233,6 +274,17 @@
             background: linear-gradient(90deg, var(--brand-dark), var(--brand-mid), transparent);
             opacity: .55;
         }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+        /* BARU: tombol minimize/expand sidebar, dipasang paling kiri topbar. */
+        .sidebar-toggle-btn {
+            width: 38px; height: 38px; min-width: 38px; border-radius: 11px; border: none; background: var(--bg-page);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s ease;
+            color: var(--text-secondary);
+        }
+        .sidebar-toggle-btn:hover { background-color: #eef2f6; color: var(--brand-mid); }
+        .sidebar-toggle-btn svg, .sidebar-toggle-btn i { width: 18px; height: 18px; }
 
         .topbar-actions { display: flex; align-items: center; gap: 8px; }
 
@@ -393,6 +445,14 @@
 </head>
 <body>
 
+    {{-- Dibaca & di-apply SEBELUM sidebar sempat digambar, supaya gak ada
+         kedipan sidebar full-lebar sesaat sebelum ke-collapse balik. --}}
+    <script>
+        if (localStorage.getItem('sidebarCollapsed') === '1') {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
+
     <div class="app-shell">
 
         @include('layouts.partials.sidebar')
@@ -432,6 +492,16 @@
             document.querySelectorAll('.sidebar-submenu.open').forEach(submenu => {
                 submenu.style.maxHeight = submenu.scrollHeight + 'px';
             });
+
+            // ===== Minimize/expand sidebar — state disimpan ke localStorage
+            // supaya nempel walau pindah halaman (server-rendered, bukan SPA) =====
+            const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', () => {
+                    const collapsed = document.body.classList.toggle('sidebar-collapsed');
+                    localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
+                });
+            }
 
             // ===== Modal generic open/close =====
             document.querySelectorAll('[data-open-modal]').forEach(btn => {

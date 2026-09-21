@@ -2,32 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\TransaksiImport;
+use App\Jobs\ProsesImportTransaksiJob;
 use App\Models\Spklu;
 use App\Models\SpkluAlias;
 use App\Models\Transaksi;
 use App\Models\TransaksiUnmatchedName;
 use App\Models\TransaksiUpload;
-use App\Models\TransaksiUploadUnmatched;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\Process\Process;
 
 class TransaksiController extends Controller
 {
-    /**
-     * Data historis 2024 & 2025 — FAKTA PERMANEN, bukan parameter yang bisa
-     * diubah admin, jadi sengaja di-hardcode di sini (bukan di tabel
-     * transaksis) buat menghindari masalah skema Spklu (id_spklu custom PK
-     * yang gak auto-increment) kalau dipaksa lewat SPKLU dummy di database.
-     * Cuma dipakai kalau satuan aktif = kWh; kalau satuan lain (Kali/Rp),
-     * 2 tahun ini gak ditampilkan karena datanya emang cuma ada buat kWh.
-     * Key bulan 2 digit ('01'..'12'), biar sejajar sama format DB asli.
-     */
     protected const DATA_HISTORIS_KWH = [
         2024 => [
             '01' => 6333, '02' => 9542, '03' => 9091, '04' => 11806,
@@ -107,9 +95,6 @@ class TransaksiController extends Controller
             ->map(fn ($t) => (int) $t)
             ->values();
 
-        // Tahun historis (2024/2025) cuma relevan buat satuan kWh, dan cuma
-        // kalau TIDAK sedang difilter ke SPKLU tertentu (datanya agregat
-        // seluruh SPKLU, bukan punya satu SPKLU spesifik).
         if ($kolom === 'energi_kwh' && ! $spkluId) {
             $tahunTersedia = $tahunTersedia
                 ->concat(array_keys(self::DATA_HISTORIS_KWH))
@@ -162,15 +147,6 @@ class TransaksiController extends Controller
         ]);
     }
 
-    /**
-     * Total per bulan sesuai kolom satuan aktif (kali/kwh/rp), satu array per
-     * tahun yang dipilih, dibatasi rentang bulan tertentu — dipakai untuk
-     * grafik + tabel data "Visualisasi Tren Transaksi" (multi-tahun).
-     *
-     * Tahun yang ada di DATA_HISTORIS_KWH (dan kolom aktifnya energi_kwh serta
-     * TIDAK sedang difilter per-SPKLU) diambil langsung dari constant, gak
-     * query DB sama sekali — data itu emang gak pernah ada di tabel transaksis.
-     */
     private function buildTrenPerTahunBulanan(array $tahunList, $spkluId, string $kolom, int $bulanAwal, int $bulanAkhir): array
     {
         $hasil = [];
@@ -246,31 +222,70 @@ class TransaksiController extends Controller
         return $pdf->download('rekap-transaksi-' . now()->format('Ymd-His') . '.pdf');
     }
 
+    /**
+     * ALUR BARU: file disimpan PERMANEN dulu di sini (synchronous, masih
+     * dalam 1 request HTTP), BARU dispatch job ke queue dengan membawa
+     * ID upload-nya doang (bukan file/path temp). Job nanti ambil balik
+     * path permanennya sendiri dari kolom path_file pas dia jalan.
+     *
+     * Kenapa harus gini: file temporary upload PHP OTOMATIS KEHAPUS begitu
+     * response HTTP ini selesai dikirim — padahal job di queue baru jalan
+     * belakangan (proses/request terpisah). Kalau job dikasih path temp,
+     * pas dia jalan filenya udah gak ada lagi (`getRealPath()` jadi
+     * null/false) — itu penyebab error "Argument #1 ($path) ... null
+     * given" yang muncul sebelumnya.
+     */
     public function import(Request $request)
     {
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv|max:51200',
         ]);
 
-        set_time_limit(600);
-
         $uploadedFile = $request->file('file');
         $namaFileAsli = $uploadedFile->getClientOriginalName();
         $ukuranBytes = $uploadedFile->getSize();
         $extension = strtolower($uploadedFile->getClientOriginalExtension());
 
-        Log::info('=== TRANSAKSI IMPORT START ===', ['file' => $namaFileAsli]);
-
         $uploadLog = TransaksiUpload::create([
             'nama_file' => $namaFileAsli,
             'ukuran_bytes' => $ukuranBytes,
-            'status' => 'berhasil',
+            'status' => 'diproses',
             'diupload_oleh' => $request->user()->id,
         ]);
 
-        $this->simpanFileMentah($uploadedFile, $uploadLog);
+        // Simpan file PERMANEN dulu — WAJIB berhasil sebelum dispatch job,
+        // kalau gagal jangan lanjut dispatch job yang nanti gak ada filenya.
+        if (! $this->simpanFileMentah($uploadedFile, $uploadLog)) {
+            $uploadLog->update([
+                'status' => 'gagal',
+                'pesan_error' => 'Gagal menyimpan file ke storage server. Cek permission folder storage/app/private.',
+            ]);
 
-        return $this->processImportFile($request, $uploadedFile->getRealPath(), $extension, $uploadLog, $namaFileAsli);
+            $pesan = 'Gagal menyimpan file ke server. Silakan coba lagi atau hubungi admin.';
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'nama_file' => $namaFileAsli, 'message' => $pesan], 422);
+            }
+
+            return back()->with('error', $pesan);
+        }
+
+        Log::info('=== TRANSAKSI IMPORT (dispatch ke queue) ===', ['file' => $namaFileAsli, 'upload_id' => $uploadLog->id]);
+
+        ProsesImportTransaksiJob::dispatch($uploadLog->id, $extension, $request->user()->id);
+
+        $pesan = "File \"{$namaFileAsli}\" sedang diproses di background. Refresh halaman ini beberapa saat lagi untuk melihat hasilnya.";
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'nama_file' => $namaFileAsli,
+                'status' => 'diproses',
+                'message' => $pesan,
+            ]);
+        }
+
+        return back()->with('success', $pesan);
     }
 
     public function reupload(Request $request, TransaksiUpload $transaksiUpload)
@@ -278,8 +293,6 @@ class TransaksiController extends Controller
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv|max:51200',
         ]);
-
-        set_time_limit(600);
 
         $uploadedFile = $request->file('file');
         $namaFileAsli = $uploadedFile->getClientOriginalName();
@@ -292,6 +305,8 @@ class TransaksiController extends Controller
         ]);
 
         DB::transaction(function () use ($transaksiUpload) {
+            $this->kurangiAkumulasiUnmatchedGlobal($transaksiUpload);
+
             $transaksiUpload->transaksis()->delete();
             $transaksiUpload->unmatchedNames()->delete();
         });
@@ -303,14 +318,23 @@ class TransaksiController extends Controller
         $transaksiUpload->update([
             'nama_file' => $namaFileAsli,
             'ukuran_bytes' => $ukuranBytes,
-            'status' => 'berhasil',
+            'status' => 'diproses',
             'pesan_error' => null,
             'path_file' => null,
         ]);
 
-        $this->simpanFileMentah($uploadedFile, $transaksiUpload);
+        if (! $this->simpanFileMentah($uploadedFile, $transaksiUpload)) {
+            $transaksiUpload->update([
+                'status' => 'gagal',
+                'pesan_error' => 'Gagal menyimpan file ke storage server.',
+            ]);
 
-        return $this->processImportFile($request, $uploadedFile->getRealPath(), $extension, $transaksiUpload, $namaFileAsli);
+            return back()->with('error', 'Gagal menyimpan file ke server. Silakan coba lagi.');
+        }
+
+        ProsesImportTransaksiJob::dispatch($transaksiUpload->id, $extension, $request->user()->id);
+
+        return back()->with('success', "File \"{$namaFileAsli}\" sedang diproses ulang di background. Refresh halaman ini beberapa saat lagi.");
     }
 
     public function reprocess(Request $request, TransaksiUpload $transaksiUpload)
@@ -325,134 +349,113 @@ class TransaksiController extends Controller
             return back()->with('error', $pesan);
         }
 
-        set_time_limit(600);
-
-        Log::info('=== TRANSAKSI PROSES ULANG (file tersimpan, tanpa upload baru) START ===', [
+        Log::info('=== TRANSAKSI PROSES ULANG (dispatch ke queue) ===', [
             'upload_id' => $transaksiUpload->id,
             'path_file' => $transaksiUpload->path_file,
         ]);
 
         DB::transaction(function () use ($transaksiUpload) {
+            $this->kurangiAkumulasiUnmatchedGlobal($transaksiUpload);
+
             $transaksiUpload->transaksis()->delete();
             $transaksiUpload->unmatchedNames()->delete();
         });
 
         $transaksiUpload->update([
-            'status' => 'berhasil',
+            'status' => 'diproses',
             'pesan_error' => null,
         ]);
 
         $extension = strtolower(pathinfo($transaksiUpload->path_file, PATHINFO_EXTENSION));
-        $pathAbsolut = Storage::path($transaksiUpload->path_file);
 
-        return $this->processImportFile($request, $pathAbsolut, $extension, $transaksiUpload, $transaksiUpload->nama_file);
+        ProsesImportTransaksiJob::dispatch($transaksiUpload->id, $extension, $request->user()->id);
+
+        return back()->with('success', 'File sedang diproses ulang di background. Refresh halaman ini beberapa saat lagi.');
     }
 
-    private function simpanFileMentah($uploadedFile, TransaksiUpload $uploadLog): void
+    /**
+     * Simpan salinan PERMANEN dari file yang baru diupload — sekarang ini
+     * satu-satunya tempat file "hidup" sebelum job queue jalan, jadi kalau
+     * ini gagal, import() TIDAK BOLEH lanjut dispatch job (lihat pemanggil).
+     * Return bool (bukan void lagi) supaya pemanggil tau harus stop atau
+     * lanjut.
+     */
+    private function simpanFileMentah($uploadedFile, TransaksiUpload $uploadLog): bool
     {
         try {
             $extensi = strtolower($uploadedFile->getClientOriginalExtension());
             $namaTersimpan = $uploadLog->id . '_' . now()->format('YmdHis') . '.' . $extensi;
             $path = $uploadedFile->storeAs('transaksi-uploads', $namaTersimpan);
+
+            if (! $path) {
+                Log::error('simpanFileMentah: storeAs() balikin false/null', ['upload_id' => $uploadLog->id]);
+                return false;
+            }
+
             $uploadLog->update(['path_file' => $path]);
+            return true;
         } catch (\Throwable $e) {
-            Log::warning('Gagal menyimpan salinan file mentah', [
+            Log::error('Gagal menyimpan salinan file mentah', [
                 'upload_id' => $uploadLog->id,
                 'message' => $e->getMessage(),
             ]);
+            return false;
         }
     }
 
-    private function processImportFile(Request $request, string $pathToImport, string $extension, TransaksiUpload $uploadLog, string $namaFileAsli)
+    /**
+     * FIX: sebelumnya destroyUpload()/reprocess()/reupload() cuma hapus
+     * baris TransaksiUploadUnmatched (per-upload) tapi TIDAK PERNAH
+     * ngurangin balik akumulasi global di TransaksiUnmatchedName
+     * (jumlah_baris_total) — itu sumber data buat card "Nama SPKLU Belum
+     * Dipetakan" di halaman upload. Efeknya, nama yang belum sempat
+     * dipetakan tetap nyangkut muncul di card walau riwayat upload
+     * sumbernya udah dihapus/diganti/diproses ulang, karena gak ada
+     * upload lain yang "punya" kontribusi itu tapi angkanya tetap ada.
+     *
+     * WAJIB dipanggil SEBELUM $transaksiUpload->unmatchedNames()->delete()
+     * — perlu baca rincian per-upload dulu sebelum baris itu hilang, buat
+     * tau berapa yang harus dikurangi dari total global per nama.
+     */
+    private function kurangiAkumulasiUnmatchedGlobal(TransaksiUpload $transaksiUpload): void
     {
-        $csvHasilConversi = null;
-        $delimiter = ',';
+        $unmatchedDariUploadIni = $transaksiUpload->unmatchedNames()->get(['nama_asli', 'jumlah_baris']);
 
-        if (in_array($extension, ['xlsx', 'xls'])) {
-            $converted = $this->convertToCsv($pathToImport);
-            if ($converted) {
-                $pathToImport = $converted;
-                $csvHasilConversi = $converted;
-            }
-        } elseif ($extension === 'csv') {
-            $pathToImport = $this->stripBomIfPresent($pathToImport);
-            $delimiter = $this->detectCsvDelimiter($pathToImport);
-        }
+        foreach ($unmatchedDariUploadIni as $u) {
+            $global = TransaksiUnmatchedName::where('nama_asli', $u->nama_asli)->first();
 
-        $import = new TransaksiImport($delimiter);
-
-        try {
-            Excel::import($import, $pathToImport);
-        } catch (\Throwable $e) {
-            Log::error('EXCEPTION saat Excel::import()', ['message' => $e->getMessage()]);
-
-            $uploadLog->update([
-                'status' => 'gagal',
-                'pesan_error' => $e->getMessage(),
-            ]);
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'nama_file' => $namaFileAsli,
-                    'message' => 'Gagal memproses file: ' . $e->getMessage(),
-                ], 422);
+            if (! $global) {
+                continue;
             }
 
-            return back()->with('error', 'Gagal memproses file: ' . $e->getMessage());
-        }
+            $sisaBaris = $global->jumlah_baris_total - $u->jumlah_baris;
 
-        if ($csvHasilConversi && file_exists($csvHasilConversi)) {
-            @unlink($csvHasilConversi);
-        }
-
-        $totalTersimpan = $import->flushToDatabase($request->user()->id, $uploadLog->id);
-
-        foreach ($import->unmatched as $nama => $jumlah) {
-            $existing = TransaksiUnmatchedName::where('nama_asli', $nama)->first();
-            if ($existing) {
-                $existing->increment('jumlah_baris_total', $jumlah);
+            if ($sisaBaris <= 0) {
+                // Gak ada upload lain yang masih nyumbang nama ini —
+                // hapus sekalian record globalnya biar gak nyangkut di card.
+                $global->delete();
             } else {
-                TransaksiUnmatchedName::create(['nama_asli' => $nama, 'jumlah_baris_total' => $jumlah]);
+                $global->update(['jumlah_baris_total' => $sisaBaris]);
             }
-
-            TransaksiUploadUnmatched::updateOrCreate(
-                ['transaksi_upload_id' => $uploadLog->id, 'nama_asli' => $nama],
-                ['jumlah_baris' => $jumlah]
-            );
         }
+    }
 
-        $uploadLog->update([
-            'total_baris_diproses' => $import->totalRowsProcessed,
-            'total_rekap_tersimpan' => $totalTersimpan,
-            'jumlah_nama_tidak_cocok' => count($import->unmatched),
+    /**
+     * Dipoll dari frontend (halaman Upload) buat cek status import yang
+     * lagi jalan di background lewat queue — biar UI bisa auto-refresh
+     * tanpa user manual reload page.
+     */
+    public function uploadStatus(TransaksiUpload $transaksiUpload)
+    {
+        return response()->json([
+            'id' => $transaksiUpload->id,
+            'status' => $transaksiUpload->status,
+            'pesan_error' => $transaksiUpload->pesan_error,
+            'total_baris_diproses' => $transaksiUpload->total_baris_diproses,
+            'total_rekap_tersimpan' => $transaksiUpload->total_rekap_tersimpan,
+            'jumlah_nama_tidak_cocok' => $transaksiUpload->jumlah_nama_tidak_cocok,
+            'selesai' => in_array($transaksiUpload->status, ['berhasil', 'gagal']),
         ]);
-
-        Log::info('=== TRANSAKSI IMPORT END ===', [
-            'upload_id' => $uploadLog->id,
-            'total_diproses' => $import->totalRowsProcessed,
-            'total_tersimpan' => $totalTersimpan,
-        ]);
-
-        $pesan = "Berhasil memproses " . number_format($import->totalRowsProcessed) . " baris menjadi " . number_format($totalTersimpan) . " rekap harian.";
-
-        if (count($import->unmatched) > 0) {
-            $totalBarisGagal = array_sum($import->unmatched);
-            $pesan .= " ⚠ " . count($import->unmatched) . " nama SPKLU (total " . number_format($totalBarisGagal) . " baris) tidak cocok.";
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'nama_file' => $namaFileAsli,
-                'total_baris_diproses' => $import->totalRowsProcessed,
-                'total_tersimpan' => $totalTersimpan,
-                'unmatched_count' => count($import->unmatched),
-                'message' => $pesan,
-            ]);
-        }
-
-        return back()->with('success', $pesan);
     }
 
     public function storeAlias(Request $request)
@@ -513,12 +516,21 @@ class TransaksiController extends Controller
         return back()->with('success', "Pemetaan \"{$spkluAlias->nama_asli}\" berhasil diperbarui.");
     }
 
+    /**
+     * FIX (lihat kurangiAkumulasiUnmatchedGlobal): sebelumnya method ini
+     * cuma hapus transaksis() + unmatchedNames() (per-upload) + record
+     * upload-nya sendiri, TANPA ngurangin akumulasi global
+     * TransaksiUnmatchedName — itu penyebab card "Nama SPKLU Belum
+     * Dipetakan" tetap nampilin nama dari upload yang udah dihapus.
+     */
     public function destroyUpload(TransaksiUpload $transaksiUpload)
     {
         $namaFile = $transaksiUpload->nama_file;
         $pathFile = $transaksiUpload->path_file;
 
         DB::transaction(function () use ($transaksiUpload) {
+            $this->kurangiAkumulasiUnmatchedGlobal($transaksiUpload);
+
             $transaksiUpload->transaksis()->delete();
             $transaksiUpload->unmatchedNames()->delete();
             $transaksiUpload->delete();
@@ -529,84 +541,5 @@ class TransaksiController extends Controller
         }
 
         return back()->with('success', "Riwayat \"{$namaFile}\" dan seluruh data transaksi yang tersimpan dari file itu berhasil dihapus.");
-    }
-
-    private function convertToCsv(string $xlsxPath): ?string
-    {
-        $sofficeBinary = $this->findSofficeBinary();
-        if (! $sofficeBinary) {
-            return null;
-        }
-
-        $outputDir = storage_path('app/temp-imports');
-        if (! is_dir($outputDir)) {
-            mkdir($outputDir, 0755, true);
-        }
-
-        $process = new Process([
-            $sofficeBinary, '--headless', '--convert-to',
-            'csv:Text - txt - csv (StarCalc):44,34,0,1,,,,,,,,-1',
-            '--outdir', $outputDir, $xlsxPath,
-        ]);
-        $process->setTimeout(300);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            return null;
-        }
-
-        $csvPath = $outputDir . DIRECTORY_SEPARATOR . pathinfo($xlsxPath, PATHINFO_FILENAME) . '.csv';
-        return file_exists($csvPath) ? $csvPath : null;
-    }
-
-    private function findSofficeBinary(): ?string
-    {
-        foreach (['C:\Program Files\LibreOffice\program\soffice.exe', 'C:\Program Files (x86)\LibreOffice\program\soffice.exe', 'soffice'] as $path) {
-            if ($path === 'soffice' || file_exists($path)) {
-                return $path;
-            }
-        }
-        return null;
-    }
-
-    private function detectCsvDelimiter(string $csvPath): string
-    {
-        $handle = fopen($csvPath, 'r');
-        $firstLine = fgets($handle);
-        fclose($handle);
-
-        if (! $firstLine) {
-            return ',';
-        }
-
-        $jumlahKoma = substr_count($firstLine, ',');
-        $jumlahTitikKoma = substr_count($firstLine, ';');
-
-        return $jumlahTitikKoma > $jumlahKoma ? ';' : ',';
-    }
-
-    private function stripBomIfPresent(string $csvPath): string
-    {
-        $handle = fopen($csvPath, 'rb');
-        $firstBytes = fread($handle, 3);
-        fclose($handle);
-
-        $bom = "\xEF\xBB\xBF";
-        if ($firstBytes !== $bom) {
-            return $csvPath;
-        }
-
-        $content = file_get_contents($csvPath);
-        $content = substr($content, 3);
-
-        $tempPath = storage_path('app/temp-imports');
-        if (! is_dir($tempPath)) {
-            mkdir($tempPath, 0755, true);
-        }
-
-        $newPath = $tempPath . DIRECTORY_SEPARATOR . 'nobom_' . basename($csvPath);
-        file_put_contents($newPath, $content);
-
-        return $newPath;
     }
 }

@@ -35,18 +35,21 @@
             border-radius: 50%; border: 1px solid rgba(255,255,255,.08); pointer-events: none;
         }
         .login-brand-logo { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+
         .login-brand-icon {
-            width: 50px; height: 50px; border-radius: 15px;
-            background: linear-gradient(135deg, #FFC629, #ffab00);
+            width: 68px; height: 68px; border-radius: 50%;
+            background: #fff;
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            box-shadow: 0 4px 14px rgba(255,198,41,.4);
+            box-shadow: 0 4px 14px rgba(0,0,0,.18);
+            padding: 3px;
         }
-        .login-brand-icon svg { width: 25px; height: 25px; color: #023E8A; stroke-width: 2.2; }
+        .login-brand-icon img { width: 100%; height: 100%; object-fit: contain; }
         .login-brand-text .title { font-weight: 800; font-size: 18px; margin: 0; line-height: 1.2; }
         .login-brand-text .subtitle { font-size: 12.5px; color: rgba(255,255,255,.7); margin: 3px 0 0; }
 
-        .login-brand-hero { position: relative; z-index: 1; margin-top: auto; max-width: 480px; }
-        .login-brand-hero h1 { font-size: 38px; font-weight: 800; line-height: 1.25; margin: 0 0 16px; letter-spacing: -.015em; }
+        .login-brand-hero { position: relative; z-index: 1; margin-top: auto; margin-bottom: 44px; max-width: 480px; }
+        .login-brand-hero h1 { font-size: 54px; font-weight: 800; line-height: 1.1; margin: 0 0 18px; letter-spacing: -.02em; }
+        .login-brand-hero h1 .accent { color: #FFC629; }
         .login-brand-hero p { font-size: 15px; color: rgba(255,255,255,.78); line-height: 1.7; margin: 0; max-width: 400px; }
 
         .login-brand-features { display: flex; flex-direction: column; gap: 15px; margin-top: 36px; position: relative; z-index: 1; }
@@ -65,55 +68,63 @@
         }
         .login-form-inner { width: 100%; max-width: 380px; margin: 0 auto; }
 
-        .login-form-header { margin-bottom: 32px; }
-        .login-form-header h2 { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0 0 8px; letter-spacing: -.01em; }
+        .login-form-header { margin-bottom: 36px; }
+        .login-form-header h2 { font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 8px; letter-spacing: -.015em; }
         .login-form-header p { font-size: 14px; color: #64748B; margin: 0; }
 
-        .login-field { margin-bottom: 18px; }
-        .login-field label { display: block; font-size: 12.5px; font-weight: 700; color: #475569; margin-bottom: 7px; }
+        .login-field { margin-bottom: 20px; }
+        .login-field label { display: block; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 8px; letter-spacing: .01em; }
         .login-input-wrap { position: relative; }
-        .login-input-wrap svg {
+        .login-input-wrap > svg {
             position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
             width: 16px; height: 16px; color: #94a3b8; stroke-width: 2; pointer-events: none;
+            transition: color .15s ease;
         }
         .login-input-wrap input {
-            width: 100%; padding: 13px 14px 13px 40px; border-radius: 10px; border: 1px solid #e2e8f0;
+            width: 100%; padding: 14px 44px 14px 42px; border-radius: 11px; border: 1.5px solid #e2e8f0;
             font-size: 14px; font-family: inherit; transition: all .15s ease; background: #fff;
         }
-        .login-input-wrap input:focus { outline: none; border-color: #0081AB; box-shadow: 0 0 0 3px rgba(0,129,171,.12); }
+        .login-input-wrap input:hover { border-color: #cbd5e1; }
+        .login-input-wrap input:focus { outline: none; border-color: #F59E0B; box-shadow: inset 0 0 0 2px rgba(245,158,11,.25); }
+        .login-input-wrap input:focus + .login-toggle-password,
+        .login-input-wrap:has(input:focus) svg:first-child { color: #F59E0B; }
 
         .login-toggle-password {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; cursor: pointer; padding: 4px; color: #94a3b8; display: flex;
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; padding: 5px; color: #94a3b8;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: all .15s ease;
         }
         .login-toggle-password svg { width: 16px; height: 16px; stroke-width: 2; }
-        .login-toggle-password:hover { color: #64748B; }
+        .login-toggle-password:hover { background: rgba(245,158,11,.1); color: #F59E0B; }
+        .login-toggle-password:active { background: rgba(245,158,11,.18); }
 
-        .login-row { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 22px; font-size: 13px; }
-        .login-remember { display: flex; align-items: center; gap: 7px; color: #64748B; }
-        .login-remember input { accent-color: #0081AB; }
-        .login-forgot { color: #0081AB; text-decoration: none; font-weight: 600; }
+        .login-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 26px; font-size: 13px; }
+        .login-remember { display: flex; align-items: center; gap: 8px; color: #64748B; cursor: pointer; }
+        .login-remember input { accent-color: #F59E0B; width: 15px; height: 15px; cursor: pointer; }
+        .login-forgot { color: #F59E0B; text-decoration: none; font-weight: 700; }
         .login-forgot:hover { text-decoration: underline; }
 
         .login-submit-btn {
-            width: 100%; padding: 13.5px; border: none; border-radius: 10px;
-            background: linear-gradient(135deg, #023E8A, #0081AB); color: #fff;
-            font-size: 14.5px; font-weight: 700; cursor: pointer; transition: all .15s ease;
-            box-shadow: 0 3px 12px rgba(2,62,138,.25);
+            width: 100%; padding: 14.5px; border: none; border-radius: 11px;
+            background: linear-gradient(135deg, #F59E0B, #FFC629); color: #fff;
+            font-size: 14.5px; font-weight: 700; letter-spacing: .01em; cursor: pointer; transition: all .18s ease;
+            box-shadow: 0 4px 14px rgba(245,158,11,.32);
         }
-        .login-submit-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(2,62,138,.32); }
+        .login-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245,158,11,.4); }
+        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(245,158,11,.3); }
 
-        .login-divider { display: flex; align-items: center; gap: 12px; margin: 26px 0; }
+        .login-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; }
         .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #eef1f5; }
-        .login-divider span { font-size: 11.5px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+        .login-divider span { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
 
         .login-google-btn {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; background: #fff;
+            width: 100%; padding: 13px; border-radius: 11px; border: 1.5px solid #e2e8f0; background: #fff;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             font-size: 13.8px; font-weight: 600; color: #1E293B; cursor: pointer; text-decoration: none;
             transition: all .15s ease;
         }
-        .login-google-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .login-google-btn:hover { background: #f8fafc; border-color: #cbd5e1; transform: translateY(-1px); }
         .login-google-btn img { width: 17px; height: 17px; }
 
         .login-alert {
@@ -137,17 +148,17 @@
         <div class="login-brand">
             <div class="login-brand-logo">
                 <div class="login-brand-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <img src="{{ asset('images/logo-revolution.png') }}" alt="Logo rEVolution">
                 </div>
                 <div class="login-brand-text">
-                    <p class="title">Sistem SPKLU</p>
+                    <p class="title">Dashboard SPKLU</p>
                     <p class="subtitle">PLN UP3 Bogor</p>
                 </div>
             </div>
 
             <div class="login-brand-hero">
-                <h1>Kelola & pantau jaringan SPKLU dalam satu sistem terpadu</h1>
-                <p>Dari monitoring probabilitas lokasi, studi kelayakan, sampai integrasi ke Master SPKLU — semua tercatat dan terstruktur.</p>
+                <h1>The SPKLU<br><span class="accent">Matchmaker</span></h1>
+                <p>Metode pemasaran yang menawarkan konsep matchmaker antara pemilik lahan dengan pemilik mesin, dengan tujuan peningkatan penjualan kWh melalui kemitraan SPKLU.</p>
 
                 <div class="login-brand-features">
                     <div class="login-brand-feature">

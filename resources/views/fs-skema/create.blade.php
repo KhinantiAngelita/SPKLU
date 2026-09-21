@@ -17,12 +17,12 @@
 .fsf-tab{position:relative}
 .fsf-tab input{position:absolute;opacity:0;cursor:pointer}
 .fsf-tab span{display:block;padding:8px 22px;border-radius:8px;font-size:14px;font-weight:600;color:#64748B;cursor:pointer}
-.fsf-tab input:checked + span{background:#fff;color:#0EA5B7;box-shadow:0 1px 2px rgba(15,23,42,.08)}
-.fsf-section-title{font-size:15px;font-weight:700;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0EA5B7}
+.fsf-tab input:checked + span{background:#fff;color:#0081AB;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.fsf-section-title{font-size:15px;font-weight:700;margin:28px 0 14px;padding-top:20px;border-top:1px solid #F1F5F9;letter-spacing:.03em;text-transform:uppercase;color:#0081AB}
 .fsf-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
 .fsf-field label{display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px}
 .fsf-field input,.fsf-field select,.fsf-field textarea{width:100%;padding:10px 12px;border:1px solid #E2E8F0;border-radius:8px;font-size:14px;color:#0F172A}
-.fsf-field input:focus,.fsf-field select:focus{outline:none;border-color:#0EA5B7;box-shadow:0 0 0 3px rgba(14,165,183,.12)}
+.fsf-field input:focus,.fsf-field select:focus{outline:none;border-color:#0081AB;box-shadow:0 0 0 3px rgba(0,129,171,.12)}
 .fsf-field input[readonly]{background:#F1F5F9;color:#64748B;cursor:not-allowed}
 .fsf-hint{font-size:12px;color:#94A3B8;margin-top:4px}
 .fsf-label-group{font-size:13px;font-weight:600;color:#334155;margin-bottom:10px;display:block}
@@ -30,10 +30,10 @@
 .fsf-chip{position:relative}
 .fsf-chip input{position:absolute;opacity:0;cursor:pointer}
 .fsf-chip span{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid #E2E8F0;border-radius:999px;font-size:13px;font-weight:500;color:#475569;cursor:pointer}
-.fsf-chip input:checked + span{background:#E0F7FA;border-color:#0EA5B7;color:#0C8A9A}
+.fsf-chip input:checked + span{background:rgba(0,129,171,.12);border-color:#0081AB;color:#023E8A}
 .fsf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:28px;padding-top:20px;border-top:1px solid #F1F5F9}
 .fsf-btn-outline{padding:10px 20px;border-radius:8px;border:1px solid #E2E8F0;color:#475569;font-weight:600;font-size:14px;text-decoration:none}
-.fsf-btn-primary{padding:10px 22px;border-radius:8px;border:none;background:#0EA5B7;color:#fff;font-weight:600;font-size:14px;cursor:pointer}
+.fsf-btn-primary{padding:10px 22px;border-radius:8px;border:none;background:#0081AB;color:#fff;font-weight:600;font-size:14px;cursor:pointer}
 .fsf-skema3-only{display:none}
 
 /* Combobox pencarian lokasi (sumber: Probabilitas) */
@@ -46,7 +46,7 @@
 }
 .fsf-combobox-trigger:hover { border-color:#cbd5e1; }
 .fsf-combobox.open .fsf-combobox-trigger,
-.fsf-combobox-trigger:focus-visible { outline:none; border-color:#0EA5B7; box-shadow:0 0 0 3px rgba(14,165,183,.12); }
+.fsf-combobox-trigger:focus-visible { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); }
 .fsf-combobox-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .fsf-combobox-label.has-value { color:#0F172A; font-weight:600; }
 .fsf-combobox-chevron { width:13px; height:13px; color:#94A3B8; flex-shrink:0; transition:transform .15s ease; }
@@ -67,17 +67,17 @@
 .fsf-combobox-search:focus { outline:none; background:#fbfcfd; }
 .fsf-combobox-options { max-height:230px; overflow-y:auto; }
 .fsf-combobox-option { padding:10px 12px; font-size:13.5px; color:#0F172A; cursor:pointer; }
-.fsf-combobox-option:hover { background:rgba(14,165,183,.08); }
-.fsf-combobox-option.selected { background:rgba(14,165,183,.12); color:#0C8A9A; font-weight:600; }
+.fsf-combobox-option:hover { background:rgba(0,129,171,.08); }
+.fsf-combobox-option.selected { background:rgba(0,129,171,.12); color:#023E8A; font-weight:600; }
 .fsf-combobox-empty { display:none; padding:16px 12px; font-size:13px; color:#94A3B8; text-align:center; }
 
 /* Ringkasan Kelayakan Lokasi -- versi tertanam di kolom kiri (bawah Penilaian Lokasi) */
 .fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
-.fsf-mini-card-header{background:#E0F7FA;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-header{background:rgba(0,129,171,.10);padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
 .fsf-mini-card-body{padding:18px 20px}
 
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
-.fsp-card-header{background:#ECF4F8;padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fsp-card-header{background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .fsp-card-body{padding:18px 20px}
 .fsp-table{width:100%;border-collapse:collapse;font-size:13px}
 .fsp-table th{text-align:left;color:#94A3B8;font-weight:600;padding:8px 4px;border-bottom:1px solid #F1F5F9;white-space:nowrap}
@@ -95,7 +95,7 @@
 .fsp-status-netral{background:#F1F5F9;color:#64748B}
 .fsp-narasi{font-size:13.5px;color:#475569;line-height:1.6;margin:0}
 .fsp-narasi-placeholder{color:#94A3B8;font-style:italic;font-size:13px}
-.fsp-loading{font-size:12px;color:#0EA5B7;font-weight:600}
+.fsp-loading{font-size:12px;color:#0081AB;font-weight:600}
 .fsp-estimasi-roi{margin-top:14px;padding:12px 14px;background:#F8FAFC;border-radius:8px;font-size:13px;color:#334155;line-height:1.7}
 .fsp-estimasi-roi strong{color:#0F172A}
 .fsp-chart-error{color:#B91C1C;font-size:12.5px;line-height:1.6}
@@ -399,9 +399,13 @@ function toggleSkema(val) {
     if (val === 'skema_3') {
         mobilSkema3.name = 'mobil_per_hari';
         mobilSkema2.name = 'mobil_per_hari_disabled';
+        mobilSkema2.required = false;
+        mobilSkema3.required = true;
     } else {
         mobilSkema2.name = 'mobil_per_hari';
         mobilSkema3.name = 'mobil_per_hari_disabled';
+        mobilSkema2.required = true;
+        mobilSkema3.required = false;
     }
 }
 
@@ -563,7 +567,11 @@ async function jalankanPreview() {
             body: formData,
         });
 
-        if (!res.ok) return;
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => null);
+            console.warn('Preview FS Skema ditolak server (status ' + res.status + '):', errBody);
+            return;
+        }
         const data = await res.json();
         renderPoin(data.poin);
         renderSpklu(data.spklu_terdekat);
@@ -695,8 +703,8 @@ function renderChartRoi(roi) {
             ? [{
                 label: 'Progres BEP (%)',
                 data: roi.tahunan.map(r => r.persen_progres),
-                borderColor: '#0EA5B7',
-                backgroundColor: 'rgba(14,165,183,0.15)',
+                borderColor: '#0081AB',
+                backgroundColor: 'rgba(0,129,171,0.15)',
                 tension: 0.3,
                 fill: true,
             }]
@@ -704,8 +712,8 @@ function renderChartRoi(roi) {
                 {
                     label: 'Progres BEP Mitra Mesin (%)',
                     data: roi.tahunan.map(r => r.persen_progres_mesin),
-                    borderColor: '#0EA5B7',
-                    backgroundColor: 'rgba(14,165,183,0.15)',
+                    borderColor: '#0081AB',
+                    backgroundColor: 'rgba(0,129,171,0.15)',
                     tension: 0.3,
                     fill: true,
                 },
