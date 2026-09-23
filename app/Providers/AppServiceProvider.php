@@ -29,7 +29,12 @@ class AppServiceProvider extends ServiceProvider
         Carbon::setLocale('id');
         setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'id', 'ind');
 
-        if (str_starts_with(config('app.url'), 'https://') || app()->environment('production')) {
+        if (
+            str_starts_with((string) config('app.url'), 'https://') ||
+            app()->environment('production') ||
+            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        ) {
             URL::forceScheme('https');
         }
 
