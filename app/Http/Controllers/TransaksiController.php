@@ -367,7 +367,7 @@ class TransaksiController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv|max:51200',
+            'file' => 'required|file|extensions:xlsx,xls,csv|mimes:xlsx,xls,csv,txt|max:51200',
         ]);
 
         $uploadedFile = $request->file('file');
@@ -427,7 +427,7 @@ class TransaksiController extends Controller
     public function reupload(Request $request, TransaksiUpload $transaksiUpload)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv|max:51200',
+            'file' => 'required|file|extensions:xlsx,xls,csv|mimes:xlsx,xls,csv,txt|max:51200',
         ]);
 
         $uploadedFile = $request->file('file');
