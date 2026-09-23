@@ -4,9 +4,11 @@ namespace App\Imports;
 
 use App\Models\Spklu;
 use App\Models\SpkluAlias;
+use App\Models\TransaksiUpload;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
@@ -28,9 +30,12 @@ class TransaksiImport implements ToCollection, WithChunkReading, WithCustomCsvSe
 
     protected string $csvDelimiter;
 
-    public function __construct(string $csvDelimiter = ',')
+    protected ?int $transaksiUploadId = null;
+
+    public function __construct(string $csvDelimiter = ',', ?int $transaksiUploadId = null)
     {
         $this->csvDelimiter = $csvDelimiter;
+        $this->transaksiUploadId = $transaksiUploadId;
     }
 
     public function getCsvSettings(): array
@@ -48,6 +53,17 @@ class TransaksiImport implements ToCollection, WithChunkReading, WithCustomCsvSe
 
         foreach ($rows as $row) {
             $this->totalRowsProcessed++;
+
+            if ($this->totalRowsProcessed % 5000 === 0) {
+                $infoTag = $this->transaksiUploadId ? " (Upload #{$this->transaksiUploadId})" : '';
+                Log::info("Import transaksi{$infoTag}: sedang memproses baris ke-".number_format($this->totalRowsProcessed, 0, ',', '.').'...');
+
+                if ($this->transaksiUploadId) {
+                    TransaksiUpload::where('id', $this->transaksiUploadId)->update([
+                        'total_baris_diproses' => $this->totalRowsProcessed,
+                    ]);
+                }
+            }
 
             $namaRaw = trim((string) ($row['spklu'] ?? ''));
             if ($namaRaw === '') {

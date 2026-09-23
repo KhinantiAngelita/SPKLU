@@ -18,7 +18,7 @@ class ProsesImportTransaksiJob implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 590; // sedikit di bawah 600 detik set_time_limit yang dulu dipakai controller
+    public int $timeout = 1700; // sedikit di bawah retry_after (1800 detik)
 
     public function __construct(
         public int $transaksiUploadId,
@@ -43,6 +43,7 @@ class ProsesImportTransaksiJob implements ShouldQueue
     public function handle(TransaksiImportService $service): void
     {
         ini_set('memory_limit', '1024M');
+        @set_time_limit(1700);
 
         $uploadLog = TransaksiUpload::find($this->transaksiUploadId);
 

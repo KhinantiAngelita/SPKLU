@@ -48,7 +48,7 @@ class TransaksiImportService
             $readerType = ExcelFormat::CSV;
         }
 
-        $import = new TransaksiImport($delimiter);
+        $import = new TransaksiImport($delimiter, $uploadLog->id);
 
         try {
             Excel::import($import, $pathToImport, null, $readerType);
