@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jadwal;
 use App\Models\Probabilitas;
 use App\Models\Spklu;
+use App\Models\TargetTahunan;
 use App\Models\Transaksi;
 use App\Services\KandidatPeringkatService;
 use App\Services\RekomendasiLokasiService;
@@ -21,8 +22,14 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $dariBulan = $request->dari_bulan ?: now()->subMonths(5)->format('Y-m');
-        $sampaiBulan = $request->sampai_bulan ?: now()->format('Y-m');
+        $minTanggal = Transaksi::min('tanggal');
+        $maxTanggal = Transaksi::max('tanggal');
+
+        $defaultDari = $minTanggal ? Carbon::parse($minTanggal)->format('Y-m') : now()->startOfYear()->format('Y-m');
+        $defaultSampai = $maxTanggal ? Carbon::parse($maxTanggal)->format('Y-m') : now()->format('Y-m');
+
+        $dariBulan = $request->dari_bulan ?: $defaultDari;
+        $sampaiBulan = $request->sampai_bulan ?: $defaultSampai;
 
         $mulai = Carbon::createFromFormat('Y-m', $dariBulan)->startOfMonth();
         $sampai = Carbon::createFromFormat('Y-m', $sampaiBulan)->endOfMonth();
@@ -69,9 +76,13 @@ class DashboardController extends Controller
         $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
         $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
 
+        // ===== Target Tahunan SPKLU dari Master Parameter =====
+        $targetTahunan = TargetTahunan::where('tahun', now()->year)->value('target_jumlah_spklu');
+
         return view('dashboard.index', [
             'totalSpkluTerpasang' => Spklu::aktif()->count(),
             'spkluBaruBulanIni' => Spklu::aktif()->whereMonth('created_at', now()->month)->count(),
+            'targetTahunan' => $targetTahunan,
 
             'pengajuanOnProgress' => $pengajuanOnProgress,
             'kandidatAktif' => $kandidatAktif,
@@ -97,13 +108,17 @@ class DashboardController extends Controller
     }
 
     /**
-     * Pendapatan & energi bulan berjalan vs bulan lalu — sebelumnya
-     * Dashboard sama sekali gak nampilin angka uang/energi (cuma ada di
-     * halaman Transaksi terpisah), padahal itu KPI inti buat manajemen.
+     * Pendapatan & energi bulan berjalan vs bulan lalu.
+     * Menggunakan bulan data transaksi terkini bila bulan kalender saat ini belum memiliki transaksi upload.
      */
     private function buildRingkasanKeuangan(): array
     {
-        $bulanIni = now();
+        $latestDate = Transaksi::max('tanggal');
+        $bulanAcuan = ($latestDate && Transaksi::whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->doesntExist())
+            ? Carbon::parse($latestDate)
+            : now();
+
+        $bulanIni = $bulanAcuan;
         $bulanLalu = $bulanIni->copy()->subMonth();
 
         $agregatBulanIni = Transaksi::query()

@@ -163,7 +163,10 @@
 </style>
 
 <div class="msp-header">
-    <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
+    <div>
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Master SPKLU</h1>
+        <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
+    </div>
     @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
         <div class="msp-actions">
             @if (($unmatchedTransaksiCount ?? 0) > 0)

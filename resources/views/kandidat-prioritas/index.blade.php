@@ -46,9 +46,9 @@
     {{-- =========================================================
          HEADER
     ========================================================= --}}
-    <div>
-        <h1>Kandidat Prioritas</h1>
-        <p class="kp-sub">Ringkasan Sistem SPKLU</p>
+    <div style="margin-bottom: 20px;">
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Kandidat Prioritas</h1>
+        <p class="kp-sub" style="margin:0; color:#64748B; font-size:13.5px;">Perhitungan jarak dan pembobotan poin kesiapan lokasi kandidat SPKLU</p>
     </div>
 
 

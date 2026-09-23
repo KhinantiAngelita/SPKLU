@@ -153,6 +153,7 @@
 
 <div class="up-page-header">
     <div>
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Upload Data Transaksi</h1>
         <p class="up-page-subtitle" style="margin-top:0;">Upload file mentah transaksi dan lihat riwayat file yang sudah pernah diproses</p>
     </div>
     <a href="{{ route('transaksi.index') }}" class="up-btn up-btn-outline">

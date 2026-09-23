@@ -39,7 +39,10 @@
     .mp-btn:hover { transform:translateY(-1px); }
 </style>
 
-<p class="mp-subtitle">Nilai referensi yang dipakai sistem untuk perhitungan skor. Perubahan hanya berlaku untuk penilaian baru — data yang sudah dinilai sebelumnya tidak dihitung ulang otomatis.</p>
+<div style="margin-bottom: 20px;">
+    <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Master Parameter</h1>
+    <p class="mp-subtitle" style="margin:0;">Nilai referensi yang dipakai sistem untuk perhitungan skor. Perubahan hanya berlaku untuk penilaian baru — data yang sudah dinilai sebelumnya tidak dihitung ulang otomatis.</p>
+</div>
 
 <div class="mp-grid">
 

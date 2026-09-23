@@ -144,7 +144,13 @@
     <div class="dsh-card blue">
         <div class="dsh-card-label">Total SPKLU Terpasang</div>
         <div class="dsh-card-value">{{ number_format($totalSpkluTerpasang) }} <span style="font-size:14px; font-weight:600; color:#64748B;">unit</span></div>
-        <div class="dsh-card-note"><span class="dsh-trend dsh-trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span></div>
+        <div class="dsh-card-note">
+            @if (!empty($targetTahunan))
+                <span class="dsh-trend dsh-trend-up">Target {{ now()->year }}: {{ $targetTahunan }} unit ({{ round(($totalSpkluTerpasang / $targetTahunan) * 100) }}%)</span>
+            @else
+                <span class="dsh-trend dsh-trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span>
+            @endif
+        </div>
     </div>
 
     <div class="dsh-card amber">

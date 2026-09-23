@@ -24,7 +24,7 @@
             --status-green: #2E9E5B;
             --status-amber: #E8A317;
             --status-red: #C0392B;
-            --bg-page: #F6F8FA;
+            --bg-page: #F4F6FB;
             --text-primary: #0F172A;
             --text-secondary: #64748B;
         }
@@ -41,6 +41,33 @@
         @keyframes contentFadeIn {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Universal Page Header Style ===== */
+        .app-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eef1f5;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .app-page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.015em;
+            margin: 0;
+            line-height: 1.25;
+        }
+        .app-page-subtitle {
+            color: #64748B;
+            font-size: 13.5px;
+            margin: 4px 0 0;
+            font-weight: 500;
+            line-height: 1.4;
         }
 
         /* ===== Class global dipakai lintas halaman: header section biru ===== */

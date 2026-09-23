@@ -113,7 +113,10 @@
 </style>
 
 <div class="trx-page-header">
-    <p class="trx-page-subtitle">Ringkasan transaksi seluruh SPKLU</p>
+    <div>
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Ringkasan Transaksi</h1>
+        <p class="trx-page-subtitle">Ringkasan transaksi seluruh SPKLU</p>
+    </div>
     <div style="display:flex; gap:10px;">
         @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
             <a href="{{ route('transaksi.upload') }}" class="trx-btn trx-btn-outline">

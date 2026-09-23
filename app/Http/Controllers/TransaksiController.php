@@ -9,11 +9,13 @@ use App\Models\SpkluAlias;
 use App\Models\Transaksi;
 use App\Models\TransaksiUnmatchedName;
 use App\Models\TransaksiUpload;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class TransaksiController extends Controller
 {
@@ -43,12 +45,14 @@ class TransaksiController extends Controller
             default => 'jumlah_transaksi',
         };
 
-        $mulai = $request->dari ? Carbon::parse($request->dari) : now()->subMonths(9);
-        $sampai = $request->sampai ? Carbon::parse($request->sampai) : now();
+        $minTanggal = Transaksi::min('tanggal');
+        $maxTanggal = Transaksi::max('tanggal');
+        $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
+        $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
 
         $ringkasan = Transaksi::query()
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
-            ->whereBetween('tanggal', [$mulai, $sampai])
+            ->whereBetween('tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')])
             ->selectRaw('SUM(jumlah_transaksi) as total_transaksi, SUM(energi_kwh) as total_energi, SUM(pendapatan_rp) as total_pendapatan')
             ->first();
 
@@ -265,19 +269,99 @@ class TransaksiController extends Controller
     public function export(Request $request)
     {
         $spkluId = $request->spklu_id;
-        $mulai = $request->dari ? Carbon::parse($request->dari) : now()->subMonths(9);
-        $sampai = $request->sampai ? Carbon::parse($request->sampai) : now();
+        $spkluTerpilih = $spkluId ? Spklu::find($spkluId) : null;
 
-        $rincian = Transaksi::query()
-            ->with('spklu')
+        $minTanggal = Transaksi::min('tanggal');
+        $maxTanggal = Transaksi::max('tanggal');
+        $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
+        $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
+
+        $baseQuery = Transaksi::query()
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
-            ->whereBetween('tanggal', [$mulai, $sampai])
-            ->orderByDesc('tanggal')
+            ->whereBetween('tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')]);
+
+        $kpi = (clone $baseQuery)
+            ->selectRaw('
+                COUNT(id) as total_baris,
+                SUM(jumlah_transaksi) as total_transaksi,
+                SUM(energi_kwh) as total_energi,
+                SUM(pendapatan_rp) as total_pendapatan,
+                SUM(total_durasi_menit) as total_durasi,
+                COUNT(DISTINCT spklu_id) as total_spklu_aktif
+            ')
+            ->first();
+
+        $totalTransaksi = (int) ($kpi->total_transaksi ?? 0);
+        $totalEnergi = (float) ($kpi->total_energi ?? 0);
+        $totalPendapatan = (float) ($kpi->total_pendapatan ?? 0);
+        $totalDurasi = (int) ($kpi->total_durasi ?? 0);
+        $totalSpkluAktif = (int) ($kpi->total_spklu_aktif ?? 0);
+
+        $rataKwh = $totalTransaksi > 0 ? $totalEnergi / $totalTransaksi : 0;
+        $rataRp = $totalTransaksi > 0 ? $totalPendapatan / $totalTransaksi : 0;
+        $rataDurasi = $totalTransaksi > 0 ? round($totalDurasi / $totalTransaksi) : 0;
+
+        $rekapSpklu = Transaksi::query()
+            ->join('spklus', 'spklus.id', '=', 'transaksis.spklu_id')
+            ->leftJoin('ulp_mappings', 'ulp_mappings.id', '=', 'spklus.ulp_mapping_id')
+            ->when($spkluId, fn ($q) => $q->where('transaksis.spklu_id', $spkluId))
+            ->whereBetween('transaksis.tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')])
+            ->selectRaw('
+                spklus.id as spklu_id,
+                spklus.nama as nama_spklu,
+                spklus.kode_unit,
+                ulp_mappings.nama_singkat as nama_ulp,
+                SUM(transaksis.jumlah_transaksi) as total_transaksi,
+                SUM(transaksis.energi_kwh) as total_energi,
+                SUM(transaksis.pendapatan_rp) as total_pendapatan,
+                SUM(transaksis.total_durasi_menit) as total_durasi
+            ')
+            ->groupBy('spklus.id', 'spklus.nama', 'spklus.kode_unit', 'ulp_mappings.nama_singkat')
+            ->orderByDesc('total_transaksi')
             ->get();
 
-        $pdf = \PDF::loadView('transaksi.export-pdf', compact('rincian', 'mulai', 'sampai'));
+        $rekapBulanan = (clone $baseQuery)
+            ->selectRaw("
+                DATE_FORMAT(tanggal, '%Y-%m') as bulan,
+                SUM(jumlah_transaksi) as total_transaksi,
+                SUM(energi_kwh) as total_energi,
+                SUM(pendapatan_rp) as total_pendapatan
+            ")
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get();
 
-        return $pdf->download('rekap-transaksi-'.now()->format('Ymd-His').'.pdf');
+        $isSpkluKhusus = ! empty($spkluId);
+        $rincianQuery = (clone $baseQuery)->with('spklu');
+
+        if ($isSpkluKhusus) {
+            $rincian = $rincianQuery->orderByDesc('tanggal')->get();
+        } else {
+            $rincian = $rincianQuery->orderByDesc('jumlah_transaksi')->limit(50)->get();
+        }
+
+        $pdf = Pdf::loadView('transaksi.export-pdf', compact(
+            'spkluTerpilih',
+            'mulai',
+            'sampai',
+            'totalTransaksi',
+            'totalEnergi',
+            'totalPendapatan',
+            'totalDurasi',
+            'totalSpkluAktif',
+            'rataKwh',
+            'rataRp',
+            'rataDurasi',
+            'rekapSpklu',
+            'rekapBulanan',
+            'rincian',
+            'isSpkluKhusus'
+        ))->setPaper('a4', 'portrait');
+
+        $slugSpklu = $spkluTerpilih ? Str::slug($spkluTerpilih->nama) : 'semua-spklu';
+        $namaFile = 'Laporan-Transaksi-SPKLU-'.$slugSpklu.'-'.now()->format('Ymd-His').'.pdf';
+
+        return $pdf->download($namaFile);
     }
 
     public function import(Request $request)

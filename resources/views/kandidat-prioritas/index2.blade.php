@@ -30,9 +30,9 @@
     {{-- =========================================================
          HEADER
     ========================================================= --}}
-    <div>
-        <h1>Kandidat Prioritas</h1>
-       <p class="kp-sub">Ranking Akhir &mdash; 20% Progres + 20% Kapasitas + 20% Demand ULP + 20% Kebutuhan + 20% Okupansi/Fasilitas/Jaringan</p>
+    <div style="margin-bottom: 20px;">
+        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Peringkat Kandidat</h1>
+        <p class="kp-sub" style="margin:0; color:#64748B; font-size:13.5px;">Ranking Akhir &mdash; 20% Progres + 20% Kapasitas + 20% Demand ULP + 20% Kebutuhan + 20% Okupansi/Fasilitas/Jaringan</p>
     </div>
 
 

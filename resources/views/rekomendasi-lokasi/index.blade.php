@@ -129,6 +129,7 @@
 </style>
 
 <div class="rl-page-header">
+    <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Rekomendasi Lokasi</h1>
     <p class="rl-page-subtitle">Peta sebaran SPKLU eksisting (DC/AC), kandidat pipeline berdasarkan kepemilikan mitra mesin, dan titik rekomendasi otomatis.</p>
 </div>
 
