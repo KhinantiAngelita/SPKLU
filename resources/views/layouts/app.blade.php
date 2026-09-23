@@ -81,10 +81,11 @@
             line-height: 1.4;
         }
 
-        /* ===== Class global dipakai lintas halaman: header section biru ===== */
+        /* ===== Class global dipakai lintas halaman: header section putih bersih (seperti dashboard) ===== */
         .section-header-bar {
-            background: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
-            padding: 20px 24px;
+            background: #FFFFFF !important;
+            padding: 18px 24px;
+            border-bottom: 1px solid #F1F5F9;
             display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
         .section-header-bar-left { display: flex; align-items: center; gap: 12px; }

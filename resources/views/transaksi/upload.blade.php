@@ -128,8 +128,8 @@
     /* overflow:hidden DIHAPUS dari sini — itu yang bikin dropdown Choices.js kepotong/gak muncul.
        Rounded corner dipindah ke header/footer supaya sudut modal tetap rapi tanpa overflow:hidden. */
     .up-modal { background:#fff; border-radius:18px; padding:0; width:600px; max-width:92vw; box-shadow:0 24px 60px rgba(0,0,0,.25); max-height:90vh; display:flex; flex-direction:column; }
-    .up-modal-header { background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09)); padding:20px 24px; border-radius:18px 18px 0 0; }
-    .up-modal-header h3 { margin:0 0 4px; font-size:16.5px; font-weight:800; color:#023E8A; }
+    .up-modal-header { background:#FFFFFF; border-bottom:1px solid #F1F5F9; padding:20px 24px; border-radius:18px 18px 0 0; }
+    .up-modal-header h3 { margin:0 0 4px; font-size:16.5px; font-weight:800; color:#1B2559; }
     .up-modal-header p { margin:0; font-size:12.5px; color:#64748B; }
     .up-modal-body { padding:20px 24px; overflow-y:auto; }
     .up-modal-footer { padding:16px 24px; border-top:1px solid #f1f5f9; border-radius:0 0 18px 18px; }

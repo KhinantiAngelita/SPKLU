@@ -179,9 +179,9 @@
         height: 100%;
     }
 
-    /* Header Bar Soft Blue */
+    /* Header Bar Putih Bersih (seperti Dashboard) */
     .prof-card-header {
-        background: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
+        background: #FFFFFF !important;
         padding: 16px 22px;
         display: flex;
         align-items: center;
@@ -217,7 +217,7 @@
     .prof-card-header h2 {
         font-size: 15px;
         font-weight: 800;
-        color: #023E8A;
+        color: #1B2559 !important;
         margin: 0;
     }
 

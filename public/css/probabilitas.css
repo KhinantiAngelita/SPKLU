@@ -11,7 +11,7 @@
     --bg: #F5F7FA;
     --teks-utama: #1E293B;
     --teks-sekunder: #64748B;
-    --soft-header-bg: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
+    --soft-header-bg: #FFFFFF;
 }
 
 /* ===== Table — sticky header/kolom + pembatas per kolom ===== */

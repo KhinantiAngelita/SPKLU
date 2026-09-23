@@ -167,7 +167,7 @@
 
 
         /* =========================================================
-           STRIP: TITLE + FILTER — SOFT (gradient lembut, bukan putih polos)
+           STRIP: TITLE + FILTER — PUTIH BERSIH (seperti Dashboard)
         ========================================================= */
         .kp-strip{
             display:flex;
@@ -175,16 +175,17 @@
             justify-content:space-between;
             flex-wrap:wrap;
             gap:10px;
-            background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
+            background:#FFFFFF !important;
             border:1px solid var(--kp-border);
+            border-bottom:1px solid #F1F5F9;
             border-radius:var(--kp-radius) var(--kp-radius) 0 0;
-            padding:14px 18px;
+            padding:16px 20px;
         }
 
         .kp-strip-title{
             font-size:15px;
-            font-weight:700;
-            color:var(--kp-blue-dark);
+            font-weight:800;
+            color:#1B2559 !important;
         }
 
         .kp-filter-form{

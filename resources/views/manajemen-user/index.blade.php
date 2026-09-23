@@ -175,9 +175,9 @@
         overflow: hidden;
     }
 
-    /* Header Bar Soft */
+    /* Header Bar Putih Bersih */
     .mu-section-header {
-        background: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
+        background: #FFFFFF !important;
         padding: 16px 22px;
         border-bottom: 1px solid #eef1f5;
         display: flex;
@@ -645,7 +645,7 @@
         animation: modalPop .2s cubic-bezier(.4,0,.2,1);
     }
     .mu-modal-header {
-        background: linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));
+        background: #FFFFFF !important;
         padding: 18px 22px;
         display: flex;
         align-items: center;

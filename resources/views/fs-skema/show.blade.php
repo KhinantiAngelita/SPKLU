@@ -31,12 +31,12 @@
 .fsf-btn-danger{padding:10px 20px;border-radius:8px;border:1px solid #FECACA;color:#B91C1C;background:#fff;font-weight:600;font-size:14px;cursor:pointer}
 
 .fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
-.fsf-mini-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#1B2559;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E2E8F0}
+.fsf-mini-card-header{background:#FFFFFF;padding:14px 20px;font-size:15px;font-weight:700;color:#1B2559;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E2E8F0}
 .fsf-mini-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
 .fsf-mini-card-body{padding:18px 20px}
 
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
-.fsp-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#1B2559;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F5F9}
+.fsp-card-header{background:#FFFFFF;padding:14px 20px;font-size:15px;font-weight:700;color:#1B2559;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F5F9}
 .fsp-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
 .fsp-card-header .fsp-loading{color:#0081AB;font-size:12px;margin-left:auto}
 .fsp-card-body{padding:18px 20px}

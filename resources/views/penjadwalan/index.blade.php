@@ -15,10 +15,10 @@
     .jdi-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
 
     .jdi-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); overflow:hidden; }
-    .jdi-card-head { display:flex; align-items:center; gap:10px; padding:20px 22px; border-bottom:1px solid #F1F5F9; background:linear-gradient(150deg, rgba(2,62,138,.06), rgba(0,129,171,.10)); }
+    .jdi-card-head { display:flex; align-items:center; gap:10px; padding:20px 22px; border-bottom:1px solid #F1F5F9; background:#FFFFFF; }
     .jdi-icon-box { width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
     .jdi-icon-box svg { width:17px; height:17px; stroke-width:2.2; }
-    .jdi-card-head h2 { font-size:15px; margin:0; color:#023E8A; font-weight:800; }
+    .jdi-card-head h2 { font-size:15px; margin:0; color:#1B2559; font-weight:800; }
     .jdi-card-head p { font-size:12.5px; margin:2px 0 0; color:#94A3B8; }
 
     .jdi-filters { display:flex; gap:10px; align-items:center; padding:16px 22px; }
@@ -58,9 +58,9 @@
 
     /* ===== Kalender besar ===== */
     .jdi-cal-card { margin-bottom:20px; }
-    .jdi-cal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:linear-gradient(150deg, rgba(2,62,138,.06), rgba(0,129,171,.10)); border-bottom:1px solid #F1F5F9; }
+    .jdi-cal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:#FFFFFF; border-bottom:1px solid #F1F5F9; }
     .jdi-cal-head-left { display:flex; align-items:center; gap:12px; }
-    .jdi-cal-head strong { font-size:16px; color:#023E8A; font-weight:800; }
+    .jdi-cal-head strong { font-size:16px; color:#1B2559; font-weight:800; }
     .jdi-cal-nav-group { display:flex; gap:6px; }
     .jdi-cal-nav-group button { padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; background:#fff; color:#475569; font-size:12.5px; font-weight:600; cursor:pointer; transition:background .12s ease; }
     .jdi-cal-nav-group button:hover { background:#F8FAFC; }
@@ -111,7 +111,7 @@
     }
     .jdi-modal-overlay.open { display:flex; }
     .jdi-modal-box { background:#fff; border-radius:16px; width:480px; max-width:100%; max-height:82vh; display:flex; flex-direction:column; box-shadow:0 30px 70px rgba(1,26,64,.3); overflow:hidden; }
-    .jdi-modal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid #F1F5F9; background:linear-gradient(150deg, rgba(2,62,138,.05), rgba(0,129,171,.08)); }
+    .jdi-modal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid #F1F5F9; background:#FFFFFF; }
     .jdi-modal-head strong { font-size:15px; color:#1B2559; display:block; }
     .jdi-modal-head span { font-size:12px; color:#94A3B8; }
     .jdi-modal-close { background:none; border:none; font-size:20px; line-height:1; color:#94A3B8; cursor:pointer; padding:4px; }

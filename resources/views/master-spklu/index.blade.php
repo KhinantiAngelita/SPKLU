@@ -141,10 +141,10 @@
     .msp-modal { background:#fff; border-radius:16px; padding:0; width:440px; max-width:92vw; box-shadow:0 20px 50px rgba(0,0,0,.2); max-height:90vh; overflow:hidden; display:flex; flex-direction:column; }
     .msp-modal-lg { width:680px; }
 
-    .msp-modal-header-bar { background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09)); padding:20px 26px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .msp-modal-header-bar { background:#FFFFFF; border-bottom:1px solid #F1F5F9; padding:20px 26px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
     .msp-modal-header-icon { width:38px; height:38px; min-width:38px; border-radius:10px; background:rgba(2,62,138,.12); color:#023E8A; display:flex; align-items:center; justify-content:center; }
     .msp-modal-header-icon svg { width:18px; height:18px; stroke-width:2; }
-    .msp-modal-header-bar h3 { margin:0 0 2px; font-size:16.5px; font-weight:800; color:#023E8A; }
+    .msp-modal-header-bar h3 { margin:0 0 2px; font-size:16.5px; font-weight:800; color:#1B2559; }
     .msp-modal-header-bar p { margin:0; font-size:12px; color:#64748B; }
 
     .msp-modal-body { padding:22px 26px; overflow-y:auto; }
