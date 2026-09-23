@@ -76,7 +76,10 @@ class RekomendasiLokasiService
             $radiusKm = $analisis['radiusById']->get($spklu->id, self::RADIUS_FALLBACK_KM);
 
             $status = $this->tentukanStatus($skor, $analisis['ambangBawah'], $analisis['ambangAtas']);
-            $kapasitasKw = (float) ($spklu->kw ?? 0);
+            $kapasitasKw = (float) ($spklu->kw ?? $spklu->getEffectiveKw());
+            $kwDisplay = ! empty($spklu->kw_detail)
+                ? str_replace(',', ', ', $spklu->kw_detail)
+                : ($kapasitasKw > 0 ? (string) $kapasitasKw : '-');
 
             return [
                 'id' => $spklu->id,
@@ -87,6 +90,7 @@ class RekomendasiLokasiService
                 'radius_km' => $radiusKm,
                 'type' => strtoupper(trim($spklu->type ?? 'AC')),
                 'kapasitas_kw' => $kapasitasKw,
+                'kw_display' => $kwDisplay,
                 'rata_rata_transaksi_bulan' => $data && $data['rata_rata_jumlah'] !== null ? round($data['rata_rata_jumlah'], 1) : null,
                 'rata_rata_durasi_menit_bulan' => $data && $data['rata_rata_durasi'] !== null ? round($data['rata_rata_durasi'], 0) : null,
                 'tren_persen' => $data['tren_persen'] ?? null,

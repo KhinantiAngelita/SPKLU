@@ -301,7 +301,7 @@
                     <p class="rl-tindak-nama">{{ $s['nama'] }}</p>
                     <p class="rl-tindak-meta">
                         {{ $s['ulp'] ?? '-' }} &middot;
-                        {{ $s['kapasitas_kw'] }} kW &middot;
+                        {{ $s['kw_display'] ?? ($s['kapasitas_kw'] ? $s['kapasitas_kw'] : '-') }} kW &middot;
                         {{ $s['rata_rata_transaksi_bulan'] ?? '-' }} transaksi/bulan &middot;
                         {{ $s['rata_rata_durasi_menit_bulan'] !== null ? number_format($s['rata_rata_durasi_menit_bulan'] / 60, 1) . ' jam' : '-' }} durasi/bulan
                     </p>

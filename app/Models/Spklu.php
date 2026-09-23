@@ -51,6 +51,38 @@ class Spklu extends Model
         return $this->belongsTo(User::class, 'validated_by');
     }
 
+    /**
+     * Mengambil daya kW efektif / nominal tertinggi.
+     * Jika kolom kw numerik null (karena dari import formatnya '22,4x120', '2x120', dsb.),
+     * ekstrak angka daya tertinggi dari kw_detail.
+     */
+    public function getEffectiveKw(): float
+    {
+        if ($this->kw !== null && (float) $this->kw > 0) {
+            return (float) $this->kw;
+        }
+
+        if (! empty($this->kw_detail)) {
+            preg_match_all('/(?:(\d+(?:\.\d+)?)\s*[xX]\s*)?(\d+(?:\.\d+)?)/', $this->kw_detail, $matches, PREG_SET_ORDER);
+            $numbers = [];
+            foreach ($matches as $m) {
+                if (! empty($m[2])) {
+                    $numbers[] = (float) $m[2];
+                }
+            }
+            if (! empty($numbers)) {
+                return (float) max($numbers);
+            }
+        }
+
+        return 0.0;
+    }
+
+    public function getEffectiveKwAttribute(): float
+    {
+        return $this->getEffectiveKw();
+    }
+
     public function transaksis()
     {
         return $this->hasMany(Transaksi::class);

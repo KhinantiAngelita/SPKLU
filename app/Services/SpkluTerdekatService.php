@@ -51,7 +51,7 @@ class SpkluTerdekatService
             return [
                 'nama' => $spklu->nama,
                 'jarak_km' => $jarak,
-                'kapasitas_kw' => $spklu->kw,
+                'kapasitas_kw' => $spklu->kw ?? $spklu->getEffectiveKw(),
                 'latitude' => (float) $spklu->latitude,
                 'longitude' => (float) $spklu->longitude,
                 'ulp' => $spklu->ulp->nama_penuh ?? null,
