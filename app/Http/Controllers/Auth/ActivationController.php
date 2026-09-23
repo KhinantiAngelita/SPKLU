@@ -16,7 +16,11 @@ class ActivationController extends Controller
 
     public function show(string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
 
         if ($user->invitationIsExpired()) {
             return view('auth.activation.expired', compact('user'));
@@ -27,25 +31,35 @@ class ActivationController extends Controller
 
     public function sendOtp(string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
         abort_if($user->invitationIsExpired(), 410, 'Link undangan sudah kedaluwarsa.');
 
         $this->otpService->sendTo($user);
 
         return redirect()
             ->route('activation.otp-form', $token)
-            ->with('success', 'Kode OTP sudah dikirim ke ' . $user->email);
+            ->with('success', 'Kode OTP sudah dikirim ke '.$user->email);
     }
 
     public function showOtpForm(string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
+
         return view('auth.activation.otp', compact('user', 'token'));
     }
 
     public function verifyOtp(Request $request, string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
 
         $request->validate(['otp' => 'required|digits:6']);
 
@@ -58,13 +72,20 @@ class ActivationController extends Controller
 
     public function showSetPassword(string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
+
         return view('auth.activation.set-password', compact('user', 'token'));
     }
 
     public function setPassword(Request $request, string $token)
     {
-        $user = User::where('invitation_token', $token)->firstOrFail();
+        $user = User::where('invitation_token', $token)->first();
+        if (! $user) {
+            return view('auth.activation.invalid');
+        }
 
         $request->validate(['password' => 'required|min:8|confirmed']);
 

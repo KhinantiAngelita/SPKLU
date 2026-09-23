@@ -11,6 +11,7 @@
             }
             return $item;
         })
+        ->filter(fn ($item) => !isset($item['children']) || count($item['children']) > 0)
         ->values(); // re-index biar submenu-N konsisten setelah difilter
 @endphp
 
@@ -74,10 +75,10 @@
     </nav>
 
     <div class="sidebar-footer">
-        <div class="sidebar-user" title="{{ auth()->user()->name }}">
+        <a href="{{ route('profile.index') }}" class="sidebar-user" title="Buka Profile Saya ({{ auth()->user()->name }})" style="text-decoration:none; color:inherit;">
             <div class="sidebar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
             <p class="sidebar-user-name">{{ auth()->user()->name }}</p>
-        </div>
+        </a>
 
         <form class="sidebar-logout-form" method="POST" action="{{ route('logout') }}">
             @csrf

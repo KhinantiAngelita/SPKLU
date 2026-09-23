@@ -8,19 +8,26 @@
 <style>
     .dsh-subtitle { color:#64748B; margin:-6px 0 20px; font-size:13.5px; }
 
-    .dsh-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px; }
-    .dsh-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); transition:transform .18s ease, box-shadow .18s ease; }
-    .dsh-card:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(15,23,42,.06), 0 14px 28px rgba(15,23,42,.09); }
-    .dsh-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
-    .dsh-card-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .dsh-card-icon svg { width:20px; height:20px; stroke-width:2; }
-    .dsh-card-label { font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:0 0 6px; }
-    .dsh-card-value { font-size:26px; font-weight:800; letter-spacing:-.02em; color:#0f172a; margin:0; }
-    .dsh-trend { display:inline-flex; align-items:center; padding:4px 11px; border-radius:999px; font-size:11.5px; font-weight:700; margin-top:10px; }
-    .dsh-trend-up { background:rgba(46,158,91,.12); color:#2E9E5B; }
-    .dsh-trend-down { background:rgba(192,57,43,.12); color:#C0392B; }
-    .dsh-trend-neutral { background:#eef2f7; color:#64748B; }
-    .dsh-trend-amber { background:rgba(232,163,23,.14); color:#92660f; }
+    .dsh-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+    .dsh-card {
+        background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #e2e8f0;
+        box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; overflow:hidden;
+        transition:box-shadow .18s ease, transform .18s ease;
+    }
+    .dsh-card::before { content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
+    .dsh-card.blue::before   { background:#0081AB; }
+    .dsh-card.green::before  { background:#2E9E5B; }
+    .dsh-card.amber::before  { background:#E8A317; }
+    .dsh-card.purple::before { background:#7C3AED; }
+    .dsh-card:hover { box-shadow:0 8px 20px rgba(15,23,42,.08); transform:translateY(-2px); }
+    .dsh-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 6px; }
+    .dsh-card-value { font-size:26px; font-weight:800; color:#0f172a; margin:0 0 4px; }
+    .dsh-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
+    .dsh-trend { display:inline-flex; align-items:center; font-size:12px; font-weight:600; margin:0; }
+    .dsh-trend-up { color:#2E9E5B; }
+    .dsh-trend-down { color:#C0392B; }
+    .dsh-trend-neutral { color:#64748B; }
+    .dsh-trend-amber { color:#E8A317; font-weight:600; }
 
     /* Kolom kiri (Kalender) & kanan (Jadwal Terdekat) — tinggi TETAP, bukan ngikutin isi */
     .dsh-grid-2col { display:grid; grid-template-columns:1.3fr 1fr; gap:20px; margin-bottom:20px; align-items:stretch; }
@@ -134,48 +141,28 @@
 
 
 <div class="dsh-card-grid">
-    <div class="dsh-card">
-        <div class="dsh-card-top">
-            <div>
-                <p class="dsh-card-label">Total SPKLU Terpasang</p>
-                <p class="dsh-card-value">{{ number_format($totalSpkluTerpasang) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">unit</span></p>
-            </div>
-            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12)); color:#023E8A;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-        </div>
-        <span class="dsh-trend dsh-trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span>
+    <div class="dsh-card blue">
+        <div class="dsh-card-label">Total SPKLU Terpasang</div>
+        <div class="dsh-card-value">{{ number_format($totalSpkluTerpasang) }} <span style="font-size:14px; font-weight:600; color:#64748B;">unit</span></div>
+        <div class="dsh-card-note"><span class="dsh-trend dsh-trend-up">+{{ $spkluBaruBulanIni ?? 0 }} bulan ini</span></div>
     </div>
 
-    <div class="dsh-card">
-        <div class="dsh-card-top">
-            <div>
-                <p class="dsh-card-label">Pengajuan On-Progress</p>
-                <p class="dsh-card-value">{{ number_format($pengajuanOnProgress) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">sesi</span></p>
-            </div>
-            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(232,163,23,.15), rgba(232,163,23,.06)); color:#E8A317;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-        </div>
-        <span class="dsh-trend dsh-trend-neutral">vs bulan lalu</span>
+    <div class="dsh-card amber">
+        <div class="dsh-card-label">Pengajuan On-Progress</div>
+        <div class="dsh-card-value">{{ number_format($pengajuanOnProgress) }} <span style="font-size:14px; font-weight:600; color:#64748B;">sesi</span></div>
+        <div class="dsh-card-note"><span class="dsh-trend dsh-trend-neutral">sesi aktif vs bulan lalu</span></div>
     </div>
 
-    <div class="dsh-card">
-        <div class="dsh-card-top">
-            <div>
-                <p class="dsh-card-label">Kandidat Aktif</p>
-                <p class="dsh-card-value">{{ number_format($kandidatAktif) }} <span style="font-size:13px; font-weight:500; color:#94a3b8;">lokasi</span></p>
-            </div>
-            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(46,158,91,.14), rgba(46,158,91,.06)); color:#2E9E5B;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-        </div>
-        <span class="dsh-trend dsh-trend-amber">{{ $kandidatButuhTindakLanjut }} menunggu tindak lanjut</span>
+    <div class="dsh-card green">
+        <div class="dsh-card-label">Kandidat Aktif</div>
+        <div class="dsh-card-value">{{ number_format($kandidatAktif) }} <span style="font-size:14px; font-weight:600; color:#64748B;">lokasi</span></div>
+        <div class="dsh-card-note"><span class="dsh-trend dsh-trend-amber">{{ $kandidatButuhTindakLanjut }} butuh tindak lanjut</span></div>
     </div>
 
-    <div class="dsh-card">
-        <div class="dsh-card-top">
-            <div>
-                <p class="dsh-card-label">Jadwal Mendatang</p>
-                <p class="dsh-card-value">{{ ($jadwalHariIni->count() + $jadwalBesok->count()) }}</p>
-            </div>
-            <div class="dsh-card-icon" style="background:linear-gradient(135deg, rgba(147,51,234,.14), rgba(147,51,234,.06)); color:#9333ea;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        </div>
-        <span class="dsh-trend dsh-trend-neutral">minggu ini</span>
+    <div class="dsh-card purple">
+        <div class="dsh-card-label">Jadwal Mendatang</div>
+        <div class="dsh-card-value">{{ ($jadwalHariIni->count() + $jadwalBesok->count()) }} <span style="font-size:14px; font-weight:600; color:#64748B;">agenda</span></div>
+        <div class="dsh-card-note"><span class="dsh-trend dsh-trend-neutral">terjadwal minggu ini</span></div>
     </div>
 </div>
 

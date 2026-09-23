@@ -19,6 +19,7 @@
             </a>
         </div>
 
+        @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
         {{-- ============ FORM TAMBAH KUNJUNGAN ============ --}}
         <div id="riwayat-error" style="display:none; margin-bottom:12px; padding:10px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; color:#b91c1c; font-size:13px;"></div>
         <h3>Tambah Kunjungan Baru</h3>
@@ -51,6 +52,7 @@
                 <button type="submit" class="btn btn-primary">Tambah Kunjungan</button>
             </div>
         </form>
+        @endif
     </div>
 </dialog>
 

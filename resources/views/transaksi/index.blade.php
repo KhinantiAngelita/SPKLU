@@ -227,7 +227,6 @@
 
 @php
     $paletWarnaTren = ['#023E8A', '#E8A317', '#2E9E5B', '#C0392B', '#6D5DD3', '#0EA5B7'];
-    // Konsisten 3 huruf semua (sebelumnya "Sept" 4 huruf, beda pola dari yang lain)
     $namaBulanSingkat = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nop','Des'];
     $namaBulanPenuh = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     $bulanSingkatTerpilih = array_slice($namaBulanSingkat, $bulanAwal - 1, $bulanAkhir - $bulanAwal + 1);
@@ -321,6 +320,50 @@
     @endif
 </div>
 
+<div class="surface-card" style="margin-bottom: 20px;">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
+            <div>
+                <h2>Kali Transaksi per SPKLU</h2>
+                <p>Jumlah transaksi bulanan, {{ $periodeMatriks->count() }} bulan terakhir</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="trx-data-table-wrap">
+        <table class="trx-data-table" style="min-width:1200px;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;">No</th>
+                    <th style="text-align:left;">Unit UP</th>
+                    <th style="text-align:left;">SPKLU</th>
+                    @foreach ($periodeMatriks as $p)
+                        {{-- Format 'Y-m' atau 'Ym' diubah menjadi Nama Bulan Bahasa Indonesia --}}
+                        <th>{{ \Illuminate\Support\Carbon::parse(str_contains($p, '-') ? $p : substr($p,0,4).'-'.substr($p,4,2))->translatedFormat('F Y') }}</th>
+                    @endforeach
+                    <th class="total-col">Rata-Rata</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($matriksKaliTransaksi as $row)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $row['kode_unit'] ?? '—' }}</td>
+                        <td style="text-align:left; font-weight:600;">{{ $row['nama'] }}</td>
+                        @foreach ($row['per_bulan'] as $nilai)
+                            <td>{{ $nilai !== null ? number_format($nilai, 0, ',', '.') : '—' }}</td>
+                        @endforeach
+                        <td class="total-col">{{ $row['rata_rata'] !== null ? number_format($row['rata_rata'], 0, ',', '.') : '—' }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="{{ $periodeMatriks->count() + 4 }}" style="text-align:center; color:#94a3b8;">Belum ada data transaksi.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="surface-card">
     <div class="section-header-bar">
         <div class="section-header-bar-left">
@@ -355,25 +398,6 @@
         </tbody>
     </table>
 </div>
-
-@if ($aliasList->count() > 0 && in_array(auth()->user()->role, ['super_admin', 'pengelola']))
-<div class="surface-card">
-    <div class="section-header-bar">
-        <div class="section-header-bar-left">
-            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-            <div><h2>Pemetaan Alias SPKLU</h2></div>
-        </div>
-    </div>
-    <table class="trx-table">
-        <thead><tr><th>Nama di File Sumber</th><th>Dipetakan ke SPKLU</th></tr></thead>
-        <tbody>
-            @foreach ($aliasList as $alias)
-                <tr><td>{{ $alias->nama_asli }}</td><td>{{ $alias->spklu->nama ?? '—' }}</td></tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endif
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>

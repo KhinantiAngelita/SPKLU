@@ -6,24 +6,24 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FsSkemaController;
+use App\Http\Controllers\KandidatPeringkatController;
 use App\Http\Controllers\KandidatPrioritasController;
+use App\Http\Controllers\KandidatSpkluTerdekatController;
 use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\MasterParameterController;
 use App\Http\Controllers\MasterSpkluController;
 use App\Http\Controllers\Monitoring\PengajuanController;
 use App\Http\Controllers\Monitoring\ProbabilitasController;
 use App\Http\Controllers\PenjadwalanController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProyeksiEnergiController;
 use App\Http\Controllers\RekomendasiLokasiController;
 use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\KandidatSpkluTerdekatController;
-use App\Http\Controllers\KandidatPeringkatController;
 use Illuminate\Support\Facades\Route;
-
 
 // ============ ROOT ============
 
 Route::get('/', fn () => redirect()->route('login'));
-
 
 // ============ LOGIN (tanpa auth) ============
 
@@ -44,7 +44,6 @@ Route::prefix('login/first-otp')->name('login.first-otp.')->group(function () {
     Route::post('resend', [LoginController::class, 'resendFirstOtp'])
         ->name('resend');
 });
-
 
 // ============ AKTIVASI UNDANGAN (tanpa auth) ============
 
@@ -69,7 +68,6 @@ Route::prefix('activation')->name('activation.')->group(function () {
         ->name('store-password');
 });
 
-
 // ============ GOOGLE OAUTH (tanpa auth) ============
 
 Route::prefix('auth/google')->name('auth.google.')->group(function () {
@@ -80,7 +78,6 @@ Route::prefix('auth/google')->name('auth.google.')->group(function () {
     Route::get('callback', [GoogleAuthController::class, 'callback'])
         ->name('callback');
 });
-
 
 // ============ HALAMAN UTAMA (butuh login) ============
 
@@ -103,6 +100,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('auth/google/link', [GoogleAuthController::class, 'link'])
         ->name('auth.google.link');
 
+    // ============ PROFILE ============
+
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+    });
 
     // ============ MASTER SPKLU ============
 
@@ -123,13 +126,22 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin,pengelola')
             ->name('import');
 
-        // BARU: dipanggil via AJAX dari form Tambah/Edit SPKLU saat dropdown
-        // ULP diganti — nyariin kode_unit yang paling sering dipakai SPKLU
-        // lain di ULP yang sama (lihat MasterSpkluController::kodeUnitByUlp).
-        // Sengaja gak dikasih middleware role tambahan, sama kayak 'index' —
-        // read-only, siapa aja yang bisa buka Master SPKLU boleh manggil ini.
         Route::get('kode-unit-by-ulp/{ulpMapping}', [MasterSpkluController::class, 'kodeUnitByUlp'])
             ->name('kode-unit-by-ulp');
+
+        // ---- PEMETAAN ALIAS (dipindah dari Transaksi, controller & route sudah konsisten) ----
+        Route::post('alias', [MasterSpkluController::class, 'storeAlias'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('alias.store');
+
+        Route::put('alias/{spkluAlias}', [MasterSpkluController::class, 'updateAlias'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('alias.update');
+
+        Route::post('alias/bulk', [MasterSpkluController::class, 'storeAliasBulk'])
+            ->middleware('role:super_admin,pengelola')
+            ->name('alias.bulk-store');
+        // ---------------------------------------------------------------------------------------
 
         Route::middleware('role:super_admin')->group(function () {
 
@@ -144,8 +156,8 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-
     // ============ TRANSAKSI ============
+    // Catatan: TIDAK ADA lagi route alias.* di sini — sudah full pindah ke grup master-spklu di atas.
 
     Route::prefix('transaksi')->name('transaksi.')->group(function () {
 
@@ -160,18 +172,14 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin')
             ->name('upload.destroy');
 
-        // Upload ulang file untuk riwayat yang sudah ada
         Route::post('upload/{transaksiUpload}/reupload', [TransaksiController::class, 'reupload'])
             ->middleware('role:super_admin,pengelola')
             ->name('upload.reupload');
 
-        // Diperbaiki: Path & nama route tidak double, ditambah middleware role
         Route::post('upload/{transaksiUpload}/reprocess', [TransaksiController::class, 'reprocess'])
             ->middleware('role:super_admin,pengelola')
             ->name('upload.reprocess');
 
-        // Dipoll dari frontend untuk cek status import yang jalan di
-        // background lewat queue (ProcessTransaksiImport).
         Route::get('upload/{transaksiUpload}/status', [TransaksiController::class, 'uploadStatus'])
             ->name('upload.status');
 
@@ -182,19 +190,9 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin,pengelola')
             ->name('import');
 
-        Route::post('alias', [TransaksiController::class, 'storeAlias'])
-            ->middleware('role:super_admin,pengelola')
-            ->name('alias.store');
-
-        Route::put('alias/{spkluAlias}', [TransaksiController::class, 'updateAlias'])
-            ->middleware('role:super_admin,pengelola')
-            ->name('alias.update');
-
-        Route::post('alias/bulk', [TransaksiController::class, 'storeAliasBulk'])
-            ->middleware('role:super_admin,pengelola')
-            ->name('alias.bulk-store');
+        Route::get('proyeksi', [ProyeksiEnergiController::class, 'index'])
+            ->name('proyeksi');
     });
-
 
     // ============ MANAJEMEN USER ============
 
@@ -222,7 +220,6 @@ Route::middleware(['auth'])->group(function () {
                 ->name('destroy');
         });
 
-
     // ============ MASTER PARAMETER ============
 
     Route::middleware('role:super_admin')
@@ -243,7 +240,6 @@ Route::middleware(['auth'])->group(function () {
                 ->name('target.store');
         });
 
-
     // ============ MONITORING PROBABILITAS ============
 
     Route::prefix('monitoring/probabilitas')
@@ -254,15 +250,19 @@ Route::middleware(['auth'])->group(function () {
                 ->name('index');
 
             Route::post('/', [ProbabilitasController::class, 'store'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('store');
 
             Route::get('/{probabilitas}/edit-data', [ProbabilitasController::class, 'editData'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('edit-data');
 
             Route::put('/{probabilitas}', [ProbabilitasController::class, 'update'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('update');
 
             Route::post('/{probabilitas}/tahapan', [ProbabilitasController::class, 'storeTahapan'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('tahapan.store');
 
             Route::get('/{probabilitas}/tahapan/{tahap}/riwayat', [ProbabilitasController::class, 'riwayatLengkap'])
@@ -272,9 +272,9 @@ Route::middleware(['auth'])->group(function () {
                 ->name('tahapan.riwayat');
 
             Route::delete('/{probabilitas}/tahapan/{tahapanProbing}', [ProbabilitasController::class, 'destroyTahapan'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('tahapan.destroy');
         });
-
 
     // ============ MONITORING KANDIDAT ============
 
@@ -283,9 +283,13 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
 
             Route::get('/create', [ProbabilitasController::class, 'create'])
+                ->middleware('role:super_admin,pengelola')
                 ->name('create');
         });
 
+    Route::get('monitoring/kandidat-baru/create', [ProbabilitasController::class, 'create'])
+        ->middleware('role:super_admin,pengelola')
+        ->name('monitoring.kandidat-baru.create');
 
     // ============ KANDIDAT PRIORITAS ============
 
@@ -293,13 +297,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('kandidat-prioritas.index');
 
     Route::post('kandidat-prioritas/{kandidat}/spklu-terdekat', [KandidatSpkluTerdekatController::class, 'store'])
+        ->middleware('role:super_admin,pengelola')
         ->name('kandidat-prioritas.spklu-terdekat.store');
 
     Route::post('kandidat-prioritas/{kandidat}/spklu-terdekat/otomatis', [KandidatSpkluTerdekatController::class, 'ambilOtomatis'])
+        ->middleware('role:super_admin,pengelola')
         ->name('kandidat-prioritas.spklu-terdekat.otomatis');
 
     Route::get('/kandidat-peringkat', [KandidatPeringkatController::class, 'index2'])
-    ->name('kandidat-peringkat.index');   
+        ->name('kandidat-peringkat.index');
 
     // ============ REKOMENDASI LOKASI ============
 
@@ -320,7 +326,6 @@ Route::middleware(['auth'])->group(function () {
                 ->name('validasi');
         });
 
-
     // ============ FS SKEMA ============
 
     Route::prefix('fs-skema')
@@ -331,12 +336,15 @@ Route::middleware(['auth'])->group(function () {
                 ->name('index');
 
             Route::get('/create', [FsSkemaController::class, 'create'])
+                ->middleware('role:super_admin,pemasaran,pengelola')
                 ->name('create');
 
             Route::post('/', [FsSkemaController::class, 'store'])
+                ->middleware('role:super_admin,pemasaran,pengelola')
                 ->name('store');
 
-            Route::post('/preview', [FsSkemaController::class, 'preview'])
+            Route::match(['post', 'put'], '/preview', [FsSkemaController::class, 'preview'])
+                ->middleware('role:super_admin,pemasaran,pengelola')
                 ->name('preview');
 
             Route::get('/{fsSkema}', [FsSkemaController::class, 'show'])
@@ -384,5 +392,15 @@ Route::middleware(['auth'])->group(function () {
                 ->middleware('role:super_admin')
                 ->name('destroy');
         });
+
+    // ============ NOTIFIKASI ============
+
+    Route::post('/notifikasi/baca-semua', function () {
+        if (auth()->check()) {
+            auth()->user()->update(['last_read_notification_at' => now()]);
+        }
+
+        return response()->json(['status' => 'ok']);
+    })->name('notifikasi.baca-semua');
 
 });

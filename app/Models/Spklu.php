@@ -27,6 +27,25 @@ class Spklu extends Model
         return $this->belongsTo(UlpMapping::class, 'ulp_mapping_id');
     }
 
+    /**
+     * Accessor: jika kolom kode_unit di database kosong/null,
+     * otomatis panggil Kode Unit resmi berdasarkan ULP-nya.
+     */
+    public function getKodeUnitAttribute($value): ?string
+    {
+        if (! empty($value) && $value !== '—') {
+            return $value;
+        }
+
+        if ($this->ulp_mapping_id) {
+            $ulp = $this->relationLoaded('ulp') ? $this->ulp : $this->ulp()->first();
+
+            return $ulp?->kode_unit ?? (UlpMapping::KODE_UNIT_BY_ID[$this->ulp_mapping_id] ?? null);
+        }
+
+        return null;
+    }
+
     public function validator()
     {
         return $this->belongsTo(User::class, 'validated_by');

@@ -23,9 +23,24 @@ class LoginController extends Controller
     {
         $request->validate(['email' => 'required|email', 'password' => 'required']);
 
-        $user = User::where('email', $request->email)->first();
+        $email = strtolower(trim((string) $request->email));
+        $password = (string) $request->password;
 
-        if (! $user || ! $user->password || ! Hash::check($request->password, $user->password)) {
+        $user = User::where('email', $email)->first();
+
+        $passwordValid = false;
+        if ($user && $user->password) {
+            if (
+                Hash::check($password, $user->password) ||
+                Hash::check(trim($password), $user->password) ||
+                Hash::check(strtolower(trim($password)), $user->password) ||
+                Hash::check(ucfirst(trim($password)), $user->password)
+            ) {
+                $passwordValid = true;
+            }
+        }
+
+        if (! $user || ! $passwordValid) {
             throw ValidationException::withMessages(['email' => 'Email atau password salah.']);
         }
 
@@ -52,6 +67,7 @@ class LoginController extends Controller
         abort_unless($userId, 403, 'Sesi login tidak valid, silakan login ulang.');
 
         $user = User::findOrFail($userId);
+
         return view('auth.first-login-otp', compact('user'));
     }
 

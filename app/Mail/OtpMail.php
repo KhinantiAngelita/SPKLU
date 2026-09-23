@@ -15,7 +15,10 @@ class OtpMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Kode Aktivasi Akun — Sistem SPKLU')
-            ->markdown('emails.otp', ['code' => $this->code]);
+        return $this->subject('Kode Aktivasi Akun — Sistem SPKLU PLN UP3 Bogor')
+            ->view('emails.otp', [
+                'user' => $this->user,
+                'code' => $this->code,
+            ]);
     }
 }

@@ -21,4 +21,4 @@ return new class extends Migration
             $table->dropColumn(['alamat', 'nomor_telepon', 'pic']);
         });
     }
-};              
+};

@@ -673,7 +673,7 @@ async function submitAliasBulk(containerSelector, btn) {
     btn.textContent = 'Menyimpan...';
 
     try {
-        const res = await fetch('{{ route('transaksi.alias.bulk-store') }}', {
+        const res = await fetch('{{ route('master-spklu.alias.bulk-store') }}', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
             body: JSON.stringify({ mappings }),
@@ -788,7 +788,7 @@ document.getElementById('btn-simpan-edit-alias')?.addEventListener('click', asyn
     btn.textContent = 'Menyimpan...';
 
     try {
-        const res = await fetch(`/transaksi/alias/${aliasId}`, {
+        const res = await fetch(`/master-spklu/alias/${aliasId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
             body: JSON.stringify({ spklu_id: spkluId }),

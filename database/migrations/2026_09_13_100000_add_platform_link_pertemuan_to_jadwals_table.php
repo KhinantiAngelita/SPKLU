@@ -9,15 +9,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('jadwals', function (Blueprint $table) {
-            $table->string('platform')->nullable()->after('lokasi');
-            $table->string('link_pertemuan')->nullable()->after('platform');
+            if (! Schema::hasColumn('jadwals', 'platform')) {
+                $table->string('platform')->nullable()->after('lokasi');
+            }
+            if (! Schema::hasColumn('jadwals', 'link_pertemuan')) {
+                $table->string('link_pertemuan')->nullable()->after('platform');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('jadwals', function (Blueprint $table) {
-            $table->dropColumn(['platform', 'link_pertemuan']);
+            $drop = [];
+            if (Schema::hasColumn('jadwals', 'platform')) {
+                $drop[] = 'platform';
+            }
+            if (Schema::hasColumn('jadwals', 'link_pertemuan')) {
+                $drop[] = 'link_pertemuan';
+            }
+            if (! empty($drop)) {
+                $table->dropColumn($drop);
+            }
         });
     }
 };

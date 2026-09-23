@@ -71,13 +71,15 @@
 .fsf-combobox-option.selected { background:rgba(0,129,171,.12); color:#023E8A; font-weight:600; }
 .fsf-combobox-empty { display:none; padding:16px 12px; font-size:13px; color:#94A3B8; text-align:center; }
 
-/* Ringkasan Kelayakan Lokasi -- versi tertanam di kolom kiri (bawah Penilaian Lokasi) */
 .fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
-.fsf-mini-card-header{background:rgba(0,129,171,.10);padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E2E8F0}
+.fsf-mini-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
 .fsf-mini-card-body{padding:18px 20px}
 
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
-.fsp-card-header{background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fsp-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F5F9}
+.fsp-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
+.fsp-card-header .fsp-loading{color:#0081AB;font-size:12px;margin-left:auto}
 .fsp-card-body{padding:18px 20px}
 .fsp-table{width:100%;border-collapse:collapse;font-size:13px}
 .fsp-table th{text-align:left;color:#94A3B8;font-weight:600;padding:8px 4px;border-bottom:1px solid #F1F5F9;white-space:nowrap}
@@ -287,7 +289,10 @@
             {{-- Ringkasan Kelayakan Lokasi — dipindah ke kiri, tepat di bawah
                  Penilaian Lokasi supaya nyambung sama input poin di atasnya. --}}
             <div class="fsf-mini-card">
-                <div class="fsf-mini-card-header">Ringkasan Kelayakan Lokasi</div>
+                <div class="fsf-mini-card-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Ringkasan Kelayakan Lokasi
+                </div>
                 <div class="fsf-mini-card-body">
                     <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
                     <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
@@ -307,7 +312,10 @@
     {{-- KOLOM KANAN: LIVE PREVIEW --}}
     <div>
         <div class="fsp-card">
-            <div class="fsp-card-header">3 SPKLU Terdekat <span id="fsp-loading-spklu" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                3 SPKLU Terdekat <span id="fsp-loading-spklu" class="fsp-loading" style="display:none">memuat…</span>
+            </div>
             <div class="fsp-card-body">
                 <div id="fsp-spklu-empty" class="fsp-empty">Isi Titik Kordinat untuk melihat SPKLU terdekat.</div>
                 <table class="fsp-table" id="fsp-spklu-table" style="display:none">
@@ -319,7 +327,10 @@
 
         {{-- Proyeksi ROI: tabel detail + estimasi teks --}}
         <div class="fsp-card">
-            <div class="fsp-card-header">Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span>
+            </div>
             <div class="fsp-card-body">
                 <div id="fsp-roi-empty" class="fsp-empty">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
                 <div id="fsp-roi-content" style="display:none">
@@ -334,7 +345,10 @@
 
         {{-- Grafik Proyeksi ROI --}}
         <div class="fsp-card">
-            <div class="fsp-card-header">Grafik Proyeksi ROI</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                Grafik Proyeksi ROI
+            </div>
             <div class="fsp-card-body">
                 <div id="fsp-roi-chart-empty" class="fsp-empty">Grafik akan tampil setelah data Proyeksi ROI di atas terisi.</div>
                 <div id="fsp-roi-chart-wrap" style="display:none">
@@ -344,7 +358,10 @@
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Ringkasan Analisis</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Ringkasan Analisis
+            </div>
             <div class="fsp-card-body">
                 <p class="fsp-narasi-placeholder" id="fsp-narasi">Lengkapi form untuk melihat ringkasan analisis.</p>
             </div>
@@ -553,6 +570,7 @@ function formatRupiah(angka) {
 async function jalankanPreview() {
     const form = document.getElementById('form-fs-skema');
     const formData = new FormData(form);
+    formData.delete('_method');
 
     document.getElementById('fsp-loading-spklu').style.display = 'inline';
     document.getElementById('fsp-loading-roi').style.display = 'inline';
@@ -651,10 +669,11 @@ function renderRoi(roi) {
     labelTahun.textContent = roi.masa_kontrak_tahun;
 
     if (roi.tipe === 'skema_2') {
-        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
+        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
             <td>${r.tahun}${r.sudah_bep ? ' ✓BEP' : ''}</td>
             <td>${r.mobil_per_hari}</td>
+            <td>${Number(r.transaksi_per_tahun).toLocaleString('id-ID')}</td>
             <td>${Number(r.energi_kwh_per_tahun).toLocaleString('id-ID')}</td>
             <td>${formatRupiah(r.pendapatan_mitra)}</td>
             <td>${formatRupiah(r.kumulatif)}</td>
@@ -663,9 +682,11 @@ function renderRoi(roi) {
         document.getElementById('fsp-estimasi-roi').innerHTML =
             `<strong>Estimasi ROI:</strong> ${roi.estimasi_roi_teks}`;
     } else {
-        head.innerHTML = '<tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
+        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
             <td>${r.tahun}</td>
+            <td>${r.mobil_per_hari}</td>
+            <td>${Number(r.transaksi_per_tahun).toLocaleString('id-ID')}</td>
             <td>${Number(r.energi_kwh_per_tahun).toLocaleString('id-ID')}</td>
             <td>${formatRupiah(r.pendapatan_mesin)}${r.sudah_bep_mesin ? ' ✓BEP' : ''}</td>
             <td>${formatRupiah(r.pendapatan_lahan)}${r.sudah_bep_lahan ? ' ✓BEP' : ''}</td>

@@ -31,11 +31,14 @@
 .fsf-btn-danger{padding:10px 20px;border-radius:8px;border:1px solid #FECACA;color:#B91C1C;background:#fff;font-weight:600;font-size:14px;cursor:pointer}
 
 .fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
-.fsf-mini-card-header{background:rgba(0,129,171,.10);padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E2E8F0}
+.fsf-mini-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
 .fsf-mini-card-body{padding:18px 20px}
 
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
-.fsp-card-header{background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fsp-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F5F9}
+.fsp-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
+.fsp-card-header .fsp-loading{color:#0081AB;font-size:12px;margin-left:auto}
 .fsp-card-body{padding:18px 20px}
 .fsp-table{width:100%;border-collapse:collapse;font-size:13px}
 .fsp-table th{text-align:left;color:#94A3B8;font-weight:600;padding:8px 4px;border-bottom:1px solid #F1F5F9;white-space:nowrap}
@@ -185,7 +188,10 @@
         </div>
 
         <div class="fsf-mini-card">
-            <div class="fsf-mini-card-header">Ringkasan Kelayakan Lokasi</div>
+            <div class="fsf-mini-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Ringkasan Kelayakan Lokasi
+            </div>
             <div class="fsf-mini-card-body">
                 <div class="fsp-poin-row"><span>Fasilitas</span><span>{{ $fsSkema->poin_fasilitas }} / 40</span></div>
                 <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span>{{ $fsSkema->poin_kesiapan_jaringan }} / 20</span></div>
@@ -198,11 +204,12 @@
             </div>
         </div>
 
-        {{-- Riwayat Analisis — dipindah kesini, tetap di kolom kiri sama
-             seperti sebelumnya, cuma sekarang pakai gaya fsf-mini-card yang
-             konsisten dengan sisa halaman. --}}
+        {{-- Riwayat Analisis --}}
         <div class="fsf-mini-card">
-            <div class="fsf-mini-card-header">Riwayat Analisis</div>
+            <div class="fsf-mini-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Riwayat Analisis
+            </div>
             <div class="fsf-mini-card-body">
                 @if ($riwayatAnalisis->isEmpty())
                     <p class="fsr-empty">Belum ada riwayat perhitungan untuk FS Skema ini.</p>
@@ -247,7 +254,10 @@
          sudah pasti (bukan live-preview) — diambil dari controller show(). --}}
     <div>
         <div class="fsp-card">
-            <div class="fsp-card-header">3 SPKLU Terdekat</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                3 SPKLU Terdekat
+            </div>
             <div class="fsp-card-body">
                 @if (empty($spkluTerdekat))
                     <div class="fsp-empty">Titik koordinat belum diisi, atau belum ada SPKLU aktif dengan koordinat lengkap.</div>
@@ -277,16 +287,20 @@
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Proyeksi ROI {{ $proyeksiRoi['masa_kontrak_tahun'] }} Tahun</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Proyeksi ROI {{ $proyeksiRoi['masa_kontrak_tahun'] }} Tahun
+            </div>
             <div class="fsp-card-body">
                 @if ($proyeksiRoi['tipe'] === 'skema_2')
                     <table class="fsp-table">
-                        <thead><tr><th>Tahun</th><th>Mobil/hari</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr></thead>
+                        <thead><tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr></thead>
                         <tbody>
                             @foreach ($proyeksiRoi['tahunan'] as $row)
                                 <tr>
                                     <td>{{ $row['tahun'] }} @if($row['sudah_bep'])<span class="fsp-bep-tag">BEP</span>@endif</td>
                                     <td>{{ number_format($row['mobil_per_hari'], 1) }}</td>
+                                    <td>{{ number_format($row['transaksi_per_tahun'], 0, ',', '.') }}</td>
                                     <td>{{ number_format($row['energi_kwh_per_tahun'], 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($row['pendapatan_mitra'], 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($row['kumulatif'], 0, ',', '.') }}</td>
@@ -299,11 +313,13 @@
                     </div>
                 @else
                     <table class="fsp-table">
-                        <thead><tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr></thead>
+                        <thead><tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr></thead>
                         <tbody>
                             @foreach ($proyeksiRoi['tahunan'] as $row)
                                 <tr>
                                     <td>{{ $row['tahun'] }}</td>
+                                    <td>{{ number_format($row['mobil_per_hari'], 1) }}</td>
+                                    <td>{{ number_format($row['transaksi_per_tahun'], 0, ',', '.') }}</td>
                                     <td>{{ number_format($row['energi_kwh_per_tahun'], 0, ',', '.') }}</td>
                                     <td>Rp {{ number_format($row['pendapatan_mesin'], 0, ',', '.') }} @if($row['sudah_bep_mesin'])<span class="fsp-bep-tag">BEP</span>@endif</td>
                                     <td>Rp {{ number_format($row['pendapatan_lahan'], 0, ',', '.') }} @if($row['sudah_bep_lahan'])<span class="fsp-bep-tag">BEP</span>@endif</td>
@@ -320,18 +336,15 @@
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Grafik Proyeksi ROI</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                Grafik Proyeksi ROI
+            </div>
             <div class="fsp-card-body">
                 <canvas id="fsp-roi-chart" height="220"></canvas>
             </div>
         </div>
 
-        <div class="fsp-card">
-            <div class="fsp-card-header">Ringkasan Analisis</div>
-            <div class="fsp-card-body">
-                <p class="fsp-narasi">{{ $fsSkema->narasi_analisis }}</p>
-            </div>
-        </div>
     </div>
 </div>
 @endsection

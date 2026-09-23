@@ -20,62 +20,76 @@
     .msp-btn-danger { background:#C0392B; color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(192,57,43,.35); }
     .msp-btn-danger:hover { transform:translateY(-1px); background:#a8302a; }
 
-    .msp-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:24px; }
+    .msp-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
     .msp-card {
-        background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5;
-        box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05);
-        display:flex; justify-content:space-between; align-items:center; min-height:96px;
-        transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #e2e8f0;
+        box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; overflow:hidden;
+        transition:box-shadow .18s ease, transform .18s ease;
     }
-    .msp-card:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(15,23,42,.06), 0 12px 28px rgba(15,23,42,.08); border-color:rgba(0,129,171,.22); }
-    .msp-card-label { font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 8px; }
-    .msp-card-value { font-size:26px; font-weight:700; letter-spacing:-.01em; color:#101828; margin:0; line-height:1.2; }
-    .msp-card-note { font-size:11px; color:#94a3b8; margin:6px 0 0; }
+    .msp-card::before { content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
+    .msp-card.blue::before  { background:#0081AB; }
+    .msp-card.green::before { background:#2E9E5B; }
+    .msp-card.amber::before { background:#E8A317; }
+    .msp-card.rose::before  { background:#C0392B; }
+    .msp-card:hover { box-shadow:0 8px 20px rgba(15,23,42,.08); transform:translateY(-2px); }
+    .msp-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 6px; }
+    .msp-card-value { font-size:26px; font-weight:800; color:#0f172a; margin:0 0 4px; line-height:1.2; }
+    .msp-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
 
-    /* Dual-stat: dua angka dalam satu card, masing-masing baris sendiri + dot warna, biar tinggi card konsisten */
-    .msp-dual-stat { display:flex; flex-direction:column; gap:4px; }
-    .msp-dual-stat-row { display:flex; align-items:center; gap:7px; font-size:16.5px; font-weight:700; color:#101828; }
-    .msp-dot { width:8px; height:8px; border-radius:999px; flex-shrink:0; }
-    .msp-dot-blue { background:#023E8A; }
-    .msp-dot-slate { background:#94a3b8; }
-    .msp-dot-amber { background:#E8A317; }
-
-    /* Icon boxes — overlay rgba, konsisten dengan halaman lain di sistem */
-    .msp-card-icon { width:46px; height:46px; min-width:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .msp-card-icon svg { width:21px; height:21px; stroke-width:1.8; }
-    .msp-ic-blue  { background:linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12)); color:#023E8A; }
-    .msp-ic-green { background:linear-gradient(135deg, rgba(46,158,91,.14), rgba(46,158,91,.06)); color:#2E9E5B; }
-    .msp-ic-amber { background:linear-gradient(135deg, rgba(232,163,23,.15), rgba(232,163,23,.06)); color:#E8A317; }
-    .msp-ic-red   { background:linear-gradient(135deg, rgba(192,57,43,.14), rgba(192,57,43,.06)); color:#C0392B; }
+    .msp-split-row { display:flex; gap:18px; margin:6px 0 4px; }
+    .msp-value-split { font-size:22px; font-weight:800; color:#0f172a; display:flex; flex-direction:column; }
+    .msp-value-split small { font-size:11px; font-weight:600; color:#64748B; margin-top:2px; }
 
     .msp-banner { background:linear-gradient(135deg, rgba(255,198,41,.12), rgba(232,163,23,.08)); border:1px solid rgba(232,163,23,.35); border-radius:12px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; color:#92660f; font-size:13.5px; font-weight:500; gap:12px; flex-wrap:wrap; }
     .msp-banner-danger { background:linear-gradient(135deg, rgba(192,57,43,.10), rgba(192,57,43,.06)); border:1px solid rgba(192,57,43,.3); color:#C0392B; }
     .msp-banner-text { display:flex; align-items:center; gap:8px; }
     .msp-banner-text svg { width:16px; height:16px; stroke-width:2; flex-shrink:0; }
 
-    .msp-table-box { background:#fff; border-radius:18px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 20px rgba(15,23,42,.05); overflow:hidden; }
-    .msp-table-head { padding:22px 24px 0; display:flex; align-items:center; gap:10px; }
-
-    .msp-table-head-icon { width:30px; height:30px; min-width:30px; border-radius:9px; background:rgba(0,129,171,.12); color:#023E8A; display:flex; align-items:center; justify-content:center; }
-    .msp-table-head-icon svg { width:16px; height:16px; stroke-width:1.9; }
-    .msp-table-head h2 { margin:0; font-size:16.5px; font-weight:700; color:#0f172a; }
-
-    .msp-filters { display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:16px 24px 20px; }
-    .msp-field { position:relative; }
-    .msp-field svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; stroke-width:2; color:#94a3b8; pointer-events:none; }
+    .msp-table-box { background:#fff; border-radius:18px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 20px rgba(15,23,42,.05); overflow:hidden; margin-bottom:24px; }
+    
+    .msp-filters { display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding:18px 24px 20px; }
+    .msp-field { position:relative; display:inline-flex; align-items:center; }
+    .msp-field > svg {
+        position:absolute;
+        left:14px;
+        top:50%;
+        transform:translateY(-50%);
+        width:16px;
+        height:16px;
+        stroke-width:2;
+        color:#94a3b8;
+        pointer-events:none;
+        flex-shrink:0;
+        z-index:2;
+    }
     .msp-input, .msp-select {
-        padding:10px 14px 10px 34px; border-radius:9px; border:1px solid #e2e8f0; font-size:13.5px;
-        background:#fff; color:#1E293B; font-family:inherit;
+        height:42px;
+        padding:0 16px 0 42px !important;
+        border-radius:10px;
+        border:1.5px solid #e2e8f0;
+        font-size:13.5px;
+        background:#fff;
+        color:#1E293B;
+        font-family:inherit;
+        transition:border-color .15s ease, box-shadow .15s ease;
+        box-sizing:border-box;
     }
-    .msp-input { min-width:200px; }
-    .msp-select { cursor:pointer; min-width:150px; appearance:none;
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2394a3b8' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-        background-repeat:no-repeat; background-position:right 12px center; padding-right:30px;
+    .msp-input { min-width:260px; }
+    .msp-input::placeholder { color:#94a3b8; font-size:13.5px; }
+    .msp-select {
+        cursor:pointer;
+        min-width:165px;
+        appearance:none;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position:right 14px center;
+        padding-right:36px !important;
     }
-    .msp-input:focus, .msp-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); }
-    .msp-reset { display:inline-flex; align-items:center; gap:5px; font-size:12.8px; font-weight:600; color:#0081AB; background:rgba(0,129,171,.08); border:none; border-radius:8px; padding:9px 12px; cursor:pointer; transition:background .15s ease; }
+    .msp-input:focus, .msp-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3.5px rgba(0,129,171,.12); }
+    .msp-input:hover, .msp-select:hover { border-color:#cbd5e1; }
+    .msp-reset { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#0081AB; background:rgba(0,129,171,.08); border:none; border-radius:9px; padding:10px 14px; cursor:pointer; transition:background .15s ease; height:42px; box-sizing:border-box; }
     .msp-reset:hover { background:rgba(0,129,171,.14); }
-    .msp-reset svg { width:13px; height:13px; stroke-width:2.3; }
+    .msp-reset svg { width:14px; height:14px; stroke-width:2.3; }
 
     .msp-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .msp-table { width:100%; border-collapse:collapse; min-width:1180px; }
@@ -117,6 +131,7 @@
 
     .msp-modal-overlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); align-items:center; justify-content:center; z-index:50; }
     .msp-modal { background:#fff; border-radius:16px; padding:0; width:440px; max-width:92vw; box-shadow:0 20px 50px rgba(0,0,0,.2); max-height:90vh; overflow:hidden; display:flex; flex-direction:column; }
+    .msp-modal-lg { width:680px; }
 
     .msp-modal-header-bar { background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09)); padding:20px 26px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
     .msp-modal-header-icon { width:38px; height:38px; min-width:38px; border-radius:10px; background:rgba(2,62,138,.12); color:#023E8A; display:flex; align-items:center; justify-content:center; }
@@ -139,14 +154,24 @@
     .msp-dropzone:hover { border-color:#0081AB; background:rgba(0,129,171,.03); }
     .msp-dropzone svg { width:26px; height:26px; stroke-width:1.6; color:#94a3b8; }
 
-    .alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin-bottom:18px; }
-    .alert-success { background:rgba(46,158,91,.08); border:1px solid rgba(46,158,91,.25); color:#2E9E5B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin-bottom:18px; }
+    /* CSS Tambahan Khusus Tabel Pemetaan Alias */
+    .alias-table { width:100%; border-collapse:collapse; min-width:600px; }
+    .alias-table th { background:#fafbfc; text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#94a3b8; padding:12px 20px; border-top:1px solid #eef1f5; border-bottom:1px solid #eef1f5; }
+    .alias-table td { padding:12px 20px; font-size:13px; color:#1e293b; border-bottom:1px solid #f5f7fa; }
+    .alias-table tr:last-child td { border-bottom:none; }
+    .alias-badge { display:inline-flex; align-items:center; gap:5px; background:rgba(0,129,171,.1); color:#023E8A; font-weight:700; padding:3px 10px; border-radius:999px; font-size:11.5px; }
 </style>
 
 <div class="msp-header">
     <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
     @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
         <div class="msp-actions">
+            @if (($unmatchedTransaksiCount ?? 0) > 0)
+                <button class="msp-btn msp-btn-warning" onclick="bukaModalPemetaanBulk()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
+                    Pemetaan Massal ({{ $unmatchedTransaksiCount }})
+                </button>
+            @endif
             <button class="msp-btn msp-btn-outline" data-open-modal="modal-import-spklu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 Import Excel
@@ -160,51 +185,46 @@
 </div>
 
 <div class="msp-card-grid">
-    <div class="msp-card">
-        <div>
-            <p class="msp-card-label">Total Unit SPKLU</p>
-            <p class="msp-card-value">{{ $totalUnit }}</p>
-        </div>
-        <div class="msp-card-icon msp-ic-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
+    <div class="msp-card blue">
+        <div class="msp-card-label">Total Unit SPKLU</div>
+        <div class="msp-card-value">{{ $totalUnit }} <span style="font-size:14px; font-weight:600; color:#64748B;">unit</span></div>
+        <div class="msp-card-note">Seluruh SPKLU terdaftar</div>
     </div>
 
-    <div class="msp-card">
-        <div>
-            <p class="msp-card-label">Berdasarkan Type</p>
-            <div class="msp-dual-stat">
-                <div class="msp-dual-stat-row"><span class="msp-dot msp-dot-blue"></span>{{ $totalByType['DC'] ?? 0 }} DC</div>
-                <div class="msp-dual-stat-row"><span class="msp-dot msp-dot-slate"></span>{{ $totalByType['AC'] ?? 0 }} AC</div>
+    <div class="msp-card green">
+        <div class="msp-card-label">Berdasarkan Type</div>
+        <div class="msp-split-row">
+            <div class="msp-value-split">
+                {{ $totalByType['DC'] ?? 0 }}
+                <small>Unit DC</small>
+            </div>
+            <div class="msp-value-split">
+                {{ $totalByType['AC'] ?? 0 }}
+                <small>Unit AC</small>
             </div>
         </div>
-        <div class="msp-card-icon msp-ic-green">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8Z"/></svg>
-        </div>
+        <div class="msp-card-note">Fast Charging vs Standard</div>
     </div>
 
-    <div class="msp-card">
-        <div>
-            <p class="msp-card-label">Berdasarkan Kepemilikan</p>
-            <div class="msp-dual-stat">
-                <div class="msp-dual-stat-row"><span class="msp-dot msp-dot-blue"></span>{{ $totalByKepemilikan['PLN'] ?? 0 }} PLN</div>
-                <div class="msp-dual-stat-row"><span class="msp-dot msp-dot-amber"></span>{{ $totalByKepemilikan['Swasta'] ?? 0 }} Swasta</div>
+    <div class="msp-card amber">
+        <div class="msp-card-label">Berdasarkan Kepemilikan</div>
+        <div class="msp-split-row">
+            <div class="msp-value-split">
+                {{ $totalByKepemilikan['PLN'] ?? 0 }}
+                <small>Milik PLN</small>
+            </div>
+            <div class="msp-value-split">
+                {{ $totalByKepemilikan['Swasta'] ?? 0 }}
+                <small>Mitra Swasta</small>
             </div>
         </div>
-        <div class="msp-card-icon msp-ic-amber">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
-        </div>
+        <div class="msp-card-note">Aset internal &amp; kemitraan</div>
     </div>
 
-    <div class="msp-card">
-        <div>
-            <p class="msp-card-label">Total Kapasitas</p>
-            <p class="msp-card-value">{{ number_format($totalKapasitas, 0) }} kW</p>
-            <p class="msp-card-note">*tidak termasuk unit custom</p>
-        </div>
-        <div class="msp-card-icon msp-ic-red">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
-        </div>
+    <div class="msp-card rose">
+        <div class="msp-card-label">Total Kapasitas</div>
+        <div class="msp-card-value">{{ number_format($totalKapasitas, 0, ',', '.') }} <span style="font-size:14px; font-weight:600; color:#64748B;">kW</span></div>
+        <div class="msp-card-note">*tidak termasuk unit custom</div>
     </div>
 </div>
 
@@ -214,7 +234,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Ada {{ $unmatchedTransaksiCount }} nama SPKLU dari data transaksi yang belum cocok dengan Master SPKLU. Data transaksi untuk nama-nama itu belum terhitung sampai dipetakan.
     </span>
-    <a href="{{ route('transaksi.upload') }}" class="msp-btn msp-btn-danger">Lakukan Pemetaan</a>
+    <button type="button" class="msp-btn msp-btn-danger" onclick="bukaModalPemetaanBulk()">Lakukan Pemetaan</button>
 </div>
 @endif
 
@@ -245,7 +265,7 @@
     <form method="GET" class="msp-filters">
         <div class="msp-field">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama SPKLU..." class="msp-input">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama SPKLU..." class="msp-input" autocomplete="off">
         </div>
 
         <div class="msp-field">
@@ -380,6 +400,67 @@
         </div>
     </div>
     @endif
+</div>
+
+{{-- CARD PEMETAAN ALIAS SPKLU --}}
+<div class="msp-table-box">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
+            </div>
+            <div>
+                <h2>Pemetaan Alias SPKLU</h2>
+                <p>Pasangkan nama SPKLU dari file transaksi ke Master SPKLU agar data transaksi terhitung akurat</p>
+            </div>
+        </div>
+        @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']) && count($unmatchedList ?? []) > 0)
+            <button type="button" class="msp-btn msp-btn-warning" onclick="bukaModalPemetaanBulk()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
+                Pemetaan Massal ({{ count($unmatchedList) }})
+            </button>
+        @endif
+    </div>
+
+    <div class="msp-table-wrap">
+        <table class="alias-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Asli di File Transaksi</th>
+                    <th>Dipetakan ke Master SPKLU</th>
+                    @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))<th>Aksi</th>@endif
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($aliasList ?? [] as $i => $alias)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td style="font-weight:600; color:#0f172a;">{{ $alias->nama_asli }}</td>
+                        <td>
+                            <span class="alias-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:12px; height:12px;"><path d="M20 6 9 17l-5-5"/></svg>
+                                {{ $alias->spklu->nama ?? '—' }}
+                            </span>
+                        </td>
+                        @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
+                            <td>
+                                <button type="button" class="msp-del-btn" title="Ubah Pemetaan" onclick='bukaModalEditAlias({{ $alias->id }}, "{{ addslashes($alias->nama_asli) }}", {{ $alias->spklu_id }})'>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                </button>
+                            </td>
+                        @endif
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" style="text-align:center; padding:36px 20px; color:#94a3b8;">
+                            Belum ada pemetaan alias SPKLU tersimpan.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {{-- Modal Tambah SPKLU --}}
@@ -556,6 +637,92 @@
     </div>
 </div>
 
+{{-- Modal Edit Single Alias --}}
+<div id="modal-edit-alias" class="msp-modal-overlay">
+    <div class="msp-modal">
+        <div class="msp-modal-header-bar">
+            <div class="msp-modal-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
+            </div>
+            <div>
+                <h3>Edit Pemetaan Alias</h3>
+                <p>Ubah pasangan Master SPKLU</p>
+            </div>
+        </div>
+        <div class="msp-modal-body">
+            <form method="POST" id="form-edit-alias">
+                @csrf
+                @method('PUT')
+
+                <label>Nama Asli di File Transaksi</label>
+                <input type="text" id="alias-nama-asli" readonly style="background:#f8fafc; color:#64748B;">
+
+                <label>Petakan ke Master SPKLU</label>
+                <select name="spklu_id" id="alias-spklu-id" required>
+                    @foreach ($spklus as $spklu)
+                        <option value="{{ $spklu->id }}">{{ $spklu->nama }}</option>
+                    @endforeach
+                </select>
+
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:22px;">
+                    <button type="button" class="msp-btn msp-btn-outline" data-close-modal>Batal</button>
+                    <button type="submit" class="msp-btn msp-btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Pemetaan Bulk (Massal) --}}
+<div id="modal-pemetaan-bulk" class="msp-modal-overlay">
+    <div class="msp-modal msp-modal-lg">
+        <div class="msp-modal-header-bar">
+            <div class="msp-modal-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
+            </div>
+            <div>
+                <h3>Pemetaan Alias Massal</h3>
+                <p>Hubungkan nama yang belum teridentifikasi ke Master SPKLU</p>
+            </div>
+        </div>
+        <div class="msp-modal-body">
+            <form method="POST" action="{{ route('master-spklu.alias.bulk-store') }}">
+                @csrf
+                <div style="max-height: 380px; overflow-y: auto; padding-right: 5px;">
+                    @forelse ($unmatchedList ?? [] as $idx => $u)
+                        <div style="background:#f8fafc; border:1px solid #eef1f5; border-radius:10px; padding:12px 14px; margin-bottom:12px;">
+                            <div style="font-weight:700; color:#0f172a; font-size:13px; margin-bottom:4px;">
+                                {{ $u->nama_asli }}
+                                <span style="font-weight:500; color:#94a3b8; font-size:11.5px;">({{ $u->jumlah_baris_total }} transaksi)</span>
+                            </div>
+                            <input type="hidden" name="mappings[{{ $idx }}][nama_asli]" value="{{ $u->nama_asli }}">
+                            <select name="mappings[{{ $idx }}][spklu_id]" required style="margin-top:6px;">
+                                <option value="">-- Pilih SPKLU Tujuan --</option>
+                                @foreach ($spklus as $spklu)
+                                    <option value="{{ $spklu->id }}">{{ $spklu->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @empty
+                        <p style="text-align:center; color:#94a3b8; margin:20px 0;">Tidak ada nama SPKLU gantung yang perlu dipetakan saat ini.</p>
+                    @endforelse
+                </div>
+
+                @if (count($unmatchedList ?? []) > 0)
+                    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                        <button type="button" class="msp-btn msp-btn-outline" data-close-modal>Batal</button>
+                        <button type="submit" class="msp-btn msp-btn-primary">Simpan Semua Pemetaan</button>
+                    </div>
+                @else
+                    <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+                        <button type="button" class="msp-btn msp-btn-outline" data-close-modal>Tutup</button>
+                    </div>
+                @endif
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 function bukaModalEdit(spklu) {
     document.getElementById('form-edit-spklu').action = '/master-spklu/' + spklu.id;
@@ -568,19 +735,43 @@ function bukaModalEdit(spklu) {
     document.getElementById('edit-nozzle').value = spklu.nozzle ?? 1;
     document.getElementById('edit-kepemilikan').value = spklu.kepemilikan ?? '';
     document.getElementById('edit-skema').value = spklu.skema ?? '';
-    // tanggal_aktif dikirim server sebagai "YYYY-MM-DD" (date cast) atau "YYYY-MM-DDTHH:mm:ss.sssZ" — potong ke 10 karakter pertama biar cocok sama <input type="date">
     document.getElementById('edit-tanggal-aktif').value = spklu.tanggal_aktif ? spklu.tanggal_aktif.substring(0, 10) : '';
     document.getElementById('edit-latitude').value = spklu.latitude ?? '';
     document.getElementById('edit-longitude').value = spklu.longitude ?? '';
     document.getElementById('modal-edit-spklu').style.display = 'flex';
 }
 
-/* =====================================================================
-   Auto-suggest Kode Unit berdasarkan ULP yang dipilih — nyariin kode_unit
-   yang paling sering dipakai SPKLU lain di ULP yang sama (endpoint
-   MasterSpkluController::kodeUnitByUlp). Tetap bisa diedit manual abis
-   keisi otomatis, ini cuma bantuan biar gak perlu ngetik ulang tiap kali.
-   ===================================================================== */
+function bukaModalEditAlias(id, namaAsli, spkluId) {
+    document.getElementById('form-edit-alias').action = '/master-spklu/alias/' + id;
+    document.getElementById('alias-nama-asli').value = namaAsli;
+    document.getElementById('alias-spklu-id').value = spkluId;
+    document.getElementById('modal-edit-alias').style.display = 'flex';
+}
+
+function bukaModalPemetaanBulk() {
+    document.getElementById('modal-pemetaan-bulk').style.display = 'flex';
+}
+
+document.querySelectorAll('[data-open-modal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-open-modal');
+        const modal = document.getElementById(id);
+        if (modal) modal.style.display = 'flex';
+    });
+});
+
+document.querySelectorAll('[data-close-modal]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.closest('.msp-modal-overlay').style.display = 'none';
+    });
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('msp-modal-overlay')) {
+        e.target.style.display = 'none';
+    }
+});
+
 async function ambilKodeUnitUntukUlp(ulpId) {
     if (!ulpId) return null;
     try {
@@ -617,15 +808,11 @@ document.getElementById('edit-ulp')?.addEventListener('change', async function (
     const kodeUnitInput = document.getElementById('edit-kode-unit');
     const hint = document.getElementById('edit-kode-unit-hint');
 
-    // Di edit, cuma auto-isi kalau field-nya emang masih kosong — biar gak
-    // nimpa kode_unit yang udah bener cuma gara-gara ULP-nya diutak-atik.
-    if (kodeUnitInput.value.trim() !== '') return;
-
     const kodeUnit = await ambilKodeUnitUntukUlp(this.value);
 
     if (kodeUnit) {
         kodeUnitInput.value = kodeUnit;
-        hint.textContent = `Otomatis diisi dari SPKLU lain di ULP yang sama (${kodeUnit}) — bisa diubah manual kalau perlu.`;
+        hint.textContent = `Kode Unit otomatis disesuaikan ke ${kodeUnit} sesuai ULP yang dipilih.`;
         hint.classList.add('msp-hint-active');
     }
 });

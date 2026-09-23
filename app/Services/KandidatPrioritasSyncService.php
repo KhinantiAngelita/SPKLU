@@ -21,21 +21,21 @@ class KandidatPrioritasSyncService
             : null;
 
         $kandidat = KandidatPrioritas::updateOrCreate(
-        ['probabilitas_id' => $probabilitas->id],
-        [
-            'nama_lokasi' => $probabilitas->lokasi,
-            'ulp_mapping_id' => $ulpMappingId,
-            'koordinat' => "{$probabilitas->tikor_lat}, {$probabilitas->tikor_lng}",
-            'mitra_mesin' => $probabilitas->mitra_mesin,
+            ['probabilitas_id' => $probabilitas->id],
+            [
+                'nama_lokasi' => $probabilitas->lokasi,
+                'ulp_mapping_id' => $ulpMappingId,
+                'koordinat' => "{$probabilitas->tikor_lat}, {$probabilitas->tikor_lng}",
+                'mitra_mesin' => $probabilitas->mitra_mesin,
 
-            // Poin — ambil dari accessor yang sudah kita buat di Probabilitas.
-            // Fallback ke 0 karena data poin belum tentu ada saat kandidat
-            // baru dibuat lewat form minimal (Kandidat), diisi belakangan.
-            'poin_fasilitas' => $probabilitas->poin_fasilitas,
-            'poin_jaringan' => $probabilitas->poin_jaringan,
-            'poin_okupasi' => $probabilitas->poin_okupasi,
-        ]
-    );
+                // Poin — ambil dari accessor yang sudah kita buat di Probabilitas.
+                // Fallback ke 0 karena data poin belum tentu ada saat kandidat
+                // baru dibuat lewat form minimal (Kandidat), diisi belakangan.
+                'poin_fasilitas' => $probabilitas->poin_fasilitas,
+                'poin_jaringan' => $probabilitas->poin_jaringan,
+                'poin_okupasi' => $probabilitas->poin_okupasi,
+            ]
+        );
 
         // skor_prioritas itu kolom asli, bukan accessor — harus dihitung
         // & disimpan eksplisit tiap kali poin komponennya berubah,

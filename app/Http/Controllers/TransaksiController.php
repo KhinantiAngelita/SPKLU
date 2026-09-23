@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NotifikasiHelper;
 use App\Jobs\ProsesImportTransaksiJob;
 use App\Models\Spklu;
 use App\Models\SpkluAlias;
@@ -28,6 +29,8 @@ class TransaksiController extends Controller
             '09' => 179959.67, '10' => 198571.53, '11' => 216287.45, '12' => 253080.26,
         ],
     ];
+
+    protected const JUMLAH_BULAN_MATRIKS = 13;
 
     public function index(Request $request)
     {
@@ -68,6 +71,7 @@ class TransaksiController extends Controller
             if (! $dulu || $dulu == 0) {
                 return $sekarang > 0 ? 100 : 0;
             }
+
             return round((($sekarang - $dulu) / $dulu) * 100, 1);
         };
 
@@ -84,8 +88,6 @@ class TransaksiController extends Controller
             ->orderByDesc('tanggal')
             ->paginate(15)
             ->withQueryString();
-
-        $aliasList = SpkluAlias::with('spklu')->orderBy('nama_asli')->get();
 
         $tahunTersedia = Transaksi::query()
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
@@ -123,6 +125,8 @@ class TransaksiController extends Controller
             ->orderBy('tahun')
             ->get();
 
+        $matriksData = $this->buildMatriksBulananPerSpklu();
+
         return view('transaksi.index', [
             'spkluList' => Spklu::aktif()->orderBy('nama')->get(),
             'spkluTerpilih' => $spkluId,
@@ -136,7 +140,6 @@ class TransaksiController extends Controller
             'rataRataKwhPerTransaksi' => $rataRataKwhPerTransaksi,
             'trend' => $trend,
             'rincian' => $rincian,
-            'aliasList' => $aliasList,
 
             'tahunTersedia' => $tahunTersedia,
             'tahunDipilih' => $tahunDipilih,
@@ -144,6 +147,9 @@ class TransaksiController extends Controller
             'bulanAkhir' => $bulanAkhir,
             'trenPerTahun' => $trenPerTahun,
             'jumlahBarisPerTahun' => $jumlahBarisPerTahun,
+
+            'periodeMatriks' => $matriksData['periodeList'],
+            'matriksKaliTransaksi' => $matriksData['matriks'],
         ]);
     }
 
@@ -180,6 +186,57 @@ class TransaksiController extends Controller
         return $hasil;
     }
 
+    private function buildMatriksBulananPerSpklu(): array
+    {
+        $bulanAkhir = now()->startOfMonth();
+        $bulanAwal = $bulanAkhir->copy()->subMonths(self::JUMLAH_BULAN_MATRIKS - 1);
+
+        $periodeList = collect(range(0, self::JUMLAH_BULAN_MATRIKS - 1))
+            ->map(fn ($i) => $bulanAwal->copy()->addMonths($i)->format('Y-m'));
+
+        $dataMentah = Transaksi::query()
+            ->join('spklus', 'spklus.id', '=', 'transaksis.spklu_id')
+            ->whereBetween('transaksis.tanggal', [$bulanAwal, $bulanAkhir->copy()->endOfMonth()])
+            ->selectRaw("
+                spklus.id as spklu_id,
+                DATE_FORMAT(transaksis.tanggal, '%Y-%m') as bulan,
+                SUM(transaksis.jumlah_transaksi) as total
+            ")
+            ->groupBy('spklus.id', 'bulan')
+            ->get()
+            ->groupBy('spklu_id');
+
+        $spkluAktif = Spklu::aktif()
+            ->orderBy('kode_unit')
+            ->orderBy('nama')
+            ->get(['id', 'nama', 'kode_unit']);
+
+        $matriks = $spkluAktif
+            ->map(function ($spklu) use ($dataMentah, $periodeList) {
+                $barisBulan = $dataMentah->get($spklu->id, collect())->pluck('total', 'bulan');
+
+                $perBulan = $periodeList->map(
+                    fn ($p) => isset($barisBulan[$p]) ? (int) $barisBulan[$p] : null
+                );
+
+                $terisi = $perBulan->filter(fn ($v) => $v !== null);
+
+                return [
+                    'kode_unit' => $spklu->kode_unit,
+                    'nama' => $spklu->nama,
+                    'per_bulan' => $perBulan,
+                    'rata_rata' => $terisi->isNotEmpty() ? round($terisi->avg()) : null,
+                ];
+            })
+            ->filter(fn ($row) => $row['per_bulan']->filter(fn ($v) => $v !== null)->isNotEmpty())
+            ->values();
+
+        return [
+            'periodeList' => $periodeList,
+            'matriks' => $matriks,
+        ];
+    }
+
     public function uploadPage()
     {
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
@@ -190,6 +247,7 @@ class TransaksiController extends Controller
             $upload->unresolvedUnmatched = $upload->unmatchedNames
                 ->filter(fn ($u) => ! in_array($u->nama_asli, $namaSudahDialias))
                 ->values();
+
             return $upload;
         });
 
@@ -219,22 +277,9 @@ class TransaksiController extends Controller
 
         $pdf = \PDF::loadView('transaksi.export-pdf', compact('rincian', 'mulai', 'sampai'));
 
-        return $pdf->download('rekap-transaksi-' . now()->format('Ymd-His') . '.pdf');
+        return $pdf->download('rekap-transaksi-'.now()->format('Ymd-His').'.pdf');
     }
 
-    /**
-     * ALUR BARU: file disimpan PERMANEN dulu di sini (synchronous, masih
-     * dalam 1 request HTTP), BARU dispatch job ke queue dengan membawa
-     * ID upload-nya doang (bukan file/path temp). Job nanti ambil balik
-     * path permanennya sendiri dari kolom path_file pas dia jalan.
-     *
-     * Kenapa harus gini: file temporary upload PHP OTOMATIS KEHAPUS begitu
-     * response HTTP ini selesai dikirim — padahal job di queue baru jalan
-     * belakangan (proses/request terpisah). Kalau job dikasih path temp,
-     * pas dia jalan filenya udah gak ada lagi (`getRealPath()` jadi
-     * null/false) — itu penyebab error "Argument #1 ($path) ... null
-     * given" yang muncul sebelumnya.
-     */
     public function import(Request $request)
     {
         $request->validate([
@@ -253,8 +298,6 @@ class TransaksiController extends Controller
             'diupload_oleh' => $request->user()->id,
         ]);
 
-        // Simpan file PERMANEN dulu — WAJIB berhasil sebelum dispatch job,
-        // kalau gagal jangan lanjut dispatch job yang nanti gak ada filenya.
         if (! $this->simpanFileMentah($uploadedFile, $uploadLog)) {
             $uploadLog->update([
                 'status' => 'gagal',
@@ -273,6 +316,15 @@ class TransaksiController extends Controller
         Log::info('=== TRANSAKSI IMPORT (dispatch ke queue) ===', ['file' => $namaFileAsli, 'upload_id' => $uploadLog->id]);
 
         ProsesImportTransaksiJob::dispatch($uploadLog->id, $extension, $request->user()->id);
+
+        NotifikasiHelper::kirim(
+            'transaksi',
+            "File transaksi \"{$namaFileAsli}\" diunggah dan sedang diproses sistem.",
+            'arrow-left-right',
+            route('transaksi.uploadPage'),
+            null,
+            'Upload Transaksi Baru'
+        );
 
         $pesan = "File \"{$namaFileAsli}\" sedang diproses di background. Refresh halaman ini beberapa saat lagi untuk melihat hasilnya.";
 
@@ -334,6 +386,15 @@ class TransaksiController extends Controller
 
         ProsesImportTransaksiJob::dispatch($transaksiUpload->id, $extension, $request->user()->id);
 
+        NotifikasiHelper::kirim(
+            'transaksi',
+            "File transaksi baru \"{$namaFileAsli}\" diunggah ulang dan sedang diproses sistem.",
+            'arrow-left-right',
+            route('transaksi.uploadPage'),
+            null,
+            'Unggah Ulang Transaksi'
+        );
+
         return back()->with('success', "File \"{$namaFileAsli}\" sedang diproses ulang di background. Refresh halaman ini beberapa saat lagi.");
     }
 
@@ -373,50 +434,32 @@ class TransaksiController extends Controller
         return back()->with('success', 'File sedang diproses ulang di background. Refresh halaman ini beberapa saat lagi.');
     }
 
-    /**
-     * Simpan salinan PERMANEN dari file yang baru diupload — sekarang ini
-     * satu-satunya tempat file "hidup" sebelum job queue jalan, jadi kalau
-     * ini gagal, import() TIDAK BOLEH lanjut dispatch job (lihat pemanggil).
-     * Return bool (bukan void lagi) supaya pemanggil tau harus stop atau
-     * lanjut.
-     */
     private function simpanFileMentah($uploadedFile, TransaksiUpload $uploadLog): bool
     {
         try {
             $extensi = strtolower($uploadedFile->getClientOriginalExtension());
-            $namaTersimpan = $uploadLog->id . '_' . now()->format('YmdHis') . '.' . $extensi;
+            $namaTersimpan = $uploadLog->id.'_'.now()->format('YmdHis').'.'.$extensi;
             $path = $uploadedFile->storeAs('transaksi-uploads', $namaTersimpan);
 
             if (! $path) {
                 Log::error('simpanFileMentah: storeAs() balikin false/null', ['upload_id' => $uploadLog->id]);
+
                 return false;
             }
 
             $uploadLog->update(['path_file' => $path]);
+
             return true;
         } catch (\Throwable $e) {
             Log::error('Gagal menyimpan salinan file mentah', [
                 'upload_id' => $uploadLog->id,
                 'message' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
 
-    /**
-     * FIX: sebelumnya destroyUpload()/reprocess()/reupload() cuma hapus
-     * baris TransaksiUploadUnmatched (per-upload) tapi TIDAK PERNAH
-     * ngurangin balik akumulasi global di TransaksiUnmatchedName
-     * (jumlah_baris_total) — itu sumber data buat card "Nama SPKLU Belum
-     * Dipetakan" di halaman upload. Efeknya, nama yang belum sempat
-     * dipetakan tetap nyangkut muncul di card walau riwayat upload
-     * sumbernya udah dihapus/diganti/diproses ulang, karena gak ada
-     * upload lain yang "punya" kontribusi itu tapi angkanya tetap ada.
-     *
-     * WAJIB dipanggil SEBELUM $transaksiUpload->unmatchedNames()->delete()
-     * — perlu baca rincian per-upload dulu sebelum baris itu hilang, buat
-     * tau berapa yang harus dikurangi dari total global per nama.
-     */
     private function kurangiAkumulasiUnmatchedGlobal(TransaksiUpload $transaksiUpload): void
     {
         $unmatchedDariUploadIni = $transaksiUpload->unmatchedNames()->get(['nama_asli', 'jumlah_baris']);
@@ -431,8 +474,6 @@ class TransaksiController extends Controller
             $sisaBaris = $global->jumlah_baris_total - $u->jumlah_baris;
 
             if ($sisaBaris <= 0) {
-                // Gak ada upload lain yang masih nyumbang nama ini —
-                // hapus sekalian record globalnya biar gak nyangkut di card.
                 $global->delete();
             } else {
                 $global->update(['jumlah_baris_total' => $sisaBaris]);
@@ -440,11 +481,6 @@ class TransaksiController extends Controller
         }
     }
 
-    /**
-     * Dipoll dari frontend (halaman Upload) buat cek status import yang
-     * lagi jalan di background lewat queue — biar UI bisa auto-refresh
-     * tanpa user manual reload page.
-     */
     public function uploadStatus(TransaksiUpload $transaksiUpload)
     {
         return response()->json([
@@ -458,71 +494,6 @@ class TransaksiController extends Controller
         ]);
     }
 
-    public function storeAlias(Request $request)
-    {
-        $request->validate([
-            'nama_asli' => 'required|string|unique:spklu_aliases,nama_asli',
-            'spklu_id' => 'required|exists:spklus,id',
-        ]);
-
-        SpkluAlias::create([
-            'nama_asli' => $request->nama_asli,
-            'spklu_id' => $request->spklu_id,
-            'dibuat_oleh' => $request->user()->id,
-        ]);
-
-        return back()->with('success', 'Alias berhasil disimpan. Upload ulang file yang sama untuk memproses baris yang tadinya terlewat.');
-    }
-
-    public function storeAliasBulk(Request $request)
-    {
-        $request->validate([
-            'mappings' => 'required|array|min:1',
-            'mappings.*.nama_asli' => 'required|string',
-            'mappings.*.spklu_id' => 'required|exists:spklus,id',
-        ]);
-
-        $disimpan = 0;
-
-        foreach ($request->mappings as $map) {
-            SpkluAlias::updateOrCreate(
-                ['nama_asli' => $map['nama_asli']],
-                ['spklu_id' => $map['spklu_id'], 'dibuat_oleh' => $request->user()->id]
-            );
-            $disimpan++;
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'jumlah' => $disimpan]);
-        }
-
-        return back()->with('success', "{$disimpan} pemetaan alias berhasil disimpan sekaligus. Upload ulang file terkait untuk memproses baris yang tadinya terlewat.");
-    }
-
-    public function updateAlias(Request $request, SpkluAlias $spkluAlias)
-    {
-        $request->validate([
-            'spklu_id' => 'required|exists:spklus,id',
-        ]);
-
-        $spkluAlias->update([
-            'spklu_id' => $request->spklu_id,
-        ]);
-
-        if ($request->wantsJson()) {
-            return response()->json(['success' => true]);
-        }
-
-        return back()->with('success', "Pemetaan \"{$spkluAlias->nama_asli}\" berhasil diperbarui.");
-    }
-
-    /**
-     * FIX (lihat kurangiAkumulasiUnmatchedGlobal): sebelumnya method ini
-     * cuma hapus transaksis() + unmatchedNames() (per-upload) + record
-     * upload-nya sendiri, TANPA ngurangin akumulasi global
-     * TransaksiUnmatchedName — itu penyebab card "Nama SPKLU Belum
-     * Dipetakan" tetap nampilin nama dari upload yang udah dihapus.
-     */
     public function destroyUpload(TransaksiUpload $transaksiUpload)
     {
         $namaFile = $transaksiUpload->nama_file;

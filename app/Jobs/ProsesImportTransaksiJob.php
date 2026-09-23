@@ -17,14 +17,14 @@ class ProsesImportTransaksiJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 1;
+
     public int $timeout = 590; // sedikit di bawah 600 detik set_time_limit yang dulu dipakai controller
 
     public function __construct(
         public int $transaksiUploadId,
         public string $extension,
         public int $userId,
-    ) {
-    }
+    ) {}
 
     /**
      * PENTING: path file diambil balik di SINI (pas job beneran jalan),
@@ -50,6 +50,7 @@ class ProsesImportTransaksiJob implements ShouldQueue
             Log::error('ProsesImportTransaksiJob: TransaksiUpload tidak ditemukan', [
                 'transaksi_upload_id' => $this->transaksiUploadId,
             ]);
+
             return;
         }
 
@@ -86,7 +87,7 @@ class ProsesImportTransaksiJob implements ShouldQueue
 
         TransaksiUpload::where('id', $this->transaksiUploadId)->update([
             'status' => 'gagal',
-            'pesan_error' => 'Job queue gagal: ' . $exception->getMessage(),
+            'pesan_error' => 'Job queue gagal: '.$exception->getMessage(),
         ]);
     }
 }

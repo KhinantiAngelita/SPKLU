@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class Probabilitas extends Model
 {
@@ -111,6 +112,31 @@ class Probabilitas extends Model
         return $this->hasOne(KandidatPrioritas::class);
     }
 
+    public function ulpMapping(): BelongsTo
+    {
+        return $this->belongsTo(UlpMapping::class, 'ulp', 'nama_penuh');
+    }
+
+    public function getKodeUnitAttribute(): ?string
+    {
+        $ulpMapping = UlpMapping::where('nama_penuh', $this->ulp)
+            ->orWhere('nama_singkat', $this->ulp)
+            ->first();
+
+        if (! $ulpMapping) {
+            return null;
+        }
+
+        return Spklu::where('ulp_mapping_id', $ulpMapping->id)
+            ->whereNotNull('kode_unit')
+            ->where('kode_unit', '!=', '')
+            ->get(['kode_unit'])
+            ->countBy('kode_unit')
+            ->sortDesc()
+            ->keys()
+            ->first();
+    }
+
     /*
     |--------------------------------------------------------------------
     | Poin (accessor) — dipakai oleh KandidatPrioritasSyncService
@@ -167,7 +193,7 @@ class Probabilitas extends Model
      * badge grid tanpa query N+1 (eager load riwayatTahapan lalu panggil
      * ini di memory).
      *
-     * @return array<string, \Illuminate\Support\Collection>
+     * @return array<string, Collection>
      */
     public function riwayatPerTahap(): array
     {
@@ -192,6 +218,7 @@ class Probabilitas extends Model
         foreach ($this->riwayatPerTahap() as $tahap => $riwayat) {
             if ($riwayat->isEmpty()) {
                 $badges[$tahap] = ['label' => 'Belum ada', 'warna' => 'abu', 'jumlah' => 0];
+
                 continue;
             }
 

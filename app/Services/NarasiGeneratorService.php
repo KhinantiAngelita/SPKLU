@@ -23,16 +23,16 @@ class NarasiGeneratorService
         $kesiapan = $fsSkema->kesiapan_jaringan ?: 'belum diketahui';
 
         $bagianPoin = "Lokasi {$fsSkema->nama_lokasi} memiliki fasilitas berupa {$fasilitas} dengan skor {$fsSkema->poin_fasilitas}/40. "
-            . "Dari sisi kesiapan jaringan, lokasi ini berada pada kondisi '{$kesiapan}' dengan skor {$fsSkema->poin_kesiapan_jaringan}/20. "
-            . "Sementara itu, dari sisi okupansi kawasan, lokasi ini berada dekat dengan {$okupansi}, memperoleh skor {$fsSkema->poin_okupansi}/40. "
-            . "Secara keseluruhan, lokasi ini mendapat skor kelayakan total {$fsSkema->total_poin}/100 dan dikategorikan {$fsSkema->status_kelayakan} untuk pengembangan SPKLU.";
+            ."Dari sisi kesiapan jaringan, lokasi ini berada pada kondisi '{$kesiapan}' dengan skor {$fsSkema->poin_kesiapan_jaringan}/20. "
+            ."Sementara itu, dari sisi okupansi kawasan, lokasi ini berada dekat dengan {$okupansi}, memperoleh skor {$fsSkema->poin_okupansi}/40. "
+            ."Secara keseluruhan, lokasi ini mendapat skor kelayakan total {$fsSkema->total_poin}/100 dan dikategorikan {$fsSkema->status_kelayakan} untuk pengembangan SPKLU.";
 
         $bagianEkonomi = $fsSkema->isSkema3()
             ? "Dari sisi keekonomian, estimasi balik modal (payback period) Mitra Mesin berada pada {$proyeksiRoi['estimasi_roi_mesin_teks']}, sementara Mitra Lahan diperkirakan "
-                . $this->bandingkanKecepatanBep($proyeksiRoi) . " pada {$proyeksiRoi['estimasi_roi_lahan_teks']}."
+                .$this->bandingkanKecepatanBep($proyeksiRoi)." pada {$proyeksiRoi['estimasi_roi_lahan_teks']}."
             : "Dari sisi keekonomian, estimasi balik modal (payback period) berada pada {$proyeksiRoi['estimasi_roi_teks']}.";
 
-        return $bagianPoin . ' ' . $bagianEkonomi;
+        return $bagianPoin.' '.$bagianEkonomi;
     }
 
     /** "lebih cepat balik modal" vs "lebih lambat balik modal", dibanding total_bulan Mesin vs Lahan. */

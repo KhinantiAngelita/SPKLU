@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NotifikasiHelper;
 use App\Models\Jadwal;
 use App\Models\Probabilitas;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class PenjadwalanController extends Controller
 {
@@ -21,7 +23,7 @@ class PenjadwalanController extends Controller
         // kalender & "Jadwal Hari Ini" tampil di halaman Daftar Jadwal
         // (di atas tabel), bukan lagi di form Buat Jadwal.
         $bulanTampil = $request->bulan
-            ? \Illuminate\Support\Carbon::parse($request->bulan)
+            ? Carbon::parse($request->bulan)
             : now();
 
         $jadwalSebulan = Jadwal::with('probabilitas')
@@ -56,12 +58,21 @@ class PenjadwalanController extends Controller
         $validated = $this->validasi($request);
         $probabilitas = Probabilitas::find($validated['probabilitas_id']);
 
-        Jadwal::create([
+        $jadwal = Jadwal::create([
             ...$validated,
             'judul' => $this->buatJudulOtomatis($probabilitas, $validated['mode']),
             'status' => 'terjadwal',
             'dibuat_oleh' => auth()->id(),
         ]);
+
+        NotifikasiHelper::kirim(
+            'jadwal',
+            "Agenda pertemuan baru \"{$jadwal->judul}\" dijadwalkan pada ".Carbon::parse($jadwal->waktu_mulai)->translatedFormat('d M Y H:i').'.',
+            'calendar-check',
+            route('penjadwalan.index'),
+            ['super_admin', 'pemasaran', 'pengelola'],
+            'Agenda Pertemuan Baru'
+        );
 
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil dibuat.');
     }
@@ -91,6 +102,15 @@ class PenjadwalanController extends Controller
         $validated['judul'] = $this->buatJudulOtomatis($probabilitas, $validated['mode']);
 
         $jadwal->update($validated);
+
+        NotifikasiHelper::kirim(
+            'jadwal',
+            "Jadwal pertemuan \"{$jadwal->judul}\" telah diperbarui (Status: {$jadwal->status}).",
+            'calendar',
+            route('penjadwalan.index'),
+            ['super_admin', 'pemasaran', 'pengelola'],
+            'Pembaruan Jadwal Pertemuan'
+        );
 
         return redirect()->route('penjadwalan.index')->with('success', 'Jadwal berhasil diperbarui.');
     }

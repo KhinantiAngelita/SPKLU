@@ -9,13 +9,36 @@
     .rl-page-header { margin-bottom:18px; }
     .rl-page-subtitle { color:#64748B; margin:0; font-size:13.5px; }
 
-    .rl-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:20px; }
-    .rl-card { background:#fff; border-radius:16px; padding:20px 22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); display:flex; align-items:center; gap:14px; cursor:pointer; transition:box-shadow .15s ease, border-color .15s ease; }
-    .rl-card:hover { box-shadow:0 4px 10px rgba(15,23,42,.08), 0 10px 24px rgba(15,23,42,.08); }
-    .rl-card.rl-card-active { border-color:currentColor; }
-    .rl-card-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
-    .rl-card-value { font-size:24px; font-weight:800; color:#0f172a; margin:0; }
-    .rl-card-label { font-size:12px; font-weight:600; color:#94a3b8; margin:2px 0 0; }
+    .rl-card-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:20px; }
+    @media (max-width:1100px) { .rl-card-grid { grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); } }
+    .rl-card {
+        background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #e2e8f0;
+        box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; overflow:hidden;
+        cursor:pointer; transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+    }
+    .rl-card::before { content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
+    .rl-card.dark-blue::before { background:#023E8A; }
+    .rl-card.light-blue::before { background:#0081AB; }
+    .rl-card.amber::before  { background:#E8A317; }
+    .rl-card.purple::before { background:#7C3AED; }
+    .rl-card.blue::before   { background:#2563EB; }
+    .rl-card:hover {
+        box-shadow:0 8px 20px rgba(15,23,42,.08);
+        transform:translateY(-2px);
+    }
+    .rl-card.rl-card-active {
+        box-shadow:0 0 0 2px #0081AB, 0 8px 20px rgba(0,129,171,.12);
+        border-color:#0081AB;
+        transform:translateY(-2px);
+    }
+    .rl-card.dark-blue.rl-card-active  { box-shadow:0 0 0 2px #023E8A, 0 8px 20px rgba(2,62,138,.15); border-color:#023E8A; }
+    .rl-card.light-blue.rl-card-active { box-shadow:0 0 0 2px #0081AB, 0 8px 20px rgba(0,129,171,.15); border-color:#0081AB; }
+    .rl-card.amber.rl-card-active      { box-shadow:0 0 0 2px #E8A317, 0 8px 20px rgba(232,163,23,.15); border-color:#E8A317; }
+    .rl-card.purple.rl-card-active     { box-shadow:0 0 0 2px #7C3AED, 0 8px 20px rgba(124,58,237,.15); border-color:#7C3AED; }
+    .rl-card.blue.rl-card-active       { box-shadow:0 0 0 2px #2563EB, 0 8px 20px rgba(37,99,235,.15); border-color:#2563EB; }
+    .rl-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 6px; }
+    .rl-card-value { font-size:26px; font-weight:800; color:#0f172a; margin:0 0 4px; }
+    .rl-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
 
     .rl-select {
         padding:9px 32px 9px 14px; border-radius:9px; border:1px solid #e2e8f0; font-size:13px; font-weight:500;
@@ -26,6 +49,16 @@
     .rl-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
 
     .rl-filter-group { display:flex; align-items:center; gap:8px; }
+
+    .rl-filter-pills { display:inline-flex; gap:3px; background:#F1F5F9; padding:3px; border-radius:9px; margin-left:14px; }
+    .rl-pill {
+        border:none; background:transparent; padding:5px 11px; border-radius:6px;
+        font-size:12px; font-weight:600; color:#64748B; cursor:pointer;
+        transition:all .15s ease; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;
+    }
+    .rl-pill:hover { color:#0F172A; background:rgba(255,255,255,0.7); }
+    .rl-pill.active { background:#fff; color:#0081AB; font-weight:700; box-shadow:0 1px 3px rgba(15,23,42,.08); }
+    @media (max-width:1050px) { .rl-filter-pills { display:none; } }
 
     .rl-peta-wrapper { margin-bottom:20px; }
 
@@ -43,7 +76,7 @@
     .rl-legend-item { display:flex; align-items:center; gap:7px; color:#334155; cursor:pointer; padding:4px 8px; border-radius:6px; transition:background .15s ease; }
     .rl-legend-item:hover { background:#f8fafc; }
     .rl-legend-item.rl-legend-item-off { opacity:.35; }
-    .rl-legend-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+    .rl-legend-dot { width:16px; height:16px; border-radius:50%; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
     .rl-legend-dot.rl-legend-plus { background:#2563EB; position:relative; }
 
     .rl-wilayah-item { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid #f5f7fa; }
@@ -89,68 +122,93 @@
     .rl-tindak-skor-label { font-size:9.5px; color:#94a3b8; text-transform:uppercase; }
 
     .rl-marker-rekomendasi-inner {
-        width:24px; height:24px; border-radius:50%; background:#2563EB; border:2px solid #fff;
-        box-shadow:0 2px 6px rgba(37,99,235,.5); display:flex; align-items:center; justify-content:center;
-        color:#fff; font-weight:800; font-size:14px; line-height:1;
+        width:26px; height:26px; border-radius:50%; background:#2563EB; border:2px solid #fff;
+        box-shadow:0 2px 7px rgba(37,99,235,.55); display:flex; align-items:center; justify-content:center;
+        color:#fff; font-weight:800; font-size:16px; line-height:1; cursor:pointer;
     }
 </style>
 
 <div class="rl-page-header">
-    <p class="rl-page-subtitle">Peta zona risiko kanibalisasi & titik rekomendasi otomatis berdasarkan skor gabungan (kepadatan + tren) SPKLU existing.</p>
+    <p class="rl-page-subtitle">Peta sebaran SPKLU eksisting (DC/AC), kandidat pipeline berdasarkan kepemilikan mitra mesin, dan titik rekomendasi otomatis.</p>
 </div>
 
 <div class="rl-info-box">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-    <span>Warna zona dari <strong>skor gabungan</strong>: rata-rata transaksi bulanan (12 bulan) yang disesuaikan jarak ideal ULP (biar area urban vs jarang dibandingkan adil), dipadukan tren 3 bulan terakhir. Titik biru (+) di peta adalah <strong>rekomendasi otomatis</strong> — koordinat yang paling potensial nampung demand tanpa masuk zona padat. Klik "Jadikan Kandidat Baru" buat langsung masukin ke pipeline Probabilitas.</span>
+    <span>Distribusi SPKLU: <strong>Biru Tua</strong> untuk Existing DC, <strong>Biru Muda</strong> untuk Existing AC, <strong>Kuning</strong> untuk SPKLU Baru/Kandidat yang sudah memiliki pasangan (mitra mesin), dan <strong>Ungu</strong> untuk kandidat yang belum ada pasangan. Titik <strong>Biru (+)</strong> di peta adalah rekomendasi otomatis koordinat potensial baru.</span>
 </div>
 
 {{-- Klik kartu buat filter zona di peta --}}
 <div class="rl-card-grid">
-    <div class="rl-card" data-kategori="hijau" onclick="toggleFilterKartu('hijau')">
-        <span class="rl-card-dot" style="background:#2E9E5B;"></span>
-        <div>
-            <p class="rl-card-value">{{ $ringkasan['hijau'] }}</p>
-            <p class="rl-card-label">Zona Aman (Hijau)</p>
-        </div>
+    <div class="rl-card dark-blue" data-kategori="dc" onclick="toggleFilterKartu('dc')">
+        <div class="rl-card-label">SPKLU Existing DC</div>
+        <div class="rl-card-value">{{ $ringkasan['dc'] ?? 0 }}</div>
+        <div class="rl-card-note">Fast / Ultra Fast DC</div>
     </div>
-    <div class="rl-card" data-kategori="kuning" onclick="toggleFilterKartu('kuning')">
-        <span class="rl-card-dot" style="background:#E8A317;"></span>
-        <div>
-            <p class="rl-card-value">{{ $ringkasan['kuning'] }}</p>
-            <p class="rl-card-label">Zona Waspada (Kuning)</p>
-        </div>
+    <div class="rl-card light-blue" data-kategori="ac" onclick="toggleFilterKartu('ac')">
+        <div class="rl-card-label">SPKLU Existing AC</div>
+        <div class="rl-card-value">{{ $ringkasan['ac'] ?? 0 }}</div>
+        <div class="rl-card-note">Standard AC Charging</div>
     </div>
-    <div class="rl-card" data-kategori="merah" onclick="toggleFilterKartu('merah')">
-        <span class="rl-card-dot" style="background:#C0392B;"></span>
-        <div>
-            <p class="rl-card-value">{{ $ringkasan['merah'] }}</p>
-            <p class="rl-card-label">Zona Padat (Merah)</p>
-        </div>
+    <div class="rl-card amber" data-kategori="kuning" onclick="toggleFilterKartu('kuning')">
+        <div class="rl-card-label">Ada Pasangan (Mitra)</div>
+        <div class="rl-card-value">{{ $ringkasan['kandidat_ada_pasangan'] ?? 0 }}</div>
+        <div class="rl-card-note">Kandidat ber-mitra mesin</div>
     </div>
-    <div class="rl-card" data-kategori="_rekomendasi" onclick="toggleFilterKartu('_rekomendasi')">
-        <span class="rl-card-dot" style="background:#2563EB;"></span>
-        <div>
-            <p class="rl-card-value">{{ $titikRekomendasi->count() }}</p>
-            <p class="rl-card-label">Titik Rekomendasi</p>
-        </div>
+    <div class="rl-card purple" data-kategori="ungu" onclick="toggleFilterKartu('ungu')">
+        <div class="rl-card-label">Belum Ada Pasangan</div>
+        <div class="rl-card-value">{{ $ringkasan['kandidat_belum_pasangan'] ?? 0 }}</div>
+        <div class="rl-card-note">Kandidat tanpa mitra mesin</div>
+    </div>
+    <div class="rl-card blue" data-kategori="_rekomendasi" onclick="toggleFilterKartu('_rekomendasi')">
+        <div class="rl-card-label">Titik Rekomendasi</div>
+        <div class="rl-card-value">{{ $titikRekomendasi->count() }}</div>
+        <div class="rl-card-note">Ekspansi otomatis (+)</div>
     </div>
 </div>
 
 <div class="rl-peta-wrapper surface-card" style="overflow:hidden;">
     <div class="section-header-bar">
-        <div class="section-header-bar-left">
-            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-            <div><h2>Peta Zona SPKLU</h2></div>
+        <div class="section-header-bar-left" style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div><h2>Peta Zona SPKLU</h2></div>
+            </div>
+            <div class="rl-filter-pills">
+                <button type="button" class="rl-pill active" data-pill="" onclick="filterKategoriPeta('')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    Semua Titik
+                </button>
+                <button type="button" class="rl-pill" data-pill="_semua_spklu" onclick="filterKategoriPeta('_semua_spklu')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Keduanya (Master + Baru)
+                </button>
+                <button type="button" class="rl-pill" data-pill="_master_spklu" onclick="filterKategoriPeta('_master_spklu')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
+                    Master SPKLU
+                </button>
+                <button type="button" class="rl-pill" data-pill="_semua_kandidat" onclick="filterKategoriPeta('_semua_kandidat')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+                    SPKLU Baru
+                </button>
+            </div>
         </div>
 
         <div class="rl-filter-group">
-            {{-- Filter kategori zona — client-side, gak reload halaman --}}
+            {{-- Filter kategori zona & jenis titik — client-side, gak reload halaman --}}
             <select id="rl-filter-kategori" class="rl-select" onchange="filterKategoriPeta(this.value)">
-                <option value="">Semua Kategori</option>
-                <option value="hijau">🟢 Hijau — Aman</option>
-                <option value="kuning">🟡 Kuning — Waspada</option>
-                <option value="merah">🔴 Merah — Padat</option>
-                <option value="belum_ada_data">⚪ Belum Ada Data</option>
+                <option value="">Semua Titik (SPKLU &amp; Rekomendasi)</option>
+                <optgroup label="── KELOMPOK UTAMA ──">
+                    <option value="_semua_spklu">Tampilkan Keduanya (Master SPKLU + SPKLU Baru)</option>
+                    <option value="_master_spklu">Hanya SPKLU Terintegrasi (Master SPKLU)</option>
+                    <option value="_semua_kandidat">Hanya SPKLU Baru (Pipeline Probing)</option>
+                </optgroup>
+                <optgroup label="── KATEGORI DETAIL ──">
+                    <option value="dc">Biru Tua — SPKLU Existing (DC)</option>
+                    <option value="ac">Biru Muda — SPKLU Existing (AC)</option>
+                    <option value="kuning">Kuning — Kandidat (Ada Pasangan)</option>
+                    <option value="ungu">Ungu — Kandidat (Belum Ada Pasangan)</option>
+                    <option value="_rekomendasi">Biru (+) — Titik Rekomendasi</option>
+                </optgroup>
             </select>
 
             <form method="GET">
@@ -165,11 +223,46 @@
     </div>
 
     <div class="rl-legend">
-        <span class="rl-legend-item" data-kategori="hijau" onclick="toggleFilterLegenda('hijau')"><span class="rl-legend-dot" style="background:#2E9E5B;"></span> Hijau — aman, skor gabungan rendah</span>
-        <span class="rl-legend-item" data-kategori="kuning" onclick="toggleFilterLegenda('kuning')"><span class="rl-legend-dot" style="background:#E8A317;"></span> Kuning — waspada, cek dulu</span>
-        <span class="rl-legend-item" data-kategori="merah" onclick="toggleFilterLegenda('merah')"><span class="rl-legend-dot" style="background:#C0392B;"></span> Merah — padat, hindari terlalu dekat</span>
-        <span class="rl-legend-item" data-kategori="belum_ada_data" onclick="toggleFilterLegenda('belum_ada_data')"><span class="rl-legend-dot" style="background:#94A3B8;"></span> Abu — belum ada data transaksi</span>
-        <span class="rl-legend-item" data-kategori="_rekomendasi" onclick="toggleFilterLegenda('_rekomendasi')"><span class="rl-legend-dot rl-legend-plus" style="background:#2563EB;"></span> Biru (+) — titik rekomendasi otomatis</span>
+        <span class="rl-legend-item" data-kategori="_semua_spklu" onclick="toggleFilterLegenda('_semua_spklu')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <strong style="color:#0284C7;">Keduanya</strong>
+        </span>
+        <span class="rl-legend-item" data-kategori="_master_spklu" onclick="toggleFilterLegenda('_master_spklu')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#023E8A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
+            <strong style="color:#023E8A;">Master SPKLU</strong>
+        </span>
+        <span class="rl-legend-item" data-kategori="dc" onclick="toggleFilterLegenda('dc')">
+            <span class="rl-legend-dot" style="background:#023E8A;">
+                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+            </span>
+            DC
+        </span>
+        <span class="rl-legend-item" data-kategori="ac" onclick="toggleFilterLegenda('ac')">
+            <span class="rl-legend-dot" style="background:#0081AB;">
+                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+            </span>
+            AC
+        </span>
+        <span class="rl-legend-item" data-kategori="_semua_kandidat" onclick="toggleFilterLegenda('_semua_kandidat')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+            <strong style="color:#7C3AED;">SPKLU Baru</strong>
+        </span>
+        <span class="rl-legend-item" data-kategori="kuning" onclick="toggleFilterLegenda('kuning')">
+            <span class="rl-legend-dot" style="background:#E8A317;">
+                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+            </span>
+            Ada Pasangan
+        </span>
+        <span class="rl-legend-item" data-kategori="ungu" onclick="toggleFilterLegenda('ungu')">
+            <span class="rl-legend-dot" style="background:#7C3AED;">
+                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+            </span>
+            Belum Pasangan
+        </span>
+        <span class="rl-legend-item" data-kategori="_rekomendasi" onclick="toggleFilterLegenda('_rekomendasi')">
+            <span class="rl-legend-dot rl-legend-plus" style="background:#2563EB; color:#fff; font-weight:800; font-size:11px; line-height:1;">+</span>
+            Titik Rekomendasi
+        </span>
     </div>
 
     <div id="peta-rekomendasi"></div>
@@ -182,9 +275,21 @@
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
             <div>
-                <h2>SPKLU Perlu Tindak Lanjut</h2>
-                <p>Lokasi existing berstatus padat (merah) — bukan lahan kosong, tapi unit yang udah ada kewalahan</p>
+                <h2>SPKLU Eksisting Perlu Tindak Lanjut (Kewalahan / Zona Merah)</h2>
+                <p>Daftar SPKLU aktif yang mengalami kepadatan transaksi &amp; durasi pemakaian tinggi. Ini bukan membuka lokasi baru, melainkan intervensi teknis pada unit yang sudah ada.</p>
             </div>
+        </div>
+    </div>
+
+    {{-- Penjelasan Kriteria Tindak Lanjut --}}
+    <div style="background:#FFFBEB; border-bottom:1px solid #FEF3C7; padding:12px 20px; font-size:12.5px; color:#92400E; display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span class="rl-tindak-badge ganti-mesin">Ganti Mesin</span>
+            <span>&rarr; Untuk SPKLU <strong>&lt; 60 kW</strong>: Disarankan upgrade mesin ke Fast/Ultra Fast Charging agar durasi pengisian per kendaraan lebih singkat dan antrean cepat terurai.</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span class="rl-tindak-badge tambah-unit">Tambah Unit</span>
+            <span>&rarr; Untuk SPKLU <strong>&ge; 60 kW</strong>: Mesin sudah berdaya tinggi, namun volume pengguna sangat banyak. Solusinya adalah menambah titik/nozzle baru di lokasi yang sama.</span>
         </div>
     </div>
 
@@ -296,6 +401,7 @@
 <script>
     const titikPeta = @json($titikPeta);
     const titikRekomendasi = @json($titikRekomendasi);
+    const kandidatBaru = @json($kandidatBaru);
 
     const warnaStatus = {
         hijau: '#2E9E5B',
@@ -333,12 +439,32 @@
 
     const batasSemuaTitik = [];
 
-    // Nyimpen referensi tiap layer zona (circle + circleMarker) beserta kategorinya,
+    // Nyimpen referensi tiap layer zona (circle + circleMarker) beserta tipenya (dc / ac),
     // supaya bisa di-toggle tampil/sembunyi tanpa reload/refetch data.
     const zonaLayers = [];
 
+    function buatIconSpkluMarker(bgColor, shadowColor) {
+        return L.divIcon({
+            className: '',
+            html: `<div style="width:26px; height:26px; border-radius:50%; background:${bgColor}; border:2px solid #ffffff; box-shadow:0 2px 7px ${shadowColor}; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="11" height="18" rx="2"/>
+                    <path d="M8.5 7.5L7 11h3l-1.5 3.5"/>
+                    <path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/>
+                    <path d="M21 9.5V8"/>
+                </svg>
+            </div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 13],
+            popupAnchor: [0, -13],
+        });
+    }
+
     titikPeta.forEach(t => {
-        const warna = warnaStatus[t.status] || '#94A3B8';
+        const isDc = (t.type || '').toUpperCase() === 'DC';
+        const warna = isDc ? '#023E8A' : '#0081AB'; // Biru tua DC, Biru muda AC
+        const shadow = isDc ? 'rgba(2,62,138,0.55)' : 'rgba(0,129,171,0.55)';
+        const badgeBg = isDc ? 'rgba(2,62,138,0.1)' : 'rgba(0,129,171,0.1)';
 
         const circle = L.circle([t.latitude, t.longitude], {
             radius: t.radius_km * 1000,
@@ -348,50 +474,95 @@
             weight: 1.5,
         }).addTo(peta);
 
-        const marker = L.circleMarker([t.latitude, t.longitude], {
-            radius: 6,
-            color: '#fff',
-            weight: 2,
-            fillColor: warna,
-            fillOpacity: 1,
+        const marker = L.marker([t.latitude, t.longitude], {
+            icon: buatIconSpkluMarker(warna, shadow)
         }).addTo(peta).bindPopup(`
-            <strong>${t.nama}</strong><br>
-            ULP: ${t.ulp ?? '-'}<br>
-            Status: <span style="color:${warna}; font-weight:700;">${labelStatus[t.status]}</span><br>
-            Rata-rata transaksi/bulan: ${t.rata_rata_transaksi_bulan !== null ? t.rata_rata_transaksi_bulan : '-'}<br>
-            Tren 3 bulan: ${formatTren(t)}<br>
-            Skor gabungan: ${t.skor_gabungan !== null ? t.skor_gabungan : '-'}<br>
-            Radius zona: ${t.radius_km} km
+            <div style="min-width:190px;">
+                <span style="display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; color:${warna}; background:${badgeBg}; padding:2px 6px; border-radius:4px; margin-bottom:5px;">
+                    SPKLU Existing (${isDc ? 'DC' : 'AC'})
+                </span><br>
+                <strong style="font-size:13px; color:#0F172A;">${t.nama}</strong><br>
+                <span style="font-size:12px; color:#64748B;">ULP: ${t.ulp ?? '-'}</span><br>
+                <span style="font-size:12px; color:#64748B;">Tipe: <strong>${isDc ? 'DC (Fast / Ultra Fast)' : 'AC (Standard)'}</strong></span><br>
+                <span style="font-size:12px; color:#64748B;">Status Zona: <strong style="color:${warnaStatus[t.status] || '#64748B'};">${labelStatus[t.status] || '-'}</strong></span><br>
+                <span style="font-size:12px; color:#64748B;">Rata-rata transaksi: ${t.rata_rata_transaksi_bulan !== null ? t.rata_rata_transaksi_bulan + '/bln' : '-'}</span><br>
+                <span style="font-size:12px; color:#64748B;">Tren 3 bulan: ${formatTren(t)}</span><br>
+                <span style="font-size:12px; color:#64748B;">Skor gabungan: ${t.skor_gabungan !== null ? t.skor_gabungan : '-'}</span><br>
+                <span style="font-size:12px; color:#64748B;">Radius jangkauan: ${t.radius_km} km</span>
+            </div>
         `);
 
-        zonaLayers.push({ status: t.status, circle, marker });
+        zonaLayers.push({ type: isDc ? 'dc' : 'ac', circle, marker });
         batasSemuaTitik.push([t.latitude, t.longitude]);
     });
 
     const iconRekomendasi = L.divIcon({
         className: '',
         html: '<div class="rl-marker-rekomendasi-inner">+</div>',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -13],
     });
 
-    // Titik rekomendasi (biru +) dianggap kategori khusus "_rekomendasi" biar bisa di-toggle juga
+    // Titik rekomendasi (biru +) kategori khusus "_rekomendasi"
     const rekomendasiLayers = [];
 
     titikRekomendasi.forEach((t, i) => {
         const marker = L.marker([t.latitude, t.longitude], { icon: iconRekomendasi })
             .addTo(peta)
             .bindPopup(`
-                <strong>Rekomendasi #${i + 1}</strong><br>
-                Koordinat: ${t.latitude}, ${t.longitude}<br>
-                Skor potensi: <strong>${t.skor_potensi}</strong><br>
-                Jarak ke SPKLU terdekat: ${t.jarak_terdekat_km} km (${t.spklu_terdekat})<br>
-                ULP terdekat: ${t.ulp_terdekat ?? '-'}<br>
-                <a href="/monitoring/kandidat/create?tikor=${t.latitude},${t.longitude}" style="color:#2563EB; font-weight:700;">Jadikan Kandidat Baru →</a>
+                <div style="min-width:180px;">
+                    <span style="display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; color:#2563EB; background:#EFF6FF; padding:2px 6px; border-radius:4px; margin-bottom:4px;">
+                        Rekomendasi #${i + 1}
+                    </span><br>
+                    <strong style="font-size:13px; color:#0F172A;">Titik Ekspansi Baru</strong><br>
+                    <span style="font-size:12px; color:#64748B;">Koordinat: ${t.latitude}, ${t.longitude}</span><br>
+                    <span style="font-size:12px; color:#64748B;">Skor potensi: <strong>${t.skor_potensi}</strong></span><br>
+                    <span style="font-size:12px; color:#64748B;">SPKLU terdekat: ${t.jarak_terdekat_km} km (${t.spklu_terdekat})</span><br>
+                    <span style="font-size:12px; color:#64748B;">ULP terdekat: ${t.ulp_terdekat ?? '-'}</span><br>
+                    <div style="margin-top:8px; padding-top:6px; border-top:1px solid #f1f5f9;">
+                        <a href="/monitoring/kandidat/create?tikor=${t.latitude},${t.longitude}" style="color:#2563EB; font-weight:700; font-size:12px;">Jadikan Kandidat Baru →</a>
+                    </div>
+                </div>
             `);
 
         rekomendasiLayers.push(marker);
         batasSemuaTitik.push([t.latitude, t.longitude]);
+    });
+
+    // SPKLU Baru / Kandidat Pipeline:
+    // Kuning: yang udah ada pasangan (mitra_mesin)
+    // Ungu: yang belum ada pasangan
+    const kandidatLayers = [];
+
+    kandidatBaru.forEach(k => {
+        const punyaPasangan = Boolean(k.mitra_mesin && k.mitra_mesin.trim() !== '');
+        const warnaKandidat = punyaPasangan ? '#E8A317' : '#7C3AED'; // Kuning ada pasangan, Ungu belum ada pasangan
+        const shadowKandidat = punyaPasangan ? 'rgba(232,163,23,0.55)' : 'rgba(124,58,237,0.55)';
+        const badgeBg = punyaPasangan ? 'rgba(232,163,23,0.12)' : 'rgba(124,58,237,0.1)';
+
+        const marker = L.marker([k.latitude, k.longitude], {
+            icon: buatIconSpkluMarker(warnaKandidat, shadowKandidat)
+        })
+            .addTo(peta)
+            .bindPopup(`
+                <div style="min-width:195px;">
+                    <span style="display:inline-block; font-size:10px; font-weight:800; text-transform:uppercase; color:${warnaKandidat}; background:${badgeBg}; padding:2px 6px; border-radius:4px; margin-bottom:4px;">
+                        ${punyaPasangan ? 'Kandidat — Ada Pasangan' : 'Kandidat — Belum Ada Pasangan'}
+                    </span><br>
+                    <strong style="font-size:13px; color:#0F172A;">${k.nama}</strong><br>
+                    <span style="font-size:12px; color:#64748B;">ULP: ${k.ulp ?? '-'}</span><br>
+                    <span style="font-size:12px; color:#64748B;">Tahap: <strong>${k.tahap}</strong></span><br>
+                    <span style="font-size:12px; color:#64748B;">Mitra Mesin: <strong>${k.mitra_mesin ? k.mitra_mesin : '<span style="color:#7C3AED; font-style:italic;">Belum Ada</span>'}</strong></span><br>
+                    <span style="font-size:12px; color:#64748B;">Status: <strong style="text-transform:capitalize;">${(k.status_kanban || '').replace('_', ' ')}</strong></span><br>
+                    <div style="margin-top:8px; padding-top:6px; border-top:1px solid #f1f5f9;">
+                        <a href="/monitoring/probabilitas" style="color:${warnaKandidat}; font-weight:700; font-size:11.5px;">Lihat di Pipeline Probing &rarr;</a>
+                    </div>
+                </div>
+            `);
+
+        kandidatLayers.push({ kategori: punyaPasangan ? 'kuning' : 'ungu', marker });
+        batasSemuaTitik.push([k.latitude, k.longitude]);
     });
 
     if (batasSemuaTitik.length > 1) {
@@ -406,9 +577,14 @@
     let kategoriAktif = '';
 
     function terapkanFilter() {
-        // Toggle zona (hijau/kuning/merah/belum_ada_data)
-        zonaLayers.forEach(({ status, circle, marker }) => {
-            const tampil = !kategoriAktif || kategoriAktif === status;
+        // Toggle SPKLU existing (Master SPKLU: dc / ac)
+        zonaLayers.forEach(({ type, circle, marker }) => {
+            let tampil = false;
+            if (!kategoriAktif || kategoriAktif === '_semua_spklu' || kategoriAktif === '_master_spklu') {
+                tampil = true;
+            } else if (kategoriAktif === type) {
+                tampil = true;
+            }
 
             if (tampil) {
                 if (!peta.hasLayer(circle)) circle.addTo(peta);
@@ -419,8 +595,26 @@
             }
         });
 
+        // Toggle SPKLU Baru / kandidat pipeline (kuning / ungu)
+        kandidatLayers.forEach(({ kategori, marker }) => {
+            let tampil = false;
+            if (!kategoriAktif || kategoriAktif === '_semua_spklu' || kategoriAktif === '_semua_kandidat') {
+                tampil = true;
+            } else if (kategoriAktif === kategori) {
+                tampil = true;
+            }
+
+            if (tampil) {
+                if (!peta.hasLayer(marker)) marker.addTo(peta);
+            } else {
+                if (peta.hasLayer(marker)) peta.removeLayer(marker);
+            }
+        });
+
         // Toggle titik rekomendasi (kategori khusus "_rekomendasi")
-        const tampilRekomendasi = !kategoriAktif || kategoriAktif === '_rekomendasi';
+        // Catatan: Jika memilih grup SPKLU (_semua_spklu, _master_spklu, _semua_kandidat),
+        // titik rekomendasi di-hide agar peta fokus menampilkan unit SPKLU
+        const tampilRekomendasi = (!kategoriAktif && kategoriAktif !== '_semua_spklu' && kategoriAktif !== '_master_spklu' && kategoriAktif !== '_semua_kandidat') || kategoriAktif === '_rekomendasi';
         rekomendasiLayers.forEach(marker => {
             if (tampilRekomendasi) {
                 if (!peta.hasLayer(marker)) marker.addTo(peta);
@@ -432,14 +626,43 @@
         // Sinkronisasi tampilan dropdown
         document.getElementById('rl-filter-kategori').value = kategoriAktif;
 
+        // Sinkronisasi highlight pills
+        document.querySelectorAll('.rl-pill[data-pill]').forEach(pill => {
+            pill.classList.toggle('active', pill.dataset.pill === kategoriAktif);
+        });
+
         // Sinkronisasi highlight kartu ringkasan
         document.querySelectorAll('.rl-card[data-kategori]').forEach(card => {
-            card.classList.toggle('rl-card-active', kategoriAktif && card.dataset.kategori === kategoriAktif);
+            let isActive = false;
+            if (kategoriAktif === card.dataset.kategori) {
+                isActive = true;
+            } else if (kategoriAktif === '_master_spklu' && (card.dataset.kategori === 'dc' || card.dataset.kategori === 'ac')) {
+                isActive = true;
+            } else if (kategoriAktif === '_semua_kandidat' && (card.dataset.kategori === 'kuning' || card.dataset.kategori === 'ungu')) {
+                isActive = true;
+            } else if (kategoriAktif === '_semua_spklu' && card.dataset.kategori !== '_rekomendasi') {
+                isActive = true;
+            }
+            card.classList.toggle('rl-card-active', isActive);
         });
 
         // Sinkronisasi highlight legenda
         document.querySelectorAll('.rl-legend-item[data-kategori]').forEach(item => {
-            item.classList.toggle('rl-legend-item-off', kategoriAktif && item.dataset.kategori !== kategoriAktif);
+            let isOff = false;
+            if (!kategoriAktif) {
+                isOff = false;
+            } else if (item.dataset.kategori === kategoriAktif) {
+                isOff = false;
+            } else if (kategoriAktif === '_master_spklu' && (item.dataset.kategori === 'dc' || item.dataset.kategori === 'ac' || item.dataset.kategori === '_master_spklu')) {
+                isOff = false;
+            } else if (kategoriAktif === '_semua_kandidat' && (item.dataset.kategori === 'kuning' || item.dataset.kategori === 'ungu' || item.dataset.kategori === '_semua_kandidat')) {
+                isOff = false;
+            } else if (kategoriAktif === '_semua_spklu' && item.dataset.kategori !== '_rekomendasi') {
+                isOff = false;
+            } else {
+                isOff = true;
+            }
+            item.classList.toggle('rl-legend-item-off', isOff);
         });
     }
 

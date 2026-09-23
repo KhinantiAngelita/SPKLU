@@ -13,14 +13,18 @@ return new class extends Migration
             // Dipakai buat skor kepadatan yang lebih akurat di Rekomendasi Lokasi
             // (durasi = seberapa lama unit "dipake"/nge-block antrian, beda
             // dengan jumlah_transaksi yang cuma ngitung berapa KALI dipake).
-            $table->decimal('total_durasi_menit', 10, 2)->default(0)->after('energi_kwh');
+            if (! Schema::hasColumn('transaksis', 'total_durasi_menit')) {
+                $table->decimal('total_durasi_menit', 10, 2)->default(0)->after('energi_kwh');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('transaksis', function (Blueprint $table) {
-            $table->dropColumn('total_durasi_menit');
+            if (Schema::hasColumn('transaksis', 'total_durasi_menit')) {
+                $table->dropColumn('total_durasi_menit');
+            }
         });
     }
 };

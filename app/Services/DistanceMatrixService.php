@@ -70,7 +70,7 @@ class DistanceMatrixService
                 'body' => $response->body(),
             ]);
 
-            throw new \RuntimeException('Gagal menghubungi Google Routes API (HTTP ' . $response->status() . ')');
+            throw new \RuntimeException('Gagal menghubungi Google Routes API (HTTP '.$response->status().')');
         }
 
         $rows = $response->json();
@@ -104,7 +104,7 @@ class DistanceMatrixService
                     : null;
                 $hasil[$idx]['status'] = 'OK';
             } else {
-                $hasil[$idx]['status'] = $condition ?? ('ERROR_CODE_' . $statusCode);
+                $hasil[$idx]['status'] = $condition ?? ('ERROR_CODE_'.$statusCode);
             }
         }
 

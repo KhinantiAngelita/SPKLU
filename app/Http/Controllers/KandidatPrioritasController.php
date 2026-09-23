@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class KandidatPrioritasController extends Controller
 {
-    public function __construct(private SpkluTerdekatService $spkluTerdekatService)
-    {
-    }
+    public function __construct(private SpkluTerdekatService $spkluTerdekatService) {}
 
     public function index(Request $request)
     {
@@ -22,70 +20,78 @@ class KandidatPrioritasController extends Controller
 
         $query = KandidatPrioritas::query()->with(['ulpMapping', 'probabilitas']);
 
-        if ($search) $query->where('nama_lokasi', 'like', "%{$search}%");
-        if ($ulpId) $query->where('ulp_mapping_id', $ulpId);
-        if ($typeKw) $query->where('type_kw', $typeKw);
-        if ($kepemilikan) $query->where('kepemilikan', $kepemilikan);
+        if ($search) {
+            $query->where('nama_lokasi', 'like', "%{$search}%");
+        }
+        if ($ulpId) {
+            $query->where('ulp_mapping_id', $ulpId);
+        }
+        if ($typeKw) {
+            $query->where('type_kw', $typeKw);
+        }
+        if ($kepemilikan) {
+            $query->where('kepemilikan', $kepemilikan);
+        }
 
         $kandidatList = $query->orderByDesc('skor_prioritas')->paginate(15)->withQueryString();
 
         $kandidatList->getCollection()->transform(function (KandidatPrioritas $kandidat) {
-        $koordinat = $kandidat->koordinat_array;
+            $koordinat = $kandidat->koordinat_array;
 
-        $ulp = $kandidat->ulpMapping;
-        $jarakIdealUlp = $ulp->jarak_ideal_km ?? null;
+            $ulp = $kandidat->ulpMapping;
+            $jarakIdealUlp = $ulp->jarak_ideal_km ?? null;
 
-        // Ambil data manual dulu (yang diinput via modal)
-        $manualList = $kandidat->spkluTerdekat()->orderBy('jarak_km')->get();
+            // Ambil data manual dulu (yang diinput via modal)
+            $manualList = $kandidat->spkluTerdekat()->orderBy('jarak_km')->get();
 
-        if ($manualList->isNotEmpty()) {
-            $spkluTerdekat = $manualList->map(fn ($m) => [
-                'nama'         => $m->nama_spklu,
-                'jarak_km'     => $m->jarak_km,
-                'status_jarak' => $m->status_jarak ?? '-',
-            ])->all();
+            if ($manualList->isNotEmpty()) {
+                $spkluTerdekat = $manualList->map(fn ($m) => [
+                    'nama' => $m->nama_spklu,
+                    'jarak_km' => $m->jarak_km,
+                    'status_jarak' => $m->status_jarak ?? '-',
+                ])->all();
 
-            $jarakRealList = $manualList->pluck('jarak_km')->all();
-        } else {
-            $spkluTerdekat = $koordinat
-                ? $this->spkluTerdekatService->cariTerdekat($koordinat[0], $koordinat[1], 3)
-                : [];
+                $jarakRealList = $manualList->pluck('jarak_km')->all();
+            } else {
+                $spkluTerdekat = $koordinat
+                    ? $this->spkluTerdekatService->cariTerdekat($koordinat[0], $koordinat[1], 3)
+                    : [];
 
-            $jarakRealList = collect($spkluTerdekat)->pluck('jarak_km')->all();
-        }
+                $jarakRealList = collect($spkluTerdekat)->pluck('jarak_km')->all();
+            }
 
-        $skorJarak = $this->spkluTerdekatService->hitungSkorJarak($jarakRealList, $jarakIdealUlp);
-        $skorPoinKapasitas = $this->spkluTerdekatService->hitungSkorPoinKapasitas($kandidat->probabilitas);
-        $skorPoinOkupansi = $this->spkluTerdekatService->hitungSkorPoinOkupansi(
-            $kandidat->poin_fasilitas ?? 0,
-            $kandidat->poin_jaringan ?? 0,
-            $kandidat->poin_okupasi ?? 0
-        );
-        $skorPrioritasAkhir = $this->spkluTerdekatService->hitungSkorPrioritasAkhir(
-            $skorJarak,
-            $skorPoinKapasitas,
-            $skorPoinOkupansi
-        );
+            $skorJarak = $this->spkluTerdekatService->hitungSkorJarak($jarakRealList, $jarakIdealUlp);
+            $skorPoinKapasitas = $this->spkluTerdekatService->hitungSkorPoinKapasitas($kandidat->probabilitas);
+            $skorPoinOkupansi = $this->spkluTerdekatService->hitungSkorPoinOkupansi(
+                $kandidat->poin_fasilitas ?? 0,
+                $kandidat->poin_jaringan ?? 0,
+                $kandidat->poin_okupasi ?? 0
+            );
+            $skorPrioritasAkhir = $this->spkluTerdekatService->hitungSkorPrioritasAkhir(
+                $skorJarak,
+                $skorPoinKapasitas,
+                $skorPoinOkupansi
+            );
 
-        // ==== SIMPAN DULU, SEBELUM nempel attribute display-only ====
-        if ($skorPrioritasAkhir !== null && $kandidat->skor_prioritas != $skorPrioritasAkhir) {
-            KandidatPrioritas::withoutEvents(function () use ($kandidat, $skorPrioritasAkhir) {
-                $kandidat->newQueryWithoutScopes()
-                    ->where('id', $kandidat->id)
-                    ->update(['skor_prioritas' => $skorPrioritasAkhir]);
-            });
-        }
+            // ==== SIMPAN DULU, SEBELUM nempel attribute display-only ====
+            if ($skorPrioritasAkhir !== null && $kandidat->skor_prioritas != $skorPrioritasAkhir) {
+                KandidatPrioritas::withoutEvents(function () use ($kandidat, $skorPrioritasAkhir) {
+                    $kandidat->newQueryWithoutScopes()
+                        ->where('id', $kandidat->id)
+                        ->update(['skor_prioritas' => $skorPrioritasAkhir]);
+                });
+            }
 
-        // ==== BARU nempel data virtual/display setelah save ====
-        $kandidat->spklu_terdekat = $spkluTerdekat;
-        $kandidat->skor_jarak = $skorJarak;
-        $kandidat->skor_poin_kapasitas = $skorPoinKapasitas;
-        $kandidat->skor_poin_okupansi = $skorPoinOkupansi;
-        $kandidat->skor_prioritas_akhir = $skorPrioritasAkhir;
-        $kandidat->skor_prioritas = $skorPrioritasAkhir; // biar konsisten tampil di request ini
+            // ==== BARU nempel data virtual/display setelah save ====
+            $kandidat->spklu_terdekat = $spkluTerdekat;
+            $kandidat->skor_jarak = $skorJarak;
+            $kandidat->skor_poin_kapasitas = $skorPoinKapasitas;
+            $kandidat->skor_poin_okupansi = $skorPoinOkupansi;
+            $kandidat->skor_prioritas_akhir = $skorPrioritasAkhir;
+            $kandidat->skor_prioritas = $skorPrioritasAkhir; // biar konsisten tampil di request ini
 
-        return $kandidat;
-    });
+            return $kandidat;
+        });
 
         // Summary cards dihitung dari SELURUH data yang lolos filter
         $baseQuery = fn () => KandidatPrioritas::query()

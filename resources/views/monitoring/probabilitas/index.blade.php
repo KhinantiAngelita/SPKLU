@@ -4,13 +4,31 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/probabilitas.css') }}">
+
+    <style>
+        /* FIX: pagination default Laravel nganggep Tailwind ada (SVG panah
+           Prev/Next pakai class h-5 w-5 yang gak ngefek tanpa Tailwind,
+           jatuh ke ukuran default browser ~300px). Dirapiin di sini biar
+           konsisten sama desain sistem, tanpa perlu ganti default view
+           Laravel-nya lewat provider. */
+        nav[role="navigation"] { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 18px; flex-wrap: wrap; font-size: 13.3px; }
+        nav[role="navigation"] svg { width: 16px !important; height: 16px !important; display: inline-block; vertical-align: middle; }
+        nav[role="navigation"] a, nav[role="navigation"] span {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 34px; height: 34px; padding: 0 10px; border-radius: 9px;
+            font-weight: 600; color: #64748B; text-decoration: none; transition: all .15s ease;
+        }
+        nav[role="navigation"] a:hover { background: #F6F8FA; color: #0081AB; }
+        nav[role="navigation"] span[aria-current="page"] { background: linear-gradient(135deg, #023E8A, #0081AB); color: #fff; }
+        nav[role="navigation"] .hidden, nav[role="navigation"] .sr-only { display: none !important; }
+    </style>
 @endpush
 
 @section('content')
 
     <div class="page-header">
         <h1>Monitoring Probabilitas SPKLU</h1>
-        <p class="page-subtitle">Ringkasan Sistem SPKLU</p>
+        <p class="page-subtitle">Pantau probabilitas kandidat proyek SPKLU</p>
     </div>
 
     <div class="toolbar">
@@ -161,54 +179,70 @@
 
     {{-- Modal Detail Kandidat (read-only, isi form Tambah Kandidat) --}}
     <dialog id="modal-detail" class="dialog-clean detail-dialog">
-        <div class="modal-header-gradient">
-            <h2 id="detail-lokasi">-</h2>
-            <button type="button" class="modal-close-btn" onclick="document.getElementById('modal-detail').close()">✕</button>
-        </div>
-
-        <div class="modal-body-clean detail-body">
-            <div class="detail-item detail-full">
-                <span class="detail-label">Alamat</span>
-                <span class="detail-value" id="detail-alamat">-</span>
+        <form id="form-detail-edit">
+            <div class="modal-header-gradient">
+                <h2 id="detail-lokasi">-</h2>
+                <button type="button" class="modal-close-btn" onclick="document.getElementById('modal-detail').close()">✕</button>
             </div>
 
-            <div class="detail-divider"></div>
+            <div class="modal-body-clean detail-body">
+                <div id="detail-error" style="display:none; margin-bottom:12px; padding:10px 14px; background:#fef2f2; border:1px solid #fecaca; border-radius:8px; color:#b91c1c; font-size:13px;"></div>
 
-            <div class="detail-row">
-                <div class="detail-item">
-                    <span class="detail-label">Nomor Telephone</span>
-                    <span class="detail-value" id="detail-telepon">-</span>
+                <div class="detail-item detail-full">
+                    <span class="detail-label">Alamat</span>
+                    <input type="text" name="alamat" id="detail-alamat" class="detail-input">
                 </div>
-                <div class="detail-item">
-                    <span class="detail-label">PIC</span>
-                    <span class="detail-value" id="detail-pic">-</span>
+
+                <div class="detail-divider"></div>
+
+                <div class="detail-row">
+                    <div class="detail-item">
+                        <span class="detail-label">Nomor Telephone</span>
+                        <input type="text" name="nomor_telepon" id="detail-telepon" class="detail-input">
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">PIC</span>
+                        <input type="text" name="pic" id="detail-pic" class="detail-input">
+                    </div>
+                </div>
+
+                <div class="detail-divider"></div>
+
+                <div class="detail-item detail-full">
+                    <span class="detail-label">Titik Koordinat</span>
+                    <span class="detail-value detail-mono" id="detail-tikor">-</span>
+                </div>
+
+                <div class="detail-divider"></div>
+
+                <div class="detail-row">
+                    <div class="detail-item">
+                        <span class="detail-label">ULP</span>
+                        <select name="ulp" id="detail-ulp" class="detail-input">
+                            <option value="">— Pilih ULP —</option>
+                            @foreach ($daftarUlp as $ulp)
+                                <option value="{{ $ulp->nama_penuh }}">{{ $ulp->nama_penuh }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Skema</span>
+                        <select name="skema" id="detail-skema" class="detail-input">
+                            <option value="">— Pilih Skema —</option>
+                            <option value="Skema 1">Skema 1</option>
+                            <option value="Skema 2">Skema 2</option>
+                            <option value="Skema 3">Skema 3</option>
+                            <option value="Skema 4">Skema 4</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="detail-divider"></div>
-
-            <div class="detail-item detail-full">
-                <span class="detail-label">Titik Koordinat</span>
-                <span class="detail-value detail-mono" id="detail-tikor">-</span>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-detail').close()">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
-
-            <div class="detail-divider"></div>
-
-            <div class="detail-row">
-                <div class="detail-item">
-                    <span class="detail-label">ULP</span>
-                    <span class="detail-value" id="detail-ulp">-</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Skema</span>
-                    <span class="detail-value" id="detail-skema">-</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-detail').close()">Tutup</button>
-        </div>
+        </form>
     </dialog>
 
     @include('monitoring.probabilitas._modal_edit')
@@ -232,21 +266,73 @@
             document.getElementById('filter-form').submit();
         }
 
+        let DETAIL_PROBABILITAS_ID = null;
+
         function bukaDetail(id) {
             fetch(`/monitoring/probabilitas/${id}/edit-data`)
                 .then(r => r.json())
                 .then(data => {
                     const p = data.probabilitas;
+                    DETAIL_PROBABILITAS_ID = p.id;
+
+                    document.getElementById('detail-error').style.display = 'none';
                     document.getElementById('detail-lokasi').textContent = p.lokasi;
-                    document.getElementById('detail-alamat').textContent = p.alamat || '—';
-                    document.getElementById('detail-telepon').textContent = p.nomor_telepon || '—';
-                    document.getElementById('detail-pic').textContent = p.pic || '—';
+                    document.getElementById('detail-alamat').value = p.alamat ?? '';
+                    document.getElementById('detail-telepon').value = p.nomor_telepon ?? '';
+                    document.getElementById('detail-pic').value = p.pic ?? '';
                     document.getElementById('detail-tikor').textContent = `${p.tikor_lat}, ${p.tikor_lng}`;
-                    document.getElementById('detail-ulp').textContent = p.ulp || '—';
-                    document.getElementById('detail-skema').textContent = p.skema || '—';
+                    document.getElementById('detail-ulp').value = p.ulp ?? '';
+                    document.getElementById('detail-skema').value = p.skema ?? '';
                     document.getElementById('modal-detail').showModal();
                 });
         }
+
+        document.getElementById('form-detail-edit').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const errorBox = document.getElementById('detail-error');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            errorBox.style.display = 'none';
+            submitBtn.disabled = true;
+
+            const csrf = document.querySelector('meta[name=csrf-token]')?.content ?? '';
+            const payload = {
+                alamat: document.getElementById('detail-alamat').value,
+                nomor_telepon: document.getElementById('detail-telepon').value,
+                pic: document.getElementById('detail-pic').value,
+                ulp: document.getElementById('detail-ulp').value,
+                skema: document.getElementById('detail-skema').value,
+            };
+
+            fetch(`/monitoring/probabilitas/${DETAIL_PROBABILITAS_ID}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(async (res) => {
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        const pesan = data.errors
+                            ? Object.values(data.errors).flat().join(' ')
+                            : (data.message || 'Gagal menyimpan perubahan.');
+                        errorBox.textContent = pesan;
+                        errorBox.style.display = 'block';
+                        return;
+                    }
+                    window.location.reload();
+                })
+                .catch(() => {
+                    errorBox.textContent = 'Gagal menghubungi server. Coba lagi.';
+                    errorBox.style.display = 'block';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                });
+        });
 
         function aturTinggiHeaderTabel() {
             const theadRow1 = document.querySelector('.table-probabilitas thead tr:first-child');
@@ -259,6 +345,15 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             aturTinggiHeaderTabel();
+
+            // kalau tadi keluar dari modal riwayat lewat "Lihat Semua Riwayat",
+            // buka ulang modal riwayat yang sama begitu balik ke halaman ini
+            const pending = sessionStorage.getItem('reopenRiwayat');
+            if (pending) {
+                sessionStorage.removeItem('reopenRiwayat');
+                const { probabilitasId, tahapKey, tahapLabel } = JSON.parse(pending);
+                bukaRiwayat(probabilitasId, tahapKey, tahapLabel);
+            }
         });
 
         window.addEventListener('resize', aturTinggiHeaderTabel);

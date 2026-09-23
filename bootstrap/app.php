@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\ForcePasswordChange;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,13 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
+            'role' => CheckRole::class,
         ]);
 
         // Middleware ini jalan otomatis untuk SEMUA route yang butuh login (append ke grup 'web')
         $middleware->appendToGroup('web', [
-            \App\Http\Middleware\ForcePasswordChange::class,
+            ForcePasswordChange::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

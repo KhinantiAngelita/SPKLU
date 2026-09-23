@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Imports\TransaksiImport;
+use App\Models\AktivitasNotifikasi;
 use App\Models\TransaksiUnmatchedName;
 use App\Models\TransaksiUpload;
 use App\Models\TransaksiUploadUnmatched;
@@ -93,6 +94,16 @@ class TransaksiImportService
             'jumlah_nama_tidak_cocok' => count($import->unmatched),
         ]);
 
+        AktivitasNotifikasi::create([
+            'user_id' => $userId,
+            'kategori' => 'transaksi',
+            'judul' => 'Import Transaksi Selesai',
+            'pesan' => "File transaksi \"{$uploadLog->nama_file}\" berhasil diproses: {$totalTersimpan} ringkasan transaksi tersimpan.",
+            'icon' => 'arrow-left-right',
+            'url' => route('transaksi.index'),
+            'target_roles' => null,
+        ]);
+
         Log::info('=== TRANSAKSI IMPORT (job) SELESAI ===', [
             'upload_id' => $uploadLog->id,
             'total_diproses' => $import->totalRowsProcessed,
@@ -124,7 +135,8 @@ class TransaksiImportService
             return null;
         }
 
-        $csvPath = $outputDir . DIRECTORY_SEPARATOR . pathinfo($xlsxPath, PATHINFO_FILENAME) . '.csv';
+        $csvPath = $outputDir.DIRECTORY_SEPARATOR.pathinfo($xlsxPath, PATHINFO_FILENAME).'.csv';
+
         return file_exists($csvPath) ? $csvPath : null;
     }
 
@@ -151,6 +163,7 @@ class TransaksiImportService
                 return $path;
             }
         }
+
         return null;
     }
 
@@ -189,7 +202,7 @@ class TransaksiImportService
             mkdir($tempPath, 0755, true);
         }
 
-        $newPath = $tempPath . DIRECTORY_SEPARATOR . 'nobom_' . basename($csvPath);
+        $newPath = $tempPath.DIRECTORY_SEPARATOR.'nobom_'.basename($csvPath);
         file_put_contents($newPath, $content);
 
         return $newPath;

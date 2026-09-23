@@ -20,7 +20,7 @@ class FsSkemaPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['super_admin', 'pemasaran', 'pengelola', 'manajemen']);
+        return in_array($user->role, ['super_admin', 'pemasaran', 'pengelola']);
     }
 
     public function update(User $user, FsSkema $fsSkema): bool

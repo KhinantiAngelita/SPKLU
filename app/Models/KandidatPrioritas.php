@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KandidatPrioritas extends Model
 {
@@ -43,13 +44,13 @@ class KandidatPrioritas extends Model
      */
     public function getKoordinatArrayAttribute(): ?array
     {
-        if (!$this->koordinat) {
+        if (! $this->koordinat) {
             return null;
         }
 
         $bagian = array_map('trim', explode(',', $this->koordinat));
 
-        if (count($bagian) !== 2 || !is_numeric($bagian[0]) || !is_numeric($bagian[1])) {
+        if (count($bagian) !== 2 || ! is_numeric($bagian[0]) || ! is_numeric($bagian[1])) {
             return null;
         }
 
@@ -101,14 +102,14 @@ class KandidatPrioritas extends Model
         };
     }
 
-    public function probabilitas(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function probabilitas(): BelongsTo
     {
         return $this->belongsTo(Probabilitas::class);
     }
 
     public function getSkorProgresAttribute(): float
     {
-        $tahapan = ['probing','survey_nps','surat_masuk','survey_ulp','rab','kkp_final','pks','bayar_bp','pembangunan','integrasi'];
+        $tahapan = ['probing', 'survey_nps', 'surat_masuk', 'survey_ulp', 'rab', 'kkp_final', 'pks', 'bayar_bp', 'pembangunan', 'integrasi'];
         $selesai = collect($tahapan)->filter(fn ($t) => $this->{$t})->count();
 
         return $selesai / count($tahapan); // 0.0 - 1.0, sama seperti I5 di Excel
@@ -118,6 +119,4 @@ class KandidatPrioritas extends Model
     {
         return $this->hasMany(KandidatSpkluTerdekat::class, 'kandidat_id');
     }
-
-    
 }

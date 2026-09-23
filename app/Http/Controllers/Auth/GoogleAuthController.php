@@ -15,12 +15,22 @@ class GoogleAuthController extends Controller
             session(['activation_token' => $token]);
         }
 
-        return Socialite::driver('google')->redirect();
+        $redirectUrl = config('services.google.redirect');
+        if (! $redirectUrl || str_starts_with($redirectUrl, '/')) {
+            $redirectUrl = route('auth.google.callback');
+        }
+
+        return Socialite::driver('google')->redirectUrl($redirectUrl)->redirect();
     }
 
     public function callback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        $redirectUrl = config('services.google.redirect');
+        if (! $redirectUrl || str_starts_with($redirectUrl, '/')) {
+            $redirectUrl = route('auth.google.callback');
+        }
+
+        $googleUser = Socialite::driver('google')->redirectUrl($redirectUrl)->user();
         $token = session('activation_token');
 
         if ($token) {

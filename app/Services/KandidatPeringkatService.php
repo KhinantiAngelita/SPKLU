@@ -14,18 +14,22 @@ use Illuminate\Support\Facades\DB;
  */
 class KandidatPeringkatService
 {
-    public function __construct(private SpkluTerdekatService $spkluTerdekatService)
-    {
-    }
+    public function __construct(private SpkluTerdekatService $spkluTerdekatService) {}
 
-    private const BOBOT_PROGRES    = 0.2;
-    private const BOBOT_KAPASITAS  = 0.2;
+    private const BOBOT_PROGRES = 0.2;
+
+    private const BOBOT_KAPASITAS = 0.2;
+
     private const BOBOT_DEMAND_ULP = 0.2;
-    private const BOBOT_KEBUTUHAN  = 0.2;
-    private const BOBOT_OKUPANSI   = 0.2;
+
+    private const BOBOT_KEBUTUHAN = 0.2;
+
+    private const BOBOT_OKUPANSI = 0.2;
 
     private const BOBOT_TERDEKAT = [0.5, 0.3, 0.2];
+
     private const CAP_KAPASITAS_KW = 200;
+
     private const BULAN_DEMAND_ULP = 12;
 
     /**
@@ -55,24 +59,24 @@ class KandidatPeringkatService
 
         $diranking = $semuaKandidat->map(function (KandidatPrioritas $kandidat) use ($demandPerUlp, $maxDemandUlp) {
 
-            $koordinat    = $kandidat->koordinat_array;
+            $koordinat = $kandidat->koordinat_array;
             $tikorLengkap = ! empty($koordinat[0]) && ! empty($koordinat[1]);
 
-            $skorProgres      = $this->hitungSkorProgres($kandidat->probabilitas);
-            $skorKapasitas    = $this->spkluTerdekatService->hitungSkorPoinKapasitas($kandidat->probabilitas);
-            $skorDemandUlp    = $this->hitungSkorDemandUlp($kandidat, $demandPerUlp, $maxDemandUlp);
-            $skorKebutuhan    = $this->hitungSkorKebutuhan($kandidat);
+            $skorProgres = $this->hitungSkorProgres($kandidat->probabilitas);
+            $skorKapasitas = $this->spkluTerdekatService->hitungSkorPoinKapasitas($kandidat->probabilitas);
+            $skorDemandUlp = $this->hitungSkorDemandUlp($kandidat, $demandPerUlp, $maxDemandUlp);
+            $skorKebutuhan = $this->hitungSkorKebutuhan($kandidat);
             $skorPoinOkupansi = $this->hitungSkorPoinOkupansi($kandidat);
 
             $spkluTerdekatList = $kandidat->spkluTerdekat->take(3)->values()->map(fn ($s) => [
-                'nama'         => $s->nama_spklu,
-                'jarak_km'     => $s->jarak_km,
+                'nama' => $s->nama_spklu,
+                'jarak_km' => $s->jarak_km,
                 'kapasitas_kw' => $s->kapasitas_kw,
                 'status_jarak' => $s->status_jarak ?? '-',
             ])->all();
 
             if (! $tikorLengkap) {
-                $skorAkhir    = null;
+                $skorAkhir = null;
                 $statusTampil = 'TIKOR belum diisi';
             } else {
                 $skorAkhir = round(
@@ -87,7 +91,7 @@ class KandidatPeringkatService
                 $statusTampil = match (true) {
                     $skorProgres == 0 => 'Belum ada progress',
                     $skorProgres == 1 => 'Sudah selesai/terintegrasi',
-                    default            => 'On Progress',
+                    default => 'On Progress',
                 };
             }
 
@@ -95,20 +99,20 @@ class KandidatPeringkatService
                 $kandidat->newQueryWithoutScopes()
                     ->where('id', $kandidat->id)
                     ->update([
-                        'demand_ulp'    => round($skorDemandUlp),
+                        'demand_ulp' => round($skorDemandUlp),
                         'kebutuhan_ulp' => round($skorKebutuhan),
                     ]);
             });
 
             $kandidat->skor_progres_peringkat = $skorProgres;
-            $kandidat->skor_kapasitas         = $skorKapasitas;
-            $kandidat->skor_demand_ulp        = $skorDemandUlp;
-            $kandidat->skor_kebutuhan         = $skorKebutuhan;
-            $kandidat->skor_poin_okupansi     = $skorPoinOkupansi;
-            $kandidat->skor_akhir             = $skorAkhir;
-            $kandidat->status_tampil          = $statusTampil;
-            $kandidat->kategori_peringkat     = $this->kategoriDariSkor($skorAkhir);
-            $kandidat->spklu_terdekat_list     = $spkluTerdekatList;
+            $kandidat->skor_kapasitas = $skorKapasitas;
+            $kandidat->skor_demand_ulp = $skorDemandUlp;
+            $kandidat->skor_kebutuhan = $skorKebutuhan;
+            $kandidat->skor_poin_okupansi = $skorPoinOkupansi;
+            $kandidat->skor_akhir = $skorAkhir;
+            $kandidat->status_tampil = $statusTampil;
+            $kandidat->kategori_peringkat = $this->kategoriDariSkor($skorAkhir);
+            $kandidat->spklu_terdekat_list = $spkluTerdekatList;
 
             return $kandidat;
         });
@@ -143,10 +147,10 @@ class KandidatPeringkatService
         $adaSkor = $terurut->filter(fn ($k) => ! is_null($k->skor_akhir));
 
         return [
-            'total_kandidat'      => $terurut->count(),
-            'rata_rata_skor'      => $adaSkor->isNotEmpty() ? round($adaSkor->avg('skor_akhir'), 1) : 0,
-            'prioritas_tinggi'    => $adaSkor->filter(fn ($k) => $k->kategori_peringkat === 'A')->count(),
-            'rata_rata_progres'   => $adaSkor->isNotEmpty()
+            'total_kandidat' => $terurut->count(),
+            'rata_rata_skor' => $adaSkor->isNotEmpty() ? round($adaSkor->avg('skor_akhir'), 1) : 0,
+            'prioritas_tinggi' => $adaSkor->filter(fn ($k) => $k->kategori_peringkat === 'A')->count(),
+            'rata_rata_progres' => $adaSkor->isNotEmpty()
                 ? round($adaSkor->avg(fn ($k) => (float) $k->skor_progres_peringkat) * 100, 1)
                 : 0,
             'rata_rata_kebutuhan' => $adaSkor->isNotEmpty() ? round($adaSkor->avg('skor_kebutuhan'), 1) : 0,
@@ -159,7 +163,7 @@ class KandidatPeringkatService
             return 0.0;
         }
 
-        $badges     = $probabilitas->badgePerTahap();
+        $badges = $probabilitas->badgePerTahap();
         $totalTahap = count(Probabilitas::TAHAPAN);
 
         if ($totalTahap === 0) {
@@ -184,23 +188,28 @@ class KandidatPeringkatService
     {
         $sejak = now()->subMonths(self::BULAN_DEMAND_ULP)->startOfMonth();
 
+        $driver = DB::connection()->getDriverName();
+        $dateSql = $driver === 'sqlite'
+            ? "strftime('%Y-%m', transaksis.tanggal)"
+            : 'DATE_FORMAT(transaksis.tanggal, "%Y-%m")';
+
         $rataRataPerSpklu = DB::table('transaksis')
             ->join('spklus', 'spklus.id', '=', 'transaksis.spklu_id')
             ->whereNull('spklus.deleted_at')
             ->whereNotNull('spklus.ulp_mapping_id')
             ->where('transaksis.tanggal', '>=', $sejak)
-            ->selectRaw('
+            ->selectRaw("
                 spklus.id as spklu_id,
                 spklus.ulp_mapping_id as ulp_mapping_id,
-                DATE_FORMAT(transaksis.tanggal, "%Y-%m") as bulan,
+                {$dateSql} as bulan,
                 SUM(transaksis.jumlah_transaksi) as total_bulan
-            ')
+            ")
             ->groupBy('spklus.id', 'spklus.ulp_mapping_id', 'bulan')
             ->get()
             ->groupBy('spklu_id')
             ->map(function ($bulanan) {
                 return (object) [
-                    'ulp_mapping_id'      => $bulanan->first()->ulp_mapping_id,
+                    'ulp_mapping_id' => $bulanan->first()->ulp_mapping_id,
                     'rata2_bulanan_spklu' => $bulanan->avg('total_bulan'),
                 ];
             });
@@ -228,7 +237,7 @@ class KandidatPeringkatService
             return 0.0;
         }
 
-        $totalSkor  = 0.0;
+        $totalSkor = 0.0;
         $totalBobot = 0.0;
 
         foreach ($terdekat as $i => $spklu) {
@@ -238,7 +247,7 @@ class KandidatPeringkatService
                 continue;
             }
 
-            $faktorJarak     = min((float) $spklu->jarak_km / $jarakIdealKm, 1) * 100 * 0.6;
+            $faktorJarak = min((float) $spklu->jarak_km / $jarakIdealKm, 1) * 100 * 0.6;
             $faktorKapasitas = null;
             if (! is_null($spklu->kapasitas_kw)) {
                 $faktorKapasitas = (1 - min((float) $spklu->kapasitas_kw / self::CAP_KAPASITAS_KW, 1)) * 100 * 0.4;
@@ -248,7 +257,7 @@ class KandidatPeringkatService
                     $faktorKapasitas = (1 - min((float) $master->kw / self::CAP_KAPASITAS_KW, 1)) * 100 * 0.4;
                 }
             }
-            $totalSkor  += ($faktorJarak + $faktorKapasitas) * $bobot;
+            $totalSkor += ($faktorJarak + $faktorKapasitas) * $bobot;
             $totalBobot += $bobot;
         }
 
@@ -266,9 +275,9 @@ class KandidatPeringkatService
         }
 
         return match (true) {
-            $skorAkhir > 80  => 'A',
+            $skorAkhir > 80 => 'A',
             $skorAkhir >= 50 => 'B',
-            default          => 'C',
+            default => 'C',
         };
     }
 }

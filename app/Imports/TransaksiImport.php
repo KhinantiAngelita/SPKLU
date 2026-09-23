@@ -8,18 +8,24 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading, WithCustomCsvSettings
+class TransaksiImport implements ToCollection, WithChunkReading, WithCustomCsvSettings, WithHeadingRow
 {
     protected array $aggregates = [];
+
     protected ?array $spkluCacheLoose = null;
+
     protected ?array $spkluCacheTight = null;
+
     protected ?array $aliasCache = null;
+
     public array $unmatched = [];
+
     public int $totalRowsProcessed = 0;
+
     protected string $csvDelimiter;
 
     public function __construct(string $csvDelimiter = ',')
@@ -52,6 +58,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
 
             if (! $spkluId) {
                 $this->unmatched[$namaRaw] = ($this->unmatched[$namaRaw] ?? 0) + 1;
+
                 continue;
             }
 
@@ -60,7 +67,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
                 continue;
             }
 
-            $key = $spkluId . '_' . $tanggal;
+            $key = $spkluId.'_'.$tanggal;
 
             if (! isset($this->aggregates[$key])) {
                 $this->aggregates[$key] = [
@@ -128,6 +135,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
         $s = str_replace(['.', ','], ' ', $s);
         $s = preg_replace('/[^A-Z0-9 ]/', '', $s);
         $s = preg_replace('/\s+/', ' ', $s);
+
         return trim($s);
     }
 
@@ -147,6 +155,7 @@ class TransaksiImport implements ToCollection, WithHeadingRow, WithChunkReading,
         if ($value === '') {
             return 0.0;
         }
+
         return (float) str_replace(',', '.', $value);
     }
 

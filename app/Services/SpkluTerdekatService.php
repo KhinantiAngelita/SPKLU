@@ -2,15 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Spklu;
-use App\Models\Probabilitas;
 use App\Models\KandidatPrioritas;
+use App\Models\Probabilitas;
+use App\Models\Spklu;
 
 class SpkluTerdekatService
 {
-    public function __construct(private DistanceMatrixService $distanceMatrixService)
-    {
-    }
+    public function __construct(private DistanceMatrixService $distanceMatrixService) {}
 
     public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
@@ -107,6 +105,7 @@ class SpkluTerdekatService
             ->map(function ($s) {
                 $s['jarak_km'] = $s['jarak_km_real'];
                 unset($s['jarak_km_real']);
+
                 return $s;
             })
             ->values()
@@ -196,15 +195,15 @@ class SpkluTerdekatService
 
     public function hitungSkorPoinKapasitas(?Probabilitas $probabilitas): ?float
     {
-        if (!$probabilitas) {
+        if (! $probabilitas) {
             return null;
         }
 
         $unit = [
-            22  => $probabilitas->kebutuhan_22kw ?? 0,
-            30  => $probabilitas->kebutuhan_30kw ?? 0,
-            50  => $probabilitas->kebutuhan_50kw ?? 0,
-            60  => $probabilitas->kebutuhan_60kw ?? 0,
+            22 => $probabilitas->kebutuhan_22kw ?? 0,
+            30 => $probabilitas->kebutuhan_30kw ?? 0,
+            50 => $probabilitas->kebutuhan_50kw ?? 0,
+            60 => $probabilitas->kebutuhan_60kw ?? 0,
             120 => $probabilitas->kebutuhan_120kw ?? 0,
             180 => $probabilitas->kebutuhan_180kw ?? 0,
         ];

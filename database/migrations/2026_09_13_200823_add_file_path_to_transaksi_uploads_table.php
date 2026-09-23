@@ -12,14 +12,18 @@ return new class extends Migration
             // Lokasi file mentah yang tersimpan (disk default), dipakai untuk
             // fitur "Proses Ulang" 1-klik tanpa perlu pilih file lagi.
             // Nullable karena riwayat lama (sebelum fitur ini) gak punya file tersimpan.
-            $table->string('path_file')->nullable()->after('ukuran_bytes');
+            if (! Schema::hasColumn('transaksi_uploads', 'path_file')) {
+                $table->string('path_file')->nullable()->after('ukuran_bytes');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('transaksi_uploads', function (Blueprint $table) {
-            $table->dropColumn('path_file');
+            if (Schema::hasColumn('transaksi_uploads', 'path_file')) {
+                $table->dropColumn('path_file');
+            }
         });
     }
 };

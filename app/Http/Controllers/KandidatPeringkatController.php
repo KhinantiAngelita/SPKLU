@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\UlpMapping;
 use App\Services\KandidatPeringkatService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Controller untuk halaman "Kandidat Peringkat" — sekarang jadi thin
@@ -15,14 +16,12 @@ use Illuminate\Http\Request;
  */
 class KandidatPeringkatController extends Controller
 {
-    public function __construct(private KandidatPeringkatService $peringkatService)
-    {
-    }
+    public function __construct(private KandidatPeringkatService $peringkatService) {}
 
     public function index2(Request $request)
     {
         $search = $request->input('search');
-        $ulpId  = $request->input('ulp_mapping_id');
+        $ulpId = $request->input('ulp_mapping_id');
 
         $terurut = $this->peringkatService->rank($search, $ulpId);
         $ringkasan = $this->peringkatService->ringkasan($terurut);
@@ -30,7 +29,7 @@ class KandidatPeringkatController extends Controller
         $perPage = 15;
         $halaman = (int) $request->input('page', 1);
 
-        $kandidatList = new \Illuminate\Pagination\LengthAwarePaginator(
+        $kandidatList = new LengthAwarePaginator(
             $terurut->forPage($halaman, $perPage)->values(),
             $terurut->count(),
             $perPage,
@@ -42,9 +41,9 @@ class KandidatPeringkatController extends Controller
 
         return view('kandidat-prioritas.index2', [
             'kandidatList' => $kandidatList,
-            'ringkasan'    => $ringkasan,
-            'daftarUlp'    => $daftarUlp,
-            'filter'       => ['search' => $search, 'ulpId' => $ulpId],
+            'ringkasan' => $ringkasan,
+            'daftarUlp' => $daftarUlp,
+            'filter' => ['search' => $search, 'ulpId' => $ulpId],
         ]);
     }
 }

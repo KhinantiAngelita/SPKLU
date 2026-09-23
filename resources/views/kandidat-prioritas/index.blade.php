@@ -393,6 +393,7 @@
                                 @endforelse
 
 
+                                @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
                                 {{-- TOMBOL AKSI: INPUT MANUAL & AMBIL OTOMATIS --}}
                                 <div style="display:flex; gap:5px; flex-wrap:nowrap; margin-top:6px;">
 
@@ -475,6 +476,7 @@
                                     </form>
 
                                 </div>
+                                @endif
 
                             </td>
 

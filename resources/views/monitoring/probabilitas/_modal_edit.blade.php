@@ -18,6 +18,20 @@
 
         <div class="modal-body">
 
+            {{-- ============ BANNER NOTIF ============ --}}
+            <div id="edit-notif" hidden style="
+                margin-bottom: 16px;
+                padding: 10px 14px;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: 500;
+                align-items: center;
+                gap: 8px;
+            ">
+                <span id="edit-notif-icon"></span>
+                <span id="edit-notif-text"></span>
+            </div>
+
             <div class="edit-card">
                 <h3>Identitas Lokasi</h3>
                 <div class="form-row">
@@ -34,9 +48,10 @@
                         <label>Skema</label>
                         <select name="skema" id="f-skema">
                             <option value="">— Pilih Skema —</option>
-                            <option value="Mandiri">Mandiri</option>
-                            <option value="Kerjasama">Kerjasama</option>
-                            <option value="Kemitraan">Kemitraan</option>
+                            <option value="Skema 1">Skema 1</option>
+                            <option value="Skema 2">Skema 2</option>
+                            <option value="Skema 3">Skema 3</option>
+                            <option value="Skema 4">Skema 4</option>
                         </select>
                     </div>
                 </div>
@@ -54,8 +69,31 @@
                 </div>
 
                 <div class="form-row">
-                    <div><label>Mitra Mesin</label><input type="text" name="mitra_mesin" id="f-mitra-mesin"></div>
-                    <div><label>Poin Perluasan Jaringan</label><input type="number" min="0" max="2" step="0.5" placeholder="0" name="poin_perluasan_jaringan" id="f-poin-jaringan" onfocus="this.select()"></div>
+                    <div>
+                        <label>Mitra Mesin</label>
+                        <select name="mitra_mesin" id="f-mitra-mesin">
+                            <option value="">— Pilih Mitra Mesin —</option>
+                            <option value="UCI Beny">UCI Beny</option>
+                            <option value="Voltron">Voltron</option>
+                            <option value="EAD">EAD</option>
+                            <option value="LAD">LAD</option>
+                            <option value="Niscala">Niscala</option>
+                            <option value="Prastiwahyu">Prastiwahyu</option>
+                            <option value="TEB">TEB</option>
+                            <option value="Arista">Arista</option>
+                            <option value="PLN ES">PLN ES</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Poin Perluasan Jaringan</label>
+                        <select name="poin_perluasan_jaringan" id="f-poin-jaringan">
+                            <option value="0">0</option>
+                            <option value="0.5">0.5</option>
+                            <option value="1">1</option>
+                            <option value="1.5">1.5</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -65,25 +103,29 @@
                     <div>
                         <label>Ruang Tunggu</label>
                         <select name="fasilitas_ruang_tunggu" id="f-fas-ruang-tunggu">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Parkir</label>
                         <select name="fasilitas_parkir" id="f-fas-parkir">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Toilet</label>
                         <select name="fasilitas_toilet" id="f-fas-toilet">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Kafe</label>
                         <select name="fasilitas_kafe" id="f-fas-kafe">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                 </div>
@@ -95,25 +137,29 @@
                     <div>
                         <label>Perumahan</label>
                         <select name="okupansi_perumahan" id="f-oku-perumahan">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Pintu Tol</label>
                         <select name="okupansi_pintu_tol" id="f-oku-pintu-tol">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Pusat Keramaian</label>
                         <select name="okupansi_pusat_keramaian" id="f-oku-pusat-keramaian">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                     <div>
                         <label>Ruas Jalan</label>
                         <select name="okupansi_ruas_jalan" id="f-oku-ruas-jalan">
-                            <option value="0">0</option><option value="1">1</option>
+                            <option value="1">Ada</option>
+                            <option value="0">Tidak Ada</option>
                         </select>
                     </div>
                 </div>
@@ -147,12 +193,39 @@
 
 <script>
 const TAHAPAN_LABELS = @json(\App\Models\Probabilitas::TAHAPAN);
-let CURRENT_PROBABILITAS_ID = null;
+window.CURRENT_PROBABILITAS_ID = null;
+
+// dipanggil dari _modal_riwayat.blade.php setelah tambah kunjungan sukses
+window.tampilkanNotifEdit = function (pesan, tipe = 'sukses') {
+    const notif = document.getElementById('edit-notif');
+    const icon  = document.getElementById('edit-notif-icon');
+    const teks  = document.getElementById('edit-notif-text');
+
+    teks.textContent = pesan;
+    icon.textContent = tipe === 'sukses' ? '✓' : '✕';
+    notif.style.background = tipe === 'sukses' ? '#dcfce7' : '#fef2f2';
+    notif.style.color = tipe === 'sukses' ? '#166534' : '#b91c1c';
+    notif.style.border = '1px solid ' + (tipe === 'sukses' ? '#86efac' : '#fecaca');
+    notif.style.display = 'flex';
+    notif.hidden = false;
+
+    notif.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    clearTimeout(window._editNotifTimeout);
+    window._editNotifTimeout = setTimeout(() => {
+        notif.hidden = true;
+        notif.style.display = '';
+    }, 3000);
+};
 
 window.isiModalEdit = function (data) {
     const p = data.probabilitas;
     const badges = data.badges;
-    CURRENT_PROBABILITAS_ID = p.id;
+    window.CURRENT_PROBABILITAS_ID = p.id;
+
+    const notifEl = document.getElementById('edit-notif');
+    notifEl.hidden = true;
+    notifEl.style.display = '';
 
     document.getElementById('form-edit').action = `/monitoring/probabilitas/${p.id}`;
     document.getElementById('edit-judul').textContent = p.lokasi;
@@ -215,6 +288,9 @@ window.isiModalEdit = function (data) {
 
     if (window.lucide) lucide.createIcons();
 
-    document.getElementById('modal-edit').showModal();
+    const modalEditEl = document.getElementById('modal-edit');
+    if (!modalEditEl.open) {
+        modalEditEl.showModal();
+    }
 };
 </script>

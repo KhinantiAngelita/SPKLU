@@ -18,7 +18,8 @@ class User extends Authenticatable
         'invitation_token', 'invitation_expires_at',
         'force_password_change', 'created_directly_by',
         'requires_otp_first_login', 'first_login_verified_at',
-        'otp_code', 'otp_expires_at', 'otp_attempts', // <-- BARU, ini yang kurang
+        'otp_code', 'otp_expires_at', 'otp_attempts',
+        'last_read_notification_at',
     ];
 
     protected $hidden = ['password', 'otp_code', 'remember_token'];
@@ -32,6 +33,7 @@ class User extends Authenticatable
         'otp_expires_at' => 'datetime',
         'last_login_at' => 'datetime',
         'first_login_verified_at' => 'datetime',
+        'last_read_notification_at' => 'datetime',
     ];
 
     // ---------- Relasi ----------
@@ -85,6 +87,7 @@ class User extends Authenticatable
 
         if (! Hash::check($inputCode, $this->otp_code)) {
             $this->increment('otp_attempts');
+
             return false;
         }
 

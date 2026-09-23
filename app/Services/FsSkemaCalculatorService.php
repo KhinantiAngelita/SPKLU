@@ -10,30 +10,14 @@ use App\Models\Transaksi;
 
 class FsSkemaCalculatorService
 {
-    /**
-     * FALLBACK doang — dipakai kalau tabel TarifListrik kosong/belum di-seed
-     * buat kode tertentu, supaya perhitungan tetap jalan (gak throw error)
-     * alih-alih hardcode permanen kayak sebelumnya. Sumber aslinya: "Tabel
-     * Tarif Keuntungan/kWh per Layanan Listrik", dikonfirmasi user 2026-09-02.
-     */
     protected const TARIF_FALLBACK_KWH = [
         'TM' => 1752.68,
         'TR' => 1022.08,
         'LTR' => 822.26,
     ];
 
-    /** Fallback kalau kondisi jaringan yang diinput gak match apapun di tabel PoinKesiapanJaringan. */
     protected const POIN_JARINGAN_FALLBACK = 5;
 
-    /**
-     * Sumber "TABEL POIN KESIAPAN JARINGAN" — satu sumber kebenaran dipakai
-     * juga oleh dropdown di Blade, supaya label yang tampil & yang tersimpan
-     * di database selalu sinkron. Nilai poin di sini cuma buat LABEL dropdown
-     * (biar gampang lihat "opsi apa aja + kira-kira berapa poin"); poin YANG
-     * BENERAN DIPAKAI buat ngitung tetap dari tabel PoinKesiapanJaringan lewat
-     * hitungPoinKesiapanJaringan(), supaya edit di Master Parameter beneran
-     * ngaruh tanpa perlu ganti kode.
-     */
     public const OPSI_KESIAPAN_JARINGAN = [
         'Siap sambung' => 20,
         'Perluasan SUTM (mudah)' => 15,
@@ -41,7 +25,6 @@ class FsSkemaCalculatorService
         'Perluasan rumit' => 5,
     ];
 
-    /** Dipakai juga oleh NarasiGeneratorService & Blade (create/edit). */
     public const LABEL_FASILITAS = [
         'toilet' => 'Toilet',
         'ruang_tunggu' => 'Ruang Tunggu',
@@ -49,10 +32,6 @@ class FsSkemaCalculatorService
         'kafetaria' => 'Kafetaria',
     ];
 
-    /**
-     * PENTING: "Dekat Pintu Tol" (bukan cuma "Pintu Tol") — sesuai teks
-     * persis di sheet "Input Koordinat Baru".
-     */
     public const LABEL_OKUPANSI = [
         'dekat_perumahan' => 'Dekat Perumahan',
         'pintu_tol' => 'Dekat Pintu Tol',
@@ -61,11 +40,13 @@ class FsSkemaCalculatorService
     ];
 
     protected const GROWTH_RATE_TAHUNAN = 0.10;
+
     protected const POTONGAN_PLN = 0.02;
+
     protected const MASA_KONTRAK_DEFAULT = 5;
 
-    /** Cache per-instance biar gak query berkali-kali dalam satu request. */
     private ?array $tarifCache = null;
+
     private ?array $poinJaringanCache = null;
 
     public function hitungPoinFasilitas(array $fasilitas): int
@@ -73,7 +54,6 @@ class FsSkemaCalculatorService
         return min(count($fasilitas) * 10, 40);
     }
 
-    /** "Toilet, Ruang Tunggu, Parkir" — urutan ikut LABEL_FASILITAS, bukan urutan klik user. */
     public function labelFasilitasTerpilih(array $fasilitas): string
     {
         $label = collect(self::LABEL_FASILITAS)->only($fasilitas)->values();
@@ -88,12 +68,6 @@ class FsSkemaCalculatorService
         return $label->isNotEmpty() ? $label->implode(', ') : 'tidak ada kondisi okupansi yang tercatat';
     }
 
-    /**
-     * Sekarang baca dari tabel PoinKesiapanJaringan (Master Parameter),
-     * bukan hardcode. Exact match dulu terhadap kolom `kondisi`, baru
-     * fallback ke partial match kalau formatnya beda dikit, baru fallback
-     * ke POIN_JARINGAN_FALLBACK kalau beneran gak ketemu sama sekali.
-     */
     public function hitungPoinKesiapanJaringan(?string $kesiapanJaringan): int
     {
         if (! $kesiapanJaringan) {
@@ -126,14 +100,6 @@ class FsSkemaCalculatorService
         return $poinFasilitas + $poinJaringan + $poinOkupansi;
     }
 
-    /**
-     * Sesuai rumus Excel resmi:
-     *   =IF(AND(E22>=85,E19>30,E20>10,E21>30), "Layak",
-     *      IF(OR(E22>=70, AND(E19>=20,E19<=30,E21>=20,E21<=30,E20>10)),
-     *         "Menjadi Pertimbangan", "Kurang Direkomendasikan"))
-     * Pemetaan: E19=poin Fasilitas (maks 40), E20=poin Kesiapan Jaringan (maks 20),
-     * E21=poin Okupansi (maks 40), E22=Total Poin (maks 100).
-     */
     public function tentukanStatusKelayakan(int $totalPoin, int $poinFasilitas, int $poinKesiapanJaringan, int $poinOkupansi): string
     {
         $layak = $totalPoin >= 85
@@ -155,13 +121,6 @@ class FsSkemaCalculatorService
         return $menjadiPertimbangan ? 'Menjadi Pertimbangan' : 'Kurang Direkomendasikan';
     }
 
-    /**
-     * Proyeksi ROI sepanjang Masa Kontrak (tahun, fallback 5 tahun untuk
-     * data lama sebelum kolom ini ada). Untuk Skema 2 (tanpa split RAB):
-     * pendapatan penuh masuk ke satu pihak. Untuk Skema 3: dipecah Mitra
-     * Mesin/Mitra Lahan/PLN, BEP dicek TERPISAH per pihak terhadap RAB
-     * masing-masing.
-     */
     public function hitungProyeksiROI(FsSkema $fsSkema): array
     {
         $masaKontrak = (int) ($fsSkema->masa_kontrak_tahun ?: self::MASA_KONTRAK_DEFAULT);
@@ -268,12 +227,6 @@ class FsSkemaCalculatorService
         ];
     }
 
-    /**
-     * Ambil tarif keuntungan/kWh dari tabel TarifListrik (Master Parameter),
-     * di-cache per-instance biar gak query berkali-kali. Fallback ke
-     * TARIF_FALLBACK_KWH kalau kode-nya belum ada row-nya di database sama
-     * sekali (mis. sebelum di-seed).
-     */
     protected function ambilTarifPerKwh(string $layananListrik): float
     {
         if ($this->tarifCache === null) {
@@ -290,10 +243,6 @@ class FsSkemaCalculatorService
             ?? self::TARIF_FALLBACK_KWH['TR'];
     }
 
-    /**
-     * Ambil map [kondisi (lowercase) => poin] dari tabel PoinKesiapanJaringan
-     * (Master Parameter), di-cache per-instance.
-     */
     protected function ambilPoinJaringanMap(): array
     {
         if ($this->poinJaringanCache === null) {
@@ -306,19 +255,22 @@ class FsSkemaCalculatorService
     }
 
     /**
-     * Estimasi "bulan ke-" BEP tercapai — cari tahun pertama kumulatif >= RAB,
-     * lalu interpolasi linear di dalam tahun itu buat estimasi bulannya.
-     * Null kalau belum BEP sampai akhir masa kontrak.
-     *
-     * ⚠️ BELUM DIKONFIRMASI sama persis dengan rumus tersembunyi di
-     * spreadsheet (kolom bantu "Estimasi Bulan ke-" di sana kasih angka
-     * beda dari interpolasi linear standar ini). Yang SUDAH pasti sama:
-     * "tahun" (baris BEP pertama tercapai) — itu murni look-up tabel.
-     * Begitu rumus bulan yang pasti dikonfirmasi, cuma bagian
-     * $bulanDalamTahunIni yang perlu diganti, field 'tahun' tetap sama.
-     *
-     * @return array{tahun:int, total_bulan:int}|null null kalau belum BEP.
+     * BARU: expose peta poin jaringan (Master Parameter) supaya bisa dipakai
+     * buat kalkulasi INSTAN di sisi JS form create/edit — biar Ringkasan
+     * Kelayakan Lokasi gak perlu nunggu roundtrip AJAX cuma buat nampilin
+     * poin dari chip/select yang baru dipilih user.
      */
+    public function poinJaringanMapUntukJs(): array
+    {
+        return $this->ambilPoinJaringanMap();
+    }
+
+    /** BARU: expose fallback poin jaringan, dipakai bareng poinJaringanMapUntukJs(). */
+    public function poinJaringanFallbackUntukJs(): int
+    {
+        return self::POIN_JARINGAN_FALLBACK;
+    }
+
     protected function estimasiBulanBep(array $dataTahunan, float $rab, string $kolomPendapatan, string $kolomKumulatif): ?array
     {
         if ($rab <= 0) {
@@ -344,10 +296,9 @@ class FsSkemaCalculatorService
             $kumulatifSebelumnya = $baris[$kolomKumulatif];
         }
 
-        return null; // belum BEP dalam masa kontrak
+        return null;
     }
 
-    /** Format "Tahun ke-2 (24 bulan / 2 tahun 0 bulan)" — sama pola teks spreadsheet. */
     public function formatEstimasiRoi(?array $estimasi, int $masaKontrak): string
     {
         if ($estimasi === null) {
@@ -362,11 +313,6 @@ class FsSkemaCalculatorService
         return "Tahun ke-{$tahun} ({$totalBulan} bulan / {$sisaTahun} tahun {$sisaBulan} bulan)";
     }
 
-    /**
-     * [TIDAK DIPAKAI — dipertahankan sebagai referensi/fallback darurat,
-     * lihat catatan di versi controller sebelumnya. Tidak diubah oleh
-     * revisi ini.]
-     */
     public function hitungJarakKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
         $radiusBumiKm = 6371;
@@ -380,7 +326,6 @@ class FsSkemaCalculatorService
         return $radiusBumiKm * $c;
     }
 
-    /** [TIDAK DIPAKAI — lihat catatan di hitungJarakKm().] */
     public function cari3SpkluTerdekat(float $lat, float $lng): array
     {
         $semuaSpklu = Spklu::aktif()->with('ulp')->whereNotNull('latitude')->whereNotNull('longitude')->get();

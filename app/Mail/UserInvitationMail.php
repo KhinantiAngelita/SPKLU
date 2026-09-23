@@ -17,8 +17,8 @@ class UserInvitationMail extends Mailable
     {
         $activationUrl = route('activation.show', $this->user->invitation_token);
 
-        return $this->subject('Undangan Bergabung — Sistem SPKLU')
-            ->markdown('emails.user-invitation', [
+        return $this->subject('Undangan Bergabung — Sistem SPKLU PLN UP3 Bogor')
+            ->view('emails.user-invitation', [
                 'user' => $this->user,
                 'activationUrl' => $activationUrl,
             ]);

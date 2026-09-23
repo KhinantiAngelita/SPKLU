@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Probabilitas;
 use App\Models\UlpMapping;
 use App\Services\RekomendasiLokasiService;
 use Illuminate\Http\Request;
@@ -15,9 +16,7 @@ use Illuminate\Http\Request;
  */
 class RekomendasiLokasiController extends Controller
 {
-    public function __construct(private RekomendasiLokasiService $service)
-    {
-    }
+    public function __construct(private RekomendasiLokasiService $service) {}
 
     public function index(Request $request)
     {
@@ -34,6 +33,42 @@ class RekomendasiLokasiController extends Controller
         // atau "Tambah Unit", bukan "buka lokasi baru".
         $spkluPerluTindakLanjut = $this->service->hitungSpkluPerluTindakLanjut($titikPeta);
 
+        // SPKLU Baru (Kandidat Aktif di Pipeline Probing yang punya koordinat)
+        $kandidatBaruQuery = Probabilitas::whereNotNull('tikor_lat')
+            ->whereNotNull('tikor_lng')
+            ->whereNull('spklu_id')
+            ->with(['riwayatTahapan']);
+
+        if ($ulpId) {
+            $ulpModel = UlpMapping::find($ulpId);
+            if ($ulpModel) {
+                $kandidatBaruQuery->where(function ($q) use ($ulpModel) {
+                    $q->where('ulp', $ulpModel->nama_singkat)
+                        ->orWhere('ulp', $ulpModel->nama_penuh);
+                });
+            }
+        }
+
+        $kandidatBaru = $kandidatBaruQuery->get()->map(function ($k) {
+            return [
+                'id' => $k->id,
+                'nama' => $k->lokasi,
+                'ulp' => $k->ulp,
+                'latitude' => (float) $k->tikor_lat,
+                'longitude' => (float) $k->tikor_lng,
+                'tahap' => $k->tahapSaatIni(),
+                'status_kanban' => $k->statusKanban(),
+                'pic' => $k->pic,
+                'mitra_mesin' => $k->mitra_mesin,
+            ];
+        })->values();
+
+        $ringkasan['kandidat_baru'] = $kandidatBaru->count();
+        $ringkasan['kandidat_ada_pasangan'] = $kandidatBaru->filter(fn ($k) => ! empty(trim($k['mitra_mesin'] ?? '')))->count();
+        $ringkasan['kandidat_belum_pasangan'] = $kandidatBaru->count() - $ringkasan['kandidat_ada_pasangan'];
+        $ringkasan['dc'] = collect($titikPeta)->where('type', 'DC')->count();
+        $ringkasan['ac'] = collect($titikPeta)->where('type', 'AC')->count();
+
         $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
 
         return view('rekomendasi-lokasi.index', [
@@ -42,6 +77,7 @@ class RekomendasiLokasiController extends Controller
             'rekomendasiWilayah' => $rekomendasiWilayah,
             'titikRekomendasi' => $titikRekomendasi,
             'spkluPerluTindakLanjut' => $spkluPerluTindakLanjut,
+            'kandidatBaru' => $kandidatBaru,
             'daftarUlp' => $daftarUlp,
             'ulpTerpilih' => $ulpId,
         ]);

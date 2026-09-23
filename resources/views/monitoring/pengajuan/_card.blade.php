@@ -2,9 +2,13 @@
     @if ($showValidasi)
         @if ($p->sudahDivalidasi())
             <span class="pgj-card-validasi pgj-card-validasi-done">✓ Tervalidasi</span>
-        @else
+        @elseif (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
+            @php
+                $matchingUlpId = $p->ulpMapping?->id ?? '';
+                $matchingKodeUnit = $matchingUlpId ? ($mapKodeUnitPerUlp[$matchingUlpId] ?? ($p->kode_unit ?? '')) : '';
+            @endphp
             <button type="button" class="pgj-card-validasi"
-                    onclick="bukaModalValidasi({{ $p->id }}, '{{ addslashes($p->lokasi) }}', '{{ addslashes($p->ulp) }}', {{ $p->estimasiTotalKw() }}, {{ $p->estimasiNozzle() }})">
+                    onclick="bukaModalValidasi({{ $p->id }}, '{{ addslashes($p->lokasi) }}', '{{ addslashes($p->ulp ?? '') }}', '{{ $matchingUlpId }}', '{{ $matchingKodeUnit }}', {{ $p->estimasiTotalKw() }}, {{ $p->estimasiNozzle() }})">
                 Validasi
             </button>
         @endif

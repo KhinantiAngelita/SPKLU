@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Monitoring;
 
+use App\Helpers\NotifikasiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Probabilitas;
 use App\Models\Spklu;
@@ -26,11 +27,19 @@ class PengajuanController extends Controller
             $kolom[$p->statusKanban()]->push($p);
         }
 
+        $mapKodeUnitPerUlp = Spklu::whereNotNull('kode_unit')
+            ->where('kode_unit', '!=', '')
+            ->get(['ulp_mapping_id', 'kode_unit'])
+            ->groupBy('ulp_mapping_id')
+            ->map(fn ($items) => $items->countBy('kode_unit')->sortDesc()->keys()->first())
+            ->toArray();
+
         return view('monitoring.pengajuan.index', [
             'belumMulai' => $kolom['belum_mulai'],
             'onProgress' => $kolom['on_progress'],
             'selesaiIntegrasi' => $kolom['selesai_integrasi'],
             'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
+            'mapKodeUnitPerUlp' => $mapKodeUnitPerUlp,
         ]);
     }
 
@@ -55,18 +64,30 @@ class PengajuanController extends Controller
 
         $validated = $request->validate([
             'ulp_mapping_id' => 'required|exists:ulp_mappings,id',
+            'kode_unit' => 'nullable|string|max:50',
             'type' => 'required|in:AC,DC',
             'kw' => 'required|numeric|min:0',
             'nozzle' => 'required|integer|min:1',
             'kepemilikan' => 'required|in:PLN,Swasta',
         ]);
 
+        if (empty($validated['kode_unit'])) {
+            $validated['kode_unit'] = Spklu::where('ulp_mapping_id', $validated['ulp_mapping_id'])
+                ->whereNotNull('kode_unit')
+                ->where('kode_unit', '!=', '')
+                ->get(['kode_unit'])
+                ->countBy('kode_unit')
+                ->sortDesc()
+                ->keys()
+                ->first();
+        }
+
         $nomorUrut = Spklu::withTrashed()->max('id') + 1;
 
         $spklu = Spklu::create([
             ...$validated,
 
-            'id_spklu' => 'SPKLU-' . str_pad(
+            'id_spklu' => 'SPKLU-'.str_pad(
                 (string) $nomorUrut,
                 3,
                 '0',
@@ -87,9 +108,18 @@ class PengajuanController extends Controller
             'divalidasi_oleh' => $request->user()->id,
         ]);
 
+        NotifikasiHelper::kirim(
+            'pengajuan',
+            "Pengajuan SPKLU \"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi aktif di Master SPKLU.",
+            'check-circle-2',
+            route('master-spklu.index', ['search' => $spklu->nama]),
+            null,
+            'Pengajuan SPKLU Divalidasi'
+        );
+
         return back()->with(
             'success',
-            "\"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi masuk Master SPKLU."
+            "\"{$probabilitas->lokasi}\" berhasil divalidasi dan resmi masuk Master SPKLU (ULP: {$spklu->ulp?->nama_penuh}, Kode Unit: {$spklu->kode_unit})."
         );
     }
 }

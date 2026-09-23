@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\KandidatPrioritas;
-use App\Models\KandidatSpkluTerdekat;
 use App\Services\SpkluTerdekatService;
 use Illuminate\Http\Request;
 
 class KandidatSpkluTerdekatController extends Controller
 {
-    public function __construct(private SpkluTerdekatService $spkluTerdekatService)
-    {
-    }
+    public function __construct(private SpkluTerdekatService $spkluTerdekatService) {}
 
     public function store(Request $request, KandidatPrioritas $kandidat)
     {
@@ -27,8 +24,8 @@ class KandidatSpkluTerdekatController extends Controller
 
         foreach ($data['items'] as $item) {
             $kandidat->spkluTerdekat()->create([
-                'nama_spklu'   => $item['nama_spklu'],
-                'jarak_km'     => $item['jarak_km'],
+                'nama_spklu' => $item['nama_spklu'],
+                'jarak_km' => $item['jarak_km'],
                 'status_jarak' => $this->tentukanStatusJarak($item['jarak_km'], $jarakIdealUlp),
                 'sumber_jarak' => 'manual',
             ]);
@@ -51,6 +48,7 @@ class KandidatSpkluTerdekatController extends Controller
             $hasil = $this->spkluTerdekatService->cariTerdekatViaApi($koordinat[0], $koordinat[1], 3);
         } catch (\Throwable $e) {
             report($e);
+
             return back()->with('error', 'Gagal mengambil jarak otomatis dari Google. Silakan coba lagi atau isi manual.');
         }
 
@@ -66,8 +64,8 @@ class KandidatSpkluTerdekatController extends Controller
 
         foreach ($hasil as $item) {
             $kandidat->spkluTerdekat()->create([
-                'nama_spklu'   => $item['nama'],
-                'jarak_km'     => $item['jarak_km'],
+                'nama_spklu' => $item['nama'],
+                'jarak_km' => $item['jarak_km'],
                 'kapasitas_kw' => $item['kapasitas_kw'] ?? null,
                 'status_jarak' => $this->tentukanStatusJarak($item['jarak_km'], $jarakIdealUlp),
                 'sumber_jarak' => 'otomatis',
@@ -87,6 +85,6 @@ class KandidatSpkluTerdekatController extends Controller
 
         return $jarakKm > $jarakIdealUlp
             ? 'Bagus'
-            : 'Tidak Bagus (< ' . $jarakIdealUlp . ' km)';
+            : 'Tidak Bagus (< '.$jarakIdealUlp.' km)';
     }
 }

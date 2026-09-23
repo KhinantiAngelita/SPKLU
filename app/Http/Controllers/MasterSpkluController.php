@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SpkluStatus;
+use App\Helpers\NotifikasiHelper;
 use App\Imports\SpkluImport;
 use App\Models\Spklu;
 use App\Models\SpkluAlias;
@@ -28,9 +29,6 @@ class MasterSpkluController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        // Nama SPKLU dari file transaksi yang belum berhasil dipetakan ke Master SPKLU manapun.
-        // Ditampilkan di sini juga (bukan cuma di halaman Transaksi) supaya Super Admin/Pengelola
-        // yang lagi buka Master SPKLU ikut sadar ada data transaksi "menggantung" karena beda ejaan nama.
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
         $unmatchedTransaksiCount = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)->count();
 
@@ -45,6 +43,12 @@ class MasterSpkluController extends Controller
 
             'menungguValidasiCount' => Spklu::menungguValidasi()->count(),
             'unmatchedTransaksiCount' => $unmatchedTransaksiCount,
+
+            // Mengirim data Alias dan Unmatched ke Halaman Master SPKLU
+            'aliasList' => SpkluAlias::with('spklu')->latest()->get(),
+            'unmatchedList' => TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)
+                ->orderByDesc('jumlah_baris_total')
+                ->get(),
         ]);
     }
 
@@ -59,11 +63,33 @@ class MasterSpkluController extends Controller
     {
         abort_unless($spklu->status === SpkluStatus::MenungguValidasi, 400);
 
-        $spklu->update([
+        $dataUpdate = [
             'status' => SpkluStatus::Aktif,
             'validated_by' => $request->user()->id,
             'validated_at' => now(),
-        ]);
+        ];
+
+        if (empty($spklu->kode_unit) && $spklu->ulp_mapping_id) {
+            $dataUpdate['kode_unit'] = Spklu::where('ulp_mapping_id', $spklu->ulp_mapping_id)
+                ->whereNotNull('kode_unit')
+                ->where('kode_unit', '!=', '')
+                ->get(['kode_unit'])
+                ->countBy('kode_unit')
+                ->sortDesc()
+                ->keys()
+                ->first();
+        }
+
+        $spklu->update($dataUpdate);
+
+        NotifikasiHelper::kirim(
+            'spklu',
+            "SPKLU \"{$spklu->nama}\" resmi divalidasi dan aktif di Master SPKLU.",
+            'check-circle-2',
+            route('master-spklu.index', ['search' => $spklu->nama]),
+            null,
+            'SPKLU Resmi Aktif'
+        );
 
         return back()->with('success', "{$spklu->nama} berhasil divalidasi dan resmi aktif di Master SPKLU.");
     }
@@ -79,19 +105,9 @@ class MasterSpkluController extends Controller
         return back()->with('success', "{$spklu->nama} ditolak dan dikembalikan ke status On Progress di Pengajuan.");
     }
 
-    /**
-     * BARU: dipanggil via AJAX dari form Tambah/Edit SPKLU saat dropdown ULP
-     * diganti — nyariin kode_unit yang PALING SERING dipakai oleh SPKLU lain
-     * di ULP yang sama (dalam praktiknya kode_unit itu kode kantor unit PLN
-     * per wilayah kerja, jadi wajar semua SPKLU di 1 ULP punya kode yang
-     * sama — tapi datanya tetap disimpan per-baris di tabel spklus, bukan
-     * ditarik dari ulp_mappings, karena kolom itu emang gak ada di sana).
-     * Pakai modus (nilai paling sering muncul) bukan cuma "ambil yang
-     * pertama ketemu", biar tahan kalau ada 1-2 data lama yang salah ketik.
-     */
     public function kodeUnitByUlp(UlpMapping $ulpMapping)
     {
-        $kodeUnit = Spklu::where('ulp_mapping_id', $ulpMapping->id)
+        $kodeUnit = $ulpMapping->kode_unit ?? Spklu::where('ulp_mapping_id', $ulpMapping->id)
             ->whereNotNull('kode_unit')
             ->where('kode_unit', '!=', '')
             ->get(['kode_unit'])
@@ -103,21 +119,6 @@ class MasterSpkluController extends Controller
         return response()->json(['kode_unit' => $kodeUnit]);
     }
 
-    /**
-     * FIX: sebelumnya id_spklu di-generate dari `Spklu::withTrashed()->max('id') + 1`
-     * — asumsinya id_spklu SELALU sinkron 1:1 dengan primary key `id` (baris ke-42
-     * di tabel otomatis dianggap "SPKLU-043"). Asumsi ini pecah begitu ada data yang
-     * masuk lewat Import Excel (lihat SpkluImport): di situ id_spklu diambil LANGSUNG
-     * dari kolom "ID SPKLU" file Excel-nya, bukan diturunkan dari `id` tabel. Kalau
-     * nomor di Excel udah "lompat" lebih jauh dibanding jumlah baris yang sebenarnya
-     * ada di database, generate manual bisa nabrak nomor yang udah dipakai import
-     * itu -> UniqueConstraintViolationException (SQLSTATE 23000, duplicate entry).
-     *
-     * Sekarang nomor urut diambil dari id_spklu TERBESAR yang BENERAN ada di
-     * database (bukan dari kolom id), baru di-increment dari situ — jadi apapun
-     * jalur data itu masuk (manual atau import), penomoran berikutnya selalu
-     * nyambung dari kondisi data yang sebenarnya, bukan asumsi yang bisa meleset.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -132,19 +133,37 @@ class MasterSpkluController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
-        // Retry kecil buat jaga-jaga race condition murni (dua admin nambah
-        // data SPKLU baru di detik yang sama persis) — bukan solusi utama,
-        // cuma jaring pengaman tambahan di atas fix utamanya di atas.
+        if (empty($validated['kode_unit'])) {
+            $validated['kode_unit'] = Spklu::where('ulp_mapping_id', $validated['ulp_mapping_id'])
+                ->whereNotNull('kode_unit')
+                ->where('kode_unit', '!=', '')
+                ->get(['kode_unit'])
+                ->countBy('kode_unit')
+                ->sortDesc()
+                ->keys()
+                ->first();
+        }
+
         $percobaan = 0;
 
         while (true) {
             try {
-                Spklu::create([
+                $baru = Spklu::create([
                     ...$validated,
                     'id_spklu' => $this->generateIdSpkluBerikutnya(),
                     'status' => SpkluStatus::Aktif,
                     'sumber' => 'manual',
                 ]);
+
+                NotifikasiHelper::kirim(
+                    'spklu',
+                    "SPKLU baru \"{$baru->nama}\" berhasil ditambahkan.",
+                    'zap',
+                    route('master-spklu.index', ['search' => $baru->nama]),
+                    null,
+                    'SPKLU Baru Ditambahkan'
+                );
+
                 break;
             } catch (UniqueConstraintViolationException $e) {
                 $percobaan++;
@@ -167,14 +186,9 @@ class MasterSpkluController extends Controller
 
         $nomorBerikutnya = ($nomorTerakhir ?? 0) + 1;
 
-        return 'SPKLU-' . str_pad((string) $nomorBerikutnya, 3, '0', STR_PAD_LEFT);
+        return 'SPKLU-'.str_pad((string) $nomorBerikutnya, 3, '0', STR_PAD_LEFT);
     }
 
-    /**
-     * Import banyak data SPKLU sekaligus dari file Excel/CSV.
-     * Baris yang gagal validasi (misal nama ULP gak ketemu) di-skip,
-     * bukan bikin seluruh proses batal — ringkasan kegagalan ditampilkan ke user.
-     */
     public function importExcel(Request $request)
     {
         $request->validate([
@@ -187,12 +201,21 @@ class MasterSpkluController extends Controller
         $failures = $import->failures();
 
         if ($failures->count() > 0) {
-            $detail = $failures->map(fn ($f) => "Baris {$f->row()}: " . implode(', ', $f->errors()))
+            $detail = $failures->map(fn ($f) => "Baris {$f->row()}: ".implode(', ', $f->errors()))
                 ->take(5)
                 ->implode(' | ');
 
-            return back()->with('error', "Import selesai, tapi {$failures->count()} baris gagal/dilewati — {$detail}" . ($failures->count() > 5 ? ' ...' : ''));
+            return back()->with('error', "Import selesai, tapi {$failures->count()} baris gagal/dilewati — {$detail}".($failures->count() > 5 ? ' ...' : ''));
         }
+
+        NotifikasiHelper::kirim(
+            'spklu',
+            'Data Master SPKLU berhasil diimpor dari file Excel.',
+            'file-spreadsheet',
+            route('master-spklu.index'),
+            null,
+            'Import SPKLU Selesai'
+        );
 
         return back()->with('success', 'Data SPKLU berhasil diimpor dari Excel.');
     }
@@ -214,8 +237,84 @@ class MasterSpkluController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
         ]);
 
+        $ulpBaru = UlpMapping::find($validated['ulp_mapping_id']);
+        if ($ulpBaru && $ulpBaru->kode_unit) {
+            // Jika ULP berubah, atau kode_unit kosong, otomatis sesuaikan ke kode unit resmi ULP baru
+            if ((int) $spklu->ulp_mapping_id !== (int) $validated['ulp_mapping_id'] || empty($validated['kode_unit'])) {
+                $validated['kode_unit'] = $ulpBaru->kode_unit;
+            }
+        }
+
         $spklu->update($validated);
 
+        NotifikasiHelper::kirim(
+            'spklu',
+            "Data SPKLU \"{$spklu->nama}\" telah diperbarui.",
+            'zap',
+            route('master-spklu.index', ['search' => $spklu->nama]),
+            null,
+            'Pembaruan Master SPKLU'
+        );
+
         return back()->with('success', "{$spklu->nama} berhasil diperbarui.");
+    }
+
+    // METHOD PEMETAAN ALIAS (DIPINDAH DARI TRANSAKSI)
+    public function storeAlias(Request $request)
+    {
+        $request->validate([
+            'nama_asli' => 'required|string|unique:spklu_aliases,nama_asli',
+            'spklu_id' => 'required|exists:spklus,id',
+        ]);
+
+        SpkluAlias::create([
+            'nama_asli' => $request->nama_asli,
+            'spklu_id' => $request->spklu_id,
+            'dibuat_oleh' => $request->user()->id,
+        ]);
+
+        return back()->with('success', 'Alias berhasil disimpan.');
+    }
+
+    public function storeAliasBulk(Request $request)
+    {
+        $request->validate([
+            'mappings' => 'required|array|min:1',
+            'mappings.*.nama_asli' => 'required|string',
+            'mappings.*.spklu_id' => 'required|exists:spklus,id',
+        ]);
+
+        $disimpan = 0;
+
+        foreach ($request->mappings as $map) {
+            SpkluAlias::updateOrCreate(
+                ['nama_asli' => $map['nama_asli']],
+                ['spklu_id' => $map['spklu_id'], 'dibuat_oleh' => $request->user()->id]
+            );
+            $disimpan++;
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'jumlah' => $disimpan]);
+        }
+
+        return back()->with('success', "{$disimpan} pemetaan alias berhasil disimpan sekaligus.");
+    }
+
+    public function updateAlias(Request $request, SpkluAlias $spkluAlias)
+    {
+        $request->validate([
+            'spklu_id' => 'required|exists:spklus,id',
+        ]);
+
+        $spkluAlias->update([
+            'spklu_id' => $request->spklu_id,
+        ]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', "Pemetaan \"{$spkluAlias->nama_asli}\" berhasil diperbarui.");
     }
 }

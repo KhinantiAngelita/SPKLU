@@ -5,18 +5,18 @@ namespace App\Imports;
 use App\Models\Spklu;
 use App\Models\UlpMapping;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class SpkluImport implements ToModel, WithHeadingRow, WithValidation, WithCalculatedFormulas, SkipsOnFailure, SkipsEmptyRows, WithEvents
+class SpkluImport implements SkipsEmptyRows, SkipsOnFailure, ToModel, WithCalculatedFormulas, WithEvents, WithHeadingRow, WithValidation
 {
     use SkipsFailures;
 
@@ -76,7 +76,7 @@ class SpkluImport implements ToModel, WithHeadingRow, WithValidation, WithCalcul
 
         $this->counter++;
 
-        $atribut['id_spklu'] = 'SPKLU-' . str_pad((string) (Spklu::withTrashed()->max('id') + $this->counter), 3, '0', STR_PAD_LEFT);
+        $atribut['id_spklu'] = 'SPKLU-'.str_pad((string) (Spklu::withTrashed()->max('id') + $this->counter), 3, '0', STR_PAD_LEFT);
 
         return new Spklu($atribut);
     }

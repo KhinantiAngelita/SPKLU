@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Monitoring;
 
+use App\Helpers\NotifikasiHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Probabilitas;
 use App\Models\TahapanProbing;
+use App\Models\UlpMapping;
+use App\Services\KandidatPrioritasSyncService;
 use App\Services\ProbabilitasScoreService;
 use Illuminate\Http\Request;
 
@@ -12,9 +15,8 @@ class ProbabilitasController extends Controller
 {
     public function __construct(
         protected ProbabilitasScoreService $scoreService,
-        protected \App\Services\KandidatPrioritasSyncService $kandidatSync,
-    ){
-    }
+        protected KandidatPrioritasSyncService $kandidatSync,
+    ) {}
 
     /**
      * Grid ringkasan (Image 1). Eager-load riwayat tahapan supaya
@@ -31,12 +33,12 @@ class ProbabilitasController extends Controller
             $query->where('kategori', $request->input('kategori'));
         }
         if ($request->filled('search')) {
-            $query->where('lokasi', 'like', '%' . $request->input('search') . '%');
+            $query->where('lokasi', 'like', '%'.$request->input('search').'%');
         }
 
         $daftarProbabilitas = $query->paginate(15);
 
-        $daftarUlp = \App\Models\UlpMapping::orderBy('nama_penuh')->get();
+        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
 
         return view('monitoring.probabilitas.index', compact('daftarProbabilitas', 'daftarUlp'));
     }
@@ -46,7 +48,7 @@ class ProbabilitasController extends Controller
      */
     public function create()
     {
-        $daftarUlp = \App\Models\UlpMapping::orderBy('nama_penuh')->get();
+        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
 
         return view('monitoring.kandidat.create', compact('daftarUlp'));
     }
@@ -59,11 +61,12 @@ class ProbabilitasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'lokasi'        => 'required|string|max:255',
-            'alamat'        => 'nullable|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'alamat' => 'nullable|string|max:255',
             'nomor_telepon' => 'nullable|string|max:30',
-            'pic'           => 'nullable|string|max:255',
-            'tikor'         => ['required', 'regex:/^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/'],
+            'pic' => 'nullable|string|max:255',
+            'ulp' => 'nullable|string|max:255',
+            'tikor' => ['required', 'regex:/^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/'],
         ], [
             'tikor.regex' => 'Format titik koordinat harus "latitude, longitude", contoh: -6.597147, 106.806039',
         ]);
@@ -88,21 +91,32 @@ class ProbabilitasController extends Controller
         }
 
         $probabilitas = Probabilitas::create([
-            'lokasi'        => $validated['lokasi'],
-            'alamat'        => $validated['alamat'] ?? null,
+            'lokasi' => $validated['lokasi'],
+            'alamat' => $validated['alamat'] ?? null,
             'nomor_telepon' => $validated['nomor_telepon'] ?? null,
-            'pic'           => $validated['pic'] ?? null,
-            'tikor_lat'     => $lat,
-            'tikor_lng'     => $lng,
-            'created_by'    => $request->user()?->id,
+            'pic' => $validated['pic'] ?? null,
+            'ulp' => $validated['ulp'] ?? null,
+            'tikor_lat' => $lat,
+            'tikor_lng' => $lng,
+            'created_by' => $request->user()?->id,
         ]);
 
         $this->kandidatSync->sync($probabilitas);
+
+        NotifikasiHelper::kirim(
+            'kandidat',
+            "Kandidat baru \"{$probabilitas->lokasi}\" berhasil didaftarkan ke monitoring.",
+            'activity',
+            route('monitoring.probabilitas.index', ['search' => $probabilitas->lokasi]),
+            ['super_admin', 'pengelola', 'manajemen'],
+            'Kandidat SPKLU Baru'
+        );
 
         return redirect()
             ->route('monitoring.probabilitas.index')
             ->with('success', 'Kandidat baru berhasil ditambahkan.');
     }
+
     /**
      * Data JSON satu lokasi untuk mengisi modal edit / popup detail
      * kandidat — termasuk badge tahapan.
@@ -183,7 +197,7 @@ class ProbabilitasController extends Controller
     public function storeTahapan(Request $request, Probabilitas $probabilitas)
     {
         $validated = $request->validate([
-            'tahap' => 'required|in:' . implode(',', array_keys(Probabilitas::TAHAPAN)),
+            'tahap' => 'required|in:'.implode(',', array_keys(Probabilitas::TAHAPAN)),
             'tanggal' => 'required|date',
             'petugas_pic' => 'nullable|string|max:255',
             'hasil' => 'required|in:berhasil,perlu_kunjungan_ulang,gagal',
@@ -222,6 +236,16 @@ class ProbabilitasController extends Controller
         ]);
 
         $this->scoreService->recalculate($probabilitas);
+
+        $tahapLabel = Probabilitas::TAHAPAN[$validated['tahap']] ?? $validated['tahap'];
+        NotifikasiHelper::kirim(
+            'kandidat',
+            "Pencatatan progres \"{$tahapLabel}\" untuk kandidat {$probabilitas->lokasi} ({$validated['status']}).",
+            'clipboard-check',
+            route('monitoring.probabilitas.riwayatLengkap', ['probabilitas' => $probabilitas->id, 'tahap' => $validated['tahap']]),
+            ['super_admin', 'pengelola', 'manajemen'],
+            'Update Progres Probing'
+        );
 
         return response()->json([
             'success' => true,
@@ -266,9 +290,9 @@ class ProbabilitasController extends Controller
 
         return view('monitoring.probabilitas.riwayat-lengkap', [
             'probabilitas' => $probabilitas,
-            'tahap'        => $tahap,
-            'tahapLabel'   => Probabilitas::TAHAPAN[$tahap],
-            'riwayat'      => $riwayat,
+            'tahap' => $tahap,
+            'tahapLabel' => Probabilitas::TAHAPAN[$tahap],
+            'riwayat' => $riwayat,
         ]);
     }
 

@@ -68,23 +68,15 @@
         <p class="pgj-page-subtitle">Ringkasan progres kandidat lokasi berdasarkan tahapan Probabilitas</p>
     </div>
 
-    @if (Route::has('monitoring.kandidat-baru.create'))
-        <a href="{{ route('monitoring.kandidat-baru.create') }}" class="pgj-btn pgj-btn-primary">
+    @can('create', \App\Models\Probabilitas::class)
+        <a href="{{ route('monitoring.kandidat.create') }}" class="pgj-btn pgj-btn-primary">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             Tambah Kandidat Baru
         </a>
-    @else
-        <button type="button" class="pgj-btn pgj-btn-disabled" disabled title="Menunggu fitur Kandidat Baru selesai dibuat">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Tambah Kandidat Baru
-        </button>
-    @endif
+    @endcan
 </div>
 
 <div class="pgj-board">
@@ -148,13 +140,21 @@
                 <label>Nama Lokasi</label>
                 <input type="text" id="val-nama-display" disabled style="background:#f8fafc; color:#64748B;">
 
-                <label>ULP</label>
-                <select name="ulp_mapping_id" id="val-ulp" required>
-                    <option value="">Pilih ULP...</option>
-                    @foreach ($ulpList as $ulp)
-                        <option value="{{ $ulp->id }}" data-nama="{{ strtolower($ulp->nama_penuh) }}">{{ $ulp->nama_penuh }}</option>
-                    @endforeach
-                </select>
+                <div class="form-row-2">
+                    <div>
+                        <label>ULP</label>
+                        <select name="ulp_mapping_id" id="val-ulp" required onchange="updateKodeUnitValidasi(this.value)">
+                            <option value="">Pilih ULP...</option>
+                            @foreach ($ulpList as $ulp)
+                                <option value="{{ $ulp->id }}" data-nama="{{ strtolower($ulp->nama_penuh) }}">{{ $ulp->nama_penuh }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label>Kode Unit</label>
+                        <input type="text" name="kode_unit" id="val-kode-unit" placeholder="Otomatis dari ULP" style="background:#f8fafc; font-weight:700;">
+                    </div>
+                </div>
 
                 <div class="form-row-2">
                     <div>
@@ -196,24 +196,50 @@
 </div>
 
 <script>
-    function bukaModalValidasi(id, lokasi, ulpAsli, estimasiKw, estimasiNozzle) {
+    const mapKodeUnitPerUlp = @json($mapKodeUnitPerUlp ?? []);
+
+    function updateKodeUnitValidasi(ulpId) {
+        const kodeInput = document.getElementById('val-kode-unit');
+        if (ulpId && mapKodeUnitPerUlp[ulpId]) {
+            kodeInput.value = mapKodeUnitPerUlp[ulpId];
+        }
+    }
+
+    function bukaModalValidasi(id, lokasi, ulpAsli, ulpMappingId, kodeUnitDefault, estimasiKw, estimasiNozzle) {
         document.getElementById('form-validasi').action = `/monitoring/pengajuan/${id}/validasi`;
         document.getElementById('val-subjudul').textContent = `Lengkapi data teknis "${lokasi}" sebelum masuk Master SPKLU`;
         document.getElementById('val-nama-display').value = lokasi;
         document.getElementById('val-kw').value = estimasiKw;
         document.getElementById('val-nozzle').value = estimasiNozzle > 0 ? estimasiNozzle : 1;
 
-        // Coba cocokkan ULP otomatis (case-insensitive, partial match)
         const ulpSelect = document.getElementById('val-ulp');
-        ulpSelect.value = '';
+        const kodeInput = document.getElementById('val-kode-unit');
 
-        const target = ulpAsli.toLowerCase();
-        for (const opt of ulpSelect.options) {
-            const namaOpt = opt.dataset.nama || '';
-            if (namaOpt && (namaOpt.includes(target) || target.includes(namaOpt))) {
-                ulpSelect.value = opt.value;
-                break;
+        // 1. Cocokkan ULP otomatis dari data Probabilitas
+        if (ulpMappingId && ulpSelect.querySelector(`option[value="${ulpMappingId}"]`)) {
+            ulpSelect.value = ulpMappingId;
+        } else if (ulpAsli) {
+            ulpSelect.value = '';
+            const target = ulpAsli.toLowerCase().trim();
+            for (const opt of ulpSelect.options) {
+                const namaOpt = (opt.dataset.nama || '').toLowerCase();
+                if (namaOpt && (namaOpt === target || namaOpt.includes(target) || target.includes(namaOpt))) {
+                    ulpSelect.value = opt.value;
+                    break;
+                }
             }
+        } else {
+            ulpSelect.value = '';
+        }
+
+        // 2. Isi Kode Unit otomatis sesuai ULP yang terpilih
+        const selectedUlpId = ulpSelect.value;
+        if (kodeUnitDefault) {
+            kodeInput.value = kodeUnitDefault;
+        } else if (selectedUlpId && mapKodeUnitPerUlp[selectedUlpId]) {
+            kodeInput.value = mapKodeUnitPerUlp[selectedUlpId];
+        } else {
+            kodeInput.value = '';
         }
 
         document.getElementById('modal-validasi').classList.add('show');

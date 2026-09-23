@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Spklu;
 use App\Models\Transaksi;
-use App\Models\UlpMapping;
 use Illuminate\Support\Collection;
 
 /**
@@ -22,16 +21,21 @@ use Illuminate\Support\Collection;
 class RekomendasiLokasiService
 {
     private const BULAN_UTILISASI = 12;
+
     private const BULAN_TREN = 3;
+
     private const TREN_CLAMP_PERSEN = 30.0;
+
     private const RADIUS_FALLBACK_KM = 3.0;
 
     private const BOBOT_KEPADATAN = 0.65;
+
     private const BOBOT_TREN = 0.35;
 
     // Kepadatan sekarang gabungan dua sinyal: seberapa SERING (jumlah
     // transaksi) dan seberapa LAMA (durasi) unit itu dipakai per bulan.
     private const BOBOT_FREKUENSI = 0.5;
+
     private const BOBOT_DURASI = 0.5;
 
     // Ambang kapasitas buat nentuin rekomendasi tindak lanjut SPKLU zona
@@ -41,8 +45,11 @@ class RekomendasiLokasiService
     private const AMBANG_KW_GANTI_MESIN = 60;
 
     private const GRID_SPASI_KM = 1.5;
+
     private const MAX_GRID_TITIK = 2500;
+
     private const MAX_TITIK_REKOMENDASI = 8;
+
     private const JARAK_MIN_ANTAR_REKOMENDASI_KM = 2.0;
 
     /**
@@ -78,6 +85,7 @@ class RekomendasiLokasiService
                 'latitude' => (float) $spklu->latitude,
                 'longitude' => (float) $spklu->longitude,
                 'radius_km' => $radiusKm,
+                'type' => strtoupper(trim($spklu->type ?? 'AC')),
                 'kapasitas_kw' => $kapasitasKw,
                 'rata_rata_transaksi_bulan' => $data && $data['rata_rata_jumlah'] !== null ? round($data['rata_rata_jumlah'], 1) : null,
                 'rata_rata_durasi_menit_bulan' => $data && $data['rata_rata_durasi'] !== null ? round($data['rata_rata_durasi'], 0) : null,
@@ -153,7 +161,7 @@ class RekomendasiLokasiService
      * jelas dengan "titik rekomendasi lokasi baru" (yang itu buat lahan
      * kosong, ini buat SPKLU yang UDAH ADA tapi kewalahan).
      *
-     * @param Collection $titikPeta hasil hitungZonaSpklu()['titikPeta']
+     * @param  Collection  $titikPeta  hasil hitungZonaSpklu()['titikPeta']
      */
     public function hitungSpkluPerluTindakLanjut(Collection $titikPeta): Collection
     {
@@ -169,7 +177,7 @@ class RekomendasiLokasiService
      * dipanggil dari Dashboard/widget ringkas, karena kompleksitasnya
      * O(titik_grid x jumlah_spklu).
      *
-     * @param Collection $titikPeta hasil hitungZonaSpklu()['titikPeta']
+     * @param  Collection  $titikPeta  hasil hitungZonaSpklu()['titikPeta']
      */
     public function generateTitikRekomendasi(Collection $titikPeta): Collection
     {

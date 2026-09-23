@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('kandidat_prioritas')) {
+        if (! Schema::hasTable('kandidat_prioritas')) {
             Schema::create('kandidat_prioritas', function (Blueprint $table) {
                 $table->id();
                 $table->string('nama_lokasi');
@@ -38,41 +38,41 @@ return new class extends Migration
         }
 
         Schema::table('kandidat_prioritas', function (Blueprint $table) {
-            if (!Schema::hasColumn('kandidat_prioritas', 'ulp_mapping_id')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'ulp_mapping_id')) {
                 $table->foreignId('ulp_mapping_id')->nullable()->after('nama_lokasi')
                     ->constrained('ulp_mappings')->nullOnDelete();
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'koordinat')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'koordinat')) {
                 $table->string('koordinat')->nullable()->after('ulp_mapping_id');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'mitra_mesin')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'mitra_mesin')) {
                 $table->string('mitra_mesin')->nullable()->after('koordinat');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'type_kw')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'type_kw')) {
                 $table->string('type_kw')->nullable()->after('mitra_mesin');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'kepemilikan')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'kepemilikan')) {
                 $table->string('kepemilikan')->nullable()->after('type_kw');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'poin_fasilitas')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'poin_fasilitas')) {
                 $table->unsignedTinyInteger('poin_fasilitas')->default(0)->after('kepemilikan');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'poin_jaringan')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'poin_jaringan')) {
                 $table->unsignedTinyInteger('poin_jaringan')->default(0)->after('poin_fasilitas');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'poin_okupasi')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'poin_okupasi')) {
                 $table->unsignedTinyInteger('poin_okupasi')->default(0)->after('poin_jaringan');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'skor_prioritas')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'skor_prioritas')) {
                 $table->unsignedTinyInteger('skor_prioritas')->default(0)->after('poin_okupasi');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'demand_ulp')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'demand_ulp')) {
                 $table->unsignedTinyInteger('demand_ulp')->nullable()->after('skor_prioritas');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'kebutuhan_ulp')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'kebutuhan_ulp')) {
                 $table->unsignedTinyInteger('kebutuhan_ulp')->nullable()->after('demand_ulp');
             }
-            if (!Schema::hasColumn('kandidat_prioritas', 'jarak_real_diisi')) {
+            if (! Schema::hasColumn('kandidat_prioritas', 'jarak_real_diisi')) {
                 $table->boolean('jarak_real_diisi')->default(false)->after('kebutuhan_ulp');
             }
         });

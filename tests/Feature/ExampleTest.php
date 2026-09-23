@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Database\Seeders\UserSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * A basic test example.
      */
@@ -14,6 +17,29 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_seeded_users_can_login_directly_without_otp(): void
+    {
+        $this->seed(UserSeeder::class);
+
+        $roles = [
+            'admin@spklu.local',
+            'pengelola@spklu.local',
+            'pemasaran@spklu.local',
+            'manajemen@spklu.local',
+        ];
+
+        foreach ($roles as $email) {
+            $response = $this->post(route('login'), [
+                'email' => $email,
+                'password' => 'password',
+            ]);
+
+            $response->assertRedirect(route('dashboard'));
+            $this->assertAuthenticated();
+            $this->post(route('logout'));
+        }
     }
 }

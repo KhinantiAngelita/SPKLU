@@ -210,12 +210,15 @@
         }
 
         .sidebar-footer { padding: 14px 14px 18px; border-top: 1px solid rgba(255,255,255,0.12); position: relative; z-index: 1; }
-        .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 10px; transition: background-color .15s ease, padding .2s ease, justify-content .2s ease; }
-        .sidebar-user:hover { background-color: rgba(255,255,255,.05); }
+        .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 10px; transition: background-color .15s ease, padding .2s ease, justify-content .2s ease; cursor: pointer; text-decoration: none; color: inherit; }
+        .sidebar-user:hover { background-color: rgba(255,255,255,.08); }
         .sidebar-avatar {
-            width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.15);
-            display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; flex-shrink: 0;
-            border: 1.5px solid rgba(255,255,255,0.3);
+            width: 34px; height: 34px; border-radius: 50%;
+            background: linear-gradient(135deg, #FFC629 0%, #F59E0B 50%, #EA580C 100%);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;
+            border: 1.5px solid rgba(255,255,255,0.45);
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
         }
         .sidebar-user-name { font-size: 13.5px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .15s ease; }
         .sidebar-logout-form button {
@@ -314,14 +317,14 @@
             width: 360px;
         }
         .topbar-search:focus-within .topbar-search-kbd { opacity: 0; }
-        /* FIX: cover "i" (sebelum diganti) DAN "svg" (setelah lucide.createIcons() jalan) */
-        .topbar-search i, .topbar-search svg {
+        /* FIX: cover direct child "i" (sebelum diganti) DAN "svg" (setelah lucide.createIcons() jalan) agar tidak menimpa svg di dalam dropdown */
+        .topbar-search > i, .topbar-search > svg {
             position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
             width: 16px; height: 16px; color: var(--text-secondary); pointer-events: none;
             transition: color .2s ease;
         }
-        .topbar-search:focus-within i,
-        .topbar-search:focus-within svg { color: var(--brand-mid); }
+        .topbar-search:focus-within > i,
+        .topbar-search:focus-within > svg { color: var(--brand-mid); }
         .topbar-search-kbd {
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
             font-size: 10.5px; font-weight: 700; color: var(--text-secondary);
@@ -373,6 +376,8 @@
         }
         .topbar-notif-item:last-child { border-bottom: none; }
         .topbar-notif-item:hover { background: rgba(0,129,171,.05); }
+        .topbar-notif-item.is-unread { background: rgba(0,129,171,.04); border-left: 3px solid var(--brand-mid); }
+        .topbar-notif-item.is-unread .topbar-notif-text p { font-weight: 600; }
         .topbar-notif-icon {
             width: 34px; height: 34px; min-width: 34px; border-radius: 10px; background: rgba(0,129,171,.1); color: var(--brand-mid);
             display: flex; align-items: center; justify-content: center;
@@ -387,9 +392,9 @@
 
         .topbar-profile-summary { display: flex; align-items: center; gap: 12px; padding: 18px; }
         .topbar-profile-avatar {
-            width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--brand-dark), var(--brand-mid));
-            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(2,62,138,.28);
+            width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #FFC629 0%, #F59E0B 50%, #EA580C 100%);
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, .32);
         }
         .topbar-profile-summary h4 { margin: 0; font-size: 14.5px; font-weight: 800; color: var(--text-primary); }
         .topbar-profile-summary p { margin: 2px 0 0; font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }
@@ -421,9 +426,9 @@
         }
         .topbar-user:hover, .topbar-user.is-open { background-color: var(--bg-page); }
         .topbar-avatar {
-            width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, var(--brand-dark), var(--brand-mid));
-            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 700; flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(2,62,138,.28); position: relative;
+            width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #FFC629 0%, #F59E0B 50%, #EA580C 100%);
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(234, 88, 12, .32); position: relative;
         }
         .topbar-avatar::after {
             content: ''; position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%;
@@ -575,6 +580,21 @@
                     closeAllDropdowns(willOpen ? panel : null);
                     panel.classList.toggle('show', willOpen);
                     trigger.classList.toggle('is-open', willOpen);
+
+                    if (willOpen && trigger.dataset.dropdownTrigger === 'panel-notifikasi') {
+                        const dot = trigger.querySelector('.topbar-notif-dot');
+                        if (dot) {
+                            fetch('{{ route("notifikasi.baca-semua") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            }).then(() => {
+                                dot.remove();
+                            }).catch(() => {});
+                        }
+                    }
                 });
             });
 

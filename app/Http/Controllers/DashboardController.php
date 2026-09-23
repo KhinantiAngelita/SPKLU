@@ -10,14 +10,14 @@ use App\Services\KandidatPeringkatService;
 use App\Services\RekomendasiLokasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function __construct(
         private KandidatPeringkatService $peringkatService,
         private RekomendasiLokasiService $rekomendasiLokasiService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -127,6 +127,7 @@ class DashboardController extends Controller
             if (! $dulu || $dulu == 0) {
                 return $sekarang > 0 ? 100.0 : 0.0;
             }
+
             return round((($sekarang - $dulu) / $dulu) * 100, 1);
         };
 
@@ -145,9 +146,14 @@ class DashboardController extends Controller
      */
     private function buildTrenTransaksi(Carbon $mulai, Carbon $sampai): array
     {
+        $driver = DB::connection()->getDriverName();
+        $formatSql = $driver === 'sqlite'
+            ? "strftime('%Y-%m', tanggal)"
+            : "DATE_FORMAT(tanggal, '%Y-%m')";
+
         $data = Transaksi::query()
             ->whereBetween('tanggal', [$mulai, $sampai])
-            ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan, SUM(jumlah_transaksi) as total")
+            ->selectRaw("{$formatSql} as bulan, SUM(jumlah_transaksi) as total")
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get();

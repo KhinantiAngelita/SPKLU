@@ -14,8 +14,12 @@ class ManajemenUserController extends Controller
     public function index(Request $request)
     {
         $users = User::query()
-            ->when($request->search, fn ($q) => $q->where('name', 'like', "%{$request->search}%")
-                ->orWhere('email', 'like', "%{$request->search}%"))
+            ->when($request->search, fn ($q) => $q->where(function ($sub) use ($request) {
+                $sub->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+            }))
+            ->when($request->filled('role'), fn ($q) => $q->where('role', $request->role))
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -42,7 +46,7 @@ class ManajemenUserController extends Controller
         if ($request->mode === 'invite') {
             $this->invitationService->invite($request->name, $request->email, $request->role, $request->user());
 
-            return back()->with('success', 'Undangan berhasil dikirim ke ' . $request->email);
+            return back()->with('success', 'Undangan berhasil dikirim ke '.$request->email);
         }
 
         $result = $this->invitationService->createDirectly(

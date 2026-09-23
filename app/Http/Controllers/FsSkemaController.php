@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NotifikasiHelper;
 use App\Models\FsSkema;
 use App\Models\Probabilitas;
 use App\Services\FsSkemaCalculatorService;
@@ -30,14 +31,25 @@ class FsSkemaController extends Controller
     public function create()
     {
         $probabilitasList = $this->ambilProbabilitasUntukDropdown();
+        $poinJaringanMap = $this->calculator->poinJaringanMapUntukJs();
+        $poinJaringanFallback = $this->calculator->poinJaringanFallbackUntukJs();
 
-        return view('fs-skema.create', compact('probabilitasList'));
+        return view('fs-skema.create', compact('probabilitasList', 'poinJaringanMap', 'poinJaringanFallback'));
     }
 
     public function store(Request $request)
     {
         $validated = $this->validasi($request);
         $fsSkema = $this->simpanDenganPerhitungan($validated, $request);
+
+        NotifikasiHelper::kirim(
+            'fs_skema',
+            "Simulasi FS Skema untuk lokasi \"{$fsSkema->nama_lokasi}\" berhasil dibuat ({$fsSkema->status_kelayakan}).",
+            'calculator',
+            route('fs-skema.show', $fsSkema),
+            ['super_admin', 'pemasaran', 'pengelola'],
+            'Simulasi FS Skema Baru'
+        );
 
         return redirect()->route('fs-skema.show', $fsSkema)
             ->with('success', 'FS Skema berhasil dibuat.');
@@ -56,9 +68,23 @@ class FsSkemaController extends Controller
 
     public function edit(FsSkema $fsSkema)
     {
-        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
+        $fsSkema->load('kandidat');
 
-        return view('fs-skema.edit', compact('fsSkema', 'probabilitasList'));
+        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
+        $poinJaringanMap = $this->calculator->poinJaringanMapUntukJs();
+        $poinJaringanFallback = $this->calculator->poinJaringanFallbackUntukJs();
+
+        $spkluTerdekat = $this->hitungSpkluTerdekatDariKoordinat($fsSkema->titik_koordinat);
+        $proyeksiRoi = $this->calculator->hitungProyeksiROI($fsSkema);
+
+        return view('fs-skema.edit', compact(
+            'fsSkema',
+            'probabilitasList',
+            'poinJaringanMap',
+            'poinJaringanFallback',
+            'spkluTerdekat',
+            'proyeksiRoi'
+        ));
     }
 
     public function update(Request $request, FsSkema $fsSkema)
@@ -80,6 +106,15 @@ class FsSkemaController extends Controller
         $fsSkema->update(['narasi_analisis' => $narasi]);
 
         $this->catatRiwayat($fsSkema, $poin, $narasi, $request);
+
+        NotifikasiHelper::kirim(
+            'fs_skema',
+            "Parameter simulasi FS Skema \"{$fsSkema->nama_lokasi}\" telah diperbarui.",
+            'calculator',
+            route('fs-skema.show', $fsSkema),
+            ['super_admin', 'pemasaran', 'pengelola'],
+            'Pembaruan FS Skema'
+        );
 
         return redirect()->route('fs-skema.show', $fsSkema)
             ->with('success', 'FS Skema berhasil diperbarui.');

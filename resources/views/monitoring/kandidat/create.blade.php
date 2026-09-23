@@ -43,6 +43,17 @@
                 </div>
 
                 <div class="form-group">
+                    <label>ULP</label>
+                    <select name="ulp" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid #e2e8f0; font-size:13.5px; background:#fff; font-family:inherit;">
+                        <option value="">— Pilih ULP (opsional, bisa dilengkapi nanti) —</option>
+                        @foreach ($daftarUlp as $ulp)
+                            <option value="{{ $ulp->nama_penuh }}" {{ old('ulp') === $ulp->nama_penuh ? 'selected' : '' }}>{{ $ulp->nama_penuh }}</option>
+                        @endforeach
+                    </select>
+                    @error('ulp') <span class="form-error">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="form-group">
                     <label>Titik Kordinat</label>
                     <input type="text" name="tikor" placeholder="Contoh: -6.597147, 106.806039"
                         value="{{ old('tikor', request('tikor')) }}" required>

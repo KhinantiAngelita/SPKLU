@@ -71,11 +71,14 @@
 .fsf-combobox-empty { display:none; padding:16px 12px; font-size:13px; color:#94A3B8; text-align:center; }
 
 .fsf-mini-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;overflow:hidden;margin-top:8px}
-.fsf-mini-card-header{background:rgba(0,129,171,.10);padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A}
+.fsf-mini-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E2E8F0}
+.fsf-mini-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
 .fsf-mini-card-body{padding:18px 20px}
 
 .fsp-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);overflow:hidden;margin-bottom:20px}
-.fsp-card-header{background:linear-gradient(135deg, rgba(2,62,138,.06), rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fsp-card-header{background:linear-gradient(135deg,rgba(2,62,138,.06),rgba(0,129,171,.09));padding:14px 20px;font-size:15px;font-weight:700;color:#0F172A;display:flex;align-items:center;gap:10px;border-bottom:1px solid #F1F5F9}
+.fsp-card-header svg{width:17px;height:17px;flex-shrink:0;stroke-width:2;color:#0081AB}
+.fsp-card-header .fsp-loading{color:#0081AB;font-size:12px;margin-left:auto}
 .fsp-card-body{padding:18px 20px}
 .fsp-table{width:100%;border-collapse:collapse;font-size:13px}
 .fsp-table th{text-align:left;color:#94A3B8;font-weight:600;padding:8px 4px;border-bottom:1px solid #F1F5F9;white-space:nowrap}
@@ -293,13 +296,20 @@
             </div>
 
             <div class="fsf-mini-card">
-                <div class="fsf-mini-card-header">Ringkasan Kelayakan Lokasi</div>
+                <div class="fsf-mini-card-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Ringkasan Kelayakan Lokasi
+                </div>
                 <div class="fsf-mini-card-body">
-                    <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">0 / 40</span></div>
-                    <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">0 / 20</span></div>
-                    <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">0 / 40</span></div>
-                    <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">0 / 100</span></div>
-                    <div class="fsp-status-box fsp-status-netral" id="fsp-status-box">Status Kelayakan: —</div>
+                    <div class="fsp-poin-row"><span>Fasilitas</span><span id="fsp-poin-fasilitas">{{ $fsSkema->poin_fasilitas ?? 0 }} / 40</span></div>
+                    <div class="fsp-poin-row"><span>Kesiapan Jaringan</span><span id="fsp-poin-jaringan">{{ $fsSkema->poin_kesiapan_jaringan ?? 0 }} / 20</span></div>
+                    <div class="fsp-poin-row"><span>Okupansi</span><span id="fsp-poin-okupansi">{{ $fsSkema->poin_okupansi ?? 0 }} / 40</span></div>
+                    <div class="fsp-poin-row"><span>TOTAL</span><span id="fsp-poin-total">{{ $fsSkema->total_poin ?? 0 }} / 100</span></div>
+                    @php
+                        $statusKel = $fsSkema->status_kelayakan ?? null;
+                        $statusKelClass = $statusKel === 'Layak' ? 'fsp-status-hijau' : ($statusKel === 'Menjadi Pertimbangan' ? 'fsp-status-kuning' : ($statusKel ? 'fsp-status-merah' : 'fsp-status-netral'));
+                    @endphp
+                    <div class="fsp-status-box {{ $statusKelClass }}" id="fsp-status-box">Status Kelayakan: {{ $statusKel ?? '—' }}</div>
                 </div>
             </div>
 
@@ -310,47 +320,119 @@
         </form>
     </div>
 
-    {{-- KOLOM KANAN: LIVE PREVIEW — sama seperti form Tambah --}}
+    {{-- KOLOM KANAN: LIVE PREVIEW — diisi data awal dari controller dan update otomatis via AJAX --}}
     <div>
         <div class="fsp-card">
-            <div class="fsp-card-header">3 SPKLU Terdekat <span id="fsp-loading-spklu" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                3 SPKLU Terdekat <span id="fsp-loading-spklu" class="fsp-loading" style="display:none">memuat…</span>
+            </div>
             <div class="fsp-card-body">
-                <div id="fsp-spklu-empty" class="fsp-empty">Isi Titik Kordinat untuk melihat SPKLU terdekat.</div>
-                <table class="fsp-table" id="fsp-spklu-table" style="display:none">
+                <div id="fsp-spklu-empty" class="fsp-empty" style="{{ !empty($spkluTerdekat) ? 'display:none' : '' }}">Isi Titik Kordinat untuk melihat SPKLU terdekat.</div>
+                <table class="fsp-table" id="fsp-spklu-table" style="{{ empty($spkluTerdekat) ? 'display:none' : '' }}">
                     <thead><tr><th>Nama SPKLU</th><th>Jarak</th><th>Status Jarak</th></tr></thead>
-                    <tbody id="fsp-spklu-body"></tbody>
+                    <tbody id="fsp-spklu-body">
+                        @if (!empty($spkluTerdekat))
+                            @foreach ($spkluTerdekat as $s)
+                                @php
+                                    $kelasStatus = 'fsp-jarak-belum';
+                                    if ($s['status_jarak'] === 'Bagus') $kelasStatus = 'fsp-jarak-bagus';
+                                    elseif (str_contains($s['status_jarak'] ?? '', 'kanibalisasi')) $kelasStatus = 'fsp-jarak-risiko';
+                                @endphp
+                                <tr>
+                                    <td>{{ $s['nama'] }}</td>
+                                    <td>{{ number_format($s['jarak_km'], 2) }} km</td>
+                                    <td class="{{ $kelasStatus }}">{{ $s['status_jarak'] }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
                 </table>
             </div>
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Proyeksi ROI <span id="fsp-roi-tahun-label">5</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span></div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                Proyeksi ROI <span id="fsp-roi-tahun-label">{{ $proyeksiRoi['masa_kontrak_tahun'] ?? 5 }}</span> Tahun <span id="fsp-loading-roi" class="fsp-loading" style="display:none">memuat…</span>
+            </div>
             <div class="fsp-card-body">
-                <div id="fsp-roi-empty" class="fsp-empty">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
-                <div id="fsp-roi-content" style="display:none">
+                <div id="fsp-roi-empty" class="fsp-empty" style="{{ !empty($proyeksiRoi) ? 'display:none' : '' }}">Isi Mobil/hari &amp; Transaksi kWh/Mobil untuk melihat proyeksi.</div>
+                <div id="fsp-roi-content" style="{{ empty($proyeksiRoi) ? 'display:none' : '' }}">
                     <table class="fsp-table" id="fsp-roi-table">
-                        <thead id="fsp-roi-head"></thead>
-                        <tbody id="fsp-roi-body"></tbody>
+                        <thead id="fsp-roi-head">
+                            @if (!empty($proyeksiRoi))
+                                @if (($proyeksiRoi['tipe'] ?? '') === 'skema_2')
+                                    <tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>
+                                @else
+                                    <tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>
+                                @endif
+                            @endif
+                        </thead>
+                        <tbody id="fsp-roi-body">
+                            @if (!empty($proyeksiRoi))
+                                @if (($proyeksiRoi['tipe'] ?? '') === 'skema_2')
+                                    @foreach ($proyeksiRoi['tahunan'] as $r)
+                                        <tr>
+                                            <td>{{ $r['tahun'] }}{{ $r['sudah_bep'] ? ' ✓BEP' : '' }}</td>
+                                            <td>{{ $r['mobil_per_hari'] }}</td>
+                                            <td>{{ number_format($r['transaksi_per_tahun'], 0, ',', '.') }}</td>
+                                            <td>{{ number_format($r['energi_kwh_per_tahun'], 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($r['pendapatan_mitra'], 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($r['kumulatif'], 0, ',', '.') }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    @foreach ($proyeksiRoi['tahunan'] as $r)
+                                        <tr>
+                                            <td>{{ $r['tahun'] }}</td>
+                                            <td>{{ $r['mobil_per_hari'] }}</td>
+                                            <td>{{ number_format($r['transaksi_per_tahun'], 0, ',', '.') }}</td>
+                                            <td>{{ number_format($r['energi_kwh_per_tahun'], 0, ',', '.') }}</td>
+                                            <td>Rp {{ number_format($r['pendapatan_mesin'], 0, ',', '.') }}{{ $r['sudah_bep_mesin'] ? ' ✓BEP' : '' }}</td>
+                                            <td>Rp {{ number_format($r['pendapatan_lahan'], 0, ',', '.') }}{{ $r['sudah_bep_lahan'] ? ' ✓BEP' : '' }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            @endif
+                        </tbody>
                     </table>
-                    <div class="fsp-estimasi-roi" id="fsp-estimasi-roi"></div>
+                    <div class="fsp-estimasi-roi" id="fsp-estimasi-roi">
+                        @if (!empty($proyeksiRoi))
+                            @if (($proyeksiRoi['tipe'] ?? '') === 'skema_2')
+                                <strong>Estimasi ROI:</strong> {{ $proyeksiRoi['estimasi_roi_teks'] }}
+                            @else
+                                <strong>Estimasi ROI Mitra Mesin:</strong> {{ $proyeksiRoi['estimasi_roi_mesin_teks'] }}<br>
+                                <strong>Estimasi ROI Mitra Lahan:</strong> {{ $proyeksiRoi['estimasi_roi_lahan_teks'] }}
+                            @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Grafik Proyeksi ROI</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                Grafik Proyeksi ROI
+            </div>
             <div class="fsp-card-body">
-                <div id="fsp-roi-chart-empty" class="fsp-empty">Grafik akan tampil setelah data Proyeksi ROI di atas terisi.</div>
-                <div id="fsp-roi-chart-wrap" style="display:none">
+                <div id="fsp-roi-chart-empty" class="fsp-empty" style="{{ !empty($proyeksiRoi) ? 'display:none' : '' }}">Grafik akan tampil setelah data Proyeksi ROI di atas terisi.</div>
+                <div id="fsp-roi-chart-wrap" style="{{ empty($proyeksiRoi) ? 'display:none' : '' }}">
                     <canvas id="fsp-roi-chart" height="220"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="fsp-card">
-            <div class="fsp-card-header">Ringkasan Analisis</div>
+            <div class="fsp-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Ringkasan Analisis
+            </div>
             <div class="fsp-card-body">
-                <p class="fsp-narasi-placeholder" id="fsp-narasi">Lengkapi form untuk melihat ringkasan analisis.</p>
+                <p class="{{ $fsSkema->narasi_analisis ? 'fsp-narasi' : 'fsp-narasi-placeholder' }}" id="fsp-narasi">
+                    {{ $fsSkema->narasi_analisis ?: 'Lengkapi form untuk melihat ringkasan analisis.' }}
+                </p>
             </div>
         </div>
     </div>
@@ -417,6 +499,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initComboboxLokasi();
     initRupiahFormatter();
     perbaruiLatLng();
+    @if (!empty($proyeksiRoi))
+        renderChartRoi(@json($proyeksiRoi));
+    @endif
     jalankanPreview();
 });
 
@@ -542,6 +627,7 @@ function formatRupiah(angka) {
 async function jalankanPreview() {
     const form = document.getElementById('form-fs-skema');
     const formData = new FormData(form);
+    formData.delete('_method'); // PENTING: buang _method PUT agar request preview dikirim murni sebagai POST
 
     document.getElementById('fsp-loading-spklu').style.display = 'inline';
     document.getElementById('fsp-loading-roi').style.display = 'inline';
@@ -640,10 +726,11 @@ function renderRoi(roi) {
     labelTahun.textContent = roi.masa_kontrak_tahun;
 
     if (roi.tipe === 'skema_2') {
-        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
+        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendapatan</th><th>Kumulatif</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
             <td>${r.tahun}${r.sudah_bep ? ' ✓BEP' : ''}</td>
             <td>${r.mobil_per_hari}</td>
+            <td>${Number(r.transaksi_per_tahun).toLocaleString('id-ID')}</td>
             <td>${Number(r.energi_kwh_per_tahun).toLocaleString('id-ID')}</td>
             <td>${formatRupiah(r.pendapatan_mitra)}</td>
             <td>${formatRupiah(r.kumulatif)}</td>
@@ -652,9 +739,11 @@ function renderRoi(roi) {
         document.getElementById('fsp-estimasi-roi').innerHTML =
             `<strong>Estimasi ROI:</strong> ${roi.estimasi_roi_teks}`;
     } else {
-        head.innerHTML = '<tr><th>Tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
+        head.innerHTML = '<tr><th>Tahun</th><th>Mobil/hari</th><th>Transaksi/tahun</th><th>Energi (kWh)</th><th>Pendpt. Mesin</th><th>Pendpt. Lahan</th></tr>';
         body.innerHTML = roi.tahunan.map(r => `<tr>
             <td>${r.tahun}</td>
+            <td>${r.mobil_per_hari}</td>
+            <td>${Number(r.transaksi_per_tahun).toLocaleString('id-ID')}</td>
             <td>${Number(r.energi_kwh_per_tahun).toLocaleString('id-ID')}</td>
             <td>${formatRupiah(r.pendapatan_mesin)}${r.sudah_bep_mesin ? ' ✓BEP' : ''}</td>
             <td>${formatRupiah(r.pendapatan_lahan)}${r.sudah_bep_lahan ? ' ✓BEP' : ''}</td>
