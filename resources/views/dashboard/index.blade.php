@@ -499,6 +499,21 @@
         gap: 14px;
         padding: 18px 22px;
         border-bottom: 1px solid #F1F5F9;
+        background: #FFFFFF;
+    }
+    .dsh-chart-header h2 {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1B2559 !important;
+        letter-spacing: -0.015em;
+        margin: 0 0 2px 0 !important;
+        line-height: 1.25;
+    }
+    .dsh-chart-header p {
+        font-size: 12.5px;
+        color: #64748B;
+        margin: 0 !important;
+        line-height: 1.35;
     }
     .dsh-chart-toolbar {
         display: flex;
@@ -1136,16 +1151,16 @@
       5. TREN TRANSAKSI DENGAN INTEGRATED FILTER BULAN
     ========================================================= --}}
 <div class="surface-card">
-    <div class="dsh-chart-header">
+    <div class="section-header-bar dsh-chart-header">
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                 </svg>
             </div>
-            <div>
-                <h2 style="color:#1B2559;">Tren Transaksi SPKLU</h2>
-                <p>Volume transaksi kumulatif: {{ \Carbon\Carbon::createFromFormat('Y-m', $dariBulan)->locale('id')->translatedFormat('F Y') }} &ndash; {{ \Carbon\Carbon::createFromFormat('Y-m', $sampaiBulan)->locale('id')->translatedFormat('F Y') }}</p>
+            <div style="display:flex; flex-direction:column; justify-content:center;">
+                <h2 style="margin:0 0 2px 0 !important; font-size:16px; font-weight:800; color:#1B2559; line-height:1.25;">Tren Transaksi SPKLU</h2>
+                <p style="margin:0 !important; font-size:12.5px; color:#64748B; line-height:1.35;">Volume transaksi kumulatif: {{ \Carbon\Carbon::createFromFormat('Y-m', $dariBulan)->locale('id')->translatedFormat('F Y') }} &ndash; {{ \Carbon\Carbon::createFromFormat('Y-m', $sampaiBulan)->locale('id')->translatedFormat('F Y') }}</p>
             </div>
         </div>
 

@@ -28,7 +28,6 @@ class ProyeksiEnergiTest extends TestCase
         $response = $this->actingAs($user)->get(route('transaksi.proyeksi'));
 
         $response->assertStatus(200);
-        $response->assertSee('FROM IMPACT TO SCALE');
         $response->assertSee('Proyeksi Penjualan Energi: Eksisting + SPKLU Baru');
         $response->assertSee('Tambahan SPKLU Baru');
         $response->assertSee('Eksisting (proyeksi)');

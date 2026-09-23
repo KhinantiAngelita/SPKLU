@@ -699,10 +699,6 @@
     {{-- Frame Slide Presentasi Utama --}}
     <div class="slide-frame" id="slide-capture-area">
 
-        {{-- Judul Besar Slide --}}
-        <h2 class="slide-main-title">FROM IMPACT TO SCALE</h2>
-        <p class="slide-subtitle">Realized Growth, Future Potential, Measurable Impact</p>
-
         {{-- Kartu Visual Grafik & Tabel --}}
         <div class="chart-section-card">
 
