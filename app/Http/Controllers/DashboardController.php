@@ -62,6 +62,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get()
             ->map(fn ($p) => (object) [
+                'id' => $p->id,
                 'lokasi' => $p->lokasi,
                 'ulp' => $p->ulp,
                 'tahap_saat_ini' => $p->tahapSaatIni(),
