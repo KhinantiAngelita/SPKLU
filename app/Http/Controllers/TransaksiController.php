@@ -405,7 +405,7 @@ class TransaksiController extends Controller
             'transaksi',
             "File transaksi \"{$namaFileAsli}\" diunggah dan sedang diproses sistem.",
             'arrow-left-right',
-            route('transaksi.uploadPage'),
+            route('transaksi.upload'),
             null,
             'Upload Transaksi Baru'
         );
@@ -474,7 +474,7 @@ class TransaksiController extends Controller
             'transaksi',
             "File transaksi baru \"{$namaFileAsli}\" diunggah ulang dan sedang diproses sistem.",
             'arrow-left-right',
-            route('transaksi.uploadPage'),
+            route('transaksi.upload'),
             null,
             'Unggah Ulang Transaksi'
         );

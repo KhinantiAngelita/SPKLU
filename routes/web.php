@@ -168,6 +168,9 @@ Route::middleware(['auth'])->group(function () {
             ->middleware('role:super_admin,pengelola')
             ->name('upload');
 
+        Route::get('upload-page-alias', [TransaksiController::class, 'uploadPage'])
+            ->name('uploadPage');
+
         Route::delete('upload/{transaksiUpload}', [TransaksiController::class, 'destroyUpload'])
             ->middleware('role:super_admin')
             ->name('upload.destroy');
