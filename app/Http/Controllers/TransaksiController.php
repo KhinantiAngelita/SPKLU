@@ -531,7 +531,8 @@ class TransaksiController extends Controller
                 return false;
             }
 
-            $uploadLog->update(['path_file' => $path]);
+            $uploadLog->path_file = $path;
+            $uploadLog->save();
 
             return true;
         } catch (\Throwable $e) {
