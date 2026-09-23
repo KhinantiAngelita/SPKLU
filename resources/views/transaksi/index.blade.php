@@ -47,18 +47,28 @@
     .trx-daterange input::-webkit-calendar-picker-indicator:hover { background-color: rgba(0,129,171,.1); opacity: 1; }
     .trx-daterange-sep { color:#cbd5e1; font-size:12px; flex-shrink:0; }
 
-    .trx-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px; }
-    .trx-summary-card { background:#fff; border-radius:16px; padding:22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); transition:transform .18s ease, box-shadow .18s ease; }
-    .trx-summary-card:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(15,23,42,.06), 0 14px 28px rgba(15,23,42,.09); }
-    .trx-summary-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+    .trx-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .trx-summary-card {
+        background:#fff; border-radius:16px; padding:20px; border:1px solid #e2e8f0;
+        box-shadow:0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02);
+        position:relative; overflow:hidden;
+        transition:transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .trx-summary-card:hover { transform:translateY(-3px); box-shadow:0 12px 24px -4px rgba(15,23,42,.08); }
+    .trx-summary-card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; }
+    .trx-summary-card.blue::before   { background:linear-gradient(90deg, #023E8A, #0081AB); }
+    .trx-summary-card.green::before  { background:linear-gradient(90deg, #059669, #10B981); }
+    .trx-summary-card.amber::before  { background:linear-gradient(90deg, #D97706, #F59E0B); }
+    .trx-summary-card.purple::before { background:linear-gradient(90deg, #7C3AED, #8B5CF6); }
+    .trx-summary-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
     .trx-summary-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .trx-summary-icon svg { width:20px; height:20px; stroke-width:2; }
-    .ic-blue  { background:linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12)); color:#023E8A; }
-    .ic-green { background:linear-gradient(135deg, rgba(46,158,91,.14), rgba(46,158,91,.06)); color:#2E9E5B; }
-    .ic-amber { background:linear-gradient(135deg, rgba(232,163,23,.15), rgba(232,163,23,.06)); color:#E8A317; }
-    .ic-purple{ background:linear-gradient(135deg, rgba(147,51,234,.14), rgba(147,51,234,.06)); color:#9333ea; }
-    .trx-summary-label { font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:0 0 6px; }
-    .trx-summary-value { font-size:26px; font-weight:800; letter-spacing:-.02em; color:#0f172a; margin:0; }
+    .ic-blue  { background:rgba(0,129,171,.1); color:#0081AB; }
+    .ic-green { background:rgba(5,150,105,.1); color:#059669; }
+    .ic-amber { background:rgba(217,119,6,.1); color:#D97706; }
+    .ic-purple{ background:rgba(124,58,237,.1); color:#7C3AED; }
+    .trx-summary-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748B; margin:0 0 6px; }
+    .trx-summary-value { font-size:28px; font-weight:800; letter-spacing:-.02em; color:#1B2559 !important; margin:0; line-height:1; }
     .trx-trend { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:700; margin-top:10px; }
     .trx-trend svg { width:12px; height:12px; stroke-width:3; }
     .trx-trend.up { color:#2E9E5B; }
@@ -114,7 +124,7 @@
 
 <div class="trx-page-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Ringkasan Transaksi</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Ringkasan Transaksi</h1>
         <p class="trx-page-subtitle">Ringkasan transaksi seluruh SPKLU</p>
     </div>
     <div style="display:flex; gap:10px;">
@@ -165,7 +175,7 @@
 </form>
 
 <div class="trx-card-grid">
-    <div class="trx-summary-card">
+    <div class="trx-summary-card blue">
         <div class="trx-summary-top">
             <div>
                 <p class="trx-summary-label">Total Transaksi</p>
@@ -181,7 +191,7 @@
         </span>
     </div>
 
-    <div class="trx-summary-card">
+    <div class="trx-summary-card green">
         <div class="trx-summary-top">
             <div>
                 <p class="trx-summary-label">Energi Tersalur</p>
@@ -197,7 +207,7 @@
         </span>
     </div>
 
-    <div class="trx-summary-card">
+    <div class="trx-summary-card amber">
         <div class="trx-summary-top">
             <div>
                 <p class="trx-summary-label">Total Pendapatan</p>
@@ -213,7 +223,7 @@
         </span>
     </div>
 
-    <div class="trx-summary-card">
+    <div class="trx-summary-card purple">
         <div class="trx-summary-top">
             <div>
                 <p class="trx-summary-label">Rata-Rata/Transaksi</p>

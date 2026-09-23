@@ -18,7 +18,7 @@
     .mu-title {
         font-size: 22px;
         font-weight: 800;
-        color: #0f172a;
+        color: #1B2559;
         margin: 0 0 4px;
         letter-spacing: -0.01em;
     }
@@ -88,32 +88,32 @@
     }
     .mu-card {
         background: #fff;
-        border-radius: 14px;
-        padding: 18px 20px;
+        border-radius: 16px;
+        padding: 20px;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 2px rgba(15,23,42,.04);
+        box-shadow: 0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02);
         position: relative;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        transition: transform .18s ease, box-shadow .18s ease;
+        transition: transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .mu-card::before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        width: 4px;
-        height: 100%;
+        right: 0;
+        height: 3px;
     }
-    .mu-card.blue::before  { background: #0081AB; }
-    .mu-card.green::before { background: #2E9E5B; }
-    .mu-card.amber::before { background: #E8A317; }
+    .mu-card.blue::before  { background: linear-gradient(90deg, #023E8A, #0081AB); }
+    .mu-card.green::before { background: linear-gradient(90deg, #059669, #10B981); }
+    .mu-card.amber::before { background: linear-gradient(90deg, #D97706, #F59E0B); }
     .mu-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(15,23,42,.07);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px -4px rgba(15,23,42,.08);
     }
     .mu-card-info {
         display: flex;
@@ -128,11 +128,11 @@
         margin: 0 0 4px;
     }
     .mu-card-value {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
-        color: #0f172a;
+        color: #1B2559 !important;
         margin: 0 0 2px;
-        line-height: 1.2;
+        line-height: 1;
     }
     .mu-card-note {
         font-size: 12px;

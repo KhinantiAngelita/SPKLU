@@ -4,6 +4,7 @@
     --brand-dark: #023E8A;   /* sebelumnya #0A2E52 */
     --brand-mid: #0081AB;    /* sebelumnya #14508C */
     --brand-light: #4FC3E0;  /* sebelumnya #3E82C4 — saya sesuaikan biar masih 1 keluarga warna */
+    --header-color: #1B2559;
     --accent-yellow: #FFC629;
     --status-green: #2E9E5B;
     --status-amber: #E8A317;
@@ -22,6 +23,15 @@ body {
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     background-color: var(--bg-page);
     color: var(--text-primary);
+}
+
+h1, h2, h3, h4, h5, h6,
+.app-page-title,
+.section-header-bar h2,
+.surface-card h2,
+.dsh-welcome-title,
+.section-title {
+    color: #1B2559 !important;
 }
 
 a {

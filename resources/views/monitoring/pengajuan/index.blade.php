@@ -32,7 +32,7 @@
 
     /* Kartu kandidat */
     .pgj-card { background:#fff; border-radius:12px; padding:14px 16px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; }
-    .pgj-card-title { font-size:13.8px; font-weight:700; color:#0f172a; margin:0 0 2px; padding-right:70px; }
+    .pgj-card-title { font-size:13.8px; font-weight:700; color:#1B2559; margin:0 0 2px; padding-right:70px; }
     .pgj-card-ulp { font-size:11.5px; color:#94a3b8; margin:0 0 10px; }
     .pgj-card-tahap { display:flex; align-items:center; gap:6px; font-size:12px; color:#1E293B; margin-bottom:6px; }
     .pgj-card-tahap-dot { width:6px; height:6px; border-radius:999px; background:#0081AB; flex-shrink:0; }
@@ -64,7 +64,7 @@
 
 <div class="pgj-page-header">
     <div>
-        <h1 style="margin:0 0 4px; font-size:20px; font-weight:800; color:#0f172a;">Pengajuan Integrasi SPKLU</h1>
+        <h1 style="margin:0 0 4px; font-size:20px; font-weight:800; color:#1B2559;">Pengajuan Integrasi SPKLU</h1>
         <p class="pgj-page-subtitle">Ringkasan progres kandidat lokasi berdasarkan tahapan Probabilitas</p>
     </div>
 

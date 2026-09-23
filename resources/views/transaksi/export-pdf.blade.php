@@ -48,7 +48,7 @@
         .kop-title-main {
             font-size: 16px;
             font-weight: 800;
-            color: #023E8A;
+            color: #1B2559;
             letter-spacing: -0.2px;
             margin: 0 0 3px 0;
         }
@@ -64,7 +64,7 @@
             line-height: 1.45;
         }
         .kop-meta strong {
-            color: #0F172A;
+            color: #1B2559;
         }
         .kop-meta-badge {
             display: inline-block;
@@ -85,7 +85,7 @@
         .section-title {
             font-size: 10.5px;
             font-weight: 800;
-            color: #023E8A;
+            color: #1B2559;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: inline-block;
@@ -122,7 +122,7 @@
         .kpi-value {
             font-size: 13px;
             font-weight: 800;
-            color: #0F172A;
+            color: #1B2559;
             line-height: 1.15;
             margin-bottom: 2px;
         }

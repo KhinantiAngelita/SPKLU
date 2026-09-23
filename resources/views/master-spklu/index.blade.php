@@ -20,25 +20,33 @@
     .msp-btn-danger { background:#C0392B; color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(192,57,43,.35); }
     .msp-btn-danger:hover { transform:translateY(-1px); background:#a8302a; }
 
-    .msp-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+    .msp-card-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
     .msp-card {
-        background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #e2e8f0;
-        box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; overflow:hidden;
-        transition:box-shadow .18s ease, transform .18s ease;
+        background:#fff; border-radius:16px; padding:20px; border:1px solid #e2e8f0;
+        box-shadow:0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02);
+        position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between;
+        transition:transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .msp-card::before { content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
-    .msp-card.blue::before  { background:#0081AB; }
-    .msp-card.green::before { background:#2E9E5B; }
-    .msp-card.amber::before { background:#E8A317; }
-    .msp-card.rose::before  { background:#C0392B; }
-    .msp-card:hover { box-shadow:0 8px 20px rgba(15,23,42,.08); transform:translateY(-2px); }
-    .msp-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 6px; }
-    .msp-card-value { font-size:26px; font-weight:800; color:#0f172a; margin:0 0 4px; line-height:1.2; }
+    .msp-card:hover { transform:translateY(-3px); box-shadow:0 12px 24px -4px rgba(15,23,42,.08); }
+    .msp-card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; }
+    .msp-card.blue::before  { background:linear-gradient(90deg, #023E8A, #0081AB); }
+    .msp-card.green::before { background:linear-gradient(90deg, #059669, #10B981); }
+    .msp-card.amber::before { background:linear-gradient(90deg, #D97706, #F59E0B); }
+    .msp-card.rose::before  { background:linear-gradient(90deg, #7C3AED, #8B5CF6); }
+    .msp-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+    .msp-card-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .msp-card-icon svg { width:20px; height:20px; stroke-width:2; }
+    .msp-card-icon.blue   { background:rgba(0,129,171,.1); color:#0081AB; }
+    .msp-card-icon.green  { background:rgba(5,150,105,.1); color:#059669; }
+    .msp-card-icon.amber  { background:rgba(217,119,6,.1); color:#D97706; }
+    .msp-card-icon.purple { background:rgba(124,58,237,.1); color:#7C3AED; }
+    .msp-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748B; margin:0 0 6px; }
+    .msp-card-value { font-size:28px; font-weight:800; color:#1B2559 !important; margin:0 0 4px; line-height:1; }
     .msp-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
 
-    .msp-split-row { display:flex; gap:18px; margin:6px 0 4px; }
-    .msp-value-split { font-size:22px; font-weight:800; color:#0f172a; display:flex; flex-direction:column; }
-    .msp-value-split small { font-size:11px; font-weight:600; color:#64748B; margin-top:2px; }
+    .msp-split-row { display:flex; gap:18px; margin:4px 0 4px; }
+    .msp-value-split { font-size:22px; font-weight:800; color:#1B2559 !important; display:flex; flex-direction:column; line-height:1.1; }
+    .msp-value-split small { font-size:11px; font-weight:600; color:#64748B; margin-top:3px; }
 
     .msp-banner { background:linear-gradient(135deg, rgba(255,198,41,.12), rgba(232,163,23,.08)); border:1px solid rgba(232,163,23,.35); border-radius:12px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; color:#92660f; font-size:13.5px; font-weight:500; gap:12px; flex-wrap:wrap; }
     .msp-banner-danger { background:linear-gradient(135deg, rgba(192,57,43,.10), rgba(192,57,43,.06)); border:1px solid rgba(192,57,43,.3); color:#C0392B; }
@@ -164,7 +172,7 @@
 
 <div class="msp-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Master SPKLU</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Master SPKLU</h1>
         <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
     </div>
     @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
@@ -189,13 +197,23 @@
 
 <div class="msp-card-grid">
     <div class="msp-card blue">
-        <div class="msp-card-label">Total Unit SPKLU</div>
+        <div class="msp-card-top">
+            <div class="msp-card-label">Total Unit SPKLU</div>
+            <div class="msp-card-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+        </div>
         <div class="msp-card-value">{{ $totalUnit }} <span style="font-size:14px; font-weight:600; color:#64748B;">unit</span></div>
         <div class="msp-card-note">Seluruh SPKLU terdaftar</div>
     </div>
 
     <div class="msp-card green">
-        <div class="msp-card-label">Berdasarkan Type</div>
+        <div class="msp-card-top">
+            <div class="msp-card-label">Berdasarkan Type</div>
+            <div class="msp-card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+            </div>
+        </div>
         <div class="msp-split-row">
             <div class="msp-value-split">
                 {{ $totalByType['DC'] ?? 0 }}
@@ -210,7 +228,12 @@
     </div>
 
     <div class="msp-card amber">
-        <div class="msp-card-label">Berdasarkan Kepemilikan</div>
+        <div class="msp-card-top">
+            <div class="msp-card-label">Berdasarkan Kepemilikan</div>
+            <div class="msp-card-icon amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+            </div>
+        </div>
         <div class="msp-split-row">
             <div class="msp-value-split">
                 {{ $totalByKepemilikan['PLN'] ?? 0 }}
@@ -225,7 +248,12 @@
     </div>
 
     <div class="msp-card rose">
-        <div class="msp-card-label">Total Kapasitas</div>
+        <div class="msp-card-top">
+            <div class="msp-card-label">Total Kapasitas</div>
+            <div class="msp-card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 22v-4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M22 12h-4"/><path d="m19.07 4.93-2.83 2.83"/></svg>
+            </div>
+        </div>
         <div class="msp-card-value">{{ number_format($totalKapasitas, 0, ',', '.') }} <span style="font-size:14px; font-weight:600; color:#64748B;">kW</span></div>
         <div class="msp-card-note">*tidak termasuk unit custom</div>
     </div>

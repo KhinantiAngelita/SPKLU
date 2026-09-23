@@ -7,7 +7,7 @@
 
 <style>
     .jdi-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
-    .jdi-page-header h1 { font-size:20px; font-weight:700; color:#0F172A; margin:0; }
+    .jdi-page-header h1 { font-size:20px; font-weight:700; color:#1B2559; margin:0; }
     .jdi-page-header p { color:#64748B; margin:4px 0 0; font-size:13.5px; }
     .jdi-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:10px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; text-decoration:none; transition:all .15s ease; }
     .jdi-btn svg { width:15px; height:15px; stroke-width:2.1; }
@@ -79,7 +79,7 @@
     .jdi-cal-more { font-size:9px; color:#94A3B8; margin-top:2px; }
 
     .jdi-hariini-title { display:flex; align-items:center; justify-content:space-between; padding:18px 22px 10px; }
-    .jdi-hariini-title strong { font-size:15px; font-weight:700; color:#0F172A; }
+    .jdi-hariini-title strong { font-size:15px; font-weight:700; color:#1B2559; }
     .jdi-hariini-title span { font-size:12px; color:#94A3B8; }
     .jdi-hariini-list { padding:0 22px 22px; display:flex; flex-direction:column; gap:12px; }
     .jdi-hariini-item {
@@ -91,11 +91,11 @@
     .jdi-hariini-time {
         flex-shrink:0; width:56px; text-align:center;
         background:rgba(2,62,138,.08); color:#023E8A; font-weight:700; font-size:13px;
-        padding:8px 6px; border-radius:9px; white-space:nowrap;
+        padding:8px 6px; border-radius:999px; white-space:nowrap;
     }
     .jdi-hariini-item.offline .jdi-hariini-time { background:#EAFAF1; color:#2E9E5B; }
     .jdi-hariini-body { flex:1; min-width:0; }
-    .jdi-hariini-body strong { font-size:14px; color:#0F172A; display:block; }
+    .jdi-hariini-body strong { font-size:14px; color:#1B2559; display:block; }
     .jdi-hariini-desc { font-size:12px; color:#94A3B8; display:block; margin-top:2px; }
     .jdi-hariini-badge {
         flex-shrink:0; font-size:11.5px; font-weight:700; padding:5px 14px; border-radius:999px;
@@ -112,7 +112,7 @@
     .jdi-modal-overlay.open { display:flex; }
     .jdi-modal-box { background:#fff; border-radius:16px; width:480px; max-width:100%; max-height:82vh; display:flex; flex-direction:column; box-shadow:0 30px 70px rgba(1,26,64,.3); overflow:hidden; }
     .jdi-modal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid #F1F5F9; background:linear-gradient(150deg, rgba(2,62,138,.05), rgba(0,129,171,.08)); }
-    .jdi-modal-head strong { font-size:15px; color:#0F172A; display:block; }
+    .jdi-modal-head strong { font-size:15px; color:#1B2559; display:block; }
     .jdi-modal-head span { font-size:12px; color:#94A3B8; }
     .jdi-modal-close { background:none; border:none; font-size:20px; line-height:1; color:#94A3B8; cursor:pointer; padding:4px; }
     .jdi-modal-close:hover { color:#475569; }

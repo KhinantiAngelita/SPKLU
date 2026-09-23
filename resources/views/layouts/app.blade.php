@@ -25,6 +25,7 @@
             --status-amber: #E8A317;
             --status-red: #C0392B;
             --bg-page: #F4F6FB;
+            --header-color: #1B2559;
             --text-primary: #0F172A;
             --text-secondary: #64748B;
         }
@@ -33,6 +34,16 @@
         button, input, select, textarea { font-family: inherit; }
         body { margin: 0; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; background-color: var(--bg-page); color: var(--text-primary); -webkit-font-smoothing: antialiased; }
         a { text-decoration: none; color: inherit; }
+
+        /* ===== Universal Header Color (#1B2559) ===== */
+        h1, h2, h3,
+        .app-page-title,
+        .section-header-bar h2,
+        .surface-card h2,
+        .dsh-welcome-title,
+        .section-title {
+            color: #1B2559 !important;
+        }
 
         .app-shell { display: flex; height: 100vh; overflow: hidden; }
         .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
@@ -57,7 +68,7 @@
         .app-page-title {
             font-size: 22px;
             font-weight: 800;
-            color: #0f172a;
+            color: #1B2559 !important;
             letter-spacing: -0.015em;
             margin: 0;
             line-height: 1.25;
@@ -84,7 +95,7 @@
             box-shadow: 0 3px 8px rgba(2,62,138,.25);
         }
         .section-header-bar-icon svg { width: 17px; height: 17px; color: #fff; stroke-width: 2; }
-        .section-header-bar h2 { margin: 0; font-size: 16.5px; font-weight: 800; color: var(--brand-dark); }
+        .section-header-bar h2 { margin: 0; font-size: 16.5px; font-weight: 800; color: #1B2559 !important; }
         .section-header-bar p { margin: 3px 0 0; font-size: 12px; color: var(--text-secondary); }
 
         .surface-card {

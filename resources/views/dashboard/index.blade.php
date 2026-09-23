@@ -32,7 +32,7 @@
     .dsh-welcome-title {
         font-size: 24px;
         font-weight: 800;
-        color: #0F172A;
+        color: #1B2559;
         letter-spacing: -0.025em;
         margin: 0 0 4px 0;
         display: flex;
@@ -179,7 +179,7 @@
     .dsh-kpi-value {
         font-size: 28px;
         font-weight: 800;
-        color: #0F172A;
+        color: #1B2559;
         letter-spacing: -0.02em;
         line-height: 1;
         margin: 0;
@@ -266,7 +266,7 @@
     .section-header-bar h2 {
         font-size: 16px;
         font-weight: 800;
-        color: #0F172A;
+        color: #1B2559;
         letter-spacing: -0.015em;
         margin: 0;
     }
@@ -425,7 +425,7 @@
     .dsh-metric-box-val {
         font-size: 24px;
         font-weight: 800;
-        color: #0F172A;
+        color: #1B2559;
         letter-spacing: -0.02em;
         margin: 0 0 6px 0;
         line-height: 1.1;
@@ -1144,8 +1144,8 @@
                 </svg>
             </div>
             <div>
-                <h2>Tren Transaksi SPKLU</h2>
-                <p>Volume transaksi kumulatif: {{ \Carbon\Carbon::createFromFormat('Y-m', $dariBulan)->translatedFormat('F Y') }} &ndash; {{ \Carbon\Carbon::createFromFormat('Y-m', $sampaiBulan)->translatedFormat('F Y') }}</p>
+                <h2 style="color:#1B2559;">Tren Transaksi SPKLU</h2>
+                <p>Volume transaksi kumulatif: {{ \Carbon\Carbon::createFromFormat('Y-m', $dariBulan)->locale('id')->translatedFormat('F Y') }} &ndash; {{ \Carbon\Carbon::createFromFormat('Y-m', $sampaiBulan)->locale('id')->translatedFormat('F Y') }}</p>
             </div>
         </div>
 

@@ -47,7 +47,7 @@
          HEADER
     ========================================================= --}}
     <div style="margin-bottom: 20px;">
-        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Kandidat Prioritas</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Kandidat Prioritas</h1>
         <p class="kp-sub" style="margin:0; color:#64748B; font-size:13.5px;">Perhitungan jarak dan pembobotan poin kesiapan lokasi kandidat SPKLU</p>
     </div>
 
@@ -58,7 +58,12 @@
     <div class="kp-cards">
 
         <div class="kp-card blue">
-            <div class="label">Total Kandidat</div>
+            <div class="kp-card-top">
+                <div class="label">Total Kandidat</div>
+                <div class="kp-card-icon blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+            </div>
 
             <div class="value">
                 {{ $ringkasan['total_kandidat'] }}
@@ -71,7 +76,12 @@
 
 
         <div class="kp-card green">
-            <div class="label">Rata-rata Skor Progres</div>
+            <div class="kp-card-top">
+                <div class="label">Rata-rata Skor Progres</div>
+                <div class="kp-card-icon green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+            </div>
 
             <div class="value">
                 {{ $ringkasan['rata_rata_skor'] }}%
@@ -86,7 +96,12 @@
 
 
         <div class="kp-card amber">
-            <div class="label">Butuh Perhatian</div>
+            <div class="kp-card-top">
+                <div class="label">Butuh Perhatian</div>
+                <div class="kp-card-icon amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+            </div>
 
             <div class="value">
                 {{ $ringkasan['butuh_perhatian'] }}
@@ -100,7 +115,12 @@
 
 
         <div class="kp-card rose">
-            <div class="label">Komponen Skor Akhir</div>
+            <div class="kp-card-top">
+                <div class="label">Komponen Skor Akhir</div>
+                <div class="kp-card-icon rose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+            </div>
 
             <div class="kp-split-row">
 

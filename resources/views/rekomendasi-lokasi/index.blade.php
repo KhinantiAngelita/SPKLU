@@ -12,32 +12,41 @@
     .rl-card-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:20px; }
     @media (max-width:1100px) { .rl-card-grid { grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); } }
     .rl-card {
-        background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #e2e8f0;
-        box-shadow:0 1px 2px rgba(15,23,42,.04); position:relative; overflow:hidden;
-        cursor:pointer; transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+        background:#fff; border-radius:16px; padding:18px 20px; border:1px solid #e2e8f0;
+        box-shadow:0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02); position:relative; overflow:hidden;
+        cursor:pointer; transition:transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1), border-color .18s ease;
+        display:flex; flex-direction:column; justify-content:space-between;
     }
-    .rl-card::before { content:""; position:absolute; top:0; left:0; width:4px; height:100%; }
-    .rl-card.dark-blue::before { background:#023E8A; }
-    .rl-card.light-blue::before { background:#0081AB; }
-    .rl-card.amber::before  { background:#E8A317; }
-    .rl-card.purple::before { background:#7C3AED; }
-    .rl-card.blue::before   { background:#2563EB; }
+    .rl-card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; }
+    .rl-card.dark-blue::before { background:linear-gradient(90deg, #023E8A, #0081AB); }
+    .rl-card.light-blue::before { background:linear-gradient(90deg, #0081AB, #38BDF8); }
+    .rl-card.amber::before  { background:linear-gradient(90deg, #D97706, #F59E0B); }
+    .rl-card.purple::before { background:linear-gradient(90deg, #7C3AED, #8B5CF6); }
+    .rl-card.blue::before   { background:linear-gradient(90deg, #2563EB, #60A5FA); }
     .rl-card:hover {
-        box-shadow:0 8px 20px rgba(15,23,42,.08);
-        transform:translateY(-2px);
+        box-shadow:0 12px 24px -4px rgba(15,23,42,.08);
+        transform:translateY(-3px);
     }
     .rl-card.rl-card-active {
-        box-shadow:0 0 0 2px #0081AB, 0 8px 20px rgba(0,129,171,.12);
+        box-shadow:0 0 0 2px #0081AB, 0 12px 24px -4px rgba(0,129,171,.15);
         border-color:#0081AB;
-        transform:translateY(-2px);
+        transform:translateY(-3px);
     }
-    .rl-card.dark-blue.rl-card-active  { box-shadow:0 0 0 2px #023E8A, 0 8px 20px rgba(2,62,138,.15); border-color:#023E8A; }
-    .rl-card.light-blue.rl-card-active { box-shadow:0 0 0 2px #0081AB, 0 8px 20px rgba(0,129,171,.15); border-color:#0081AB; }
-    .rl-card.amber.rl-card-active      { box-shadow:0 0 0 2px #E8A317, 0 8px 20px rgba(232,163,23,.15); border-color:#E8A317; }
-    .rl-card.purple.rl-card-active     { box-shadow:0 0 0 2px #7C3AED, 0 8px 20px rgba(124,58,237,.15); border-color:#7C3AED; }
-    .rl-card.blue.rl-card-active       { box-shadow:0 0 0 2px #2563EB, 0 8px 20px rgba(37,99,235,.15); border-color:#2563EB; }
-    .rl-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:#64748B; margin:0 0 6px; }
-    .rl-card-value { font-size:26px; font-weight:800; color:#0f172a; margin:0 0 4px; }
+    .rl-card.dark-blue.rl-card-active  { box-shadow:0 0 0 2px #023E8A, 0 12px 24px -4px rgba(2,62,138,.18); border-color:#023E8A; }
+    .rl-card.light-blue.rl-card-active { box-shadow:0 0 0 2px #0081AB, 0 12px 24px -4px rgba(0,129,171,.18); border-color:#0081AB; }
+    .rl-card.amber.rl-card-active      { box-shadow:0 0 0 2px #E8A317, 0 12px 24px -4px rgba(232,163,23,.18); border-color:#E8A317; }
+    .rl-card.purple.rl-card-active     { box-shadow:0 0 0 2px #7C3AED, 0 12px 24px -4px rgba(124,58,237,.18); border-color:#7C3AED; }
+    .rl-card.blue.rl-card-active       { box-shadow:0 0 0 2px #2563EB, 0 12px 24px -4px rgba(37,99,235,.18); border-color:#2563EB; }
+    .rl-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+    .rl-card-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .rl-card-icon svg { width:19px; height:19px; stroke-width:2; }
+    .rl-card-icon.dark-blue  { background:rgba(2,62,138,.1); color:#023E8A; }
+    .rl-card-icon.light-blue { background:rgba(0,129,171,.1); color:#0081AB; }
+    .rl-card-icon.amber      { background:rgba(217,119,6,.1); color:#D97706; }
+    .rl-card-icon.purple     { background:rgba(124,58,237,.1); color:#7C3AED; }
+    .rl-card-icon.blue       { background:rgba(37,99,235,.1); color:#2563EB; }
+    .rl-card-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748B; margin:0; }
+    .rl-card-value { font-size:28px; font-weight:800; color:#1B2559 !important; margin:0 0 4px; line-height:1; }
     .rl-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
 
     .rl-select {
@@ -129,7 +138,7 @@
 </style>
 
 <div class="rl-page-header">
-    <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Rekomendasi Lokasi</h1>
+    <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Rekomendasi Lokasi</h1>
     <p class="rl-page-subtitle">Peta sebaran SPKLU eksisting (DC/AC), kandidat pipeline berdasarkan kepemilikan mitra mesin, dan titik rekomendasi otomatis.</p>
 </div>
 
@@ -141,27 +150,52 @@
 {{-- Klik kartu buat filter zona di peta --}}
 <div class="rl-card-grid">
     <div class="rl-card dark-blue" data-kategori="dc" onclick="toggleFilterKartu('dc')">
-        <div class="rl-card-label">SPKLU Existing DC</div>
+        <div class="rl-card-top">
+            <div class="rl-card-label">SPKLU Existing DC</div>
+            <div class="rl-card-icon dark-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+        </div>
         <div class="rl-card-value">{{ $ringkasan['dc'] ?? 0 }}</div>
         <div class="rl-card-note">Fast / Ultra Fast DC</div>
     </div>
     <div class="rl-card light-blue" data-kategori="ac" onclick="toggleFilterKartu('ac')">
-        <div class="rl-card-label">SPKLU Existing AC</div>
+        <div class="rl-card-top">
+            <div class="rl-card-label">SPKLU Existing AC</div>
+            <div class="rl-card-icon light-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+            </div>
+        </div>
         <div class="rl-card-value">{{ $ringkasan['ac'] ?? 0 }}</div>
         <div class="rl-card-note">Standard AC Charging</div>
     </div>
     <div class="rl-card amber" data-kategori="kuning" onclick="toggleFilterKartu('kuning')">
-        <div class="rl-card-label">Ada Pasangan (Mitra)</div>
+        <div class="rl-card-top">
+            <div class="rl-card-label">Ada Pasangan (Mitra)</div>
+            <div class="rl-card-icon amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+        </div>
         <div class="rl-card-value">{{ $ringkasan['kandidat_ada_pasangan'] ?? 0 }}</div>
         <div class="rl-card-note">Kandidat ber-mitra mesin</div>
     </div>
     <div class="rl-card purple" data-kategori="ungu" onclick="toggleFilterKartu('ungu')">
-        <div class="rl-card-label">Belum Ada Pasangan</div>
+        <div class="rl-card-top">
+            <div class="rl-card-label">Belum Ada Pasangan</div>
+            <div class="rl-card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+        </div>
         <div class="rl-card-value">{{ $ringkasan['kandidat_belum_pasangan'] ?? 0 }}</div>
         <div class="rl-card-note">Kandidat tanpa mitra mesin</div>
     </div>
     <div class="rl-card blue" data-kategori="_rekomendasi" onclick="toggleFilterKartu('_rekomendasi')">
-        <div class="rl-card-label">Titik Rekomendasi</div>
+        <div class="rl-card-top">
+            <div class="rl-card-label">Titik Rekomendasi</div>
+            <div class="rl-card-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+        </div>
         <div class="rl-card-value">{{ $titikRekomendasi->count() }}</div>
         <div class="rl-card-note">Ekspansi otomatis (+)</div>
     </div>

@@ -12,11 +12,11 @@
             --kp-rose:#C0392B;
             --kp-rose-soft:#FDECEA;
 
-            --kp-ink:#0f172a;
+            --kp-ink:#1B2559;
             --kp-sub:#64748b;
             --kp-border:#e2e8f0;
 
-            --kp-radius:14px;
+            --kp-radius:16px;
         }
 
         .kp-wrap h1{
@@ -39,19 +39,22 @@
         .kp-cards{
             display:grid;
             grid-template-columns:repeat(4,1fr);
-            gap:14px;
-            margin-bottom:22px;
+            gap:16px;
+            margin-bottom:24px;
         }
 
         .kp-card{
             background:#fff;
-            border-radius:var(--kp-radius);
-            padding:16px 18px;
-            border:1px solid var(--kp-border);
-            box-shadow:0 1px 2px rgba(15,23,42,.04);
-            transition:box-shadow .18s ease, transform .18s ease;
+            border-radius:16px;
+            padding:20px;
+            border:1px solid #e2e8f0;
+            box-shadow:0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02);
+            transition:transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1);
             position:relative;
             overflow:hidden;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
         }
 
         .kp-card::before{
@@ -59,44 +62,73 @@
             position:absolute;
             top:0;
             left:0;
-            width:4px;
-            height:100%;
+            right:0;
+            height:3px;
+            width:100%;
         }
 
         .kp-card.blue::before{
-            background:var(--kp-blue);
+            background:linear-gradient(90deg, #023E8A, #0081AB);
         }
 
         .kp-card.green::before{
-            background:var(--kp-green);
+            background:linear-gradient(90deg, #059669, #10B981);
         }
 
         .kp-card.amber::before{
-            background:var(--kp-amber);
+            background:linear-gradient(90deg, #D97706, #F59E0B);
         }
 
         .kp-card.rose::before{
-            background:var(--kp-rose);
+            background:linear-gradient(90deg, #7C3AED, #8B5CF6);
         }
 
         .kp-card:hover{
-            box-shadow:0 8px 20px rgba(15,23,42,.08);
-            transform:translateY(-2px);
+            box-shadow:0 12px 24px -4px rgba(15,23,42,.08);
+            transform:translateY(-3px);
         }
 
+        .kp-card-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            margin-bottom:10px;
+        }
+
+        .kp-card-icon{
+            width:42px;
+            height:42px;
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+        }
+        .kp-card-icon svg{
+            width:20px;
+            height:20px;
+            stroke-width:2;
+        }
+        .kp-card-icon.blue   { background:rgba(0,129,171,.1); color:#0081AB; }
+        .kp-card-icon.green  { background:rgba(5,150,105,.1); color:#059669; }
+        .kp-card-icon.amber  { background:rgba(217,119,6,.1); color:#D97706; }
+        .kp-card-icon.rose   { background:rgba(124,58,237,.1); color:#7C3AED; }
+
         .kp-card .label{
-            font-size:12.5px;
-            font-weight:600;
+            font-size:11.5px;
+            font-weight:700;
             color:var(--kp-sub);
             text-transform:uppercase;
-            letter-spacing:.03em;
+            letter-spacing:.04em;
+            margin:0;
         }
 
         .kp-card .value{
-            font-size:26px;
+            font-size:28px;
             font-weight:800;
-            color:var(--kp-ink);
-            margin:6px 0 4px;
+            color:#1B2559 !important;
+            margin:0 0 4px;
+            line-height:1;
         }
 
         .kp-card .note{
@@ -113,15 +145,16 @@
         .kp-split-row{
             display:flex;
             gap:18px;
-            margin:6px 0 4px;
+            margin:4px 0 4px;
         }
 
         .value-split{
             font-size:22px;
             font-weight:800;
-            color:var(--kp-ink);
+            color:#1B2559 !important;
             display:flex;
             flex-direction:column;
+            line-height:1.1;
         }
 
         .value-split small{

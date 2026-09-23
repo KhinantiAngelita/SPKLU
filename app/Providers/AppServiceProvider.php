@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\AktivitasNotifikasi;
 use App\Models\Probabilitas;
 use App\Policies\ProbabilitasPolicy;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -25,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Carbon::setLocale('id');
+        setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'id', 'ind');
+
         if (str_starts_with(config('app.url'), 'https://') || app()->environment('production')) {
             URL::forceScheme('https');
         }

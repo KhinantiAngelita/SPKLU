@@ -24,21 +24,30 @@
     .up-btn-primary:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
 
     /* Summary cards */
-    .up-summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:22px; }
-    .up-summary-card { background:#fff; border-radius:16px; padding:20px 22px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); display:flex; align-items:center; gap:16px; transition:transform .18s ease, box-shadow .18s ease; }
-    .up-summary-card:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(15,23,42,.06), 0 14px 28px rgba(15,23,42,.09); }
-    .up-summary-icon { width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .up-summary-icon svg { width:21px; height:21px; stroke-width:2; }
-    .up-ic-blue  { background:linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12)); color:#023E8A; }
-    .up-ic-amber { background:linear-gradient(135deg, rgba(232,163,23,.15), rgba(232,163,23,.06)); color:#E8A317; }
-    .up-ic-green { background:linear-gradient(135deg, rgba(46,158,91,.14), rgba(46,158,91,.06)); color:#2E9E5B; }
-    .up-summary-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; margin:0 0 4px; }
-    .up-summary-value { font-size:24px; font-weight:800; letter-spacing:-.02em; color:#0f172a; margin:0; }
+    .up-summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+    .up-summary-card {
+        background:#fff; border-radius:16px; padding:20px; border:1px solid #e2e8f0;
+        box-shadow:0 2px 6px rgba(15,23,42,.03), 0 10px 15px -3px rgba(15,23,42,.02);
+        display:flex; align-items:center; gap:16px; position:relative; overflow:hidden;
+        transition:transform .2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .up-summary-card:hover { transform:translateY(-3px); box-shadow:0 12px 24px -4px rgba(15,23,42,.08); }
+    .up-summary-card::before { content:""; position:absolute; top:0; left:0; right:0; height:3px; }
+    .up-summary-card.blue::before   { background:linear-gradient(90deg, #023E8A, #0081AB); }
+    .up-summary-card.amber::before  { background:linear-gradient(90deg, #D97706, #F59E0B); }
+    .up-summary-card.green::before  { background:linear-gradient(90deg, #059669, #10B981); }
+    .up-summary-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .up-summary-icon svg { width:20px; height:20px; stroke-width:2; }
+    .up-ic-blue  { background:rgba(0,129,171,.1); color:#0081AB; }
+    .up-ic-amber { background:rgba(217,119,6,.1); color:#D97706; }
+    .up-ic-green { background:rgba(5,150,105,.1); color:#059669; }
+    .up-summary-label { font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#64748B; margin:0 0 4px; }
+    .up-summary-value { font-size:28px; font-weight:800; letter-spacing:-.02em; color:#1B2559 !important; margin:0; line-height:1; }
 
     /* Upload card */
     .up-card { background:#fff; border-radius:16px; padding:26px; border:1px solid #eef1f5; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 6px 16px rgba(15,23,42,.05); margin-bottom:22px; }
     .up-card-body { padding:22px 26px; }
-    .up-card-title { margin:0 0 4px; font-size:16.5px; font-weight:700; color:#0f172a; }
+    .up-card-title { margin:0 0 4px; font-size:16.5px; font-weight:800; color:#1B2559 !important; }
     .up-card-desc { color:#64748B; font-size:13.5px; margin:0 0 18px; }
 
     .up-dropzone { position:relative; display:flex; flex-direction:column; align-items:center; gap:10px; border:2px dashed #cbd5e1; border-radius:14px; padding:40px 20px; text-align:center; color:#64748B; cursor:pointer; transition:all .2s ease; }
@@ -153,7 +162,7 @@
 
 <div class="up-page-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 4px; letter-spacing:-0.015em;">Upload Data Transaksi</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Upload Data Transaksi</h1>
         <p class="up-page-subtitle" style="margin-top:0;">Upload file mentah transaksi dan lihat riwayat file yang sudah pernah diproses</p>
     </div>
     <a href="{{ route('transaksi.index') }}" class="up-btn up-btn-outline">
@@ -163,21 +172,21 @@
 </div>
 
 <div class="up-summary-grid">
-    <div class="up-summary-card">
+    <div class="up-summary-card blue">
         <div class="up-summary-icon up-ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <div>
             <p class="up-summary-label">Total Riwayat</p>
             <p class="up-summary-value">{{ number_format($riwayat->total()) }}</p>
         </div>
     </div>
-    <div class="up-summary-card">
+    <div class="up-summary-card amber">
         <div class="up-summary-icon up-ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
         <div>
             <p class="up-summary-label">Nama Belum Dipetakan</p>
             <p class="up-summary-value">{{ number_format($unmatchedList->count()) }}</p>
         </div>
     </div>
-    <div class="up-summary-card">
+    <div class="up-summary-card green">
         <div class="up-summary-icon up-ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
         <div>
             <p class="up-summary-label">Alias Tersimpan</p>
