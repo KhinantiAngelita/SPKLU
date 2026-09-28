@@ -373,7 +373,12 @@ class TransaksiController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|extensions:xlsx,xls,csv|mimes:xlsx,xls,csv,txt|max:51200',
+            'file' => 'required|file|extensions:csv|mimes:csv,txt|max:51200',
+        ], [
+            'file.required' => 'Pilih file transaksi terlebih dahulu.',
+            'file.extensions' => 'Format file tidak sesuai. Sistem hanya menerima file berformat .csv.',
+            'file.mimes' => 'Format file tidak sesuai. Sistem hanya menerima file berformat .csv.',
+            'file.max' => 'Ukuran file terlalu besar. Maksimal ukuran file yang diizinkan adalah 50 MB.',
         ]);
 
         $uploadedFile = $request->file('file');
@@ -433,7 +438,12 @@ class TransaksiController extends Controller
     public function reupload(Request $request, TransaksiUpload $transaksiUpload)
     {
         $request->validate([
-            'file' => 'required|file|extensions:xlsx,xls,csv|mimes:xlsx,xls,csv,txt|max:51200',
+            'file' => 'required|file|extensions:csv|mimes:csv,txt|max:51200',
+        ], [
+            'file.required' => 'Pilih file transaksi terlebih dahulu.',
+            'file.extensions' => 'Format file tidak sesuai. Sistem hanya menerima file berformat .csv.',
+            'file.mimes' => 'Format file tidak sesuai. Sistem hanya menerima file berformat .csv.',
+            'file.max' => 'Ukuran file terlalu besar. Maksimal ukuran file yang diizinkan adalah 50 MB.',
         ]);
 
         $uploadedFile = $request->file('file');

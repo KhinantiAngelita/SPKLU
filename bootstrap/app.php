@@ -5,6 +5,8 @@ use App\Http\Middleware\ForcePasswordChange;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -25,5 +27,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (PostTooLargeException $e, Request $request) {
+            $pesan = 'Ukuran file yang diupload melebihi batas maksimal server (50 MB).';
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $pesan,
+                    'errors' => ['file' => [$pesan]],
+                ], 413);
+            }
+
+            return back()->with('error', $pesan);
+        });
     })->create();

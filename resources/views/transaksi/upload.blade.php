@@ -238,8 +238,8 @@
     <label for="file-input-transaksi" class="up-dropzone" id="dropzone-transaksi">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span class="up-dropzone-name" id="file-name-label-transaksi">Klik untuk pilih file (bisa lebih dari satu), atau drag &amp; drop di sini</span>
-        <span class="up-dropzone-hint">Format: .xlsx, .xls, .csv — maks 50MB per file</span>
-        <input type="file" id="file-input-transaksi" accept=".xlsx,.xls,.csv" multiple style="display:none;">
+        <span class="up-dropzone-hint">Format: .csv — maks 50MB per file</span>
+        <input type="file" id="file-input-transaksi" accept=".csv" multiple style="display:none;">
     </label>
 
     <div class="up-note">
@@ -399,7 +399,7 @@
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
                                         </button>
                                     @endif
-                                    <input type="file" id="reupload-input-{{ $r->id }}" accept=".xlsx,.xls,.csv" style="display:none;" onchange="doReupload({{ $r->id }}, this)">
+                                    <input type="file" id="reupload-input-{{ $r->id }}" accept=".csv" style="display:none;" onchange="doReupload({{ $r->id }}, this)">
 
                                     <form method="POST" action="{{ route('transaksi.upload.destroy', $r) }}"
                                           data-confirm="Riwayat &quot;{{ $r->nama_file }}&quot; beserta SEMUA data transaksi dari file ini akan terhapus permanen dan tidak bisa dibatalkan."
@@ -545,12 +545,49 @@ function formatBytes(bytes) {
 }
 
 function addFilesToQueue(fileList) {
-    const newItems = Array.from(fileList).map(file => ({ file, status: 'menunggu', progress: 0 }));
-    fileQueue = fileQueue.concat(newItems);
-    renderQueue();
-    document.getElementById('file-name-label-transaksi').textContent =
-        fileQueue.length === 1 ? fileQueue[0].file.name : `${fileQueue.length} file dipilih`;
-    btnSubmit.disabled = fileQueue.length === 0;
+    const invalidFormatFiles = [];
+    const tooLargeFiles = [];
+    const validItems = [];
+
+    Array.from(fileList).forEach(file => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (ext !== 'csv') {
+            invalidFormatFiles.push(file.name);
+            return;
+        }
+        if (file.size > 50 * 1024 * 1024) {
+            tooLargeFiles.push({ name: file.name, size: formatBytes(file.size) });
+            return;
+        }
+        validItems.push({ file, status: 'menunggu', progress: 0 });
+    });
+
+    if (invalidFormatFiles.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Format File Tidak Sesuai',
+            html: `Sistem saat ini <b>hanya menerima format .csv</b>.<br><br>File berikut tidak dapat diunggah:<br><span style="color:#C0392B; font-weight:600;">${invalidFormatFiles.join('<br>')}</span><br><br><small style="color:#64748B;">Silakan simpan file sebagai <b>CSV (Comma delimited) (*.csv)</b> di Excel terlebih dahulu.</small>`,
+            confirmButtonColor: '#0081AB',
+        });
+    }
+
+    if (tooLargeFiles.length > 0) {
+        const daftar = tooLargeFiles.map(f => `${f.name} (${f.size})`).join('<br>');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Ukuran File Terlalu Besar',
+            html: `File melebihi batas maksimal <b>50 MB</b> per file:<br><br><span style="color:#C0392B; font-weight:600;">${daftar}</span><br><br><small style="color:#64748B;">Silakan perkecil atau bagi data transaksi di file tersebut sebelum diupload.</small>`,
+            confirmButtonColor: '#0081AB',
+        });
+    }
+
+    if (validItems.length > 0) {
+        fileQueue = fileQueue.concat(validItems);
+        renderQueue();
+        document.getElementById('file-name-label-transaksi').textContent =
+            fileQueue.length === 1 ? fileQueue[0].file.name : `${fileQueue.length} file dipilih`;
+        btnSubmit.disabled = fileQueue.length === 0;
+    }
 }
 
 fileInput.addEventListener('change', function () {
@@ -686,6 +723,12 @@ function uploadOneFile(item) {
         });
 
         xhr.onload = function () {
+            if (xhr.status === 413) {
+                item.status = 'error';
+                item.message = 'Ukuran file terlalu besar (melebihi batas 50 MB)';
+                resolve(false);
+                return;
+            }
             try {
                 const res = JSON.parse(xhr.responseText);
                 if (xhr.status >= 200 && xhr.status < 300 && res.success) {
@@ -699,7 +742,7 @@ function uploadOneFile(item) {
                 }
             } catch (e) {
                 item.status = 'error';
-                item.message = 'Respons server tidak dikenali';
+                item.message = xhr.status === 413 ? 'Ukuran file terlalu besar (melebihi batas 50 MB)' : 'Respons server tidak dikenali';
                 resolve(false);
             }
         };
@@ -917,6 +960,29 @@ function triggerReupload(id) {
 async function doReupload(id, inputEl) {
     const file = inputEl.files[0];
     if (!file) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext !== 'csv') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Format File Tidak Sesuai',
+            html: `Sistem saat ini <b>hanya menerima format .csv</b>.<br><br>File terpilih: <b>${file.name}</b><br><br><small style="color:#64748B;">Silakan simpan file sebagai <b>CSV (Comma delimited) (*.csv)</b> di Excel terlebih dahulu.</small>`,
+            confirmButtonColor: '#0081AB',
+        });
+        inputEl.value = '';
+        return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Ukuran File Terlalu Besar',
+            html: `File <b>${file.name}</b> (${formatBytes(file.size)}) melebihi batas maksimal <b>50 MB</b>.<br><br><small style="color:#64748B;">Silakan perkecil atau bagi data transaksi di file tersebut sebelum diupload.</small>`,
+            confirmButtonColor: '#0081AB',
+        });
+        inputEl.value = '';
+        return;
+    }
 
     const konfirmasi = await Swal.fire({
         icon: 'warning',
