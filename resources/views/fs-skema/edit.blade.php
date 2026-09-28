@@ -260,7 +260,7 @@
             <label class="fsf-label-group">Fasilitas (maks 40 poin)</label>
             <div class="fsf-chip-group">
                 @php $fasilitasLama = old('fasilitas', $fsSkema->fasilitas ?? []); @endphp
-                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_FASILITAS as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::daftarFasilitas() as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, $fasilitasLama)) data-preview-trigger>
                         <span>{{ $label }}</span>
@@ -269,17 +269,20 @@
             </div>
 
             <div class="fsf-field-half" style="max-width: calc(50% - 9px); margin-bottom:18px;">
-                @php $kesiapanJaringanLama = old('kesiapan_jaringan', $fsSkema->kesiapan_jaringan); @endphp
+                @php 
+                    $kesiapanJaringanLama = old('kesiapan_jaringan', $fsSkema->kesiapan_jaringan); 
+                    $daftarJaringan = \App\Services\FsSkemaCalculatorService::daftarKesiapanJaringan();
+                @endphp
                 <label>Kesiapan Jaringan (maks 20 poin)</label>
                 <select name="kesiapan_jaringan" data-preview-trigger>
                     <option value="">Pilih kesiapan jaringan...</option>
-                    @foreach (\App\Services\FsSkemaCalculatorService::OPSI_KESIAPAN_JARINGAN as $label => $poinMax)
+                    @foreach ($daftarJaringan as $label => $poinMax)
                         <option value="{{ $label }}" @selected($kesiapanJaringanLama === $label)>
                             {{ $label }} ({{ $poinMax }} poin)
                         </option>
                     @endforeach
                 </select>
-                @if ($kesiapanJaringanLama && ! in_array($kesiapanJaringanLama, array_keys(\App\Services\FsSkemaCalculatorService::OPSI_KESIAPAN_JARINGAN)))
+                @if ($kesiapanJaringanLama && ! in_array($kesiapanJaringanLama, array_keys($daftarJaringan)))
                     <p class="fsf-hint">Data lama tersimpan sebagai: "{{ $kesiapanJaringanLama }}" — pilih salah satu opsi di atas untuk memperbarui.</p>
                 @endif
             </div>
@@ -287,7 +290,7 @@
             <label class="fsf-label-group">Okupansi (maks 40 poin)</label>
             <div class="fsf-chip-group">
                 @php $okupansiLama = old('okupansi', $fsSkema->okupansi ?? []); @endphp
-                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_OKUPANSI as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::daftarOkupansi() as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, $okupansiLama)) data-preview-trigger>
                         <span>{{ $label }}</span>

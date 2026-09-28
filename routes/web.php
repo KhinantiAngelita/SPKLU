@@ -233,14 +233,47 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [MasterParameterController::class, 'index'])
                 ->name('index');
 
+            // Tarif
             Route::patch('tarif/{tarif}', [MasterParameterController::class, 'updateTarif'])
                 ->name('tarif.update');
 
+            // Poin Jaringan
+            Route::post('poin-jaringan', [MasterParameterController::class, 'storePoinJaringan'])
+                ->name('poin-jaringan.store');
             Route::patch('poin-jaringan/{poin}', [MasterParameterController::class, 'updatePoinJaringan'])
                 ->name('poin-jaringan.update');
+            Route::delete('poin-jaringan/{poin}', [MasterParameterController::class, 'destroyPoinJaringan'])
+                ->name('poin-jaringan.destroy');
 
+            // Poin Fasilitas
+            Route::post('poin-fasilitas', [MasterParameterController::class, 'storePoinFasilitas'])
+                ->name('poin-fasilitas.store');
+            Route::patch('poin-fasilitas/{poin}', [MasterParameterController::class, 'updatePoinFasilitas'])
+                ->name('poin-fasilitas.update');
+            Route::delete('poin-fasilitas/{poin}', [MasterParameterController::class, 'destroyPoinFasilitas'])
+                ->name('poin-fasilitas.destroy');
+
+            // Poin Okupansi
+            Route::post('poin-okupansi', [MasterParameterController::class, 'storePoinOkupansi'])
+                ->name('poin-okupansi.store');
+            Route::patch('poin-okupansi/{poin}', [MasterParameterController::class, 'updatePoinOkupansi'])
+                ->name('poin-okupansi.update');
+            Route::delete('poin-okupansi/{poin}', [MasterParameterController::class, 'destroyPoinOkupansi'])
+                ->name('poin-okupansi.destroy');
+
+            // Mitra Mesin (CRUD)
+            Route::post('mitra-mesin', [MasterParameterController::class, 'storeMitraMesin'])
+                ->name('mitra-mesin.store');
+            Route::patch('mitra-mesin/{mitra}', [MasterParameterController::class, 'updateMitraMesin'])
+                ->name('mitra-mesin.update');
+            Route::delete('mitra-mesin/{mitra}', [MasterParameterController::class, 'destroyMitraMesin'])
+                ->name('mitra-mesin.destroy');
+
+            // Target
             Route::post('target', [MasterParameterController::class, 'storeTarget'])
                 ->name('target.store');
+            Route::delete('target/{target}', [MasterParameterController::class, 'destroyTarget'])
+                ->name('target.destroy');
         });
 
     // ============ MONITORING PROBABILITAS ============

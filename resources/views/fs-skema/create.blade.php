@@ -256,7 +256,7 @@
 
             <label class="fsf-label-group">Fasilitas (maks 40 poin)</label>
             <div class="fsf-chip-group">
-                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_FASILITAS as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::daftarFasilitas() as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="fasilitas[]" value="{{ $val }}" @checked(in_array($val, old('fasilitas', []))) data-preview-trigger>
                         <span>{{ $label }}</span>
@@ -268,7 +268,7 @@
                 <label>Kesiapan Jaringan (maks 20 poin)</label>
                 <select name="kesiapan_jaringan" data-preview-trigger>
                     <option value="">Pilih kesiapan jaringan...</option>
-                    @foreach (\App\Services\FsSkemaCalculatorService::OPSI_KESIAPAN_JARINGAN as $label => $poinMax)
+                    @foreach (\App\Services\FsSkemaCalculatorService::daftarKesiapanJaringan() as $label => $poinMax)
                         <option value="{{ $label }}" @selected(old('kesiapan_jaringan') === $label)>
                             {{ $label }} ({{ $poinMax }} poin)
                         </option>
@@ -278,7 +278,7 @@
 
             <label class="fsf-label-group">Okupansi (maks 40 poin)</label>
             <div class="fsf-chip-group">
-                @foreach (\App\Services\FsSkemaCalculatorService::LABEL_OKUPANSI as $val => $label)
+                @foreach (\App\Services\FsSkemaCalculatorService::daftarOkupansi() as $val => $label)
                     <label class="fsf-chip">
                         <input type="checkbox" name="okupansi[]" value="{{ $val }}" @checked(in_array($val, old('okupansi', []))) data-preview-trigger>
                         <span>{{ $label }}</span>

@@ -73,15 +73,26 @@
                         <label>Mitra Mesin</label>
                         <select name="mitra_mesin" id="f-mitra-mesin">
                             <option value="">— Pilih Mitra Mesin —</option>
-                            <option value="UCI Beny">UCI Beny</option>
-                            <option value="Voltron">Voltron</option>
-                            <option value="EAD">EAD</option>
-                            <option value="LAD">LAD</option>
-                            <option value="Niscala">Niscala</option>
-                            <option value="Prastiwahyu">Prastiwahyu</option>
-                            <option value="TEB">TEB</option>
-                            <option value="Arista">Arista</option>
-                            <option value="PLN ES">PLN ES</option>
+                            @php
+                                $mitraOptions = isset($daftarMitraMesin) && $daftarMitraMesin->isNotEmpty()
+                                    ? $daftarMitraMesin
+                                    : (class_exists(\App\Models\MitraMesin::class) && \Illuminate\Support\Facades\Schema::hasTable('mitra_mesin')
+                                        ? \App\Models\MitraMesin::where('is_aktif', true)->orderBy('urutan')->orderBy('nama')->get()
+                                        : collect([
+                                            (object)['nama' => 'UCI Beny'],
+                                            (object)['nama' => 'Voltron'],
+                                            (object)['nama' => 'EAD'],
+                                            (object)['nama' => 'LAD'],
+                                            (object)['nama' => 'Niscala'],
+                                            (object)['nama' => 'Prastiwahyu'],
+                                            (object)['nama' => 'TEB'],
+                                            (object)['nama' => 'Arista'],
+                                            (object)['nama' => 'PLN ES'],
+                                        ]));
+                            @endphp
+                            @foreach ($mitraOptions as $mitra)
+                                <option value="{{ $mitra->nama }}">{{ $mitra->nama }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div>
@@ -245,8 +256,11 @@ window.isiModalEdit = function (data) {
     document.getElementById('f-50kw').value = p.kebutuhan_50kw || '';
     document.getElementById('f-60kw').value = p.kebutuhan_60kw || '';
     document.getElementById('f-120kw').value = p.kebutuhan_120kw || '';
-    document.getElementById('f-180kw').value = p.kebutuhan_180kw || '';
-    document.getElementById('f-mitra-mesin').value = p.mitra_mesin ?? '';
+    const selMitra = document.getElementById('f-mitra-mesin');
+    if (p.mitra_mesin && !Array.from(selMitra.options).some(o => o.value === p.mitra_mesin)) {
+        selMitra.add(new Option(p.mitra_mesin, p.mitra_mesin));
+    }
+    selMitra.value = p.mitra_mesin ?? '';
     document.getElementById('f-poin-jaringan').value = p.poin_perluasan_jaringan || '';
     document.getElementById('f-keterangan').value = p.keterangan ?? '';
 

@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Monitoring;
 
 use App\Helpers\NotifikasiHelper;
 use App\Http\Controllers\Controller;
+use App\Models\MitraMesin;
 use App\Models\Probabilitas;
 use App\Models\TahapanProbing;
 use App\Models\UlpMapping;
 use App\Services\KandidatPrioritasSyncService;
 use App\Services\ProbabilitasScoreService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ProbabilitasController extends Controller
 {
@@ -40,7 +42,11 @@ class ProbabilitasController extends Controller
 
         $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
 
-        return view('monitoring.probabilitas.index', compact('daftarProbabilitas', 'daftarUlp'));
+        $daftarMitraMesin = Schema::hasTable('mitra_mesin')
+            ? MitraMesin::where('is_aktif', true)->orderBy('urutan')->orderBy('nama')->get()
+            : collect();
+
+        return view('monitoring.probabilitas.index', compact('daftarProbabilitas', 'daftarUlp', 'daftarMitraMesin'));
     }
 
     /**

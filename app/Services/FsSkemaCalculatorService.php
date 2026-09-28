@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\FsSkema;
+use App\Models\PoinFasilitas;
 use App\Models\PoinKesiapanJaringan;
+use App\Models\PoinOkupansi;
 use App\Models\Spklu;
 use App\Models\TarifListrik;
 use App\Models\Transaksi;
+use Illuminate\Support\Facades\Schema;
 
 class FsSkemaCalculatorService
 {
@@ -49,21 +52,81 @@ class FsSkemaCalculatorService
 
     private ?array $poinJaringanCache = null;
 
+    public static function daftarFasilitas(): array
+    {
+        try {
+            if (Schema::hasTable('poin_fasilitas')) {
+                $items = PoinFasilitas::where('is_aktif', true)->orderBy('urutan')->orderBy('id')->get();
+                if ($items->isNotEmpty()) {
+                    return $items->pluck('nama', 'kode')->toArray();
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return self::LABEL_FASILITAS;
+    }
+
+    public static function daftarOkupansi(): array
+    {
+        try {
+            if (Schema::hasTable('poin_okupansi')) {
+                $items = PoinOkupansi::where('is_aktif', true)->orderBy('urutan')->orderBy('id')->get();
+                if ($items->isNotEmpty()) {
+                    return $items->pluck('nama', 'kode')->toArray();
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return self::LABEL_OKUPANSI;
+    }
+
+    public static function daftarKesiapanJaringan(): array
+    {
+        try {
+            if (Schema::hasTable('poin_kesiapan_jaringan')) {
+                $items = PoinKesiapanJaringan::orderBy('urutan')->orderBy('id')->get();
+                if ($items->isNotEmpty()) {
+                    return $items->pluck('poin', 'kondisi')->toArray();
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return self::OPSI_KESIAPAN_JARINGAN;
+    }
+
     public function hitungPoinFasilitas(array $fasilitas): int
     {
+        try {
+            if (Schema::hasTable('poin_fasilitas')) {
+                $poinMap = PoinFasilitas::where('is_aktif', true)->pluck('poin', 'kode')->toArray();
+                if (! empty($poinMap)) {
+                    $total = 0;
+                    foreach ($fasilitas as $f) {
+                        $total += $poinMap[$f] ?? 10;
+                    }
+
+                    return min($total, 40);
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
         return min(count($fasilitas) * 10, 40);
     }
 
     public function labelFasilitasTerpilih(array $fasilitas): string
     {
-        $label = collect(self::LABEL_FASILITAS)->only($fasilitas)->values();
+        $label = collect(self::daftarFasilitas())->only($fasilitas)->values();
 
         return $label->isNotEmpty() ? $label->implode(', ') : 'tidak ada fasilitas yang tercatat';
     }
 
     public function labelOkupansiTerpilih(array $okupansi): string
     {
-        $label = collect(self::LABEL_OKUPANSI)->only($okupansi)->values();
+        $label = collect(self::daftarOkupansi())->only($okupansi)->values();
 
         return $label->isNotEmpty() ? $label->implode(', ') : 'tidak ada kondisi okupansi yang tercatat';
     }
@@ -92,6 +155,21 @@ class FsSkemaCalculatorService
 
     public function hitungPoinOkupansi(array $okupansi): int
     {
+        try {
+            if (Schema::hasTable('poin_okupansi')) {
+                $poinMap = PoinOkupansi::where('is_aktif', true)->pluck('poin', 'kode')->toArray();
+                if (! empty($poinMap)) {
+                    $total = 0;
+                    foreach ($okupansi as $o) {
+                        $total += $poinMap[$o] ?? 10;
+                    }
+
+                    return min($total, 40);
+                }
+            }
+        } catch (\Throwable $e) {
+        }
+
         return min(count($okupansi) * 10, 40);
     }
 
