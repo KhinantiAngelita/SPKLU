@@ -158,8 +158,20 @@ class TransaksiImport implements ToCollection, WithChunkReading, WithCustomCsvSe
     protected function parseTanggal(string $raw): ?string
     {
         $datePart = trim(explode(' ', $raw)[0] ?? '');
+        if ($datePart === '') {
+            return null;
+        }
+
+        foreach (['d-m-Y', 'd/m/Y', 'Y-m-d', 'Y/m/d'] as $format) {
+            try {
+                return Carbon::createFromFormat($format, $datePart)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                // Lanjut ke format berikutnya
+            }
+        }
+
         try {
-            return Carbon::createFromFormat('d-m-Y', $datePart)->format('Y-m-d');
+            return Carbon::parse($datePart)->format('Y-m-d');
         } catch (\Throwable $e) {
             return null;
         }
