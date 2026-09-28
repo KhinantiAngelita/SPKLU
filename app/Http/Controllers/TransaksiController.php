@@ -241,11 +241,16 @@ class TransaksiController extends Controller
         ];
     }
 
-    public function uploadPage()
+    public function uploadPage(Request $request)
     {
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
+        $urutan = $request->input('urutan', 'terbaru');
+        $direction = $urutan === 'terlama' ? 'asc' : 'desc';
 
-        $riwayat = TransaksiUpload::with(['diuploadOleh', 'unmatchedNames'])->latest()->paginate(15);
+        $riwayat = TransaksiUpload::with(['diuploadOleh', 'unmatchedNames'])
+            ->orderBy('id', $direction)
+            ->paginate(15)
+            ->withQueryString();
 
         $riwayat->getCollection()->transform(function ($upload) use ($namaSudahDialias) {
             $upload->unresolvedUnmatched = $upload->unmatchedNames
@@ -257,6 +262,7 @@ class TransaksiController extends Controller
 
         return view('transaksi.upload', [
             'riwayat' => $riwayat,
+            'urutan' => $urutan,
             'aliasList' => SpkluAlias::with('spklu')->latest()->get(),
             'spkluList' => Spklu::aktif()->orderBy('nama')->get(),
 

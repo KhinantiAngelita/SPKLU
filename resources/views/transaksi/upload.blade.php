@@ -82,6 +82,42 @@
 
     /* Tables */
     .up-table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .up-table-scroll-riwayat {
+        max-height: 410px;
+        overflow-y: auto;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .up-table-scroll-riwayat thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #fafbfc;
+        box-shadow: 0 1px 0 #eef1f5;
+    }
+
+    /* Tombol filter urutan (Terbaru / Terlama) */
+    .up-sort-btn {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #64748B;
+        background: transparent;
+        transition: all .15s ease;
+    }
+    .up-sort-btn:hover { color: #1E293B; background: rgba(255,255,255,.7); }
+    .up-sort-btn.active {
+        background: linear-gradient(135deg, #023E8A, #0081AB);
+        color: #fff !important;
+        box-shadow: 0 2px 6px rgba(2,62,138,.25);
+    }
+    .up-sort-btn svg { width: 13px; height: 13px; stroke-width: 2.2; }
+
     .up-table { width:100%; min-width:860px; border-collapse:collapse; }
     .up-table thead th { background:#fafbfc; text-align:left; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#94a3b8; padding:13px 20px; border-bottom:1px solid #eef1f5; white-space:nowrap; }
     .up-table td { padding:14px 20px; font-size:13.3px; color:#1E293B; border-bottom:1px solid #f5f7fa; }
@@ -271,9 +307,25 @@
                 <p>Ikon kuning = masih ada nama belum cocok khusus dari file itu. Ikon panah = upload ulang file ini (mengganti data lama dari riwayat ini). Hapus riwayat akan ikut menghapus data transaksi terkait.</p>
             </div>
         </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#64748B;">Urutkan:</span>
+            <div style="background:#f1f5f9; padding:3px; border-radius:10px; display:inline-flex; gap:3px;">
+                <a href="{{ route('transaksi.upload', array_merge(request()->query(), ['urutan' => 'terbaru'])) }}"
+                   class="up-sort-btn {{ ($urutan ?? 'terbaru') === 'terbaru' ? 'active' : '' }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    Terbaru
+                </a>
+                <a href="{{ route('transaksi.upload', array_merge(request()->query(), ['urutan' => 'terlama'])) }}"
+                   class="up-sort-btn {{ ($urutan ?? 'terbaru') === 'terlama' ? 'active' : '' }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                    Terlama
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="up-table-scroll">
+    <div class="up-table-scroll up-table-scroll-riwayat">
         <table class="up-table">
             <thead>
                 <tr>
