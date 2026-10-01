@@ -1103,17 +1103,6 @@
                 </select>
             </div>
 
-            <div class="mu-field">
-                <label for="new-up3">Unit Pelaksana Pelayanan Pelanggan (UP3)</label>
-                <select id="new-up3" name="up3">
-                    <option value="">-- Pilih UP3 (Opsional) --</option>
-                    @foreach (\App\Models\User::DAFTAR_UP3 as $optUp3)
-                        <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
-                    @endforeach
-                </select>
-                <span style="font-size:11.5px; color:#64748B; margin-top:4px; display:block;">Pilih unit penugasan UP3 pengguna di lingkungan UID Jawa Barat.</span>
-            </div>
-
             <div id="panel-invite">
                 <div class="mu-hint-box">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>

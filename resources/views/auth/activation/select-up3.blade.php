@@ -12,158 +12,345 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(160deg, #023E8A 0%, #034d9e 45%, #0081AB 100%);
+            background-color: #F4F6FB;
             padding: 32px 20px;
-            position: relative;
-            overflow-x: hidden;
+            color: #0F172A;
         }
-        body::before {
-            content: ''; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.12), transparent 45%),
-                        radial-gradient(circle at 8% 92%, rgba(255,198,41,.15), transparent 40%);
+
+        .act-brand-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            background: #FFFFFF;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .act-brand-top img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .act-brand-top span {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #023E8A;
+            letter-spacing: .03em;
+            text-transform: uppercase;
         }
 
         .act-card {
-            background: #fff;
-            border-radius: 24px;
-            width: 520px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            width: 560px;
             max-width: 100%;
-            box-shadow: 0 30px 70px rgba(1,26,64,.35);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+            border: 1px solid #E2E8F0;
             overflow: hidden;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,.3);
         }
 
         .act-header {
-            background: linear-gradient(150deg, rgba(2,62,138,.07), rgba(0,129,171,.12));
-            padding: 36px 36px 24px;
+            background: #FFFFFF;
+            padding: 32px 36px 22px;
             text-align: center;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #F1F5F9;
         }
 
         .act-logo {
-            width: 56px; height: 56px; border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #023E8A, #0081AB);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 20px rgba(2,62,138,.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
         }
-        .act-logo svg { width: 28px; height: 28px; color: #FFC629; stroke-width: 2.2; }
+        .act-logo svg {
+            width: 26px;
+            height: 26px;
+            color: #FFC629;
+            stroke-width: 2.2;
+        }
 
-        .act-header h1 { font-size: 21px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -.02em; }
-        .act-header p { font-size: 13.5px; color: #64748B; line-height: 1.5; }
+        .act-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1B2559;
+            margin-bottom: 6px;
+            letter-spacing: -.02em;
+        }
+        .act-header p {
+            font-size: 13px;
+            color: #64748B;
+            line-height: 1.5;
+        }
 
         /* Stepper */
         .act-stepper {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            margin: 20px auto 0; max-width: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 18px auto 0;
+            max-width: 380px;
         }
         .step-item {
-            display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #94A3B8;
         }
         .step-item.active { color: #023E8A; }
         .step-item.done { color: #059669; }
         .step-num {
-            width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 11px; background: #e2e8f0; color: #64748b;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            background: #E2E8F0;
+            color: #64748B;
         }
-        .step-item.active .step-num { background: #023E8A; color: #fff; box-shadow: 0 0 0 3px rgba(2,62,138,.2); }
-        .step-item.done .step-num { background: #059669; color: #fff; }
-        .step-divider { width: 20px; height: 2px; background: #e2e8f0; }
+        .step-item.active .step-num {
+            background: #023E8A;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.18);
+        }
+        .step-item.done .step-num {
+            background: #059669;
+            color: #FFFFFF;
+        }
+        .step-divider {
+            width: 20px;
+            height: 2px;
+            background: #E2E8F0;
+        }
 
-        .act-body { padding: 32px 36px 36px; }
+        .act-body {
+            padding: 28px 36px 36px;
+        }
 
         .act-user-box {
-            display: flex; align-items: center; gap: 14px;
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            border-radius: 14px; padding: 14px 18px; margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 13px 16px;
+            margin-bottom: 22px;
         }
         .act-user-avatar {
-            width: 44px; height: 44px; border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #023E8A, #0081AB);
-            color: #fff; font-weight: 800; font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
         .act-user-info { flex: 1; min-width: 0; }
-        .act-user-info .name { font-size: 14.5px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .act-user-info .email { font-size: 12.5px; color: #64748B; margin-top: 2px; }
+        .act-user-info .name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .act-user-info .email {
+            font-size: 12px;
+            color: #64748B;
+            margin-top: 2px;
+        }
         .act-user-role {
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            padding: 3px 9px; border-radius: 6px;
-            background: rgba(0,129,171,.12); color: #0081AB;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 6px;
+            background: rgba(0, 129, 171, 0.1);
+            color: #0081AB;
+            border: 1px solid rgba(0, 129, 171, 0.18);
         }
 
-        .act-label {
-            display: block; font-size: 12.5px; font-weight: 700;
-            color: #334155; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em;
+        .act-section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .up3-select-wrap { position: relative; margin-bottom: 24px; }
-        .up3-select-wrap svg {
-            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-            width: 18px; height: 18px; color: #0081AB; stroke-width: 2.2; pointer-events: none;
+        /* Banner info UP3 terpilih */
+        .up3-selected-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F0F9FF;
+            border: 1.5px solid #BAE6FD;
+            border-radius: 12px;
+            padding: 11px 16px;
+            margin-bottom: 16px;
+            transition: all .2s ease;
         }
-        .up3-select {
-            width: 100%; padding: 13px 16px 13px 44px;
-            border-radius: 12px; border: 1.8px solid #cbd5e1;
-            font-size: 14px; font-weight: 600; color: #0f172a;
-            background: #fff; appearance: none; cursor: pointer;
-            transition: all .15s ease;
+        .up3-selected-banner.empty {
+            background: #F8FAFC;
+            border-color: #E2E8F0;
         }
-        .up3-select:focus {
-            outline: none; border-color: #0081AB;
-            box-shadow: 0 0 0 4px rgba(0,129,171,.15);
+        .up3-selected-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .up3-select-arrow {
-            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-            pointer-events: none; color: #94a3b8;
+        .up3-selected-left svg {
+            width: 18px;
+            height: 18px;
+            color: #0284C7;
+            flex-shrink: 0;
+        }
+        .up3-selected-banner.empty .up3-selected-left svg {
+            color: #94A3B8;
+        }
+        .up3-selected-name {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #023E8A;
+        }
+        .up3-selected-banner.empty .up3-selected-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748B;
+        }
+        .up3-selected-badge {
+            font-size: 11px;
+            font-weight: 700;
+            background: #0284C7;
+            color: #FFFFFF;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* Grid Pilih Cepat 16 UP3 */
+        .up3-quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 580px) {
+            .up3-quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .up3-chip-btn {
+            background: #FFFFFF;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 11px 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #334155;
+            text-align: center;
+            cursor: pointer;
+            transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            outline: none;
+            width: 100%;
+        }
+        .up3-chip-btn:hover {
+            border-color: #0081AB;
+            background: #F0F9FF;
+            color: #023E8A;
+            transform: translateY(-1px);
+        }
+        .up3-chip-btn.active {
+            background: linear-gradient(135deg, #023E8A, #0081AB);
+            color: #FFFFFF;
+            border-color: #023E8A;
+            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.25);
+            font-weight: 700;
         }
 
         .act-btn-submit {
-            width: 100%; padding: 14px 20px; border-radius: 12px;
-            font-size: 14.5px; font-weight: 800; cursor: pointer;
-            border: none; background: linear-gradient(135deg, #023E8A, #0081AB);
-            color: #fff; box-shadow: 0 5px 18px rgba(2,62,138,.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #023E8A, #0081AB);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             transition: all .15s ease;
         }
-        .act-btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(2,62,138,.38); }
+        .act-btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2, 62, 138, 0.32);
+        }
         .act-btn-submit:active { transform: translateY(0); }
 
         .act-note {
-            display: flex; gap: 10px; align-items: flex-start;
-            background: rgba(0,129,171,.06); border: 1px solid rgba(0,129,171,.16);
-            border-radius: 12px; padding: 12px 14px; margin-top: 24px;
-            font-size: 12px; color: #0369a1; line-height: 1.55;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-top: 22px;
+            font-size: 12px;
+            color: #64748B;
+            line-height: 1.55;
         }
-        .act-note svg { width: 16px; height: 16px; min-width: 16px; margin-top: 1px; color: #0081AB; }
-
-        .up3-chips-title { font-size: 11.5px; font-weight: 700; color: #64748B; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
-        .up3-grid-hint {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 20px;
+        .act-note svg {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            margin-top: 2px;
+            color: #0081AB;
         }
-        .up3-pill {
-            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px;
-            padding: 6px 8px; font-size: 11px; font-weight: 600; color: #475569;
-            text-align: center; cursor: pointer; transition: all .15s ease;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .up3-pill:hover { background: #e0f2fe; color: #0284c7; border-color: #7dd3fc; }
-        .up3-pill.active { background: #023E8A; color: #fff; border-color: #023E8A; }
     </style>
 </head>
 <body>
+
+    {{-- Brand Top Bar --}}
+    <div class="act-brand-top">
+        <img src="{{ asset('images/logo-revolution-circle.png') }}" alt="PLN Logo">
+        <span>Sistem SPKLU &bull; PLN UID Jawa Barat</span>
+    </div>
+
     <div class="act-card">
         <div class="act-header">
             <div class="act-logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
             <h1>Aktivasi Akun SPKLU</h1>
-            <p>Pilih Unit Pelaksana Pelayanan Pelanggan (UP3) wilayah kerja Anda sebelum melanjutkan aktivasi via OTP</p>
+            <p>Pilih Unit Pelaksana Pelayanan Pelanggan (UP3) wilayah kerja Anda sebelum verifikasi OTP</p>
 
             <div class="act-stepper">
                 <div class="step-item active">
@@ -190,7 +377,7 @@
 
         <div class="act-body">
             @if ($errors->any())
-                <div style="background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; padding:12px 14px; border-radius:10px; font-size:12.5px; margin-bottom:20px;">
+                <div style="background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; padding:12px 14px; border-radius:10px; font-size:12.5px; margin-bottom:18px;">
                     {{ $errors->first() }}
                 </div>
             @endif
@@ -209,36 +396,46 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('activation.select-up3', $token) }}" id="formSelectUp3">
+            <form method="POST" action="{{ route('activation.select-up3', $token) }}" id="formSelectUp3" onsubmit="return validateForm()">
                 @csrf
+                <input type="hidden" name="up3" id="selected-up3-input" value="{{ old('up3', $user->up3) }}">
 
-                <label class="act-label" for="select-up3-field">Pilih Unit UP3 Wilayah Kerja</label>
-                <div class="up3-select-wrap">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <select name="up3" id="select-up3-field" class="up3-select" required onchange="syncPill(this.value)">
-                        <option value="">— Klik untuk memilih salah satu dari 16 UP3 —</option>
-                        @foreach ($daftarUp3 as $up3)
-                            <option value="{{ $up3 }}" @selected(old('up3', $user->up3) === $up3)>
-                                {{ $up3 }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <span class="up3-select-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                    </span>
+                <div class="act-section-label">
+                    <span>Pilih UP3 Wilayah Kerja (16 Unit)</span>
+                    <span style="font-size: 11px; color: #64748B; text-transform: none; font-weight: 500;">Klik salah satu</span>
                 </div>
 
-                {{-- Quick Pick Chips --}}
-                <div class="up3-chips-title">Atau Pilih Cepat:</div>
-                <div class="up3-grid-hint">
-                    @foreach ($daftarUp3 as $up3)
-                        <div class="up3-pill {{ old('up3', $user->up3) === $up3 ? 'active' : '' }}" onclick="pilihUp3('{{ $up3 }}')">
-                            {{ str_replace('UP3 ', '', $up3) }}
+                {{-- Status Banner Terpilih --}}
+                @php
+                    $initialUp3 = old('up3', $user->up3);
+                @endphp
+                <div id="up3Banner" class="up3-selected-banner {{ $initialUp3 ? '' : 'empty' }}">
+                    <div class="up3-selected-left">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <div class="up3-selected-name" id="up3BannerText">
+                            {{ $initialUp3 ? $initialUp3 : 'Silakan klik salah satu unit UP3 di bawah ini' }}
                         </div>
+                    </div>
+                    <span class="up3-selected-badge" id="up3BannerBadge" style="{{ $initialUp3 ? '' : 'display:none;' }}">✓ Terpilih</span>
+                </div>
+
+                {{-- Pilih Cepat 16 UP3 --}}
+                <div class="up3-quick-grid">
+                    @foreach ($daftarUp3 as $up3)
+                        @php
+                            $shortName = str_replace('UP3 ', '', $up3);
+                            $isSelected = $initialUp3 === $up3;
+                        @endphp
+                        <button type="button" 
+                                class="up3-chip-btn {{ $isSelected ? 'active' : '' }}" 
+                                data-up3="{{ $up3 }}"
+                                onclick="pilihUp3('{{ $up3 }}')">
+                            {{ $shortName }}
+                        </button>
                     @endforeach
                 </div>
 
-                <button type="submit" class="act-btn-submit">
+                <button type="submit" class="act-btn-submit" id="submitBtn">
                     Lanjut ke Verifikasi OTP
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="18" height="18" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </button>
@@ -246,28 +443,41 @@
 
             <div class="act-note">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span>Aktivasi kini menggunakan <strong>Kode OTP</strong> langsung tanpa perlu tautan email tambahan. Riwayat lengkap aktivasi Anda akan dicatat dan ditampilkan di akhir proses.</span>
+                <span>Aktivasi kini langsung diverifikasi melalui <strong>Kode OTP</strong> tanpa perlu tautan email tambahan. Riwayat lengkap aktivasi Anda akan dicatat dan ditampilkan di akhir proses.</span>
             </div>
         </div>
     </div>
 
     <script>
         function pilihUp3(nama) {
-            const select = document.getElementById('select-up3-field');
-            select.value = nama;
-            syncPill(nama);
-        }
+            document.getElementById('selected-up3-input').value = nama;
 
-        function syncPill(nama) {
-            document.querySelectorAll('.up3-pill').forEach(pill => {
-                const text = pill.innerText.trim();
-                const cleanSelected = nama.replace('UP3 ', '').trim();
-                if (text === cleanSelected) {
-                    pill.classList.add('active');
+            // Update status banner
+            const banner = document.getElementById('up3Banner');
+            const text = document.getElementById('up3BannerText');
+            const badge = document.getElementById('up3BannerBadge');
+
+            banner.classList.remove('empty');
+            text.textContent = nama + ' (UID Jawa Barat)';
+            badge.style.display = 'inline-block';
+
+            // Update active states on buttons
+            document.querySelectorAll('.up3-chip-btn').forEach(btn => {
+                if (btn.getAttribute('data-up3') === nama) {
+                    btn.classList.add('active');
                 } else {
-                    pill.classList.remove('active');
+                    btn.classList.remove('active');
                 }
             });
+        }
+
+        function validateForm() {
+            const val = document.getElementById('selected-up3-input').value.trim();
+            if (!val) {
+                alert('Silakan pilih salah satu Unit Pelaksana Pelayanan Pelanggan (UP3) terlebih dahulu.');
+                return false;
+            }
+            return true;
         }
     </script>
 </body>

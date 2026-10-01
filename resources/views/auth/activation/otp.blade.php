@@ -12,137 +12,292 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(160deg, #023E8A 0%, #034d9e 45%, #0081AB 100%);
+            background-color: #F4F6FB;
             padding: 32px 20px;
-            position: relative;
-            overflow-x: hidden;
+            color: #0F172A;
         }
-        body::before {
-            content: ''; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.12), transparent 45%),
-                        radial-gradient(circle at 8% 92%, rgba(255,198,41,.15), transparent 40%);
+
+        .act-brand-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            background: #FFFFFF;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .act-brand-top img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .act-brand-top span {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #023E8A;
+            letter-spacing: .03em;
+            text-transform: uppercase;
         }
 
         .act-card {
-            background: #fff;
-            border-radius: 24px;
-            width: 480px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            width: 500px;
             max-width: 100%;
-            box-shadow: 0 30px 70px rgba(1,26,64,.35);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+            border: 1px solid #E2E8F0;
             overflow: hidden;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,.3);
         }
 
         .act-header {
-            background: linear-gradient(150deg, rgba(2,62,138,.07), rgba(0,129,171,.12));
-            padding: 36px 36px 24px;
+            background: #FFFFFF;
+            padding: 32px 36px 22px;
             text-align: center;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #F1F5F9;
         }
 
         .act-logo {
-            width: 56px; height: 56px; border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #023E8A, #0081AB);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 20px rgba(2,62,138,.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
         }
-        .act-logo svg { width: 28px; height: 28px; color: #FFC629; stroke-width: 2.2; }
+        .act-logo svg {
+            width: 26px;
+            height: 26px;
+            color: #FFC629;
+            stroke-width: 2.2;
+        }
 
-        .act-header h1 { font-size: 21px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -.02em; }
-        .act-header p { font-size: 13.5px; color: #64748B; line-height: 1.5; }
+        .act-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1B2559;
+            margin-bottom: 6px;
+            letter-spacing: -.02em;
+        }
+        .act-header p {
+            font-size: 13px;
+            color: #64748B;
+            line-height: 1.5;
+        }
 
         /* Stepper */
         .act-stepper {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            margin: 20px auto 0; max-width: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 18px auto 0;
+            max-width: 380px;
         }
         .step-item {
-            display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #94A3B8;
         }
         .step-item.active { color: #023E8A; }
         .step-item.done { color: #059669; }
         .step-num {
-            width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 11px; background: #e2e8f0; color: #64748b;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            background: #E2E8F0;
+            color: #64748B;
         }
-        .step-item.active .step-num { background: #023E8A; color: #fff; box-shadow: 0 0 0 3px rgba(2,62,138,.2); }
-        .step-item.done .step-num { background: #059669; color: #fff; }
-        .step-divider { width: 20px; height: 2px; background: #e2e8f0; }
+        .step-item.active .step-num {
+            background: #023E8A;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.18);
+        }
+        .step-item.done .step-num {
+            background: #059669;
+            color: #FFFFFF;
+        }
+        .step-divider {
+            width: 20px;
+            height: 2px;
+            background: #E2E8F0;
+        }
 
-        .act-body { padding: 32px 36px 36px; }
+        .act-body {
+            padding: 28px 36px 36px;
+        }
 
         .up3-badge-box {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            border-radius: 12px; padding: 10px 16px; margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-bottom: 22px;
             font-size: 13px;
         }
-        .up3-badge-left { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #023E8A; }
-        .up3-badge-left svg { width: 16px; height: 16px; color: #0081AB; }
-        .up3-change-link { font-size: 12px; font-weight: 600; color: #0284c7; text-decoration: none; }
+        .up3-badge-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #023E8A;
+        }
+        .up3-badge-left svg {
+            width: 16px;
+            height: 16px;
+            color: #0081AB;
+        }
+        .up3-change-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0284C7;
+            text-decoration: none;
+        }
         .up3-change-link:hover { text-decoration: underline; }
 
         /* Banner Kode OTP (Bypass / Kemudahan Testing Tanpa Email) */
         .otp-demo-banner {
-            background: linear-gradient(135deg, rgba(255, 198, 41, 0.15), rgba(245, 158, 11, 0.12));
-            border: 1.5px dashed #f59e0b;
-            border-radius: 14px; padding: 14px 18px; margin-bottom: 22px;
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            background: #FFFBEB;
+            border: 1.5px dashed #F59E0B;
+            border-radius: 14px;
+            padding: 13px 16px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
         }
-        .otp-demo-text { font-size: 12.5px; color: #92400e; }
+        .otp-demo-text {
+            font-size: 12px;
+            color: #92400E;
+            font-weight: 600;
+        }
         .otp-demo-code {
-            font-size: 20px; font-weight: 800; color: #b45309; letter-spacing: 2px;
-            font-family: ui-monospace, monospace; background: #fff; padding: 3px 8px; border-radius: 6px;
+            font-size: 19px;
+            font-weight: 800;
+            color: #B45309;
+            letter-spacing: 2px;
+            font-family: ui-monospace, monospace;
+            background: #FFFFFF;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #FDE68A;
+            display: inline-block;
+            margin-top: 4px;
         }
         .btn-use-otp {
-            background: #f59e0b; color: #fff; border: none; padding: 6px 12px; border-radius: 8px;
-            font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s ease;
+            background: #F59E0B;
+            color: #FFFFFF;
+            border: none;
+            padding: 7px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .15s ease;
+            white-space: nowrap;
         }
-        .btn-use-otp:hover { background: #d97706; transform: translateY(-1px); }
+        .btn-use-otp:hover {
+            background: #D97706;
+            transform: translateY(-1px);
+        }
 
-        .otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 18px 0 8px; }
+        .otp-boxes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 18px 0 8px;
+        }
         .otp-box {
-            width: 52px; height: 60px;
-            border-radius: 14px;
-            border: 1.8px solid #cbd5e1;
-            font-size: 24px;
+            width: 50px;
+            height: 58px;
+            border-radius: 12px;
+            border: 1.8px solid #CBD5E1;
+            font-size: 22px;
             font-weight: 800;
             text-align: center;
             color: #023E8A;
             font-family: inherit;
             transition: all .15s ease;
-            background: #fff;
+            background: #FFFFFF;
         }
         .otp-box:focus {
-            outline: none; border-color: #0081AB;
-            box-shadow: 0 0 0 4px rgba(0,129,171,.15);
+            outline: none;
+            border-color: #0081AB;
+            box-shadow: 0 0 0 4px rgba(0, 129, 171, 0.15);
         }
 
         .act-btn-submit {
-            width: 100%; padding: 14px 20px; border-radius: 12px;
-            font-size: 14.5px; font-weight: 800; cursor: pointer;
-            border: none; background: linear-gradient(135deg, #023E8A, #0081AB);
-            color: #fff; box-shadow: 0 5px 18px rgba(2,62,138,.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all .15s ease; margin-top: 24px;
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #023E8A, #0081AB);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all .15s ease;
+            margin-top: 24px;
         }
-        .act-btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(2,62,138,.38); }
+        .act-btn-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2, 62, 138, 0.32);
+        }
+        .act-btn-submit:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
 
         .resend-box {
-            text-align: center; margin-top: 20px; font-size: 13px; color: #64748B;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #64748B;
         }
         .resend-btn {
-            background: none; border: none; color: #0081AB; font-weight: 700;
-            cursor: pointer; font-size: 13px; padding: 0; text-decoration: underline;
+            background: none;
+            border: none;
+            color: #0081AB;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 0;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+
+    {{-- Brand Top Bar --}}
+    <div class="act-brand-top">
+        <img src="{{ asset('images/logo-revolution-circle.png') }}" alt="PLN Logo">
+        <span>Sistem SPKLU &bull; PLN UID Jawa Barat</span>
+    </div>
+
     <div class="act-card">
         <div class="act-header">
             <div class="act-logo">

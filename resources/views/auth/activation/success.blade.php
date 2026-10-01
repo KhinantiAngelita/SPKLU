@@ -12,134 +12,277 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(160deg, #023E8A 0%, #034d9e 45%, #0081AB 100%);
+            background-color: #F4F6FB;
             padding: 32px 20px;
-            position: relative;
-            overflow-x: hidden;
+            color: #0F172A;
         }
-        body::before {
-            content: ''; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.12), transparent 45%),
-                        radial-gradient(circle at 8% 92%, rgba(255,198,41,.15), transparent 40%);
+
+        .act-brand-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            background: #FFFFFF;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .act-brand-top img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .act-brand-top span {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #023E8A;
+            letter-spacing: .03em;
+            text-transform: uppercase;
         }
 
         .act-card {
-            background: #fff;
-            border-radius: 24px;
+            background: #FFFFFF;
+            border-radius: 20px;
             width: 520px;
             max-width: 100%;
-            box-shadow: 0 30px 70px rgba(1,26,64,.35);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+            border: 1px solid #E2E8F0;
             overflow: hidden;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,.3);
         }
 
         .act-header {
-            background: linear-gradient(150deg, rgba(2,62,138,.07), rgba(0,129,171,.12));
-            padding: 36px 36px 24px;
+            background: #FFFFFF;
+            padding: 32px 36px 22px;
             text-align: center;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #F1F5F9;
         }
 
         .act-badge-success {
-            width: 60px; height: 60px; border-radius: 20px;
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: #fff; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 24px rgba(5,150,105,.35);
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #059669, #10B981);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
         }
-        .act-badge-success svg { width: 32px; height: 32px; stroke-width: 2.5; }
+        .act-badge-success svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 2.5;
+        }
 
-        .act-header h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -.02em; }
-        .act-header p { font-size: 13.5px; color: #64748B; }
+        .act-header h1 {
+            font-size: 21px;
+            font-weight: 800;
+            color: #1B2559;
+            margin-bottom: 6px;
+            letter-spacing: -.02em;
+        }
+        .act-header p {
+            font-size: 13px;
+            color: #64748B;
+        }
 
         /* Stepper */
         .act-stepper {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            margin: 20px auto 0; max-width: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 18px auto 0;
+            max-width: 380px;
         }
         .step-item {
-            display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #059669;
         }
         .step-num {
-            width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 11px; background: #059669; color: #fff;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            background: #059669;
+            color: #FFFFFF;
         }
-        .step-divider { width: 20px; height: 2px; background: #059669; }
+        .step-divider {
+            width: 20px;
+            height: 2px;
+            background: #059669;
+        }
 
-        .act-body { padding: 32px 36px 36px; }
+        .act-body {
+            padding: 28px 36px 36px;
+        }
 
         /* Receipt Box */
         .receipt-card {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
+            background: #F8FAFC;
+            border: 1.5px solid #E2E8F0;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 24px;
         }
         .receipt-header {
-            background: #fff;
-            padding: 14px 20px;
-            border-bottom: 1px solid #eef1f5;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #FFFFFF;
+            padding: 13px 18px;
+            border-bottom: 1px solid #EEF1F5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .receipt-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #023E8A; display: flex; align-items: center; gap: 6px; }
-        .receipt-title svg { width: 15px; height: 15px; }
+        .receipt-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #023E8A;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .receipt-title svg {
+            width: 15px;
+            height: 15px;
+        }
         .receipt-status-pill {
-            background: #dcfce7; color: #15803d; font-size: 11px; font-weight: 800;
-            padding: 3px 10px; border-radius: 999px; text-transform: uppercase;
+            background: #DCFCE7;
+            color: #15803D;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            border: 1px solid #BBF7D0;
         }
 
-        .receipt-table { width: 100%; border-collapse: collapse; }
-        .receipt-table tr { border-bottom: 1px solid #f1f5f9; }
-        .receipt-table tr:last-child { border-bottom: none; }
-        .receipt-table td { padding: 12px 20px; font-size: 13px; vertical-align: middle; }
-        .receipt-label { color: #64748B; font-weight: 600; width: 42%; }
-        .receipt-value { color: #0f172a; font-weight: 700; text-align: right; }
+        .receipt-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .receipt-table tr {
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .receipt-table tr:last-child {
+            border-bottom: none;
+        }
+        .receipt-table td {
+            padding: 11px 18px;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        .receipt-label {
+            color: #64748B;
+            font-weight: 600;
+            width: 40%;
+        }
+        .receipt-value {
+            color: #0F172A;
+            font-weight: 700;
+            text-align: right;
+        }
 
         .receipt-up3-badge {
-            background: #023E8A; color: #fff; font-size: 12px; font-weight: 800;
-            padding: 4px 10px; border-radius: 6px; display: inline-block;
+            background: #023E8A;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
         }
 
         .receipt-role-badge {
-            background: rgba(0,129,171,.12); color: #0081AB; font-size: 11.5px; font-weight: 700;
-            padding: 3px 9px; border-radius: 6px; text-transform: uppercase; display: inline-block;
+            background: rgba(0, 129, 171, 0.1);
+            color: #0081AB;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 129, 171, 0.18);
+            display: inline-block;
         }
 
-        .act-actions { display: flex; flex-direction: column; gap: 10px; }
+        .act-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
         .act-btn-dashboard {
-            width: 100%; padding: 14px 20px; border-radius: 12px;
-            font-size: 14.5px; font-weight: 800; cursor: pointer; text-decoration: none;
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
             background: linear-gradient(135deg, #023E8A, #0081AB);
-            color: #fff; box-shadow: 0 5px 18px rgba(2,62,138,.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             transition: all .15s ease;
         }
-        .act-btn-dashboard:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(2,62,138,.38); }
+        .act-btn-dashboard:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2, 62, 138, 0.32);
+        }
 
         .act-btn-print {
-            width: 100%; padding: 12px 20px; border-radius: 12px;
-            font-size: 13.5px; font-weight: 700; cursor: pointer;
-            background: #fff; border: 1.5px solid #cbd5e1; color: #334155;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%;
+            padding: 11px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            background: #FFFFFF;
+            border: 1.5px solid #CBD5E1;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             transition: all .15s ease;
         }
-        .act-btn-print:hover { background: #f8fafc; border-color: #94a3b8; }
+        .act-btn-print:hover {
+            background: #F8FAFC;
+            border-color: #94A3B8;
+        }
 
         @media print {
-            body { background: #fff !important; padding: 0 !important; }
-            body::before { display: none !important; }
+            body { background: #FFFFFF !important; padding: 0 !important; }
+            .act-brand-top { display: none !important; }
             .act-card { box-shadow: none !important; border: 1px solid #ccc !important; width: 100% !important; margin: 0 auto; }
             .act-actions, .act-stepper { display: none !important; }
         }
     </style>
 </head>
 <body>
+
+    {{-- Brand Top Bar --}}
+    <div class="act-brand-top">
+        <img src="{{ asset('images/logo-revolution-circle.png') }}" alt="PLN Logo">
+        <span>Sistem SPKLU &bull; PLN UID Jawa Barat</span>
+    </div>
+
     <div class="act-card">
         <div class="act-header">
             <div class="act-badge-success">

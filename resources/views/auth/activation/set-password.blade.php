@@ -12,119 +12,275 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(160deg, #023E8A 0%, #034d9e 45%, #0081AB 100%);
+            background-color: #F4F6FB;
             padding: 32px 20px;
-            position: relative;
-            overflow-x: hidden;
+            color: #0F172A;
         }
-        body::before {
-            content: ''; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.12), transparent 45%),
-                        radial-gradient(circle at 8% 92%, rgba(255,198,41,.15), transparent 40%);
+
+        .act-brand-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            background: #FFFFFF;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .act-brand-top img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+        .act-brand-top span {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #023E8A;
+            letter-spacing: .03em;
+            text-transform: uppercase;
         }
 
         .act-card {
-            background: #fff;
-            border-radius: 24px;
-            width: 480px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            width: 500px;
             max-width: 100%;
-            box-shadow: 0 30px 70px rgba(1,26,64,.35);
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+            border: 1px solid #E2E8F0;
             overflow: hidden;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,.3);
         }
 
         .act-header {
-            background: linear-gradient(150deg, rgba(2,62,138,.07), rgba(0,129,171,.12));
-            padding: 36px 36px 24px;
+            background: #FFFFFF;
+            padding: 32px 36px 22px;
             text-align: center;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #F1F5F9;
         }
 
         .act-logo {
-            width: 56px; height: 56px; border-radius: 16px;
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
             background: linear-gradient(135deg, #023E8A, #0081AB);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 20px rgba(2,62,138,.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
         }
-        .act-logo svg { width: 28px; height: 28px; color: #FFC629; stroke-width: 2.2; }
+        .act-logo svg {
+            width: 26px;
+            height: 26px;
+            color: #FFC629;
+            stroke-width: 2.2;
+        }
 
-        .act-header h1 { font-size: 21px; font-weight: 800; color: #0f172a; margin-bottom: 6px; letter-spacing: -.02em; }
-        .act-header p { font-size: 13.5px; color: #64748B; line-height: 1.5; }
+        .act-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1B2559;
+            margin-bottom: 6px;
+            letter-spacing: -.02em;
+        }
+        .act-header p {
+            font-size: 13px;
+            color: #64748B;
+            line-height: 1.5;
+        }
 
         /* Stepper */
         .act-stepper {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            margin: 20px auto 0; max-width: 380px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 18px auto 0;
+            max-width: 380px;
         }
         .step-item {
-            display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #94A3B8;
         }
         .step-item.active { color: #023E8A; }
         .step-item.done { color: #059669; }
         .step-num {
-            width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 11px; background: #e2e8f0; color: #64748b;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            background: #E2E8F0;
+            color: #64748B;
         }
-        .step-item.active .step-num { background: #023E8A; color: #fff; box-shadow: 0 0 0 3px rgba(2,62,138,.2); }
-        .step-item.done .step-num { background: #059669; color: #fff; }
-        .step-divider { width: 20px; height: 2px; background: #e2e8f0; }
+        .step-item.active .step-num {
+            background: #023E8A;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(2, 62, 138, 0.18);
+        }
+        .step-item.done .step-num {
+            background: #059669;
+            color: #FFFFFF;
+        }
+        .step-divider {
+            width: 20px;
+            height: 2px;
+            background: #E2E8F0;
+        }
 
-        .act-body { padding: 32px 36px 36px; }
+        .act-body {
+            padding: 28px 36px 36px;
+        }
 
         .up3-badge-box {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            border-radius: 12px; padding: 10px 16px; margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-bottom: 22px;
             font-size: 13px;
         }
-        .up3-badge-left { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #023E8A; }
-        .up3-badge-left svg { width: 16px; height: 16px; color: #0081AB; }
+        .up3-badge-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #023E8A;
+        }
+        .up3-badge-left svg {
+            width: 16px;
+            height: 16px;
+            color: #0081AB;
+        }
 
-        .field-group { margin-bottom: 18px; }
-        .field-label { display: block; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 7px; }
-        .field-input-wrap { position: relative; }
+        .field-group {
+            margin-bottom: 18px;
+        }
+        .field-label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+        .field-input-wrap {
+            position: relative;
+        }
         .field-input-wrap input {
-            width: 100%; padding: 13px 44px 13px 14px;
-            border-radius: 12px; border: 1.8px solid #cbd5e1;
-            font-size: 14px; font-family: inherit; color: #0f172a;
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border-radius: 11px;
+            border: 1.8px solid #CBD5E1;
+            font-size: 14px;
+            font-family: inherit;
+            color: #0F172A;
+            background: #FFFFFF;
             transition: all .15s ease;
         }
         .field-input-wrap input:focus {
-            outline: none; border-color: #0081AB;
-            box-shadow: 0 0 0 4px rgba(0,129,171,.15);
+            outline: none;
+            border-color: #0081AB;
+            box-shadow: 0 0 0 4px rgba(0, 129, 171, 0.15);
         }
         .btn-toggle-eye {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; cursor: pointer; color: #94a3b8; padding: 4px;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94A3B8;
+            padding: 4px;
         }
         .btn-toggle-eye:hover { color: #475569; }
 
-        .pw-strength { display: flex; gap: 4px; margin-top: 8px; }
-        .pw-strength-bar { height: 4px; flex: 1; border-radius: 999px; background: #e2e8f0; transition: all .2s ease; }
+        .pw-strength {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .pw-strength-bar {
+            height: 4px;
+            flex: 1;
+            border-radius: 999px;
+            background: #E2E8F0;
+            transition: all .2s ease;
+        }
 
-        .pw-checklist { list-style: none; margin-top: 10px; display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #94a3b8; }
-        .pw-checklist li { display: flex; align-items: center; gap: 6px; }
-        .pw-checklist li.met { color: #059669; font-weight: 600; }
-        .pw-checklist li .dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; }
-        .pw-checklist li.met .dot { background: #059669; }
+        .pw-checklist {
+            list-style: none;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 12px;
+            color: #94A3B8;
+        }
+        .pw-checklist li {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pw-checklist li.met {
+            color: #059669;
+            font-weight: 600;
+        }
+        .pw-checklist li .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #CBD5E1;
+        }
+        .pw-checklist li.met .dot {
+            background: #059669;
+        }
 
         .act-btn-submit {
-            width: 100%; padding: 14px 20px; border-radius: 12px;
-            font-size: 14.5px; font-weight: 800; cursor: pointer;
-            border: none; background: linear-gradient(135deg, #023E8A, #0081AB);
-            color: #fff; box-shadow: 0 5px 18px rgba(2,62,138,.3);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all .15s ease; margin-top: 24px;
+            width: 100%;
+            padding: 13px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #023E8A, #0081AB);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all .15s ease;
+            margin-top: 24px;
         }
-        .act-btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(2,62,138,.38); }
+        .act-btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2, 62, 138, 0.32);
+        }
+        .act-btn-submit:active { transform: translateY(0); }
     </style>
 </head>
 <body>
+
+    {{-- Brand Top Bar --}}
+    <div class="act-brand-top">
+        <img src="{{ asset('images/logo-revolution-circle.png') }}" alt="PLN Logo">
+        <span>Sistem SPKLU &bull; PLN UID Jawa Barat</span>
+    </div>
+
     <div class="act-card">
         <div class="act-header">
             <div class="act-logo">
@@ -169,7 +325,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     <span>Unit: <strong>{{ $user->up3 ?? 'UP3 Terdaftar' }}</strong></span>
                 </div>
-                <span style="font-size:11.5px; font-weight:700; color:#059669; background:#dcfce7; padding:2px 8px; border-radius:6px;">OTP Terverifikasi</span>
+                <span style="font-size:11.5px; font-weight:700; color:#059669; background:#DCFCE7; padding:3px 9px; border-radius:6px; border:1px solid #BBF7D0;">OTP Terverifikasi</span>
             </div>
 
             <form method="POST" action="{{ route('activation.store-password', $token) }}">
@@ -236,21 +392,21 @@
             const s2 = document.getElementById('str2');
             const s3 = document.getElementById('str3');
 
-            s1.style.background = '#e2e8f0';
-            s2.style.background = '#e2e8f0';
-            s3.style.background = '#e2e8f0';
+            s1.style.background = '#E2E8F0';
+            s2.style.background = '#E2E8F0';
+            s3.style.background = '#E2E8F0';
 
             if (!val) return;
 
             if (val.length < 6) {
-                s1.style.background = '#ef4444';
+                s1.style.background = '#EF4444';
             } else if (hasLen && hasMix) {
-                s1.style.background = '#22c55e';
-                s2.style.background = '#22c55e';
-                s3.style.background = '#22c55e';
+                s1.style.background = '#22C55E';
+                s2.style.background = '#22C55E';
+                s3.style.background = '#22C55E';
             } else {
-                s1.style.background = '#f59e0b';
-                s2.style.background = '#f59e0b';
+                s1.style.background = '#F59E0B';
+                s2.style.background = '#F59E0B';
             }
         }
     </script>
