@@ -930,7 +930,7 @@
                     <th>UP3</th>
                     <th>Role / Akses</th>
                     <th>Status</th>
-                    <th>Terakhir Login</th>
+                    <th style="white-space: nowrap; min-width: 150px;">Terakhir Login</th>
                     <th style="text-align: right;">Aksi</th>
                 </tr>
             </thead>
@@ -999,12 +999,13 @@
                             @endif
                         </div>
                     </td>
-                    <td>
+                    <td style="white-space: nowrap;">
                         @if($u->last_login_at)
-                            <div style="font-size: 13px; font-weight: 600; color: #1E293B; line-height: 1.25;">
-                                {{ $u->last_login_at->translatedFormat('d M Y, H:i') }}
+                            <div style="font-size: 13px; font-weight: 700; color: #1E293B; line-height: 1.3; white-space: nowrap;">
+                                {{ $u->last_login_at->translatedFormat('d M Y') }} • {{ $u->last_login_at->format('H:i') }}
                             </div>
-                            <span style="font-size: 11px; color: #94A3B8;">
+                            <span style="font-size: 11.5px; color: #64748B; display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; white-space: nowrap;">
+                                <svg style="width: 11px; height: 11px; color: #94A3B8; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                 {{ $u->last_login_at->diffForHumans() }}
                             </span>
                         @else

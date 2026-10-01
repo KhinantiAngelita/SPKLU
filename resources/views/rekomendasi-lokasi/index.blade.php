@@ -459,17 +459,30 @@
         return `${panah} ${label} (${t.tren_persen}%)`;
     }
 
-    let pusatLat = -6.5971, pusatLng = 106.8060, zoomAwal = 11;
+    // Batasan wilayah operasional Provinsi Jawa Barat (PLN UID Jawa Barat)
+    const batasJawaBarat = L.latLngBounds(
+        L.latLng(-7.95, 106.15), // Barat Daya: selatan Sukabumi - Pangandaran
+        L.latLng(-5.80, 109.05)  // Timur Laut: pesisir utara Karawang s.d. Cirebon
+    );
+
+    let pusatLat = -6.9147, pusatLng = 107.6098, zoomAwal = 9;
     if (titikPeta.length > 0) {
         pusatLat = titikPeta.reduce((a, t) => a + t.latitude, 0) / titikPeta.length;
         pusatLng = titikPeta.reduce((a, t) => a + t.longitude, 0) / titikPeta.length;
+        zoomAwal = 10;
     }
 
-    const peta = L.map('peta-rekomendasi').setView([pusatLat, pusatLng], zoomAwal);
+    const peta = L.map('peta-rekomendasi', {
+        maxBounds: batasJawaBarat,
+        maxBoundsViscosity: 0.9, // Menahan peta agar tidak bisa digeser keluar dari Jawa Barat
+        minZoom: 8,              // Batasi zoom out agar tetap fokus di cakupan Jawa Barat
+        maxZoom: 18,
+    }).setView([pusatLat, pusatLng], zoomAwal);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors | PLN UID Jawa Barat',
+        minZoom: 8,
+        maxZoom: 18,
     }).addTo(peta);
 
     const batasSemuaTitik = [];
