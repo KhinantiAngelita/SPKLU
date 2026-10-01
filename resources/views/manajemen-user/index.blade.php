@@ -675,9 +675,9 @@
         box-shadow: 0 2px 6px rgba(0, 129, 171, 0.2);
     }
     .mu-view-btn svg {
-        width: 15px;
-        height: 15px;
-        stroke-width: 2.2;
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
     }
 
     .mu-del-btn {
@@ -1409,7 +1409,7 @@
                     <td>
                         <div class="mu-actions" style="justify-content: flex-end;">
                             <button type="button" class="mu-view-btn" onclick="openDetailUser({{ $u->id }})" title="Lihat Detail & Riwayat Pengguna">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
 
                             <button type="button" class="mu-icon-btn btn-edit-user" title="Edit Data Pengguna"
@@ -1614,7 +1614,7 @@
         <div class="mu-modal-header">
             <div class="mu-modal-header-left">
                 <div class="mu-modal-header-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </div>
                 <div>
                     <h3>Detail Pengguna &amp; Riwayat Aktivitas</h3>
