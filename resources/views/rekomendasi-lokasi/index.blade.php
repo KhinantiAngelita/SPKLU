@@ -6,7 +6,7 @@
 @section('content')
 
 <style>
-    .rl-page-header { margin-bottom:18px; }
+    .rl-page-header { margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; }
     .rl-page-subtitle { color:#64748B; margin:0; font-size:13.5px; }
 
     .rl-card-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:20px; }

@@ -7,7 +7,7 @@
 
 <style>
     /* Header halaman */
-    .pgj-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+    .pgj-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap; gap:16px; }
     .pgj-page-subtitle { color:#64748B; margin:0; font-size:13.5px; }
 
     /* Tombol */

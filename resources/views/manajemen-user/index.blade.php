@@ -12,6 +12,8 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #E2E8F0;
         flex-wrap: wrap;
         gap: 16px;
     }

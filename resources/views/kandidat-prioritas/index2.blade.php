@@ -30,9 +30,11 @@
     {{-- =========================================================
          HEADER
     ========================================================= --}}
-    <div style="margin-bottom: 20px;">
-        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Peringkat Kandidat</h1>
-        <p class="kp-sub" style="margin:0; color:#64748B; font-size:13.5px;">Ranking Akhir &mdash; 20% Progres + 20% Kapasitas + 20% Demand ULP + 20% Kebutuhan + 20% Okupansi/Fasilitas/Jaringan</p>
+    <div class="kp-header">
+        <div>
+            <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Peringkat Kandidat</h1>
+            <p class="kp-sub" style="margin:0; color:#64748B; font-size:13.5px;">Ranking Akhir &mdash; 20% Progres + 20% Kapasitas + 20% Demand ULP + 20% Kebutuhan + 20% Okupansi/Fasilitas/Jaringan</p>
+        </div>
     </div>
 
 

@@ -7,7 +7,7 @@
 <style>
 .fsf-wrap{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;align-items:start}
 @media (max-width:1100px){.fsf-wrap{grid-template-columns:1fr}}
-.fsf-header{margin-bottom:24px}
+.fsf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #E2E8F0;flex-wrap:wrap;gap:16px}
 .fsf-header h1{font-size:24px;font-weight:700;color:#1B2559;margin:0}
 .fsf-header p{color:#64748B;margin:4px 0 0;font-size:14px}
 .fsf-card{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(15,23,42,.08);padding:28px}

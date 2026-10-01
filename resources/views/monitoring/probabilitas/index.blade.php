@@ -27,8 +27,10 @@
 @section('content')
 
     <div class="page-header">
-        <h1>Monitoring Probabilitas SPKLU</h1>
-        <p class="page-subtitle">Pantau probabilitas kandidat proyek SPKLU</p>
+        <div>
+            <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Monitoring Probabilitas SPKLU</h1>
+            <p class="page-subtitle" style="color:#64748B; margin:0; font-size:13.5px;">Pantau probabilitas kandidat proyek SPKLU</p>
+        </div>
     </div>
 
     <div class="toolbar">

@@ -6,7 +6,7 @@
 @section('content')
 
 <style>
-    .msp-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; gap:16px; flex-wrap:wrap; }
+    .msp-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; gap:16px; flex-wrap:wrap; }
     .msp-subtitle { color:#64748B; margin:0; font-size:14px; }
     .msp-actions { display:flex; gap:10px; }
 

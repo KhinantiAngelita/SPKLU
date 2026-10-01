@@ -145,11 +145,14 @@
     .mp-modal-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; line-height:1; opacity:.8; }
     .mp-modal-close:hover { opacity:1; }
     .mp-modal-body { padding:20px; }
+    .mp-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap; gap:16px; }
 </style>
 
-<div style="margin-bottom: 8px;">
-    <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Master Parameter</h1>
-    <p class="mp-subtitle">Nilai referensi yang dipakai sistem untuk perhitungan skor probabilitas, kelayakan FS, dan daftar mitra mesin.</p>
+<div class="mp-topbar">
+    <div>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Master Parameter</h1>
+        <p class="mp-subtitle" style="margin:0;">Nilai referensi yang dipakai sistem untuk perhitungan skor probabilitas, kelayakan FS, dan daftar mitra mesin.</p>
+    </div>
 </div>
 
 {{-- SECTION 1: PARAMETER PENILAIAN LOKASI (3 CARDS) --}}

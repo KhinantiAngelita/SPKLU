@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="{{ asset('vendor/choices/choices.min.css') }}">
 
 <style>
-    .up-page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+    .up-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap; gap:16px; }
     .up-page-subtitle { color:#64748B; margin:4px 0 0; font-size:13.5px; }
 
     .up-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:9px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; transition:all .15s ease; white-space:nowrap; }

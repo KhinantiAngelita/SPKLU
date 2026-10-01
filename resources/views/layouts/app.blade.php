@@ -63,15 +63,28 @@
         }
 
         /* ===== Universal Page Header Style ===== */
-        .app-page-header {
+        .app-page-header,
+        .dsh-topbar,
+        .msp-header,
+        .trx-page-header,
+        .up-page-header,
+        .page-header,
+        .pgj-page-header,
+        .kp-header,
+        .rl-page-header,
+        .fss-header,
+        .jdi-page-header,
+        .mp-topbar,
+        .mu-header,
+        .fsf-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
             margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eef1f5;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E2E8F0;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 16px;
         }
         .app-page-title {
             font-size: 22px;

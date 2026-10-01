@@ -6,9 +6,9 @@
 @section('content')
 
 <style>
-    .jdi-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
-    .jdi-page-header h1 { font-size:20px; font-weight:700; color:#1B2559; margin:0; }
-    .jdi-page-header p { color:#64748B; margin:4px 0 0; font-size:13.5px; }
+    .jdi-page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #E2E8F0; flex-wrap:wrap; gap:16px; }
+    .jdi-page-header h1 { font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; }
+    .jdi-page-header p { color:#64748B; margin:0; font-size:13.5px; }
     .jdi-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:10px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; text-decoration:none; transition:all .15s ease; }
     .jdi-btn svg { width:15px; height:15px; stroke-width:2.1; }
     .jdi-btn-primary { background:#023E8A; color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); }

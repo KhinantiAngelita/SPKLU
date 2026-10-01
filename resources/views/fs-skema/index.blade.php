@@ -5,7 +5,7 @@
 
 @push('styles')
 <style>
-.fss-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.fss-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #E2E8F0;flex-wrap:wrap;gap:16px}
 .fss-header h1{font-size:24px;font-weight:700;color:#1B2559;margin:0}
 .fss-header p{color:#64748B;margin:4px 0 0;font-size:14px}
 .fss-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}

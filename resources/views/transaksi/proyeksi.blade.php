@@ -33,9 +33,10 @@
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        gap: 14px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #f1f5f9;
+        gap: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #E2E8F0;
+        margin-bottom: 20px;
     }
 
     .proyeksi-toolbar-title h1 {
