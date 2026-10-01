@@ -101,7 +101,6 @@
             width: 34px; height: 34px; min-width: 34px; border-radius: 10px;
             background: linear-gradient(135deg, var(--brand-dark), var(--brand-mid));
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 3px 8px rgba(2,62,138,.25);
         }
         .section-header-bar-icon svg { width: 17px; height: 17px; color: #fff; stroke-width: 2; }
         .section-header-bar h2 { margin: 0; font-size: 16.5px; font-weight: 800; color: #1B2559 !important; }

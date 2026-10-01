@@ -46,7 +46,6 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 14px;
-            box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
         }
         .act-logo svg {
             width: 26px;

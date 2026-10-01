@@ -53,7 +53,6 @@
             background: linear-gradient(135deg, #023E8A, #0081AB);
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 18px;
-            box-shadow: 0 8px 20px rgba(2,62,138,.3);
         }
         .act-logo svg { width: 26px; height: 26px; color: #FFC629; stroke-width: 2.2; }
 

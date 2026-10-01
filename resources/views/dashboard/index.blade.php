@@ -256,7 +256,6 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        box-shadow: 0 4px 10px rgba(2, 62, 138, 0.18);
     }
     .section-header-bar-icon svg {
         width: 18px;
