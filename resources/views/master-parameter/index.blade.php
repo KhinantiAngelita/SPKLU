@@ -13,8 +13,9 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
-        margin: 36px 0 16px;
+        gap: 14px;
+        margin-top: 32px;
+        margin-bottom: 16px;
         padding-top: 24px;
         border-top: 1px solid #E2E8F0;
         flex-wrap: wrap;
@@ -25,6 +26,7 @@
         margin-top: 0;
         padding-top: 0;
         border-top: none;
+        margin-bottom: 16px;
     }
     .mp-section-header-left {
         display: flex;
@@ -64,8 +66,10 @@
         line-height: 1.35;
     }
 
-    .mp-grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-bottom:24px; }
-    .mp-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+    .mp-grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:0; }
+    .mp-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:0; }
+    .mp-grid-3 .surface-card, .mp-grid-2 .surface-card, .mp-single-card { margin-bottom: 0 !important; }
+    .surface-card .section-header-bar { padding: 14px 20px; }
     .mp-grid-full { grid-column: 1 / -1; }
 
     @media (max-width: 1024px) {
@@ -355,7 +359,7 @@
     </div>
 </div>
 
-<div class="surface-card" style="margin-bottom:24px;">
+<div class="surface-card mp-single-card" style="margin-bottom:0;">
     <div class="section-header-bar">
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon">
@@ -447,37 +451,39 @@
 <div class="mp-grid-2">
 
     {{-- CARD: TARIF LISTRIK --}}
-    <div class="surface-card">
-        <div class="section-header-bar">
-            <div class="section-header-bar-left">
-                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                <div>
-                    <h2>Tarif Layanan Listrik</h2>
-                    <p>Rp per kWh, sesuai jenis sambungan</p>
+    <div class="surface-card" style="display:flex; flex-direction:column; justify-content:space-between; margin-bottom:0;">
+        <div>
+            <div class="section-header-bar">
+                <div class="section-header-bar-left">
+                    <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <div>
+                        <h2>Tarif Layanan Listrik</h2>
+                        <p>Rp per kWh, sesuai jenis sambungan</p>
+                    </div>
                 </div>
             </div>
+            <table class="mp-table">
+                <thead><tr><th>Kode</th><th>Tarif per kWh</th><th style="width:80px; text-align:right;"></th></tr></thead>
+                <tbody>
+                    @forelse ($tarifListrik as $tarif)
+                    <tr>
+                        <form method="POST" action="{{ route('master-parameter.tarif.update', $tarif) }}">
+                            @csrf @method('PATCH')
+                            <td style="font-weight:700; color:#023E8A;">{{ $tarif->kode }}</td>
+                            <td><input type="number" step="0.01" name="tarif_per_kwh" value="{{ $tarif->tarif_per_kwh }}" style="width:120px;"></td>
+                            <td style="text-align:right;"><button type="submit" class="mp-save-link">Simpan</button></td>
+                        </form>
+                    </tr>
+                    @empty
+                        <tr><td colspan="3" class="mp-empty">Belum ada data tarif.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-        <table class="mp-table">
-            <thead><tr><th>Kode</th><th>Tarif per kWh</th><th style="width:80px; text-align:right;"></th></tr></thead>
-            <tbody>
-                @forelse ($tarifListrik as $tarif)
-                <tr>
-                    <form method="POST" action="{{ route('master-parameter.tarif.update', $tarif) }}">
-                        @csrf @method('PATCH')
-                        <td style="font-weight:700; color:#023E8A;">{{ $tarif->kode }}</td>
-                        <td><input type="number" step="0.01" name="tarif_per_kwh" value="{{ $tarif->tarif_per_kwh }}" style="width:120px;"></td>
-                        <td style="text-align:right;"><button type="submit" class="mp-save-link">Simpan</button></td>
-                    </form>
-                </tr>
-                @empty
-                    <tr><td colspan="3" class="mp-empty">Belum ada data tarif.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
     </div>
 
     {{-- CARD: TARGET TAHUNAN --}}
-    <div class="surface-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+    <div class="surface-card" style="display:flex; flex-direction:column; justify-content:space-between; margin-bottom:0;">
         <div>
             <div class="section-header-bar">
                 <div class="section-header-bar-left">
