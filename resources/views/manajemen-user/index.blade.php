@@ -1000,9 +1000,16 @@
                         </div>
                     </td>
                     <td>
-                        <span style="color: #64748B; font-size: 13px;">
-                            {{ $u->last_login_at ? $u->last_login_at->translatedFormat('d M Y, H:i') : '—' }}
-                        </span>
+                        @if($u->last_login_at)
+                            <div style="font-size: 13px; font-weight: 600; color: #1E293B; line-height: 1.25;">
+                                {{ $u->last_login_at->translatedFormat('d M Y, H:i') }}
+                            </div>
+                            <span style="font-size: 11px; color: #94A3B8;">
+                                {{ $u->last_login_at->diffForHumans() }}
+                            </span>
+                        @else
+                            <span style="color: #94A3B8; font-size: 13px;" title="Belum pernah login">—</span>
+                        @endif
                     </td>
                     <td>
                         <div class="mu-actions" style="justify-content: flex-end;">

@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use App\Models\AktivitasNotifikasi;
 use App\Models\Probabilitas;
+use App\Models\User;
 use App\Policies\ProbabilitasPolicy;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -67,6 +70,12 @@ class AppServiceProvider extends ServiceProvider
                 'notifications' => $notifications,
                 'notifCount' => $notifCount,
             ]);
+        });
+
+        Event::listen(Login::class, function ($event) {
+            if ($event->user instanceof User) {
+                $event->user->forceFill(['last_login_at' => now()])->saveQuietly();
+            }
         });
     }
 

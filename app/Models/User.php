@@ -39,6 +39,7 @@ class User extends Authenticatable
         'requires_otp_first_login', 'first_login_verified_at',
         'otp_code', 'otp_expires_at', 'otp_attempts',
         'last_read_notification_at',
+        'last_login_at',
     ];
 
     protected $hidden = ['password', 'otp_code', 'remember_token'];
