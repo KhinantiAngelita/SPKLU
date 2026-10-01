@@ -16,8 +16,8 @@
 
     .jdi-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); overflow:hidden; }
     .jdi-card-head { display:flex; align-items:center; gap:10px; padding:20px 22px; border-bottom:1px solid #F1F5F9; background:#FFFFFF; }
-    .jdi-icon-box { width:38px; height:38px; border-radius:11px; background:#023E8A; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .jdi-icon-box svg { width:17px; height:17px; stroke-width:2.2; }
+    .jdi-icon-box { width:34px; height:34px; min-width:34px; border-radius:10px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .jdi-icon-box svg { width:17px; height:17px; stroke-width:2; }
     .jdi-card-head h2 { font-size:15px; margin:0; color:#1B2559; font-weight:800; }
     .jdi-card-head p { font-size:12.5px; margin:2px 0 0; color:#94A3B8; }
 
