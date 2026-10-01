@@ -12,8 +12,8 @@
 
     .msp-btn { border:none; border-radius:9px; font-size:13.5px; font-weight:600; padding:10px 18px; cursor:pointer; transition:all .15s ease; display:inline-flex; align-items:center; gap:7px; }
     .msp-btn svg { width:15px; height:15px; stroke-width:2; flex-shrink:0; }
-    .msp-btn-primary { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
-    .msp-btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.32); }
+    .msp-btn-primary { background:#023E8A; color:#fff; box-shadow:0 2px 6px rgba(2,62,138,.2); }
+    .msp-btn-primary:hover { transform:translateY(-1px); background:#002D66; color:#fff; box-shadow:0 4px 12px rgba(2,62,138,.3); }
     .msp-btn-outline { background:#fff; color:#1E293B; border:1px solid #e2e8f0; }
     .msp-btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; }
     .msp-btn-warning { background:#FFC629; color:#023E8A; font-weight:700; box-shadow:0 2px 8px rgba(255,198,41,.4); }
@@ -118,9 +118,9 @@
     .msp-pill-pln { background:rgba(2,62,138,.12); color:#023E8A; }
     .msp-pill-swasta { background:rgba(232,163,23,.15); color:#92660f; }
 
-    .msp-del-btn { width:32px; height:32px; border-radius:8px; border:none; background:rgba(0,129,171,.1); color:#023E8A; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:background .15s ease; }
-    .msp-del-btn svg { width:15px; height:15px; stroke-width:2; }
-    .msp-del-btn:hover { background:rgba(0,129,171,.18); }
+    .msp-del-btn, .msp-action-btn { width:32px; height:32px; border-radius:8px; border:1px solid transparent; background:rgba(2,62,138,.08); color:#023E8A; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
+    .msp-del-btn svg, .msp-action-btn svg { width:15px; height:15px; stroke-width:2.2; }
+    .msp-del-btn:hover, .msp-action-btn:hover { background:rgba(2,62,138,.18); color:#002D66; }
 
     .msp-empty { text-align:center; padding:60px 20px; color:#94a3b8; }
     .msp-empty svg { width:36px; height:36px; stroke-width:1.7; color:#cbd5e1; margin-bottom:10px; fill:none; }
@@ -385,8 +385,8 @@
                         </td>
                         @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
                             <td>
-                                <button type="button" class="msp-del-btn" title="Edit" onclick='bukaModalEdit(@json($spklu))'>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                <button type="button" class="msp-action-btn" title="Edit Data SPKLU" onclick='bukaModalEdit(@json($spklu))'>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                                 </button>
                             </td>
                         @endif
@@ -476,8 +476,8 @@
                         </td>
                         @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
                             <td>
-                                <button type="button" class="msp-del-btn" title="Ubah Pemetaan" onclick='bukaModalEditAlias({{ $alias->id }}, "{{ addslashes($alias->nama_asli) }}", {{ $alias->spklu_id }})'>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                <button type="button" class="msp-action-btn" title="Ubah Pemetaan Alias" onclick='bukaModalEditAlias({{ $alias->id }}, "{{ addslashes($alias->nama_asli) }}", {{ $alias->spklu_id }})'>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                                 </button>
                             </td>
                         @endif

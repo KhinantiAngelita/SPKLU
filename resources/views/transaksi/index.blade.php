@@ -13,8 +13,8 @@
     .trx-btn svg { width:15px; height:15px; stroke-width:2.1; }
     .trx-btn-outline { background:#fff; color:#1E293B; border:1px solid #e2e8f0; }
     .trx-btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; }
-    .trx-btn-export { background:linear-gradient(135deg,#dc2626,#b91c1c); color:#fff; box-shadow:0 2px 10px rgba(220,38,38,.28); }
-    .trx-btn-export:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(220,38,38,.34); }
+    .trx-btn-export { background:#DC2626; color:#fff; box-shadow:0 2px 10px rgba(220,38,38,.28); }
+    .trx-btn-export:hover { background:#B91C1C; transform:translateY(-1px); box-shadow:0 4px 14px rgba(220,38,38,.34); }
 
     .trx-filter-form { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
 
@@ -30,7 +30,7 @@
     .trx-pill-group { display:inline-flex; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:3px; gap:2px; flex-shrink:0; }
     .trx-pill { border:none; background:none; padding:7px 13px; border-radius:7px; font-size:12.8px; font-weight:700; color:#64748B; cursor:pointer; transition:all .15s ease; white-space:nowrap; }
     .trx-pill:hover { color:#1E293B; }
-    .trx-pill.active { background:linear-gradient(135deg,#FFC629,#ffab00); color:#023E8A; box-shadow:0 2px 6px rgba(255,198,41,.4); }
+    .trx-pill.active { background:#FFC629; color:#023E8A; box-shadow:0 2px 6px rgba(255,198,41,.4); }
 
     .trx-daterange { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:8px 12px; flex-shrink:0; transition:border-color .15s ease; }
     .trx-daterange:focus-within { border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }

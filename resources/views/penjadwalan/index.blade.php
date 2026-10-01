@@ -11,12 +11,12 @@
     .jdi-page-header p { color:#64748B; margin:4px 0 0; font-size:13.5px; }
     .jdi-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:10px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; text-decoration:none; transition:all .15s ease; }
     .jdi-btn svg { width:15px; height:15px; stroke-width:2.1; }
-    .jdi-btn-primary { background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); }
-    .jdi-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
+    .jdi-btn-primary { background:#023E8A; color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); }
+    .jdi-btn-primary:hover { background:#002D66; transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
 
     .jdi-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); overflow:hidden; }
     .jdi-card-head { display:flex; align-items:center; gap:10px; padding:20px 22px; border-bottom:1px solid #F1F5F9; background:#FFFFFF; }
-    .jdi-icon-box { width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
+    .jdi-icon-box { width:38px; height:38px; border-radius:11px; background:#023E8A; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
     .jdi-icon-box svg { width:17px; height:17px; stroke-width:2.2; }
     .jdi-card-head h2 { font-size:15px; margin:0; color:#1B2559; font-weight:800; }
     .jdi-card-head p { font-size:12.5px; margin:2px 0 0; color:#94A3B8; }
@@ -121,9 +121,10 @@
     .jdi-modal-footer { padding:14px 22px; border-top:1px solid #F1F5F9; }
     .jdi-modal-footer a {
         display:flex; align-items:center; justify-content:center; gap:7px; width:100%;
-        padding:11px; border-radius:10px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff;
-        font-weight:700; font-size:13.5px; text-decoration:none;
+        padding:11px; border-radius:10px; background:#023E8A; color:#fff;
+        font-weight:700; font-size:13.5px; text-decoration:none; transition: background .15s ease;
     }
+    .jdi-modal-footer a:hover { background:#002D66; }
     .jdi-modal-footer svg { width:15px; height:15px; stroke-width:2.2; }
 </style>
 
@@ -237,8 +238,8 @@
                         <td style="text-align:right">
                             <div class="jdi-action-group">
                                 @can('update', $j)
-                                    <a href="{{ route('penjadwalan.edit', $j) }}" class="jdi-icon-btn" title="Edit">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                    <a href="{{ route('penjadwalan.edit', $j) }}" class="jdi-icon-btn" title="Ubah Jadwal">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                                     </a>
                                 @endcan
                                 @can('delete', $j)
@@ -247,8 +248,8 @@
                                           data-confirm-title="Hapus jadwal ini?"
                                           data-confirm-type="danger">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="jdi-icon-btn jdi-icon-btn-danger" title="Hapus">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        <button type="submit" class="jdi-icon-btn jdi-icon-btn-danger" title="Hapus Jadwal">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                         </button>
                                     </form>
                                 @endcan

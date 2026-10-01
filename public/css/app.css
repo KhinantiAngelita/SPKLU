@@ -459,13 +459,18 @@ a {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--brand-dark), var(--brand-mid));
+    background: #023E8A;
     color: #fff;
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-primary:hover {
+    background: #002D66;
+    color: #fff;
 }
 
 .btn-warning {
@@ -753,3 +758,78 @@ a {
 
 /* Reset link kecil */
 .link-btn { font-weight: 600; }
+
+/* ===== STANDARDIZED ACTION BUTTONS (Diseragamkan Tanpa Gradient) ===== */
+.action-group, .table-actions, .mu-actions, .msp-actions, .fss-actions, .jdi-action-group, .up-action-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.btn-action, .mu-icon-btn, .mu-del-btn, .msp-action-btn, .msp-del-btn, .fss-icon-btn, .jdi-icon-btn, .up-match-btn, .up-del-btn, .mp-action-btn, .mp-del-btn, .btn-icon-edit {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    border-radius: 8px !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+}
+.btn-action svg, .mu-icon-btn svg, .mu-del-btn svg, .msp-action-btn svg, .msp-del-btn svg, .fss-icon-btn svg, .jdi-icon-btn svg, .up-match-btn svg, .up-del-btn svg, .mp-action-btn svg, .mp-del-btn svg, .btn-icon-edit svg, .btn-icon-edit i {
+    width: 15px !important;
+    height: 15px !important;
+    stroke-width: 2.2 !important;
+    flex-shrink: 0 !important;
+}
+
+/* 1. Lihat / Detail (Eye) - Cyan/Teal */
+.btn-action-view, .action-btn-view, .fss-icon-btn-view {
+    background: rgba(0, 129, 171, 0.10) !important;
+    color: #0081AB !important;
+}
+.btn-action-view:hover, .action-btn-view:hover, .fss-icon-btn-view:hover {
+    background: rgba(0, 129, 171, 0.20) !important;
+    color: #023E8A !important;
+    border-color: rgba(0, 129, 171, 0.25) !important;
+}
+
+/* 2. Edit / Ubah (Pen) - PLN Deep Blue */
+.btn-action-edit, .action-btn-edit, .btn-edit-user, .fss-icon-btn-edit, .msp-action-edit, .btn-icon-edit {
+    background: rgba(2, 62, 138, 0.08) !important;
+    color: #023E8A !important;
+}
+.btn-action-edit:hover, .action-btn-edit:hover, .btn-edit-user:hover, .fss-icon-btn-edit:hover, .msp-action-edit:hover, .btn-icon-edit:hover {
+    background: rgba(2, 62, 138, 0.18) !important;
+    color: #002D66 !important;
+    border-color: rgba(2, 62, 138, 0.25) !important;
+}
+
+/* 3. Hapus / Delete (Trash) - Crimson Red */
+.btn-action-delete, .action-btn-delete, .mu-del-btn, .fss-icon-btn-delete, .jdi-icon-btn-danger, .up-del-btn, .mp-del-btn {
+    background: rgba(192, 57, 43, 0.08) !important;
+    color: #C0392B !important;
+}
+.btn-action-delete:hover, .action-btn-delete:hover, .mu-del-btn:hover, .fss-icon-btn-delete:hover, .jdi-icon-btn-danger:hover, .up-del-btn:hover, .mp-del-btn:hover {
+    background: rgba(192, 57, 43, 0.18) !important;
+    color: #962D22 !important;
+    border-color: rgba(192, 57, 43, 0.25) !important;
+}
+
+/* 4. Match / Process (Green) */
+.btn-action-match, .action-btn-match {
+    background: rgba(46, 158, 91, 0.10) !important;
+    color: #2E9E5B !important;
+}
+.btn-action-match:hover, .action-btn-match:hover {
+    background: rgba(46, 158, 91, 0.20) !important;
+    color: #1E6B3E !important;
+    border-color: rgba(46, 158, 91, 0.25) !important;
+}

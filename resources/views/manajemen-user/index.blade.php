@@ -54,13 +54,14 @@
         flex-shrink: 0;
     }
     .mu-btn-primary {
-        background: linear-gradient(135deg, #023E8A, #0081AB);
+        background: #023E8A;
         color: #fff;
-        box-shadow: 0 2px 8px rgba(2,62,138,.2);
+        box-shadow: 0 2px 6px rgba(2,62,138,.2);
     }
     .mu-btn-primary:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(2,62,138,.3);
+        box-shadow: 0 4px 12px rgba(2,62,138,.3);
+        background: #002D66;
         color: #fff;
     }
     .mu-btn-outline {
@@ -553,8 +554,8 @@
         height: 32px;
         border-radius: 8px;
         border: 1px solid transparent;
-        background: rgba(0,129,171,.08);
-        color: #0081AB;
+        background: rgba(2,62,138,.08);
+        color: #023E8A;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
@@ -562,13 +563,13 @@
         transition: all .15s ease;
     }
     .mu-icon-btn:hover {
-        background: rgba(0,129,171,.16);
-        color: #023E8A;
-        border-color: rgba(0,129,171,.2);
+        background: rgba(2,62,138,.18);
+        color: #002D66;
+        border-color: rgba(2,62,138,.25);
     }
     .mu-icon-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 15px;
+        height: 15px;
         stroke-width: 2.2;
     }
 

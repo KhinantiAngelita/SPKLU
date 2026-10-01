@@ -35,13 +35,38 @@
     .mp-save-link { background:none; border:none; color:#0081AB; font-size:12px; font-weight:700; cursor:pointer; padding:4px 7px; border-radius:6px; transition:background .15s ease; }
     .mp-save-link:hover { background:rgba(0,129,171,.1); }
 
-    .mp-del-btn { background:none; border:none; color:#dc2626; font-size:12px; font-weight:600; cursor:pointer; padding:4px 6px; border-radius:6px; transition:all .15s ease; display:inline-flex; align-items:center; }
-    .mp-del-btn:hover { background:rgba(220,38,38,.08); }
-    .mp-del-btn svg { width:14px; height:14px; stroke-width:2; }
-
-    .mp-edit-btn { background:none; border:none; color:#0284c7; font-size:12px; font-weight:600; cursor:pointer; padding:4px 6px; border-radius:6px; transition:all .15s ease; display:inline-flex; align-items:center; margin-right:4px; }
-    .mp-edit-btn:hover { background:rgba(2,132,199,.08); }
-    .mp-edit-btn svg { width:14px; height:14px; stroke-width:2; }
+    .mp-del-btn, .mp-edit-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .15s ease;
+        padding: 0;
+        vertical-align: middle;
+        box-sizing: border-box;
+    }
+    .mp-edit-btn {
+        background: rgba(2,62,138,.08);
+        color: #023E8A;
+        margin-right: 4px;
+    }
+    .mp-edit-btn:hover {
+        background: rgba(2,62,138,.18);
+        color: #002D66;
+    }
+    .mp-del-btn {
+        background: rgba(192,57,43,.08);
+        color: #C0392B;
+    }
+    .mp-del-btn:hover {
+        background: rgba(192,57,43,.18);
+        color: #962D22;
+    }
+    .mp-del-btn svg, .mp-edit-btn svg { width: 15px; height: 15px; stroke-width: 2.2; }
 
     .mp-badge-aktif { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#dcfce7; color:#15803d; }
     .mp-badge-nonaktif { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#f1f5f9; color:#64748b; }
@@ -56,14 +81,14 @@
     .mp-field input, .mp-field select { padding:8px 11px; border-radius:7px; border:1px solid #e2e8f0; font-size:13px; background:#fff; }
     .mp-field input:focus, .mp-field select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.12); }
 
-    .mp-btn { border:none; border-radius:8px; font-size:12.5px; font-weight:700; padding:8px 16px; cursor:pointer; transition:all .15s ease; background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; box-shadow:0 2px 8px rgba(2,62,138,.2); height:37px; display:inline-flex; align-items:center; gap:6px; }
-    .mp-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(2,62,138,.28); }
+    .mp-btn { border:none; border-radius:8px; font-size:12.5px; font-weight:700; padding:8px 16px; cursor:pointer; transition:all .15s ease; background:#023E8A; color:#fff; box-shadow:0 2px 6px rgba(2,62,138,.2); height:37px; display:inline-flex; align-items:center; gap:6px; }
+    .mp-btn:hover { background:#002D66; transform:translateY(-1px); box-shadow:0 4px 10px rgba(2,62,138,.25); }
 
     /* Modal Styling */
     .mp-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(15,23,42,.5); backdrop-filter:blur(3px); z-index:9999; align-items:center; justify-content:center; }
     .mp-modal-box { background:#fff; border-radius:14px; width:92%; max-width:480px; box-shadow:0 20px 40px rgba(0,0,0,.2); overflow:hidden; animation:modalPop .15s ease-out; }
     @keyframes modalPop { from { transform:scale(.95); opacity:0; } to { transform:scale(1); opacity:1; } }
-    .mp-modal-header { padding:16px 20px; background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; font-weight:700; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+    .mp-modal-header { padding:16px 20px; background:#023E8A; color:#fff; font-weight:700; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
     .mp-modal-close { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; line-height:1; opacity:.8; }
     .mp-modal-close:hover { opacity:1; }
     .mp-modal-body { padding:20px; }
@@ -295,16 +320,14 @@
                     @endif
                 </td>
                 <td style="text-align:right; white-space:nowrap;">
-                    <button type="button" class="mp-edit-btn" onclick="bukaModalEditMitra({{ $m->id }}, '{{ addslashes($m->nama) }}', '{{ addslashes($m->keterangan ?? '') }}', {{ $m->is_aktif ? 'true' : 'false' }})">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                        Edit
+                    <button type="button" class="mp-edit-btn" onclick="bukaModalEditMitra({{ $m->id }}, '{{ addslashes($m->nama) }}', '{{ addslashes($m->keterangan ?? '') }}', {{ $m->is_aktif ? 'true' : 'false' }})" title="Ubah Mitra Mesin">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                     </button>
                     <form method="POST" action="{{ route('master-parameter.mitra-mesin.destroy', $m) }}" style="display:inline;"
                           data-confirm="Hapus Mitra Mesin &quot;{{ $m->nama }}&quot;?" data-confirm-type="danger">
                         @csrf @method('DELETE')
-                        <button type="submit" class="mp-del-btn" title="Hapus">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                            Hapus
+                        <button type="submit" class="mp-del-btn" title="Hapus Mitra Mesin">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                         </button>
                     </form>
                 </td>

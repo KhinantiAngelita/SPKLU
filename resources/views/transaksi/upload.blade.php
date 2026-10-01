@@ -19,8 +19,8 @@
     .up-btn svg { width:15px; height:15px; stroke-width:2.1; }
     .up-btn-outline { background:#fff; color:#1E293B; border:1px solid #e2e8f0; }
     .up-btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; }
-    .up-btn-primary { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
-    .up-btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.3); }
+    .up-btn-primary { background:#023E8A; color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
+    .up-btn-primary:hover { background:#002D66; transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.3); }
     .up-btn-primary:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
 
     /* Summary cards */
@@ -112,7 +112,7 @@
     }
     .up-sort-btn:hover { color: #1E293B; background: rgba(255,255,255,.7); }
     .up-sort-btn.active {
-        background: linear-gradient(135deg, #023E8A, #0081AB);
+        background: #023E8A;
         color: #fff !important;
         box-shadow: 0 2px 6px rgba(2,62,138,.25);
     }
@@ -147,11 +147,11 @@
 
     .up-action-group { display:flex; gap:6px; }
     .up-del-btn, .up-match-btn { border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
-    .up-del-btn { background:rgba(192,57,43,.1); color:#C0392B; }
+    .up-del-btn { background:rgba(192,57,43,.08); color:#C0392B; }
     .up-del-btn:hover { background:rgba(192,57,43,.18); transform:translateY(-1px); }
-    .up-match-btn { background:rgba(232,163,23,.14); color:#92660f; position:relative; }
-    .up-match-btn:hover { background:rgba(232,163,23,.22); transform:translateY(-1px); }
-    .up-match-btn svg { width:15px; height:15px; }
+    .up-match-btn { background:rgba(2,62,138,.08); color:#023E8A; position:relative; }
+    .up-match-btn:hover { background:rgba(2,62,138,.18); transform:translateY(-1px); }
+    .up-del-btn svg, .up-match-btn svg { width:15px; height:15px; stroke-width:2.2; }
     .up-match-count {
         position:absolute; top:-5px; right:-5px; background:#C0392B; color:#fff;
         font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:999px;
@@ -407,7 +407,7 @@
                                           data-confirm-type="danger">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="up-del-btn" title="Hapus riwayat + data">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                         </button>
                                     </form>
                                 </div>

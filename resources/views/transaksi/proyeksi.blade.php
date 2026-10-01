@@ -100,11 +100,12 @@
         border-color: #94a3b8;
     }
     .btn-proyeksi-download {
-        background: linear-gradient(135deg, #023E8A, #0081AB);
+        background: #023E8A;
         color: #fff;
         box-shadow: 0 3px 10px rgba(2,62,138,0.2);
     }
     .btn-proyeksi-download:hover {
+        background: #002D66;
         transform: translateY(-1px);
         box-shadow: 0 5px 14px rgba(2,62,138,0.28);
     }

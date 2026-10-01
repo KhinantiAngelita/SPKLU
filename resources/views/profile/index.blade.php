@@ -383,7 +383,7 @@
         height: 40px;
         padding: 0 20px;
         border-radius: 9px;
-        background: linear-gradient(135deg, #023E8A, #0081AB);
+        background: #023E8A;
         color: #fff;
         font-size: 13.5px;
         font-weight: 700;
@@ -393,10 +393,11 @@
         align-items: center;
         gap: 7px;
         box-shadow: 0 2px 8px rgba(2,62,138,.2);
-        transition: transform .15s ease, box-shadow .15s ease;
+        transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
     }
 
     .prof-btn-save:hover {
+        background: #002D66;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(2,62,138,.3);
     }

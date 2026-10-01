@@ -20,30 +20,6 @@
             color: #0F172A;
         }
 
-        .act-brand-top {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 22px;
-            background: #FFFFFF;
-            padding: 8px 18px;
-            border-radius: 999px;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-        }
-        .act-brand-top img {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-        }
-        .act-brand-top span {
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #023E8A;
-            letter-spacing: .03em;
-            text-transform: uppercase;
-        }
-
         .act-card {
             background: #FFFFFF;
             border-radius: 20px;
@@ -256,7 +232,7 @@
             font-weight: 800;
             cursor: pointer;
             border: none;
-            background: linear-gradient(135deg, #023E8A, #0081AB);
+            background: #023E8A;
             color: #FFFFFF;
             box-shadow: 0 4px 14px rgba(2, 62, 138, 0.25);
             display: flex;
@@ -267,6 +243,7 @@
             margin-top: 24px;
         }
         .act-btn-submit:hover {
+            background: #002D66;
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(2, 62, 138, 0.32);
         }
@@ -274,12 +251,6 @@
     </style>
 </head>
 <body>
-
-    {{-- Brand Top Bar --}}
-    <div class="act-brand-top">
-        <img src="{{ asset('images/logo-revolution-circle.png') }}" alt="PLN Logo">
-        <span>Sistem SPKLU &bull; PLN UID Jawa Barat</span>
-    </div>
 
     <div class="act-card">
         <div class="act-header">

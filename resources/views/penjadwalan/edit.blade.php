@@ -10,15 +10,15 @@
     .jdf-btn svg { width:15px; height:15px; stroke-width:2.1; }
     .jdf-btn-outline { background:#fff; color:#1E293B; border:1px solid #E2E8F0; }
     .jdf-btn-outline:hover { background:#F8FAFC; border-color:#CBD5E1; }
-    .jdf-btn-primary { background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); border:none; }
-    .jdf-btn-primary:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
+    .jdf-btn-primary { background:#023E8A; color:#fff; box-shadow:0 6px 16px rgba(2,62,138,.25); border:none; }
+    .jdf-btn-primary:hover { background:#002D66; transform:translateY(-1px); box-shadow:0 8px 20px rgba(2,62,138,.32); }
 
     .jdf-alert-error { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.25); color:#C0392B; border-radius:10px; padding:12px 16px; font-size:13.5px; margin:0 auto 18px; max-width:520px; }
 
     .jdf-card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06); max-width:520px; margin:0 auto; overflow:hidden; }
 
     .jdf-form-head { display:flex; align-items:center; gap:14px; padding:22px 24px; background:#FFFFFF; border-bottom:1px solid #F1F5F9; }
-    .jdf-icon-box { width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg, #023E8A, #0081AB); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
+    .jdf-icon-box { width:44px; height:44px; border-radius:12px; background:#023E8A; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 12px rgba(2,62,138,.25); }
     .jdf-icon-box svg { width:20px; height:20px; stroke-width:2.3; }
     .jdf-form-head strong { font-size:17px; font-weight:800; color:#1B2559; display:block; letter-spacing:-.01em; }
     .jdf-form-head span { font-size:12.5px; color:#64748B; }

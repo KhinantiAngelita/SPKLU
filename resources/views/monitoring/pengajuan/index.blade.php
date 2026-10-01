@@ -13,8 +13,8 @@
     /* Tombol */
     .pgj-btn { display:inline-flex; align-items:center; gap:7px; border:none; border-radius:9px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; transition:all .15s ease; text-decoration:none; }
     .pgj-btn svg { width:15px; height:15px; stroke-width:2.1; }
-    .pgj-btn-primary { background:linear-gradient(135deg,#023E8A,#0081AB); color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
-    .pgj-btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.32); }
+    .pgj-btn-primary { background:#023E8A; color:#fff; box-shadow:0 2px 10px rgba(2,62,138,.25); }
+    .pgj-btn-primary:hover { background:#002D66; transform:translateY(-1px); box-shadow:0 4px 14px rgba(2,62,138,.32); }
     .pgj-btn-disabled { background:#eef1f5; color:#94a3b8; cursor:not-allowed; }
     .pgj-btn-disabled:hover { transform:none; }
 
@@ -59,7 +59,8 @@
     .val-modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:22px; }
     .val-btn { border:none; border-radius:9px; font-size:13.3px; font-weight:700; padding:10px 18px; cursor:pointer; }
     .val-btn-outline { background:#fff; color:#1E293B; border:1px solid #e2e8f0; }
-    .val-btn-primary { background:linear-gradient(135deg,#2E9E5B,#238a4c); color:#fff; }
+    .val-btn-primary { background:#2E9E5B; color:#fff; }
+    .val-btn-primary:hover { background:#238a4c; }
 </style>
 
 <div class="pgj-page-header">
