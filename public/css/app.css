@@ -801,15 +801,15 @@ a {
     border-color: rgba(0, 129, 171, 0.25) !important;
 }
 
-/* 2. Edit / Ubah (Pen) - Orange */
+/* 2. Edit / Ubah (Pen) - Amber / Warm Orange (System Color) */
 .btn-action-edit, .action-btn-edit, .btn-edit-user, .mu-icon-btn, .fss-icon-btn-edit, .msp-action-btn, .msp-action-edit, .btn-icon-edit, .mp-edit-btn, .jdi-icon-btn, .up-edit-btn {
-    background: rgba(234, 88, 12, 0.08) !important;
-    color: #EA580C !important;
+    background: rgba(245, 158, 11, 0.12) !important;
+    color: #D97706 !important;
 }
 .btn-action-edit:hover, .action-btn-edit:hover, .btn-edit-user:hover, .mu-icon-btn:hover, .fss-icon-btn-edit:hover, .msp-action-btn:hover, .msp-action-edit:hover, .btn-icon-edit:hover, .mp-edit-btn:hover, .jdi-icon-btn:hover, .up-edit-btn:hover {
-    background: rgba(234, 88, 12, 0.18) !important;
-    color: #C2410C !important;
-    border-color: rgba(234, 88, 12, 0.25) !important;
+    background: rgba(245, 158, 11, 0.22) !important;
+    color: #B45309 !important;
+    border-color: rgba(245, 158, 11, 0.35) !important;
 }
 
 /* 3. Hapus / Delete (Trash) - Crimson Red */

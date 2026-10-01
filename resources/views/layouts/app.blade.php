@@ -160,7 +160,7 @@
         /* ===== Sidebar ===== */
 
         .sidebar {
-            width: 252px; flex-shrink: 0; color: #fff; display: flex; flex-direction: column;
+            width: 276px; flex-shrink: 0; color: #fff; display: flex; flex-direction: column;
             background: linear-gradient(160deg, #023E8A 0%, #034d9e 35%, #0081AB 100%);
             position: relative;
             transition: width .25s cubic-bezier(.4,0,.2,1);
@@ -170,7 +170,7 @@
             background: radial-gradient(circle at 85% 0%, rgba(255,255,255,0.07), transparent 45%);
         }
 
-        .sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 26px 22px 22px; position: relative; z-index: 1; transition: padding .25s ease, justify-content .25s ease; }
+        .sidebar-logo { display: flex; align-items: center; gap: 14px; padding: 26px 24px 22px; position: relative; z-index: 1; transition: padding .25s ease, justify-content .25s ease; }
 
         /* BARU: badge logo jadi lingkaran putih solid berisi logo rEVolution
            asli — sama konsepnya kayak badge di halaman login, cuma
@@ -188,7 +188,7 @@
         .sidebar-logo-text .title { font-weight: 800; font-size: 15px; letter-spacing: -0.01em; line-height: 1.2; margin: 0; }
         .sidebar-logo-text .subtitle { font-size: 11.5px; color: rgba(255,255,255,0.65); line-height: 1.2; margin: 2px 0 0; font-weight: 500; }
 
-        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 14px 16px; position: relative; z-index: 1; }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 16px 20px; position: relative; z-index: 1; }
         .sidebar-nav::-webkit-scrollbar { width: 4px; }
         .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
 
@@ -210,7 +210,7 @@
         }
 
         .sidebar-link {
-            display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 14px; border-radius: 11px;
+            display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 10.5px 15px; border-radius: 11px;
             font-size: 13.8px; font-weight: 500; color: rgba(255,255,255,0.75);
             margin-bottom: 4px; cursor: pointer; border: none; background: none; width: 100%; text-align: left;
             transition: background-color .2s ease, color .2s ease, transform .15s ease, padding .2s ease, justify-content .2s ease;
@@ -220,7 +220,7 @@
         .sidebar-link.active {
             color: #fff; font-weight: 600;
             background: linear-gradient(90deg, rgba(255,198,41,0.2), rgba(255,255,255,0.06));
-            border-left: 3px solid var(--accent-yellow); padding-left: 11px;
+            border-left: 3px solid var(--accent-yellow); padding-left: 12px;
             box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
         }
         .sidebar-link-content {
@@ -240,11 +240,11 @@
         .sidebar-group-toggle.open .chevron { transform: rotate(180deg); }
 
         .sidebar-submenu {
-            margin: 0 0 0 30px; padding-left: 13px; border-left: 1px solid rgba(255,255,255,0.14);
+            margin: 0 0 0 32px; padding-left: 14px; border-left: 1px solid rgba(255,255,255,0.14);
             max-height: 0; opacity: 0; overflow: hidden;
             transition: max-height .3s cubic-bezier(.4,0,.2,1), opacity .25s ease, margin .3s ease;
         }
-        .sidebar-submenu.open { max-height: 300px; opacity: 1; margin: 3px 0 8px 30px; }
+        .sidebar-submenu.open { max-height: 300px; opacity: 1; margin: 3px 0 8px 32px; }
 
         .sidebar-sublink {
             display: block; padding: 8px 12px; border-radius: 8px; font-size: 13.3px;
@@ -253,10 +253,10 @@
         .sidebar-sublink:hover { color: #fff; background-color: rgba(255,255,255,0.07); transform: translateX(2px); }
         .sidebar-sublink.active {
             color: #fff; background-color: rgba(255,255,255,0.11); font-weight: 600;
-            border-left: 3px solid var(--accent-yellow); margin-left: -14px; padding-left: 11px;
+            border-left: 3px solid var(--accent-yellow); margin-left: -15px; padding-left: 12px;
         }
 
-        .sidebar-footer { padding: 14px 14px 18px; border-top: 1px solid rgba(255,255,255,0.12); position: relative; z-index: 1; }
+        .sidebar-footer { padding: 14px 16px 18px; border-top: 1px solid rgba(255,255,255,0.12); position: relative; z-index: 1; }
         .sidebar-user { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 10px; transition: background-color .15s ease, padding .2s ease, justify-content .2s ease; cursor: pointer; text-decoration: none; color: inherit; }
         .sidebar-user:hover { background-color: rgba(255,255,255,.08); }
         .sidebar-avatar {

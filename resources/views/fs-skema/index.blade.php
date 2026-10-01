@@ -27,8 +27,8 @@
 .fss-icon-btn:hover{transform:translateY(-1px)}
 .fss-icon-btn-view{background:rgba(0,129,171,.10);color:#0081AB}
 .fss-icon-btn-view:hover{background:rgba(0,129,171,.18)}
-.fss-icon-btn-edit{background:rgba(234,88,12,.08);color:#EA580C}
-.fss-icon-btn-edit:hover{background:rgba(234,88,12,.18);color:#C2410C;border-color:rgba(234,88,12,.25)}
+.fss-icon-btn-edit{background:rgba(245,158,11,.12);color:#D97706}
+.fss-icon-btn-edit:hover{background:rgba(245,158,11,.22);color:#B45309;border-color:rgba(245,158,11,.35)}
 .fss-icon-btn-delete{background:rgba(192,57,43,.08);color:#C0392B}
 .fss-icon-btn-delete:hover{background:rgba(192,57,43,.18);color:#962D22}
 .fss-icon-btn svg{width:15px;height:15px;stroke-width:2.2}

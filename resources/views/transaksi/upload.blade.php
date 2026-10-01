@@ -151,8 +151,8 @@
     .up-del-btn:hover { background:rgba(192,57,43,.18); transform:translateY(-1px); }
     .up-match-btn { background:rgba(2,62,138,.08); color:#023E8A; position:relative; }
     .up-match-btn:hover { background:rgba(2,62,138,.18); transform:translateY(-1px); }
-    .up-edit-btn { background:rgba(234,88,12,.08); color:#EA580C; }
-    .up-edit-btn:hover { background:rgba(234,88,12,.18); color:#C2410C; transform:translateY(-1px); }
+    .up-edit-btn { background:rgba(245,158,11,.12); color:#D97706; }
+    .up-edit-btn:hover { background:rgba(245,158,11,.22); color:#B45309; transform:translateY(-1px); }
     .up-del-btn svg, .up-match-btn svg, .up-edit-btn svg { width:15px; height:15px; stroke-width:2.2; }
     .up-match-count {
         position:absolute; top:-5px; right:-5px; background:#C0392B; color:#fff;
