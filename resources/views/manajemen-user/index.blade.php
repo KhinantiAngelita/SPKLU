@@ -522,52 +522,60 @@
         display: flex;
         align-items: center;
         gap: 9px;
+        white-space: nowrap;
     }
     .mu-pending-wrap {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
     }
     .mu-badge-pending {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 4.5px 11px;
+        gap: 5px;
+        padding: 4px 10px;
         border-radius: 999px;
         font-size: 11.5px;
         font-weight: 700;
         background: #FEF3C7;
         color: #B45309;
         border: 1px solid #FDE68A;
+        white-space: nowrap;
     }
     .mu-pending-dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
         background: #D97706;
+        flex-shrink: 0;
     }
     .mu-btn-resend {
-        background: none;
-        border: none;
+        background: rgba(0, 129, 171, 0.08);
+        border: 1px solid rgba(0, 129, 171, 0.2);
         color: #0081AB;
-        font-size: 11.5px;
+        font-size: 11px;
         font-weight: 700;
         cursor: pointer;
-        padding: 0;
+        padding: 3.5px 8px;
+        border-radius: 7px;
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        transition: color .15s ease;
-        margin-left: 2px;
+        white-space: nowrap;
+        transition: all .15s ease;
     }
     .mu-btn-resend:hover {
-        color: #023E8A;
-        text-decoration: underline;
+        background: #0081AB;
+        color: #ffffff;
+        border-color: #0081AB;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 129, 171, 0.25);
     }
     .mu-btn-resend svg {
         width: 12px;
         height: 12px;
+        stroke-width: 2.2;
     }
 
     /* Soft Toggle Switch */
