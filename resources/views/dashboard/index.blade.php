@@ -845,26 +845,8 @@
     ========================================================= --}}
 <div class="dsh-topbar">
     <div>
-        <h1 class="dsh-welcome-title">
-            <svg style="width:26px; height:26px; color:#023E8A;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
-            </svg>
-            Dashboard Eksekutif SPKLU
-        </h1>
+        <h1 class="dsh-welcome-title">Dashboard Eksekutif SPKLU</h1>
         <p class="dsh-welcome-subtitle">Overview performa operasional, penetrasi wilayah, transaksi energi, dan pipeline kandidat SPKLU PLN UID</p>
-    </div>
-
-    <div class="dsh-topbar-actions">
-        <div class="dsh-status-pill">
-            <span class="dsh-pulse-dot"></span>
-            Sistem Aktif
-        </div>
-        <div class="dsh-date-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            {{ now()->translatedFormat('l, d F Y') }}
-        </div>
     </div>
 </div>
 

@@ -7,8 +7,61 @@
 
 <style>
     .mp-subtitle { color:#64748B; margin:-6px 0 24px; font-size:13.5px; }
-    .mp-section-title { font-size:16px; font-weight:800; color:#1B2559; margin:24px 0 14px; display:flex; align-items:center; gap:8px; }
-    .mp-section-title svg { width:18px; height:18px; stroke-width:2.2; color:#0081AB; }
+
+    /* Section divider & header */
+    .mp-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 36px 0 16px;
+        padding-top: 24px;
+        border-top: 1px solid #E2E8F0;
+        flex-wrap: wrap;
+    }
+    .mp-section-header:first-of-type {
+        margin-top: 18px;
+        padding-top: 0;
+        border-top: none;
+    }
+    .mp-section-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .mp-section-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1B2559;
+        margin: 0 0 3px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.01em;
+    }
+    .mp-section-title svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2.2;
+        color: #0081AB;
+    }
+    .mp-section-desc {
+        font-size: 12.5px;
+        color: #64748B;
+        margin: 0;
+    }
+    .mp-section-badge {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(0, 129, 171, 0.08);
+        color: #0081AB;
+        border: 1px solid rgba(0, 129, 171, 0.18);
+        white-space: nowrap;
+    }
 
     .mp-grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-bottom:24px; }
     .mp-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
@@ -101,9 +154,17 @@
 </div>
 
 {{-- SECTION 1: PARAMETER PENILAIAN LOKASI (3 CARDS) --}}
-<div class="mp-section-title">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-    Parameter Penilaian Lokasi &amp; Bobot Poin
+<div class="mp-section-header">
+    <div class="mp-section-header-left">
+        <div>
+            <h2 class="mp-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Parameter Penilaian Lokasi &amp; Bobot Poin
+            </h2>
+            <p class="mp-section-desc">Konfigurasi bobot penilaian teknis: kesiapan jaringan listrik, fasilitas penunjang, dan okupansi pasar</p>
+        </div>
+    </div>
+    <span class="mp-section-badge">Kriteria Penilaian SPK</span>
 </div>
 
 <div class="mp-grid-3">
@@ -279,9 +340,17 @@
 </div>
 
 {{-- SECTION 2: MITRA MESIN (FULL CARD CRUD) --}}
-<div class="mp-section-title">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-    Master Mitra Mesin SPKLU
+<div class="mp-section-header">
+    <div class="mp-section-header-left">
+        <div>
+            <h2 class="mp-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Master Mitra Mesin SPKLU
+            </h2>
+            <p class="mp-section-desc">Daftar vendor penyedia unit charging station terdaftar untuk seleksi kandidat &amp; pemodelan kemitraan</p>
+        </div>
+    </div>
+    <span class="mp-section-badge">Katalog Mitra Mesin</span>
 </div>
 
 <div class="surface-card" style="margin-bottom:24px;">
@@ -361,9 +430,17 @@
 </div>
 
 {{-- SECTION 3: TARIF LISTRIK & TARGET TAHUNAN --}}
-<div class="mp-section-title">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-    Tarif &amp; Target Operasional
+<div class="mp-section-header">
+    <div class="mp-section-header-left">
+        <div>
+            <h2 class="mp-section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Tarif &amp; Target Operasional
+            </h2>
+            <p class="mp-section-desc">Parameter tarif dasar listrik layanan SPKLU dan sasaran jumlah unit terpasang tahunan</p>
+        </div>
+    </div>
+    <span class="mp-section-badge">Tarif &amp; Target</span>
 </div>
 
 <div class="mp-grid-2">
