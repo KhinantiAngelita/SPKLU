@@ -193,25 +193,27 @@
         gap: 12px;
     }
     .mu-section-header-icon {
-        width: 36px;
-        height: 36px;
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
         border-radius: 10px;
-        background: linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.12));
-        color: #023E8A;
+        background: linear-gradient(135deg, #023E8A, #0081AB);
+        color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
     }
     .mu-section-header-icon svg {
-        width: 18px;
-        height: 18px;
-        stroke-width: 2.2;
+        width: 17px;
+        height: 17px;
+        stroke-width: 2;
+        color: #fff;
     }
     .mu-section-header-title {
-        font-size: 15px;
+        font-size: 16.5px;
         font-weight: 800;
-        color: #023E8A;
+        color: #1B2559;
         margin: 0;
     }
     .mu-section-header-sub {
