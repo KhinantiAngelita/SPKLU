@@ -46,7 +46,7 @@
                 >
                     <span class="sidebar-link-content">
                         <i data-lucide="{{ $item['icon'] }}"></i>
-                        {{ $item['label'] }}
+                        <span class="sidebar-link-text">{{ $item['label'] }}</span>
                     </span>
                     <i data-lucide="chevron-down" class="chevron"></i>
                 </button>
@@ -66,7 +66,7 @@
                 @php $active = request()->routeIs($item['route'].'*'); @endphp
                 <a href="{{ route($item['route']) }}" class="sidebar-link {{ $active ? 'active' : '' }}" title="{{ $item['label'] }}">
                     <i data-lucide="{{ $item['icon'] }}"></i>
-                    {{ $item['label'] }}
+                    <span class="sidebar-link-text">{{ $item['label'] }}</span>
                 </a>
 
             @endif
@@ -84,7 +84,7 @@
             @csrf
             <button type="submit" title="Keluar">
                 <i data-lucide="log-out"></i>
-                Keluar
+                <span class="sidebar-logout-text">Keluar</span>
             </button>
         </form>
     </div>

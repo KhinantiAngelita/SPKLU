@@ -299,27 +299,122 @@
            ===================================================================== */
         body.sidebar-collapsed .sidebar { width: 76px; }
 
-        body.sidebar-collapsed .sidebar-logo { justify-content: center; padding: 26px 0 22px; }
-        body.sidebar-collapsed .sidebar-logo-text { display: none; }
+        body.sidebar-collapsed .sidebar-logo {
+            justify-content: center;
+            padding: 22px 0 18px;
+        }
+        body.sidebar-collapsed .sidebar-logo-text { display: none !important; }
+
+        body.sidebar-collapsed .sidebar-nav {
+            padding: 10px 0 20px;
+        }
 
         body.sidebar-collapsed .sidebar-link,
         body.sidebar-collapsed .sidebar-group-toggle {
-            justify-content: center; padding: 10px 0;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0 !important;
+            padding: 0 !important;
+            width: 44px !important;
+            height: 44px !important;
+            margin: 0 auto 6px !important;
+            border-radius: 12px !important;
+            box-sizing: border-box !important;
+            font-size: 0 !important;
         }
-        body.sidebar-collapsed .sidebar-link.active { padding-left: 0; border-left: none; }
-        body.sidebar-collapsed .sidebar-link-content { justify-content: center; gap: 0; }
-        /* Trik: font-size:0 bikin teks label (text node biasa, nempel
-           langsung setelah ikon di markup) visually hilang tanpa perlu
-           bungkus ulang tiap label ke <span> terpisah di blade. Ikon svg/i
-           gak kena efek karena ukurannya di-set eksplisit px, bukan em. */
-        body.sidebar-collapsed .sidebar-link,
-        body.sidebar-collapsed .sidebar-link-content { font-size: 0; }
+        body.sidebar-collapsed .sidebar-link:hover,
+        body.sidebar-collapsed .sidebar-group-toggle:hover {
+            transform: none !important;
+        }
+        body.sidebar-collapsed .sidebar-link.active {
+            padding: 0 !important;
+            border-left: none !important;
+            background: rgba(255, 255, 255, 0.16) !important;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+        }
+        body.sidebar-collapsed .sidebar-link-content {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            font-size: 0 !important;
+        }
+        body.sidebar-collapsed .sidebar-link i,
+        body.sidebar-collapsed .sidebar-link svg {
+            width: 20px !important;
+            height: 20px !important;
+            stroke-width: 2 !important;
+            margin: 0 !important;
+            flex-shrink: 0 !important;
+        }
+        body.sidebar-collapsed .sidebar-link:hover i,
+        body.sidebar-collapsed .sidebar-link:hover svg {
+            transform: none !important;
+        }
+        body.sidebar-collapsed .sidebar-link-text,
+        body.sidebar-collapsed .sidebar-logout-text {
+            display: none !important;
+        }
         body.sidebar-collapsed .chevron,
         body.sidebar-collapsed .sidebar-submenu { display: none !important; }
 
-        body.sidebar-collapsed .sidebar-user { justify-content: center; padding: 8px 0; }
-        body.sidebar-collapsed .sidebar-user-name { display: none; }
-        body.sidebar-collapsed .sidebar-logout-form button { justify-content: center; padding: 9px 0; font-size: 0; }
+        body.sidebar-collapsed .sidebar-footer {
+            padding: 14px 0 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        body.sidebar-collapsed .sidebar-user {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            width: 44px !important;
+            height: 44px !important;
+            margin: 0 auto 6px !important;
+            border-radius: 12px !important;
+        }
+        body.sidebar-collapsed .sidebar-user:hover {
+            transform: none !important;
+        }
+        body.sidebar-collapsed .sidebar-user-name { display: none !important; }
+        body.sidebar-collapsed .sidebar-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 14px !important;
+            margin: 0 auto !important;
+        }
+        body.sidebar-collapsed .sidebar-logout-form {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+        body.sidebar-collapsed .sidebar-logout-form button {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0 !important;
+            padding: 0 !important;
+            width: 44px !important;
+            height: 44px !important;
+            margin: 0 auto !important;
+            border-radius: 12px !important;
+            font-size: 0 !important;
+        }
+        body.sidebar-collapsed .sidebar-logout-form button:hover {
+            transform: none !important;
+        }
+        body.sidebar-collapsed .sidebar-logout-form button i,
+        body.sidebar-collapsed .sidebar-logout-form button svg {
+            width: 19px !important;
+            height: 19px !important;
+            stroke-width: 2 !important;
+            margin: 0 !important;
+        }
 
         /* =====================================================================
            Sidebar Light Mode — dikontrol lewat class "sidebar-light" di <body>,
@@ -361,11 +456,21 @@
         }
         body.sidebar-light.sidebar-collapsed .sidebar-link.active {
             border-left: none !important;
+            background: #EFF6FB !important;
+            color: #023E8A !important;
+            border: 1px solid #BAE6FD !important;
+            box-shadow: 0 1px 3px rgba(2, 62, 138, 0.05) !important;
+        }
+        body.sidebar-light.sidebar-collapsed .sidebar-link:hover,
+        body.sidebar-light.sidebar-collapsed .sidebar-group-toggle:hover {
+            background-color: rgba(2, 62, 138, 0.06) !important;
+            color: #023E8A !important;
+            transform: none !important;
         }
         body.sidebar-light .sidebar-link.active i,
         body.sidebar-light .sidebar-link.active svg {
             color: #023E8A !important;
-            filter: drop-shadow(0 0 4px rgba(2, 62, 138, 0.25)) !important;
+            filter: none !important;
         }
         body.sidebar-light .sidebar-group-toggle .chevron {
             color: #64748B !important;
