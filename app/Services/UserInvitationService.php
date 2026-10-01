@@ -5,17 +5,19 @@ namespace App\Services;
 use App\Enums\UserStatus;
 use App\Mail\UserInvitationMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UserInvitationService
 {
-    public function invite(string $name, string $email, string $role, User $invitedBy): User
+    public function invite(string $name, string $email, string $role, User $invitedBy, ?string $up3 = null): User
     {
         $user = User::create([
             'name' => $name,
             'email' => $email,
             'role' => $role,
+            'up3' => $up3,
             'status' => UserStatus::Pending,
             'password' => null,
             'invitation_token' => User::generateInvitationToken(),
@@ -23,7 +25,11 @@ class UserInvitationService
             'invited_by' => $invitedBy->id,
         ]);
 
-        Mail::to($user->email)->send(new UserInvitationMail($user));
+        try {
+            Mail::to($user->email)->send(new UserInvitationMail($user));
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengirim email undangan ke '.$user->email.': '.$e->getMessage());
+        }
 
         return $user;
     }
@@ -35,10 +41,14 @@ class UserInvitationService
             'invitation_expires_at' => now()->addDays(7),
         ]);
 
-        Mail::to($user->email)->send(new UserInvitationMail($user));
+        try {
+            Mail::to($user->email)->send(new UserInvitationMail($user));
+        } catch (\Throwable $e) {
+            Log::warning('Gagal mengirim ulang email undangan ke '.$user->email.': '.$e->getMessage());
+        }
     }
 
-    public function createDirectly(string $name, string $email, string $role, ?string $password, User $createdBy): array
+    public function createDirectly(string $name, string $email, string $role, ?string $password, User $createdBy, ?string $up3 = null): array
     {
         $plainPassword = $password ?: Str::password(12);
 
@@ -46,6 +56,7 @@ class UserInvitationService
             'name' => $name,
             'email' => $email,
             'role' => $role,
+            'up3' => $up3,
             'status' => UserStatus::Active,
             'password' => bcrypt($plainPassword),
             'force_password_change' => true,

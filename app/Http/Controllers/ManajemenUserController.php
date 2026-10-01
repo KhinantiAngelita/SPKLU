@@ -20,6 +20,7 @@ class ManajemenUserController extends Controller
             }))
             ->when($request->filled('role'), fn ($q) => $q->where('role', $request->role))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
+            ->when($request->filled('up3'), fn ($q) => $q->where('up3', $request->up3))
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -40,11 +41,12 @@ class ManajemenUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:super_admin,pemasaran,pengelola,manajemen',
+            'up3' => 'nullable|string|in:'.implode(',', User::DAFTAR_UP3),
             'password' => 'nullable|min:8',
         ]);
 
         if ($request->mode === 'invite') {
-            $this->invitationService->invite($request->name, $request->email, $request->role, $request->user());
+            $this->invitationService->invite($request->name, $request->email, $request->role, $request->user(), $request->up3);
 
             return back()->with('success', 'Undangan berhasil dikirim ke '.$request->email);
         }
@@ -54,7 +56,8 @@ class ManajemenUserController extends Controller
             $request->email,
             $request->role,
             $request->password,
-            $request->user()
+            $request->user(),
+            $request->up3
         );
 
         return back()->with([
@@ -92,9 +95,10 @@ class ManajemenUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'role' => 'required|in:super_admin,pemasaran,pengelola,manajemen',
+            'up3' => 'nullable|string|in:'.implode(',', User::DAFTAR_UP3),
         ]);
 
-        $user->update($request->only('name', 'role'));
+        $user->update($request->only('name', 'role', 'up3'));
 
         return back()->with('success', 'Data user diperbarui.');
     }

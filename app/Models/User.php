@@ -12,8 +12,27 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    public const DAFTAR_UP3 = [
+        'UP3 Bandung',
+        'UP3 Bekasi',
+        'UP3 Bogor',
+        'UP3 Cianjur',
+        'UP3 Cikarang',
+        'UP3 Cimahi',
+        'UP3 Cirebon',
+        'UP3 Depok',
+        'UP3 Garut',
+        'UP3 Gunung Putri',
+        'UP3 Karawang',
+        'UP3 Majalaya',
+        'UP3 Purwakarta',
+        'UP3 Sukabumi',
+        'UP3 Sumedang',
+        'UP3 Tasikmalaya',
+    ];
+
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'status',
+        'name', 'email', 'password', 'role', 'up3', 'status',
         'google_id', 'avatar', 'invited_by',
         'invitation_token', 'invitation_expires_at',
         'force_password_change', 'created_directly_by',
@@ -46,6 +65,16 @@ class User extends Authenticatable
     public function createdDirectlyBy()
     {
         return $this->belongsTo(User::class, 'created_directly_by');
+    }
+
+    public function riwayatAktivasi()
+    {
+        return $this->hasMany(RiwayatAktivasi::class, 'user_id');
+    }
+
+    public function riwayatAktivasiTerakhir()
+    {
+        return $this->hasOne(RiwayatAktivasi::class, 'user_id')->latestOfMany();
     }
 
     // ---------- Helper Undangan ----------

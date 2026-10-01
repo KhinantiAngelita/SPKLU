@@ -446,6 +446,19 @@
         color: #475569;
         border: 1px solid #E2E8F0;
     }
+    .mu-badge-up3 {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+        background: rgba(2, 62, 138, 0.08);
+        color: #023E8A;
+        border: 1px solid rgba(2, 62, 138, 0.16);
+        white-space: nowrap;
+    }
 
     /* ── Status Styles ── */
     .mu-status-cell {
@@ -882,6 +895,13 @@
             <option value="manajemen" {{ request('role') === 'manajemen' ? 'selected' : '' }}>Manajemen</option>
         </select>
 
+        <select name="up3" class="mu-select-filter" onchange="this.form.submit()">
+            <option value="">Semua UP3</option>
+            @foreach (\App\Models\User::DAFTAR_UP3 as $uUp3)
+                <option value="{{ $uUp3 }}" {{ request('up3') === $uUp3 ? 'selected' : '' }}>{{ $uUp3 }}</option>
+            @endforeach
+        </select>
+
         <select name="status" class="mu-select-filter" onchange="this.form.submit()">
             <option value="">Semua Status</option>
             <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
@@ -889,7 +909,7 @@
             <option value="nonaktif" {{ request('status') === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
         </select>
 
-        @if (request()->filled('search') || request()->filled('role') || request()->filled('status'))
+        @if (request()->filled('search') || request()->filled('role') || request()->filled('status') || request()->filled('up3'))
             <a href="{{ route('manajemen-user.index') }}" class="mu-reset-btn" title="Reset semua filter">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 Reset
@@ -904,6 +924,7 @@
                 <tr>
                     <th>Nama &amp; Pengguna</th>
                     <th>Email</th>
+                    <th>UP3</th>
                     <th>Role / Akses</th>
                     <th>Status</th>
                     <th>Terakhir Login</th>
@@ -931,6 +952,16 @@
                     </td>
                     <td>
                         <span style="font-weight: 500; color: #475569;">{{ $u->email }}</span>
+                    </td>
+                    <td>
+                        @if ($u->up3)
+                            <span class="mu-badge-up3" title="Unit Pelaksana: {{ $u->up3 }}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                {{ $u->up3 }}
+                            </span>
+                        @else
+                            <span style="color: #94A3B8; font-size: 12.5px;">—</span>
+                        @endif
                     </td>
                     <td>
                         <span class="mu-role-badge mu-role-{{ $u->role }}">
@@ -976,7 +1007,8 @@
                                     data-id="{{ $u->id }}"
                                     data-name="{{ $u->name }}"
                                     data-email="{{ $u->email }}"
-                                    data-role="{{ $u->role }}">
+                                    data-role="{{ $u->role }}"
+                                    data-up3="{{ $u->up3 }}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                             </button>
 
@@ -995,14 +1027,14 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="mu-empty-box">
                             <div class="mu-empty-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
                             </div>
                             <p class="mu-empty-title">Tidak ada pengguna ditemukan</p>
                             <p class="mu-empty-text">Coba periksa kembali kata kunci pencarian atau sesuaikan filter Anda.</p>
-                            @if (request()->filled('search') || request()->filled('role') || request()->filled('status'))
+                            @if (request()->filled('search') || request()->filled('role') || request()->filled('status') || request()->filled('up3'))
                                 <a href="{{ route('manajemen-user.index') }}" class="mu-btn mu-btn-outline" style="display:inline-flex;">Reset Filter</a>
                             @endif
                         </div>
@@ -1069,6 +1101,17 @@
                     <option value="pengelola">Pengelola (Operasional &amp; Monitoring SPKLU)</option>
                     <option value="manajemen">Manajemen (Laporan &amp; Ringkasan Eksekutif)</option>
                 </select>
+            </div>
+
+            <div class="mu-field">
+                <label for="new-up3">Unit Pelaksana Pelayanan Pelanggan (UP3)</label>
+                <select id="new-up3" name="up3">
+                    <option value="">-- Pilih UP3 (Opsional) --</option>
+                    @foreach (\App\Models\User::DAFTAR_UP3 as $optUp3)
+                        <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
+                <span style="font-size:11.5px; color:#64748B; margin-top:4px; display:block;">Pilih unit penugasan UP3 pengguna di lingkungan UID Jawa Barat.</span>
             </div>
 
             <div id="panel-invite">
@@ -1139,9 +1182,19 @@
                 </select>
             </div>
 
+            <div class="mu-field">
+                <label for="edit-user-up3">Unit Pelaksana Pelayanan Pelanggan (UP3)</label>
+                <select id="edit-user-up3" name="up3">
+                    <option value="">-- Tidak Ditentukan / Pusat --</option>
+                    @foreach (\App\Models\User::DAFTAR_UP3 as $optUp3)
+                        <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="mu-hint-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span>Perubahan role langsung berlaku pada sesi login pengguna berikutnya. Alamat email tidak dapat diubah demi audit integritas.</span>
+                <span>Perubahan data langsung tersimpan. Alamat email tidak dapat diubah demi audit integritas.</span>
             </div>
 
             <div class="mu-modal-footer">
@@ -1191,11 +1244,13 @@ document.addEventListener('DOMContentLoaded', function() {
             var userName = this.getAttribute('data-name');
             var userEmail = this.getAttribute('data-email');
             var userRole = this.getAttribute('data-role');
+            var userUp3 = this.getAttribute('data-up3') || '';
 
             var form = document.getElementById('edit-user-form');
             form.action = '/manajemen-user/' + userId;
             document.getElementById('edit-user-name').value = userName;
             document.getElementById('edit-user-role').value = userRole;
+            document.getElementById('edit-user-up3').value = userUp3;
             document.getElementById('edit-user-email-display').textContent = userEmail;
 
             openModal('modal-edit-user');

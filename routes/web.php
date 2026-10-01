@@ -48,12 +48,17 @@ Route::prefix('login/first-otp')->name('login.first-otp.')->group(function () {
 // ============ AKTIVASI UNDANGAN (tanpa auth) ============
 
 Route::prefix('activation')->name('activation.')->group(function () {
+    Route::get('/', [ActivationController::class, 'showDirectActivation'])
+        ->name('index');
+
+    Route::post('request-otp', [ActivationController::class, 'requestOtpDirect'])
+        ->name('request-otp-direct');
 
     Route::get('{token}', [ActivationController::class, 'show'])
         ->name('show');
 
-    Route::post('{token}/send-otp', [ActivationController::class, 'sendOtp'])
-        ->name('send-otp');
+    Route::post('{token}/select-up3', [ActivationController::class, 'selectUp3'])
+        ->name('select-up3');
 
     Route::get('{token}/otp', [ActivationController::class, 'showOtpForm'])
         ->name('otp-form');
@@ -61,11 +66,17 @@ Route::prefix('activation')->name('activation.')->group(function () {
     Route::post('{token}/otp', [ActivationController::class, 'verifyOtp'])
         ->name('verify-otp');
 
+    Route::post('{token}/resend-otp', [ActivationController::class, 'resendOtp'])
+        ->name('resend-otp');
+
     Route::get('{token}/set-password', [ActivationController::class, 'showSetPassword'])
         ->name('set-password');
 
     Route::post('{token}/set-password', [ActivationController::class, 'setPassword'])
         ->name('store-password');
+
+    Route::get('{token}/success', [ActivationController::class, 'showSuccess'])
+        ->name('success');
 });
 
 // ============ GOOGLE OAUTH (tanpa auth) ============

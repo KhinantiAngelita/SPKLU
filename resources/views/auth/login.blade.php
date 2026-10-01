@@ -159,7 +159,7 @@
                 </div>
                 <div class="login-brand-text">
                     <p class="title">Dashboard SPKLU</p>
-                    <p class="subtitle">PLN UP3 Bogor</p>
+                    <p class="subtitle">PLN UID Jawa Barat</p>
                 </div>
             </div>
 
@@ -184,12 +184,12 @@
                         <div class="login-brand-feature-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                         </div>
-                        Audit trail & kontrol akses berbasis role
+                        Audit trail &amp; kontrol akses berbasis role
                     </div>
                 </div>
             </div>
 
-            <div class="login-brand-footer">© {{ date('Y') }} PT PLN (Persero) UP3 Bogor</div>
+            <div class="login-brand-footer">© {{ date('Y') }} PT PLN (Persero) — 16 Unit Pelaksana Pelayanan Pelanggan (UP3)</div>
         </div>
 
         <div class="login-form-panel">
@@ -198,6 +198,13 @@
                     <h2>Selamat Datang</h2>
                     <p>Masuk ke akun Anda untuk melanjutkan</p>
                 </div>
+
+                @if (session('info'))
+                    <div class="login-alert" style="background:rgba(0,129,171,.08); border-color:rgba(0,129,171,.25); color:#0081AB;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span>{{ session('info') }}</span>
+                    </div>
+                @endif
 
                 @if (session('error'))
                     <div class="login-alert">
@@ -209,7 +216,14 @@
                 @error('email')
                     <div class="login-alert">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <span>{{ $message }}</span>
+                        <div>
+                            <span>{{ $message }}</span>
+                            @if (str_contains($message, 'belum aktif'))
+                                <div style="margin-top:6px;">
+                                    <a href="{{ route('activation.index') }}" style="color:#C0392B; font-weight:700; text-decoration:underline;">Aktivasi akun via OTP sekarang &rarr;</a>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 @enderror
 
@@ -252,6 +266,16 @@
                     <img src="https://www.google.com/favicon.ico" alt="">
                     Masuk dengan Google
                 </a>
+
+                <div style="text-align:center; margin-top:24px; padding-top:20px; border-top:1px solid #f1f5f9; font-size:13px; color:#64748B;">
+                    Belum mengaktivasi akun Anda?
+                    <div>
+                        <a href="{{ route('activation.index') }}" style="color:#0081AB; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:5px; margin-top:6px;">
+                            Pilih UP3 &amp; Aktivasi Akun via OTP
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="14" height="14" stroke-width="2.4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
