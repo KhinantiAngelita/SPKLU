@@ -218,6 +218,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [ManajemenUserController::class, 'index'])
                 ->name('index');
 
+            Route::get('{user}/detail', [ManajemenUserController::class, 'detail'])
+                ->name('detail');
+
             Route::post('/', [ManajemenUserController::class, 'store'])
                 ->name('store');
 

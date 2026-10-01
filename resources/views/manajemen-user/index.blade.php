@@ -653,6 +653,33 @@
         stroke-width: 2.2;
     }
 
+    .mu-view-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 129, 171, 0.25);
+        background: rgba(0, 129, 171, 0.08);
+        color: #0081AB;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .15s ease;
+        box-sizing: border-box;
+    }
+    .mu-view-btn:hover {
+        background: rgba(0, 129, 171, 0.18);
+        border-color: rgba(0, 129, 171, 0.4);
+        color: #023E8A;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 129, 171, 0.2);
+    }
+    .mu-view-btn svg {
+        width: 15px;
+        height: 15px;
+        stroke-width: 2.2;
+    }
+
     .mu-del-btn {
         width: 34px;
         height: 34px;
@@ -888,13 +915,304 @@
         flex-shrink: 0;
         margin-top: 2px;
     }
-    .mu-modal-footer {
+    /* ── Modal Large (Detail User) ── */
+    .mu-modal-lg {
+        width: 660px !important;
+        max-width: 95vw !important;
+        max-height: 90vh;
         display: flex;
-        justify-content: flex-end;
+        flex-direction: column;
+    }
+    .mu-modal-scrollable {
+        overflow-y: auto;
+        padding: 20px 24px;
+        max-height: calc(90vh - 130px);
+    }
+    .mu-detail-card {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+    }
+    .mu-detail-top {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .mu-detail-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .mu-detail-meta {
+        flex: 1;
+        min-width: 0;
+    }
+    .mu-detail-name {
+        font-size: 16px;
+        font-weight: 800;
+        color: #0F172A;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .mu-detail-email {
+        font-size: 13px;
+        color: #64748B;
+        margin: 2px 0 0;
+    }
+    .mu-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        margin-top: 22px;
-        padding-top: 16px;
-        border-top: 1px solid #F1F5F9;
+        padding-top: 12px;
+        border-top: 1px solid #E2E8F0;
+    }
+    @media (max-width: 540px) {
+        .mu-detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .mu-detail-item {
+        background: #fff;
+        border: 1px solid #EDF2F7;
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .mu-detail-item-highlight {
+        grid-column: span 2;
+        background: linear-gradient(135deg, rgba(2,62,138,.04), rgba(0,129,171,.08));
+        border: 1px solid #BAE6FD;
+    }
+    @media (max-width: 540px) {
+        .mu-detail-item-highlight {
+            grid-column: span 1;
+        }
+    }
+    .mu-detail-item-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .mu-detail-item-val {
+        font-size: 13px;
+        font-weight: 750;
+        color: #1E293B;
+    }
+    .mu-detail-item-val.highlight {
+        color: #023E8A;
+        font-size: 13.5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    /* Sub Tabs inside Modal Detail */
+    .mu-subtabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #EEF2F6;
+        padding-bottom: 10px;
+    }
+    .mu-subtab-btn {
+        background: transparent;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748B;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: all .15s ease;
+    }
+    .mu-subtab-btn:hover {
+        background: #F1F5F9;
+        color: #1E293B;
+    }
+    .mu-subtab-btn.active {
+        background: #EFF6FB;
+        color: #0081AB;
+    }
+    .mu-subtab-badge {
+        font-size: 11px;
+        background: #E2E8F0;
+        color: #475569;
+        padding: 1px 7px;
+        border-radius: 999px;
+    }
+    .mu-subtab-btn.active .mu-subtab-badge {
+        background: #BAE6FD;
+        color: #023E8A;
+    }
+
+    /* Timeline Activity & Logs */
+    .mu-timeline {
+        position: relative;
+        padding-left: 28px;
+    }
+    .mu-timeline::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        bottom: 8px;
+        left: 11px;
+        width: 2px;
+        background: #E2E8F0;
+    }
+    .mu-timeline-item {
+        position: relative;
+        margin-bottom: 16px;
+    }
+    .mu-timeline-item:last-child {
+        margin-bottom: 0;
+    }
+    .mu-timeline-dot {
+        position: absolute;
+        left: -28px;
+        top: 2px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #CBD5E1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        z-index: 2;
+    }
+    .mu-timeline-dot.login {
+        border-color: #16A34A;
+        background: #DCFCE7;
+        color: #15803D;
+    }
+    .mu-timeline-dot.logout {
+        border-color: #94A3B8;
+        background: #F1F5F9;
+        color: #64748B;
+    }
+    .mu-timeline-dot.change {
+        border-color: #0081AB;
+        background: #E0F2FE;
+        color: #023E8A;
+    }
+    .mu-timeline-dot svg {
+        width: 12px;
+        height: 12px;
+        stroke-width: 2.4;
+    }
+    .mu-timeline-card {
+        background: #fff;
+        border: 1px solid #EDF2F7;
+        border-radius: 11px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 3px rgba(15,23,42,.03);
+        transition: border-color .15s ease;
+    }
+    .mu-timeline-card:hover {
+        border-color: #CBD5E1;
+    }
+    .mu-timeline-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+    }
+    .mu-timeline-title {
+        font-size: 13px;
+        font-weight: 750;
+        color: #1E293B;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .mu-timeline-time {
+        font-size: 11.5px;
+        color: #94A3B8;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .mu-timeline-sub {
+        font-size: 12px;
+        color: #64748B;
+        margin: 2px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .mu-timeline-meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .mu-diff-box {
+        margin-top: 8px;
+        background: #F8FAFC;
+        border: 1px dashed #CBD5E1;
+        border-radius: 7px;
+        padding: 8px 10px;
+        font-size: 11.5px;
+        color: #334155;
+    }
+    .mu-diff-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 3px;
+    }
+    .mu-diff-item:last-child {
+        margin-bottom: 0;
+    }
+    .mu-diff-label {
+        font-weight: 700;
+        color: #64748B;
+        min-width: 60px;
+    }
+    .mu-diff-old {
+        text-decoration: line-through;
+        color: #EF4444;
+        background: #FEF2F2;
+        padding: 1px 5px;
+        border-radius: 4px;
+    }
+    .mu-diff-arrow {
+        color: #94A3B8;
+        font-size: 11px;
+    }
+    .mu-diff-new {
+        color: #16A34A;
+        font-weight: 700;
+        background: #F0FDF4;
+        padding: 1px 5px;
+        border-radius: 4px;
     }
 </style>
 
@@ -1015,7 +1333,6 @@
                     <th>UP3</th>
                     <th>Role / Akses</th>
                     <th>Status</th>
-                    <th style="white-space: nowrap; min-width: 150px;">Terakhir Login</th>
                     <th style="text-align: right;">Aksi</th>
                 </tr>
             </thead>
@@ -1028,8 +1345,8 @@
                                 {{ strtoupper(substr($u->name, 0, 2)) }}
                             </div>
                             <div>
-                                <p class="mu-user-name">
-                                    {{ $u->name }}
+                                <p class="mu-user-name" onclick="openDetailUser({{ $u->id }})" style="cursor: pointer;" title="Lihat detail & riwayat pengguna">
+                                    <span style="border-bottom: 1px dashed rgba(2,62,138,0.35);">{{ $u->name }}</span>
                                     @if ($u->id === auth()->id())
                                         <span class="mu-user-you">Anda</span>
                                     @endif
@@ -1089,21 +1406,12 @@
                             @endif
                         </div>
                     </td>
-                    <td style="white-space: nowrap;">
-                        @if($u->last_login_at)
-                            <div style="font-size: 13px; font-weight: 700; color: #1E293B; line-height: 1.35; white-space: nowrap;">
-                                {{ $u->last_login_at->translatedFormat('d M Y') }} • {{ $u->last_login_at->format('H:i') }}
-                            </div>
-                            <span style="font-size: 11.5px; color: #64748B; display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; white-space: nowrap;">
-                                <svg style="width: 12px; height: 12px; color: #94A3B8; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                {{ $u->last_login_at->diffForHumans() }}
-                            </span>
-                        @else
-                            <span class="mu-empty-dash" title="Belum pernah login">—</span>
-                        @endif
-                    </td>
                     <td>
                         <div class="mu-actions" style="justify-content: flex-end;">
+                            <button type="button" class="mu-view-btn" onclick="openDetailUser({{ $u->id }})" title="Lihat Detail & Riwayat Pengguna">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </button>
+
                             <button type="button" class="mu-icon-btn btn-edit-user" title="Edit Data Pengguna"
                                     data-id="{{ $u->id }}"
                                     data-name="{{ $u->name }}"
@@ -1128,7 +1436,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7">
+                    <td colspan="6">
                         <div class="mu-empty-box">
                             <div class="mu-empty-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -1298,6 +1606,136 @@
     </div>
 </div>
 
+{{-- =========================================================
+     MODAL DETAIL USER & RIWAYAT AKTIVITAS
+========================================================= --}}
+<div id="modal-detail-user" class="mu-modal-overlay" onclick="handleBackdropClick(event, 'modal-detail-user')">
+    <div class="mu-modal mu-modal-lg" onclick="event.stopPropagation()">
+        <div class="mu-modal-header">
+            <div class="mu-modal-header-left">
+                <div class="mu-modal-header-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                    <h3>Detail Pengguna &amp; Riwayat Aktivitas</h3>
+                    <p id="detail-user-subtitle" style="margin: 2px 0 0; font-size: 11.5px; color: #64748B;">Memuat data pengguna...</p>
+                </div>
+            </div>
+            <button type="button" class="mu-modal-close" onclick="closeModal('modal-detail-user')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div id="modal-detail-body" class="mu-modal-scrollable">
+            {{-- Loading Spinner --}}
+            <div id="detail-loading" style="text-align: center; padding: 45px 20px;">
+                <svg style="animation: spin 1s linear infinite; width: 32px; height: 32px; color: #0081AB; margin: 0 auto 12px; display: block;" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-opacity="0.25" stroke-width="3"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke-width="3" stroke-linecap="round"></path></svg>
+                <p style="font-size: 13.5px; color: #64748B; margin: 0;">Mengambil rincian akun &amp; riwayat aktivitas...</p>
+            </div>
+
+            {{-- Detail Content --}}
+            <div id="detail-content" style="display: none;">
+                {{-- Profile Info Card --}}
+                <div class="mu-detail-card">
+                    <div class="mu-detail-top">
+                        <div id="detail-avatar" class="mu-detail-avatar"></div>
+                        <div class="mu-detail-meta">
+                            <h4 id="detail-name" class="mu-detail-name"></h4>
+                            <p id="detail-email" class="mu-detail-email"></p>
+                        </div>
+                    </div>
+                    <div class="mu-detail-grid">
+                        <div class="mu-detail-item">
+                            <span class="mu-detail-item-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                Role / Hak Akses
+                            </span>
+                            <span id="detail-role" class="mu-detail-item-val"></span>
+                        </div>
+                        <div class="mu-detail-item">
+                            <span class="mu-detail-item-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                Unit Pelaksana (UP3)
+                            </span>
+                            <span id="detail-up3" class="mu-detail-item-val"></span>
+                        </div>
+                        <div class="mu-detail-item">
+                            <span class="mu-detail-item-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Status Akun
+                            </span>
+                            <span id="detail-status" class="mu-detail-item-val"></span>
+                        </div>
+                        <div class="mu-detail-item">
+                            <span class="mu-detail-item-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                Terdaftar Sejak
+                            </span>
+                            <span id="detail-registered" class="mu-detail-item-val"></span>
+                        </div>
+                        {{-- HIGHLIGHT TERAKHIR LOGIN --}}
+                        <div class="mu-detail-item mu-detail-item-highlight">
+                            <span class="mu-detail-item-label" style="color: #0081AB;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Sesi Terakhir Login
+                            </span>
+                            <div id="detail-last-login" class="mu-detail-item-val highlight">
+                                {{-- Rendered dynamically --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Activity Sub-Tabs --}}
+                <div class="mu-subtabs">
+                    <button type="button" class="mu-subtab-btn active" id="tab-btn-login" onclick="switchDetailSubTab('login')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Riwayat Login &amp; Logout
+                        <span id="count-login-logs" class="mu-subtab-badge">0</span>
+                    </button>
+                    <button type="button" class="mu-subtab-btn" id="tab-btn-changes" onclick="switchDetailSubTab('changes')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+                        Riwayat Perubahan Data
+                        <span id="count-change-logs" class="mu-subtab-badge">0</span>
+                    </button>
+                </div>
+
+                {{-- Tab Pane 1: Riwayat Login & Logout --}}
+                <div id="pane-detail-login">
+                    <div id="list-login-logs" class="mu-timeline"></div>
+                    <div id="empty-login-logs" class="mu-empty-box" style="display:none; padding: 25px 15px;">
+                        <div class="mu-empty-icon" style="width: 38px; height: 38px; margin-bottom: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <p class="mu-empty-title" style="font-size: 13.5px;">Belum Ada Riwayat Sesi</p>
+                        <p class="mu-empty-text" style="font-size: 12px; margin: 0;">Pengguna ini belum memiliki catatan riwayat login atau logout di sistem.</p>
+                    </div>
+                </div>
+
+                {{-- Tab Pane 2: Riwayat Perubahan Data --}}
+                <div id="pane-detail-changes" style="display:none;">
+                    <div id="list-change-logs" class="mu-timeline"></div>
+                    <div id="empty-change-logs" class="mu-empty-box" style="display:none; padding: 25px 15px;">
+                        <div class="mu-empty-icon" style="width: 38px; height: 38px; margin-bottom: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <p class="mu-empty-title" style="font-size: 13.5px;">Belum Ada Riwayat Perubahan</p>
+                        <p class="mu-empty-text" style="font-size: 12px; margin: 0;">Belum ada perubahan data (audit log) yang tercatat untuk atau oleh pengguna ini.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mu-modal-footer" style="margin-top: 0; padding: 14px 22px; background: #FAFBFD; border-top: 1px solid #EEF2F6;">
+            <button type="button" class="mu-btn mu-btn-outline" onclick="closeModal('modal-detail-user')">Tutup</button>
+            <button type="button" class="mu-btn mu-btn-primary" id="btn-edit-from-detail" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="15" height="15"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+                Edit Pengguna
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
 function openModal(id) {
     document.getElementById(id).classList.add('show');
@@ -1327,6 +1765,259 @@ function switchUserTab(tab) {
     }
 }
 
+function openDetailUser(userId) {
+    openModal('modal-detail-user');
+
+    const loadingEl = document.getElementById('detail-loading');
+    const contentEl = document.getElementById('detail-content');
+    const subtitleEl = document.getElementById('detail-user-subtitle');
+    const editBtn = document.getElementById('btn-edit-from-detail');
+
+    loadingEl.style.display = 'block';
+    contentEl.style.display = 'none';
+    subtitleEl.textContent = 'Memuat data pengguna...';
+    editBtn.style.display = 'none';
+
+    // Default to login tab
+    switchDetailSubTab('login');
+
+    fetch(`/manajemen-user/${userId}/detail`, {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Gagal mengambil data detail');
+        return res.json();
+    })
+    .then(data => {
+        const u = data.user;
+
+        subtitleEl.textContent = `${u.email} • ID #${u.id}`;
+
+        // Avatar
+        const avatarEl = document.getElementById('detail-avatar');
+        avatarEl.className = `mu-detail-avatar role-${u.role}`;
+        avatarEl.textContent = u.initials;
+
+        // Name
+        document.getElementById('detail-name').innerHTML = `
+            ${escapeHtml(u.name)}
+            ${u.is_current_user ? '<span class="mu-user-you">Anda</span>' : ''}
+        `;
+        document.getElementById('detail-email').textContent = u.email;
+
+        // Role
+        document.getElementById('detail-role').innerHTML = `
+            <span class="mu-role-badge mu-role-${u.role}">${escapeHtml(u.role_label)}</span>
+        `;
+
+        // UP3
+        document.getElementById('detail-up3').innerHTML = u.up3 && u.up3 !== '—'
+            ? `<span class="mu-badge-up3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(u.up3)}</span>`
+            : '<span class="mu-empty-dash">—</span>';
+
+        // Status
+        const statusClass = u.status === 'active' ? 'active' : (u.status === 'pending' ? 'pending' : 'inactive');
+        document.getElementById('detail-status').innerHTML = `
+            <span class="mu-status-text ${statusClass}">${escapeHtml(u.status_label)}</span>
+        `;
+
+        // Registered
+        document.getElementById('detail-registered').innerHTML = `
+            <span>${escapeHtml(u.created_at)}</span>
+            <span style="font-size: 11.5px; color: #94A3B8; font-weight: 500;">(${escapeHtml(u.created_at_human)})</span>
+        `;
+
+        // Terakhir Login Highlight
+        const lastLoginEl = document.getElementById('detail-last-login');
+        if (u.last_login_at) {
+            lastLoginEl.innerHTML = `
+                <span style="font-weight: 800; color: #023E8A; font-size: 13.5px;">
+                    ${escapeHtml(u.last_login_at)}
+                </span>
+                <span style="font-size: 11.5px; font-weight: 700; color: #0081AB; background: #fff; padding: 2px 8px; border-radius: 6px; border: 1px solid #BAE6FD; display: inline-flex; align-items: center; gap: 4px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    ${escapeHtml(u.last_login_human)}
+                </span>
+            `;
+        } else {
+            lastLoginEl.innerHTML = `
+                <span style="color: #94A3B8; font-weight: 500; font-size: 13px;">Belum pernah login ke sistem</span>
+            `;
+        }
+
+        // Tab 1: Login Logs
+        const loginLogs = data.login_logs || [];
+        document.getElementById('count-login-logs').textContent = loginLogs.length;
+        const listLoginLogs = document.getElementById('list-login-logs');
+        const emptyLoginLogs = document.getElementById('empty-login-logs');
+
+        if (loginLogs.length > 0) {
+            emptyLoginLogs.style.display = 'none';
+            listLoginLogs.style.display = 'block';
+            listLoginLogs.innerHTML = loginLogs.map(log => {
+                const isLogin = log.action === 'login';
+                const dotClass = isLogin ? 'login' : 'logout';
+                const iconSvg = isLogin
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
+                const titleText = isLogin ? 'Sesi Login Berhasil' : 'Sesi Logout Berhasil';
+
+                return `
+                    <div class="mu-timeline-item">
+                        <div class="mu-timeline-dot ${dotClass}">
+                            ${iconSvg}
+                        </div>
+                        <div class="mu-timeline-card">
+                            <div class="mu-timeline-header">
+                                <span class="mu-timeline-title">${titleText}</span>
+                                <span class="mu-timeline-time">${escapeHtml(log.waktu)} (${escapeHtml(log.time_ago)})</span>
+                            </div>
+                            <div class="mu-timeline-sub">
+                                <span class="mu-timeline-meta-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                    IP: <strong>${escapeHtml(log.ip)}</strong>
+                                </span>
+                                <span class="mu-timeline-meta-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                    Perangkat: <strong>${escapeHtml(log.device)}</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            listLoginLogs.innerHTML = '';
+            listLoginLogs.style.display = 'none';
+            emptyLoginLogs.style.display = 'block';
+        }
+
+        // Tab 2: Change Logs
+        const changeLogs = data.change_logs || [];
+        document.getElementById('count-change-logs').textContent = changeLogs.length;
+        const listChangeLogs = document.getElementById('list-change-logs');
+        const emptyChangeLogs = document.getElementById('empty-change-logs');
+
+        if (changeLogs.length > 0) {
+            emptyChangeLogs.style.display = 'none';
+            listChangeLogs.style.display = 'block';
+            listChangeLogs.innerHTML = changeLogs.map(log => {
+                let diffHtml = '';
+                if (log.new_values && typeof log.new_values === 'object' && Object.keys(log.new_values).length > 0) {
+                    const diffItems = [];
+                    for (const key in log.new_values) {
+                        const oldVal = (log.old_values && log.old_values[key] !== undefined) ? log.old_values[key] : null;
+                        const newVal = log.new_values[key];
+                        if (oldVal !== null && oldVal !== newVal) {
+                            diffItems.push(`
+                                <div class="mu-diff-item">
+                                    <span class="mu-diff-label">${escapeHtml(key)}:</span>
+                                    <span class="mu-diff-old">${escapeHtml(String(oldVal))}</span>
+                                    <span class="mu-diff-arrow">&rarr;</span>
+                                    <span class="mu-diff-new">${escapeHtml(String(newVal))}</span>
+                                </div>
+                            `);
+                        } else if (newVal) {
+                            diffItems.push(`
+                                <div class="mu-diff-item">
+                                    <span class="mu-diff-label">${escapeHtml(key)}:</span>
+                                    <span class="mu-diff-new">${escapeHtml(String(newVal))}</span>
+                                </div>
+                            `);
+                        }
+                    }
+                    if (diffItems.length > 0) {
+                        diffHtml = `<div class="mu-diff-box">${diffItems.join('')}</div>`;
+                    }
+                }
+
+                return `
+                    <div class="mu-timeline-item">
+                        <div class="mu-timeline-dot change">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        </div>
+                        <div class="mu-timeline-card">
+                            <div class="mu-timeline-header">
+                                <span class="mu-timeline-title">
+                                    ${escapeHtml(log.action_label)}
+                                    <span style="font-size: 11px; font-weight: 600; color: #64748B; background: #F1F5F9; padding: 1px 6px; border-radius: 4px;">${escapeHtml(log.model)}</span>
+                                </span>
+                                <span class="mu-timeline-time">${escapeHtml(log.waktu)} (${escapeHtml(log.time_ago)})</span>
+                            </div>
+                            <div class="mu-timeline-sub">
+                                <span>Oleh: <strong>${log.is_actor ? 'Pengguna ini' : escapeHtml(log.actor_name)}</strong></span>
+                            </div>
+                            ${diffHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            listChangeLogs.innerHTML = '';
+            listChangeLogs.style.display = 'none';
+            emptyChangeLogs.style.display = 'block';
+        }
+
+        // Wire Edit Button from Detail
+        editBtn.style.display = 'inline-flex';
+        editBtn.onclick = function() {
+            closeModal('modal-detail-user');
+            const editForm = document.getElementById('edit-user-form');
+            editForm.action = '/manajemen-user/' + u.id;
+            document.getElementById('edit-user-name').value = u.name;
+            document.getElementById('edit-user-role').value = u.role;
+            document.getElementById('edit-user-up3').value = (u.up3 && u.up3 !== '—') ? u.up3 : '';
+            document.getElementById('edit-user-email-display').textContent = u.email;
+            openModal('modal-edit-user');
+        };
+
+        loadingEl.style.display = 'none';
+        contentEl.style.display = 'block';
+    })
+    .catch(err => {
+        console.error(err);
+        loadingEl.innerHTML = `
+            <div style="color: #EF4444; padding: 25px; text-align: center;">
+                <svg style="width:32px; height:32px; margin:0 auto 8px; display:block;" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p style="font-weight:700; margin:0 0 4px;">Gagal memuat rincian pengguna</p>
+                <p style="font-size:12px; color:#64748B; margin:0;">Silakan coba beberapa saat lagi.</p>
+            </div>
+        `;
+    });
+}
+
+function switchDetailSubTab(tab) {
+    const btnLogin = document.getElementById('tab-btn-login');
+    const btnChanges = document.getElementById('tab-btn-changes');
+    const paneLogin = document.getElementById('pane-detail-login');
+    const paneChanges = document.getElementById('pane-detail-changes');
+
+    if (tab === 'login') {
+        btnLogin.classList.add('active');
+        btnChanges.classList.remove('active');
+        paneLogin.style.display = 'block';
+        paneChanges.style.display = 'none';
+    } else {
+        btnLogin.classList.remove('active');
+        btnChanges.classList.add('active');
+        paneLogin.style.display = 'none';
+        paneChanges.style.display = 'block';
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.btn-edit-user').forEach(function(btn) {
         btn.addEventListener('click', function() {
@@ -1352,6 +2043,7 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeModal('modal-tambah-user');
         closeModal('modal-edit-user');
+        closeModal('modal-detail-user');
     }
 });
 

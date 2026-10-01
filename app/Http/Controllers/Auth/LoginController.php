@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
@@ -58,6 +59,17 @@ class LoginController extends Controller
         Auth::login($user);
         $user->update(['last_login_at' => now()]);
 
+        AuditLog::create([
+            'user_id' => $user->id,
+            'auditable_type' => User::class,
+            'auditable_id' => $user->id,
+            'action' => 'login',
+            'new_values' => [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ],
+        ]);
+
         return redirect()->intended(route('dashboard'));
     }
 
@@ -89,6 +101,17 @@ class LoginController extends Controller
         Auth::login($user);
         $user->update(['last_login_at' => now()]);
 
+        AuditLog::create([
+            'user_id' => $user->id,
+            'auditable_type' => User::class,
+            'auditable_id' => $user->id,
+            'action' => 'login',
+            'new_values' => [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ],
+        ]);
+
         return redirect()->route('dashboard');
     }
 
@@ -104,6 +127,20 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            AuditLog::create([
+                'user_id' => $user->id,
+                'auditable_type' => User::class,
+                'auditable_id' => $user->id,
+                'action' => 'logout',
+                'new_values' => [
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ],
+            ]);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
