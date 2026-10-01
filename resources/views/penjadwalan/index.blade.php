@@ -57,26 +57,239 @@
     .jdi-icon-btn-danger:hover { background:rgba(192,57,43,.18); color:#962D22; }
 
     /* ===== Kalender besar ===== */
-    .jdi-cal-card { margin-bottom:20px; }
-    .jdi-cal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:#FFFFFF; border-bottom:1px solid #F1F5F9; }
-    .jdi-cal-head-left { display:flex; align-items:center; gap:12px; }
-    .jdi-cal-head strong { font-size:16px; color:#1B2559; font-weight:800; }
-    .jdi-cal-nav-group { display:flex; gap:6px; }
-    .jdi-cal-nav-group button { padding:7px 12px; border-radius:8px; border:1px solid #e2e8f0; background:#fff; color:#475569; font-size:12.5px; font-weight:600; cursor:pointer; transition:background .12s ease; }
-    .jdi-cal-nav-group button:hover { background:#F8FAFC; }
+    .jdi-cal-card {
+        margin-bottom: 24px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 1px 3px rgba(15,23,42,.04), 0 6px 18px rgba(15,23,42,.04);
+        overflow: hidden;
+    }
+    .jdi-cal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 22px;
+        background: #FFFFFF;
+        border-bottom: 1px solid #E2E8F0;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .jdi-cal-head-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .jdi-cal-head-left strong {
+        font-size: 16.5px;
+        color: #1B2559;
+        font-weight: 800;
+        display: block;
+        line-height: 1.25;
+    }
+    .jdi-cal-head-left span {
+        font-size: 12px;
+        color: #64748B;
+        margin-top: 2px;
+        display: block;
+    }
+    .jdi-cal-nav-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .jdi-cal-nav-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid #E2E8F0;
+        background: #FFFFFF;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .jdi-cal-nav-btn:hover {
+        background: #F8FAFC;
+        color: #023E8A;
+        border-color: #CBD5E1;
+    }
+    .jdi-cal-nav-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    .jdi-cal-nav-today {
+        padding: 0 14px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid #BAE6FD;
+        background: #EFF6FB;
+        color: #023E8A;
+        font-size: 12.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .jdi-cal-nav-today:hover {
+        background: #023E8A;
+        color: #FFFFFF;
+        border-color: #023E8A;
+    }
 
-    .jdi-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid #F1F5F9; }
-    .jdi-cal-dow { text-align:center; font-size:11px; font-weight:700; color:#94A3B8; padding:10px 0; border-bottom:1px solid #F1F5F9; }
-    .jdi-cal-cell { min-height:86px; border-right:1px solid #F8FAFC; border-bottom:1px solid #F8FAFC; padding:10px 11px; cursor:pointer; transition:background .12s ease; }
-    .jdi-cal-cell:hover { background:#F8FBFD; }
-    .jdi-cal-cell.selected { background:#EFF6FB; }
-    .jdi-cal-cell .num { font-size:13px; font-weight:600; color:#334155; margin-bottom:6px; display:inline-block; }
-    .jdi-cal-cell.selected .num { background:#023E8A; color:#fff; width:23px; height:23px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-    .jdi-cal-cell.hari-ini .num { border:1.5px solid #023E8A; width:23px; height:23px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:#023E8A; }
+    .jdi-cal-dow-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: #E2E8F0;
+        gap: 1px;
+        border-bottom: 1px solid #E2E8F0;
+    }
+    .jdi-cal-dow {
+        background: #F8FAFC;
+        text-align: center;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 12px 6px;
+    }
+    .jdi-cal-dow.weekend {
+        color: #94A3B8;
+    }
 
-    .jdi-cal-time-pill { display:block; font-size:9.5px; font-weight:700; padding:1.5px 5px; border-radius:5px; margin-top:3px; background:rgba(2,62,138,.1); color:#023E8A; white-space:nowrap; }
-    .jdi-cal-time-pill.offline { background:rgba(46,158,91,.14); color:#15803D; }
-    .jdi-cal-more { font-size:9px; color:#94A3B8; margin-top:2px; }
+    .jdi-cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: #E2E8F0;
+        gap: 1px;
+    }
+    .jdi-cal-cell {
+        min-height: 104px;
+        background: #FFFFFF;
+        padding: 9px 10px;
+        cursor: pointer;
+        transition: background 0.12s ease;
+        display: flex;
+        flex-direction: column;
+        user-select: none;
+    }
+    .jdi-cal-cell:hover {
+        background: #F0F7FF;
+    }
+    .jdi-cal-cell.weekend {
+        background: #FAFBFC;
+    }
+    .jdi-cal-cell.weekend:hover {
+        background: #F0F7FF;
+    }
+    .jdi-cal-cell.other-month {
+        background: #F8FAFC;
+        cursor: pointer;
+    }
+    .jdi-cal-cell.other-month:hover {
+        background: #F1F5F9;
+    }
+    .jdi-cal-cell.other-month .num {
+        color: #CBD5E1;
+        font-weight: 500;
+    }
+    .jdi-cal-cell.selected {
+        background: #EFF6FB;
+        box-shadow: inset 0 0 0 2px #0081AB;
+    }
+    .num-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+    .jdi-cal-cell .num {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1E293B;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .jdi-cal-cell.selected:not(.hari-ini) .num {
+        background: #023E8A;
+        color: #FFFFFF;
+    }
+    .jdi-cal-cell.hari-ini .num {
+        background: linear-gradient(135deg, #023E8A, #0081AB);
+        color: #FFFFFF;
+        font-weight: 800;
+    }
+    .today-tag {
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #023E8A;
+        background: #EFF6FB;
+        border: 1px solid #BAE6FD;
+        padding: 1px 6px;
+        border-radius: 999px;
+        letter-spacing: -0.01em;
+    }
+    .jdi-cal-events {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex: 1;
+    }
+    .jdi-cal-time-pill {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 6px;
+        border-radius: 6px;
+        line-height: 1.25;
+        background: rgba(2, 62, 138, 0.08);
+        color: #023E8A;
+        border: 1px solid rgba(2, 62, 138, 0.16);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: transform 0.1s ease;
+    }
+    .jdi-cal-time-pill:hover {
+        transform: translateY(-1px);
+    }
+    .jdi-cal-time-pill.offline {
+        background: rgba(46, 158, 91, 0.1);
+        color: #15803D;
+        border-color: rgba(46, 158, 91, 0.22);
+    }
+    .jdi-pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #0081AB;
+        flex-shrink: 0;
+    }
+    .jdi-cal-time-pill.offline .jdi-pill-dot {
+        background: #2E9E5B;
+    }
+    .jdi-cal-more {
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748B;
+        background: #EEF2F6;
+        border-radius: 5px;
+        padding: 2px 6px;
+        margin-top: 2px;
+        display: inline-block;
+        align-self: flex-start;
+    }
 
     .jdi-hariini-title { display:flex; align-items:center; justify-content:space-between; padding:18px 22px 10px; }
     .jdi-hariini-title strong { font-size:15px; font-weight:700; color:#1B2559; }
@@ -148,18 +361,25 @@
             <div class="jdi-icon-box">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             </div>
-            <strong id="cal-besar-label"></strong>
+            <div>
+                <strong id="cal-besar-label"></strong>
+                <span>Pilih tanggal untuk melihat detail atau membuat agenda kunjungan</span>
+            </div>
         </div>
         <div class="jdi-cal-nav-group">
-            <button type="button" onclick="ubahBulanBesar(-1)">&lsaquo;</button>
-            <button type="button" onclick="pilihHariIni()">Hari Ini</button>
-            <button type="button" onclick="ubahBulanBesar(1)">&rsaquo;</button>
+            <button type="button" class="jdi-cal-nav-btn" onclick="ubahBulanBesar(-1)" title="Bulan Sebelumnya">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button type="button" class="jdi-cal-nav-today" onclick="pilihHariIni()">Hari Ini</button>
+            <button type="button" class="jdi-cal-nav-btn" onclick="ubahBulanBesar(1)" title="Bulan Berikutnya">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
         </div>
     </div>
 
-    <div class="jdi-cal-grid">
-        @foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $d)
-            <div class="jdi-cal-dow">{{ $d }}</div>
+    <div class="jdi-cal-dow-grid">
+        @foreach (['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'] as $idx => $d)
+            <div class="jdi-cal-dow {{ $idx >= 5 ? 'weekend' : '' }}">{{ $d }}</div>
         @endforeach
     </div>
     <div class="jdi-cal-grid" id="cal-besar-grid"></div>
@@ -288,6 +508,15 @@ const MAKS_PIL_PER_SEL = 2;
 function jumlahHari(y, m) { return new Date(y, m + 1, 0).getDate(); }
 function hariPertama(y, m) { const d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; }
 
+function pilihTanggalOtherMonth(delta, tgl) {
+    besarCalCursor.setMonth(besarCalCursor.getMonth() + delta);
+    const y = besarCalCursor.getFullYear(), m = besarCalCursor.getMonth();
+    const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(tgl).padStart(2,'0')}`;
+    tanggalTerpilih = iso;
+    renderCalBesar();
+    bukaModalDetail(iso);
+}
+
 function renderCalBesar() {
     const y = besarCalCursor.getFullYear(), m = besarCalCursor.getMonth();
     document.getElementById('cal-besar-label').textContent = `${namaBulan[m]} ${y}`;
@@ -295,17 +524,37 @@ function renderCalBesar() {
     grid.innerHTML = '';
 
     const offset = hariPertama(y, m);
-    for (let i = 0; i < offset; i++) grid.innerHTML += `<div class="jdi-cal-cell" style="visibility:hidden"></div>`;
+    const prevYear = m === 0 ? y - 1 : y;
+    const prevMonth = m === 0 ? 11 : m - 1;
+    const prevMonthTotalDays = jumlahHari(prevYear, prevMonth);
+
+    // Leading days from previous month
+    for (let i = offset - 1; i >= 0; i--) {
+        const tglPrev = prevMonthTotalDays - i;
+        const colIdx = (offset - 1 - i) % 7;
+        const isWeekend = colIdx === 5 || colIdx === 6;
+        grid.innerHTML += `
+            <div class="jdi-cal-cell other-month ${isWeekend ? 'weekend' : ''}" onclick="pilihTanggalOtherMonth(-1, ${tglPrev})">
+                <div class="num-wrapper"><span class="num">${tglPrev}</span></div>
+            </div>`;
+    }
 
     const totalHari = jumlahHari(y, m);
     for (let tgl = 1; tgl <= totalHari; tgl++) {
         const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(tgl).padStart(2,'0')}`;
+        const dayOfWeek = (offset + tgl - 1) % 7;
+        const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
         const itemHariItu = jadwalSebulan.filter(j => j.tanggal === iso).sort((a,b) => a.jam.localeCompare(b.jam));
         const kelasSelected = iso === tanggalTerpilih ? 'selected' : '';
         const kelasHariIni = iso === tanggalHariIni ? 'hari-ini' : '';
+        const kelasWeekend = isWeekend ? 'weekend' : '';
 
         let pilHtml = itemHariItu.slice(0, MAKS_PIL_PER_SEL).map(j =>
-            `<span class="jdi-cal-time-pill ${j.mode}">${j.jam} · ${j.mode === 'online' ? 'On' : 'Off'}</span>`
+            `<span class="jdi-cal-time-pill ${j.mode}" title="${j.jam} · ${j.lokasi_nama} (${j.mode === 'online' ? 'Online' : 'Offline'})">
+                <span class="jdi-pill-dot"></span>
+                <span>${j.jam}</span>
+                <span style="opacity:0.85; font-size:10px;">${j.mode === 'online' ? 'On' : 'Off'}</span>
+            </span>`
         ).join('');
 
         if (itemHariItu.length > MAKS_PIL_PER_SEL) {
@@ -313,9 +562,24 @@ function renderCalBesar() {
         }
 
         grid.innerHTML += `
-            <div class="jdi-cal-cell ${kelasSelected} ${kelasHariIni}" onclick="pilihTanggal('${iso}')">
-                <div class="num">${tgl}</div>
-                ${pilHtml}
+            <div class="jdi-cal-cell ${kelasSelected} ${kelasHariIni} ${kelasWeekend}" onclick="pilihTanggal('${iso}')">
+                <div class="num-wrapper">
+                    <span class="num">${tgl}</span>
+                    ${iso === tanggalHariIni ? '<span class="today-tag">Hari ini</span>' : ''}
+                </div>
+                <div class="jdi-cal-events">${pilHtml}</div>
+            </div>`;
+    }
+
+    // Trailing days for next month to complete the row
+    const totalRendered = offset + totalHari;
+    const remaining = (7 - (totalRendered % 7)) % 7;
+    for (let i = 1; i <= remaining; i++) {
+        const colIdx = (totalRendered + i - 1) % 7;
+        const isWeekend = colIdx === 5 || colIdx === 6;
+        grid.innerHTML += `
+            <div class="jdi-cal-cell other-month ${isWeekend ? 'weekend' : ''}" onclick="pilihTanggalOtherMonth(1, ${i})">
+                <div class="num-wrapper"><span class="num">${i}</span></div>
             </div>`;
     }
 }
