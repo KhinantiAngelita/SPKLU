@@ -50,18 +50,6 @@
         color: #64748B;
         margin: 0;
     }
-    .mp-section-badge {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(0, 129, 171, 0.08);
-        color: #0081AB;
-        border: 1px solid rgba(0, 129, 171, 0.18);
-        white-space: nowrap;
-    }
 
     .mp-grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-bottom:24px; }
     .mp-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
@@ -164,7 +152,6 @@
             <p class="mp-section-desc">Konfigurasi bobot penilaian teknis: kesiapan jaringan listrik, fasilitas penunjang, dan okupansi pasar</p>
         </div>
     </div>
-    <span class="mp-section-badge">Kriteria Penilaian SPK</span>
 </div>
 
 <div class="mp-grid-3">
@@ -350,7 +337,6 @@
             <p class="mp-section-desc">Daftar vendor penyedia unit charging station terdaftar untuk seleksi kandidat &amp; pemodelan kemitraan</p>
         </div>
     </div>
-    <span class="mp-section-badge">Katalog Mitra Mesin</span>
 </div>
 
 <div class="surface-card" style="margin-bottom:24px;">
@@ -440,7 +426,6 @@
             <p class="mp-section-desc">Parameter tarif dasar listrik layanan SPKLU dan sasaran jumlah unit terpasang tahunan</p>
         </div>
     </div>
-    <span class="mp-section-badge">Tarif &amp; Target</span>
 </div>
 
 <div class="mp-grid-2">
