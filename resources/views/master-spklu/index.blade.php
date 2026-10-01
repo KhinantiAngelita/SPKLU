@@ -118,9 +118,12 @@
     .msp-pill-pln { background:rgba(2,62,138,.12); color:#023E8A; }
     .msp-pill-swasta { background:rgba(232,163,23,.15); color:#92660f; }
 
-    .msp-del-btn, .msp-action-btn { width:32px; height:32px; border-radius:8px; border:1px solid transparent; background:rgba(2,62,138,.08); color:#023E8A; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
-    .msp-del-btn svg, .msp-action-btn svg { width:15px; height:15px; stroke-width:2.2; }
-    .msp-del-btn:hover, .msp-action-btn:hover { background:rgba(2,62,138,.18); color:#002D66; }
+    .msp-action-btn { width:32px; height:32px; border-radius:8px; border:1px solid transparent; background:rgba(234,88,12,.08); color:#EA580C; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
+    .msp-action-btn svg { width:15px; height:15px; stroke-width:2.2; }
+    .msp-action-btn:hover { background:rgba(234,88,12,.18); color:#C2410C; border-color:rgba(234,88,12,.25); }
+    .msp-del-btn { width:32px; height:32px; border-radius:8px; border:1px solid transparent; background:rgba(192,57,43,.08); color:#C0392B; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
+    .msp-del-btn svg { width:15px; height:15px; stroke-width:2.2; }
+    .msp-del-btn:hover { background:rgba(192,57,43,.18); color:#962D22; border-color:rgba(192,57,43,.25); }
 
     .msp-empty { text-align:center; padding:60px 20px; color:#94a3b8; }
     .msp-empty svg { width:36px; height:36px; stroke-width:1.7; color:#cbd5e1; margin-bottom:10px; fill:none; }

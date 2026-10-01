@@ -50,13 +50,14 @@
         box-sizing: border-box;
     }
     .mp-edit-btn {
-        background: rgba(2,62,138,.08);
-        color: #023E8A;
+        background: rgba(234,88,12,.08);
+        color: #EA580C;
         margin-right: 4px;
     }
     .mp-edit-btn:hover {
-        background: rgba(2,62,138,.18);
-        color: #002D66;
+        background: rgba(234,88,12,.18);
+        color: #C2410C;
+        border-color: rgba(234,88,12,.25);
     }
     .mp-del-btn {
         background: rgba(192,57,43,.08);

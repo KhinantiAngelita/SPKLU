@@ -310,6 +310,103 @@
         body.sidebar-collapsed .sidebar-logout-form button { justify-content: center; padding: 9px 0; font-size: 0; }
 
         /* =====================================================================
+           Sidebar Light Mode — dikontrol lewat class "sidebar-light" di <body>,
+           di-toggle lewat tombol di topbar dan disimpan di localStorage.
+           ===================================================================== */
+        body.sidebar-light .sidebar {
+            background: #FFFFFF !important;
+            color: #1E293B !important;
+            border-right: 1px solid #E2E8F0 !important;
+            box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+        }
+        body.sidebar-light .sidebar::after {
+            display: none !important;
+        }
+        body.sidebar-light .sidebar-logo-icon {
+            background: #F8FAFC !important;
+            border: 1px solid #E2E8F0 !important;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06) !important;
+        }
+        body.sidebar-light .sidebar-logo-text .title {
+            color: #1B2559 !important;
+        }
+        body.sidebar-light .sidebar-logo-text .subtitle {
+            color: #64748B !important;
+        }
+        body.sidebar-light .sidebar-link {
+            color: #475569 !important;
+        }
+        body.sidebar-light .sidebar-link:hover {
+            color: #023E8A !important;
+            background-color: rgba(2, 62, 138, 0.06) !important;
+        }
+        body.sidebar-light .sidebar-link.active {
+            color: #023E8A !important;
+            font-weight: 700 !important;
+            background: rgba(2, 62, 138, 0.08) !important;
+            border-left: 3px solid #023E8A !important;
+            box-shadow: none !important;
+        }
+        body.sidebar-light.sidebar-collapsed .sidebar-link.active {
+            border-left: none !important;
+        }
+        body.sidebar-light .sidebar-link.active i,
+        body.sidebar-light .sidebar-link.active svg {
+            color: #023E8A !important;
+            filter: drop-shadow(0 0 4px rgba(2, 62, 138, 0.25)) !important;
+        }
+        body.sidebar-light .sidebar-group-toggle .chevron {
+            color: #64748B !important;
+            opacity: 0.8 !important;
+        }
+        body.sidebar-light .sidebar-group-toggle:hover .chevron,
+        body.sidebar-light .sidebar-group-toggle.open .chevron {
+            color: #023E8A !important;
+        }
+        body.sidebar-light .sidebar-submenu {
+            border-left: 1px solid #E2E8F0 !important;
+        }
+        body.sidebar-light .sidebar-sublink {
+            color: #64748B !important;
+        }
+        body.sidebar-light .sidebar-sublink:hover {
+            color: #023E8A !important;
+            background-color: rgba(2, 62, 138, 0.06) !important;
+        }
+        body.sidebar-light .sidebar-sublink.active {
+            color: #023E8A !important;
+            background-color: rgba(2, 62, 138, 0.09) !important;
+            font-weight: 700 !important;
+            border-left: 3px solid #023E8A !important;
+        }
+        body.sidebar-light .sidebar-footer {
+            border-top: 1px solid #F1F5F9 !important;
+        }
+        body.sidebar-light .sidebar-user {
+            color: #1E293B !important;
+        }
+        body.sidebar-light .sidebar-user:hover {
+            background-color: #F8FAFC !important;
+        }
+        body.sidebar-light .sidebar-user-name {
+            color: #1B2559 !important;
+        }
+        body.sidebar-light .sidebar-avatar {
+            border: 1.5px solid #E2E8F0 !important;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+        }
+        body.sidebar-light .sidebar-logout-form button {
+            color: #64748B !important;
+        }
+        body.sidebar-light .sidebar-logout-form button:hover {
+            color: #C0392B !important;
+            background-color: rgba(192, 57, 43, 0.08) !important;
+        }
+        body.sidebar-light .sidebar-nav::-webkit-scrollbar-thumb {
+            background: #CBD5E1 !important;
+        }
+
+        /* =====================================================================
            Topbar — dua grup: search rata kiri, notif+user rata kanan.
            ===================================================================== */
 
@@ -498,10 +595,13 @@
 <body>
 
     {{-- Dibaca & di-apply SEBELUM sidebar sempat digambar, supaya gak ada
-         kedipan sidebar full-lebar sesaat sebelum ke-collapse balik. --}}
+         kedipan sidebar full-lebar atau kedipan mode sebelum ke-apply balik. --}}
     <script>
         if (localStorage.getItem('sidebarCollapsed') === '1') {
             document.body.classList.add('sidebar-collapsed');
+        }
+        if (localStorage.getItem('sidebarTheme') === 'light') {
+            document.body.classList.add('sidebar-light');
         }
     </script>
 
@@ -552,6 +652,34 @@
                 sidebarToggleBtn.addEventListener('click', () => {
                     const collapsed = document.body.classList.toggle('sidebar-collapsed');
                     localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
+                });
+            }
+
+            // ===== Toggle Mode Sidebar (Terang / Gelap) =====
+            const sidebarThemeBtn = document.getElementById('sidebar-theme-toggle-btn');
+            const sunIconSpan = document.getElementById('sidebar-theme-icon-sun');
+            const moonIconSpan = document.getElementById('sidebar-theme-icon-moon');
+
+            function syncSidebarThemeUI(isLight) {
+                if (sunIconSpan && moonIconSpan) {
+                    if (isLight) {
+                        sunIconSpan.style.display = 'none';
+                        moonIconSpan.style.display = 'inline-flex';
+                        if (sidebarThemeBtn) sidebarThemeBtn.title = 'Ganti ke Mode Gelap Sidebar';
+                    } else {
+                        sunIconSpan.style.display = 'inline-flex';
+                        moonIconSpan.style.display = 'none';
+                        if (sidebarThemeBtn) sidebarThemeBtn.title = 'Ganti ke Mode Terang Sidebar';
+                    }
+                }
+            }
+
+            if (sidebarThemeBtn) {
+                syncSidebarThemeUI(document.body.classList.contains('sidebar-light'));
+                sidebarThemeBtn.addEventListener('click', () => {
+                    const isLight = document.body.classList.toggle('sidebar-light');
+                    localStorage.setItem('sidebarTheme', isLight ? 'light' : 'dark');
+                    syncSidebarThemeUI(isLight);
                 });
             }
 

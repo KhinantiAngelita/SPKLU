@@ -554,8 +554,8 @@
         height: 32px;
         border-radius: 8px;
         border: 1px solid transparent;
-        background: rgba(2,62,138,.08);
-        color: #023E8A;
+        background: rgba(234,88,12,.08);
+        color: #EA580C;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
@@ -563,9 +563,9 @@
         transition: all .15s ease;
     }
     .mu-icon-btn:hover {
-        background: rgba(2,62,138,.18);
-        color: #002D66;
-        border-color: rgba(2,62,138,.25);
+        background: rgba(234,88,12,.18);
+        color: #C2410C;
+        border-color: rgba(234,88,12,.25);
     }
     .mu-icon-btn svg {
         width: 15px;

@@ -50,11 +50,11 @@
     .jdi-lokasi-icon svg { width:14px; height:14px; }
 
     .jdi-action-group { display:flex; gap:6px; justify-content:flex-end; }
-    .jdi-icon-btn { width:32px; height:32px; border-radius:8px; border:none; background:rgba(2,62,138,.08); color:#023E8A; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
-    .jdi-icon-btn:hover { background:rgba(2,62,138,.15); }
-    .jdi-icon-btn svg { width:15px; height:15px; stroke-width:2; }
-    .jdi-icon-btn-danger { background:rgba(192,57,43,.1); color:#C0392B; }
-    .jdi-icon-btn-danger:hover { background:rgba(192,57,43,.18); }
+    .jdi-icon-btn { width:32px; height:32px; border-radius:8px; border:none; background:rgba(234,88,12,.08); color:#EA580C; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:all .15s ease; }
+    .jdi-icon-btn:hover { background:rgba(234,88,12,.18); color:#C2410C; }
+    .jdi-icon-btn svg { width:15px; height:15px; stroke-width:2.2; }
+    .jdi-icon-btn-danger { background:rgba(192,57,43,.08); color:#C0392B; }
+    .jdi-icon-btn-danger:hover { background:rgba(192,57,43,.18); color:#962D22; }
 
     /* ===== Kalender besar ===== */
     .jdi-cal-card { margin-bottom:20px; }

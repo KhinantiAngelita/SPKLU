@@ -96,6 +96,12 @@
 
     <div class="topbar-actions">
 
+        {{-- Toggle Mode Sidebar (Terang / Gelap) --}}
+        <button class="topbar-icon-btn" type="button" id="sidebar-theme-toggle-btn" title="Ganti Mode Sidebar (Terang / Gelap)">
+            <span id="sidebar-theme-icon-sun" style="display:inline-flex; align-items:center; justify-content:center;"><i data-lucide="sun"></i></span>
+            <span id="sidebar-theme-icon-moon" style="display:none; align-items:center; justify-content:center;"><i data-lucide="moon"></i></span>
+        </button>
+
         {{-- Notifikasi --}}
         <div class="topbar-dropdown-wrap">
             <button class="topbar-icon-btn" type="button" data-dropdown-trigger="panel-notifikasi">

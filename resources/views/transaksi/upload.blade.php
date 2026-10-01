@@ -146,12 +146,14 @@
     .up-alias-name { flex:1; min-width:0; font-size:13px; }
 
     .up-action-group { display:flex; gap:6px; }
-    .up-del-btn, .up-match-btn { border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
+    .up-del-btn, .up-match-btn, .up-edit-btn { border:none; border-radius:8px; width:32px; height:32px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .15s ease; }
     .up-del-btn { background:rgba(192,57,43,.08); color:#C0392B; }
     .up-del-btn:hover { background:rgba(192,57,43,.18); transform:translateY(-1px); }
     .up-match-btn { background:rgba(2,62,138,.08); color:#023E8A; position:relative; }
     .up-match-btn:hover { background:rgba(2,62,138,.18); transform:translateY(-1px); }
-    .up-del-btn svg, .up-match-btn svg { width:15px; height:15px; stroke-width:2.2; }
+    .up-edit-btn { background:rgba(234,88,12,.08); color:#EA580C; }
+    .up-edit-btn:hover { background:rgba(234,88,12,.18); color:#C2410C; transform:translateY(-1px); }
+    .up-del-btn svg, .up-match-btn svg, .up-edit-btn svg { width:15px; height:15px; stroke-width:2.2; }
     .up-match-count {
         position:absolute; top:-5px; right:-5px; background:#C0392B; color:#fff;
         font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:999px;
@@ -452,8 +454,8 @@
                         <td>{{ $alias->spklu->nama ?? '—' }}</td>
                         <td>
                             <div class="up-action-group">
-                                <button type="button" class="up-match-btn" title="Edit pemetaan" onclick="openEditAliasModal(this)">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                                <button type="button" class="up-edit-btn" title="Ubah Pemetaan" onclick="openEditAliasModal(this)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                                 </button>
                             </div>
                         </td>
