@@ -227,17 +227,26 @@
         font-size: 12px;
         font-weight: 700;
         color: #0081AB;
-        background: rgba(0,129,171,.1);
-        padding: 5px 12px;
+        background: #EFF6FB;
+        padding: 6px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(0,129,171,.18);
+        border: 1px solid #BAE6FD;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .mu-count-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #0081AB;
     }
 
     /* ── Filter & Search Toolbar (SATU BARIS SEJAJAR) ── */
     .mu-toolbar {
         padding: 14px 22px;
-        background: #fff;
-        border-bottom: 1px solid #f1f5f9;
+        background: #FAFBFD;
+        border-bottom: 1px solid #EEF2F6;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -256,7 +265,7 @@
     }
     .mu-search-box svg {
         position: absolute;
-        left: 13px;
+        left: 14px;
         top: 50%;
         transform: translateY(-50%);
         width: 15px;
@@ -267,14 +276,15 @@
     }
     .mu-search-input {
         width: 100% !important;
-        padding-top: 9px !important;
-        padding-bottom: 9px !important;
+        height: 40px !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
         padding-right: 14px !important;
-        padding-left: 38px !important;
-        border-radius: 9px;
+        padding-left: 40px !important;
+        border-radius: 10px;
         border: 1px solid #e2e8f0;
-        font-size: 13px;
-        background: #f8fafc;
+        font-size: 13.5px;
+        background: #ffffff;
         color: #0f172a;
         transition: all .15s ease;
         box-sizing: border-box;
@@ -286,11 +296,12 @@
         box-shadow: 0 0 0 3px rgba(0,129,171,.12);
     }
     .mu-select-filter {
-        padding: 9px 30px 9px 12px;
-        border-radius: 9px;
+        height: 40px;
+        padding: 0 36px 0 14px;
+        border-radius: 10px;
         border: 1px solid #e2e8f0;
         font-size: 13px;
-        background: #f8fafc;
+        background: #ffffff;
         color: #334155;
         font-weight: 500;
         cursor: pointer;
@@ -298,6 +309,13 @@
         flex: 0 0 170px;
         width: 170px;
         box-sizing: border-box;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2364748B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+    }
+    .mu-select-filter:hover {
+        border-color: #cbd5e1;
     }
     .mu-select-filter:focus {
         outline: none;
@@ -306,22 +324,26 @@
         box-shadow: 0 0 0 3px rgba(0,129,171,.12);
     }
     .mu-reset-btn {
-        font-size: 12px;
+        height: 40px;
+        font-size: 12.5px;
         color: #C0392B;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
-        padding: 8px 12px;
-        border-radius: 8px;
+        gap: 6px;
+        padding: 0 14px;
+        border-radius: 10px;
         background: rgba(192,57,43,.08);
-        font-weight: 600;
+        border: 1px solid rgba(192,57,43,.18);
+        font-weight: 700;
         flex-shrink: 0;
         white-space: nowrap;
-        transition: background .15s ease;
+        transition: all .15s ease;
+        box-sizing: border-box;
     }
     .mu-reset-btn:hover {
         background: rgba(192,57,43,.16);
+        border-color: rgba(192,57,43,.3);
     }
 
     @media (max-width: 820px) {
@@ -351,26 +373,26 @@
     .mu-table thead th {
         background: #F8FAFC;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: .05em;
+        letter-spacing: .06em;
         color: #64748B;
-        padding: 13px 20px;
-        border-bottom: 1px solid #eef1f5;
+        padding: 14px 22px;
+        border-bottom: 1px solid #EEF1F5;
         white-space: nowrap;
     }
     .mu-table tbody td {
-        padding: 14px 20px;
-        font-size: 13.3px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 16px 22px;
+        font-size: 13.5px;
+        border-bottom: 1px solid #F1F5F9;
         vertical-align: middle;
-        color: #1e293b;
+        color: #1E293B;
     }
     .mu-table tbody tr {
         transition: background .12s ease;
     }
     .mu-table tbody tr:hover {
-        background: rgba(0,129,171,.03);
+        background: rgba(0, 129, 171, 0.025);
     }
     .mu-table tbody tr:last-child td {
         border-bottom: none;
@@ -383,41 +405,63 @@
         gap: 12px;
     }
     .mu-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, rgba(2,62,138,.12), rgba(0,129,171,.14));
-        color: #023E8A;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 13px;
         font-weight: 800;
         flex-shrink: 0;
-        border: 1px solid rgba(2,62,138,.15);
+        letter-spacing: -0.02em;
+        transition: transform .15s ease;
+    }
+    .mu-avatar.role-super_admin {
+        background: #EBF3FA;
+        color: #023E8A;
+        border: 1px solid #B8D5ED;
+    }
+    .mu-avatar.role-pemasaran {
+        background: #F0F9FF;
+        color: #0081AB;
+        border: 1px solid #BAE6FD;
+    }
+    .mu-avatar.role-pengelola {
+        background: #ECFDF5;
+        color: #059669;
+        border: 1px solid #A7F3D0;
+    }
+    .mu-avatar.role-manajemen {
+        background: #F5F3FF;
+        color: #7C3AED;
+        border: 1px solid #DDD6FE;
     }
     .mu-user-name {
-        font-weight: 700;
-        color: #0f172a;
+        font-weight: 750;
+        color: #1B2559;
         margin: 0;
-        font-size: 13.5px;
+        font-size: 13.8px;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 7px;
     }
     .mu-user-you {
-        font-size: 10px;
-        font-weight: 700;
-        padding: 1px 6px;
-        border-radius: 4px;
-        background: rgba(0,129,171,.12);
-        color: #0081AB;
+        font-size: 9.5px;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: rgba(2, 62, 138, 0.08);
+        color: #023E8A;
+        border: 1px solid rgba(2, 62, 138, 0.16);
         text-transform: uppercase;
+        letter-spacing: .04em;
     }
     .mu-user-sub {
-        font-size: 11.5px;
+        font-size: 12px;
         color: #94A3B8;
-        margin: 2px 0 0;
+        margin: 3px 0 0;
+        font-weight: 500;
     }
 
     /* ── Role Badges ── */
@@ -425,70 +469,89 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 11px;
+        padding: 4.5px 12px;
         border-radius: 999px;
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 700;
         white-space: nowrap;
     }
     .mu-role-super_admin {
-        background: rgba(2,62,138,.1);
+        background: #EBF3FA;
         color: #023E8A;
-        border: 1px solid rgba(2,62,138,.2);
+        border: 1px solid #B8D5ED;
     }
     .mu-role-pemasaran {
-        background: rgba(0,129,171,.1);
+        background: #F0F9FF;
         color: #0081AB;
-        border: 1px solid rgba(0,129,171,.2);
+        border: 1px solid #BAE6FD;
     }
     .mu-role-pengelola {
-        background: rgba(46,158,91,.1);
-        color: #2E9E5B;
-        border: 1px solid rgba(46,158,91,.2);
+        background: #ECFDF5;
+        color: #059669;
+        border: 1px solid #A7F3D0;
     }
     .mu-role-manajemen {
-        background: #F1F5F9;
+        background: #F8FAFC;
         color: #475569;
         border: 1px solid #E2E8F0;
     }
     .mu-badge-up3 {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 3px 9px;
-        border-radius: 6px;
-        font-size: 11.5px;
+        gap: 6px;
+        padding: 4.5px 11px;
+        border-radius: 8px;
+        font-size: 12px;
         font-weight: 700;
-        background: rgba(2, 62, 138, 0.08);
+        background: #EFF6FB;
         color: #023E8A;
-        border: 1px solid rgba(2, 62, 138, 0.16);
+        border: 1px solid #BAE6FD;
         white-space: nowrap;
+    }
+    .mu-badge-up3 svg {
+        color: #0081AB;
+    }
+    .mu-empty-dash {
+        color: #CBD5E1;
+        font-weight: 600;
+        font-size: 14px;
     }
 
     /* ── Status Styles ── */
     .mu-status-cell {
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 9px;
+    }
+    .mu-pending-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
     .mu-badge-pending {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
+        gap: 6px;
+        padding: 4.5px 11px;
         border-radius: 999px;
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 700;
-        background: rgba(232,163,23,.12);
-        color: #92660F;
-        border: 1px solid rgba(232,163,23,.25);
+        background: #FEF3C7;
+        color: #B45309;
+        border: 1px solid #FDE68A;
+    }
+    .mu-pending-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #D97706;
     }
     .mu-btn-resend {
         background: none;
         border: none;
         color: #0081AB;
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
         cursor: pointer;
         padding: 0;
@@ -496,6 +559,7 @@
         align-items: center;
         gap: 4px;
         transition: color .15s ease;
+        margin-left: 2px;
     }
     .mu-btn-resend:hover {
         color: #023E8A;
@@ -511,7 +575,7 @@
         width: 38px;
         height: 22px;
         border-radius: 999px;
-        background: #cbd5e1;
+        background: #CBD5E1;
         border: none;
         position: relative;
         cursor: pointer;
@@ -520,7 +584,7 @@
         flex-shrink: 0;
     }
     .mu-toggle.on {
-        background: #2E9E5B;
+        background: #16A34A;
     }
     .mu-toggle:disabled {
         opacity: .45;
@@ -534,42 +598,46 @@
         height: 18px;
         border-radius: 50%;
         background: #fff;
-        box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        box-shadow: 0 1px 3px rgba(0,0,0,.18);
         transition: left .2s ease;
     }
     .mu-toggle.on .mu-toggle-knob {
         left: 18px;
     }
     .mu-status-text {
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 12.5px;
+        font-weight: 700;
     }
-    .mu-status-text.active { color: #2E9E5B; }
+    .mu-status-text.active { color: #16A34A; }
     .mu-status-text.inactive { color: #94A3B8; }
 
     /* ── Action Buttons ── */
     .mu-actions {
         display: flex;
-        gap: 6px;
+        gap: 7px;
         align-items: center;
+        justify-content: flex-end;
     }
     .mu-icon-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        background: rgba(245, 158, 11, 0.12);
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        background: rgba(245, 158, 11, 0.08);
         color: #D97706;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         transition: all .15s ease;
+        box-sizing: border-box;
     }
     .mu-icon-btn:hover {
-        background: rgba(245, 158, 11, 0.22);
+        background: rgba(245, 158, 11, 0.18);
+        border-color: rgba(245, 158, 11, 0.4);
         color: #B45309;
-        border-color: rgba(245, 158, 11, 0.35);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
     }
     .mu-icon-btn svg {
         width: 15px;
@@ -578,21 +646,25 @@
     }
 
     .mu-del-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        background: rgba(192,57,43,.08);
-        color: #C0392B;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        background: rgba(239, 68, 68, 0.08);
+        color: #DC2626;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         transition: all .15s ease;
+        box-sizing: border-box;
     }
     .mu-del-btn:hover {
-        background: rgba(192,57,43,.16);
-        border-color: rgba(192,57,43,.2);
+        background: rgba(239, 68, 68, 0.16);
+        border-color: rgba(239, 68, 68, 0.4);
+        color: #B91C1C;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
     }
     .mu-del-btn svg {
         width: 14px;
@@ -600,8 +672,10 @@
         stroke-width: 2.2;
     }
     .mu-del-btn:disabled {
-        opacity: .3;
+        opacity: .25;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
     }
 
     /* ── Empty State ── */
@@ -881,6 +955,7 @@
             </div>
         </div>
         <div class="mu-count-badge">
+            <span class="mu-count-dot"></span>
             {{ $users->total() }} User Terdata
         </div>
     </div>
@@ -941,7 +1016,7 @@
                 <tr>
                     <td>
                         <div class="mu-user-cell">
-                            <div class="mu-avatar">
+                            <div class="mu-avatar role-{{ $u->role }}">
                                 {{ strtoupper(substr($u->name, 0, 2)) }}
                             </div>
                             <div>
@@ -965,7 +1040,7 @@
                                 {{ $u->up3 }}
                             </span>
                         @else
-                            <span style="color: #94A3B8; font-size: 12.5px;">—</span>
+                            <span class="mu-empty-dash">—</span>
                         @endif
                     </td>
                     <td>
@@ -976,14 +1051,19 @@
                     <td>
                         <div class="mu-status-cell">
                             @if ($u->status->value === 'pending')
-                                <span class="mu-badge-pending">Menunggu Aktivasi</span>
-                                <form method="POST" action="{{ route('manajemen-user.resend-invitation', $u) }}" style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="mu-btn-resend" title="Kirim ulang email undangan">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                                        Kirim Ulang
-                                    </button>
-                                </form>
+                                <div class="mu-pending-wrap">
+                                    <span class="mu-badge-pending">
+                                        <span class="mu-pending-dot"></span>
+                                        Menunggu Aktivasi
+                                    </span>
+                                    <form method="POST" action="{{ route('manajemen-user.resend-invitation', $u) }}" style="display:inline; margin:0;">
+                                        @csrf
+                                        <button type="submit" class="mu-btn-resend" title="Kirim ulang email undangan">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                            Kirim Ulang
+                                        </button>
+                                    </form>
+                                </div>
                             @else
                                 <form method="POST" action="{{ route('manajemen-user.toggle-status', $u) }}"
                                       data-confirm="Status {{ $u->name }} akan diubah menjadi {{ $u->status->value === 'active' ? 'Nonaktif' : 'Aktif' }}."
@@ -1003,15 +1083,15 @@
                     </td>
                     <td style="white-space: nowrap;">
                         @if($u->last_login_at)
-                            <div style="font-size: 13px; font-weight: 700; color: #1E293B; line-height: 1.3; white-space: nowrap;">
+                            <div style="font-size: 13px; font-weight: 700; color: #1E293B; line-height: 1.35; white-space: nowrap;">
                                 {{ $u->last_login_at->translatedFormat('d M Y') }} • {{ $u->last_login_at->format('H:i') }}
                             </div>
                             <span style="font-size: 11.5px; color: #64748B; display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; white-space: nowrap;">
-                                <svg style="width: 11px; height: 11px; color: #94A3B8; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <svg style="width: 12px; height: 12px; color: #94A3B8; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                 {{ $u->last_login_at->diffForHumans() }}
                             </span>
                         @else
-                            <span style="color: #94A3B8; font-size: 13px;" title="Belum pernah login">—</span>
+                            <span class="mu-empty-dash" title="Belum pernah login">—</span>
                         @endif
                     </td>
                     <td>
