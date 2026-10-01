@@ -341,7 +341,9 @@
                 Grafik Proyeksi ROI
             </div>
             <div class="fsp-card-body">
-                <canvas id="fsp-roi-chart" height="220"></canvas>
+                <div style="position:relative; width:100%; height:260px;">
+                    <canvas id="fsp-roi-chart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -398,11 +400,13 @@ document.addEventListener('DOMContentLoaded', () => {
             },
         ];
 
-    new Chart(canvas, {
+    const chartRoiInstance = new Chart(canvas, {
         type: 'line',
         data: { labels: labelsTahun, datasets },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            resizeDelay: 50,
             scales: {
                 y: {
                     ticks: { callback: v => v + '%' },
@@ -411,6 +415,10 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             plugins: { legend: { display: true, position: 'bottom' } },
         },
+    });
+
+    window.addEventListener('resize', () => {
+        if (chartRoiInstance) chartRoiInstance.resize();
     });
 });
 </script>

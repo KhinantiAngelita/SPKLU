@@ -33,6 +33,17 @@
     .trx-pill.active { background:#FFC629; color:#023E8A; box-shadow:0 2px 6px rgba(255,198,41,.4); }
 
     .trx-daterange { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:9px; padding:8px 12px; flex-shrink:0; transition:border-color .15s ease; }
+    .trx-chart-canvas-wrap {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        min-height: 240px;
+    }
+    .trx-chart-canvas-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+    }
     .trx-daterange:focus-within { border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
     .trx-daterange input { border:none; padding:0; font-size:12.8px; color:#1E293B; width:106px; font-family:inherit; }
     .trx-daterange input:focus { outline:none; }
@@ -287,7 +298,9 @@
     </form>
 
     <div style="padding:22px 24px;">
-        <canvas id="chart-tren-per-tahun" height="95"></canvas>
+        <div class="trx-chart-canvas-wrap">
+            <canvas id="chart-tren-per-tahun"></canvas>
+        </div>
     </div>
 
     <div class="trx-data-table-wrap">
@@ -441,10 +454,13 @@
         borderWidth: 2.5,
     }));
 
-    new Chart(document.getElementById('chart-tren-per-tahun'), {
+    const chartTrenTahunInstance = new Chart(document.getElementById('chart-tren-per-tahun'), {
         type: 'line',
         data: { labels: bulanLabelTren, datasets: datasetsTren },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            resizeDelay: 50,
             plugins: {
                 legend: { display: false },
                 datalabels: {
@@ -482,6 +498,26 @@
             },
         }
     });
+
+    const handleChartTrenTahunResize = () => {
+        if (chartTrenTahunInstance) {
+            chartTrenTahunInstance.resize();
+        }
+    };
+    window.addEventListener('resize', handleChartTrenTahunResize);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            setTimeout(handleChartTrenTahunResize, 100);
+        }
+    });
+    if (window.ResizeObserver) {
+        const wrapEl = document.querySelector('.trx-chart-canvas-wrap');
+        if (wrapEl) {
+            new ResizeObserver(() => {
+                requestAnimationFrame(handleChartTrenTahunResize);
+            }).observe(wrapEl);
+        }
+    }
 </script>
 
 @endsection

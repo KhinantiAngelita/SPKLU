@@ -558,6 +558,17 @@
         color: #94A3B8;
         font-size: 12px;
     }
+    .dsh-chart-canvas-wrap {
+        position: relative;
+        width: 100%;
+        height: 290px;
+        min-height: 240px;
+    }
+    .dsh-chart-canvas-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
+    }
 
     /* ===== Grid 2-Col: Kalender & Jadwal Terdekat ===== */
     .dsh-grid-2col {
@@ -1189,7 +1200,9 @@
         </div>
     </div>
     <div style="padding: 24px 26px;">
-        <canvas id="chart-tren-dashboard" height="75"></canvas>
+        <div class="dsh-chart-canvas-wrap">
+            <canvas id="chart-tren-dashboard"></canvas>
+        </div>
     </div>
 </div>
 
@@ -1390,7 +1403,7 @@
     gradient.addColorStop(0, 'rgba(0, 129, 171, 0.22)');
     gradient.addColorStop(1, 'rgba(0, 129, 171, 0.00)');
 
-    new Chart(ctx, {
+    const chartTrenInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: {!! json_encode($trenTransaksiLabels ?? []) !!},
@@ -1413,7 +1426,8 @@
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
+            resizeDelay: 50,
             interaction: {
                 intersect: false,
                 mode: 'index',
@@ -1469,6 +1483,27 @@
             layout: { padding: { top: 24, right: 12, left: 6, bottom: 4 } }
         }
     });
+
+    // Auto-resize handler saat window di-minimize, maximize, atau kembali ke tab
+    const handleChartTrenResize = () => {
+        if (chartTrenInstance) {
+            chartTrenInstance.resize();
+        }
+    };
+    window.addEventListener('resize', handleChartTrenResize);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            setTimeout(handleChartTrenResize, 100);
+        }
+    });
+    if (window.ResizeObserver) {
+        const wrapEl = document.querySelector('.dsh-chart-canvas-wrap');
+        if (wrapEl) {
+            new ResizeObserver(() => {
+                requestAnimationFrame(handleChartTrenResize);
+            }).observe(wrapEl);
+        }
+    }
 </script>
 
 @endsection
