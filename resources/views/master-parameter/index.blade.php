@@ -19,8 +19,10 @@
         border-top: 1px solid #E2E8F0;
         flex-wrap: wrap;
     }
+    .mp-section-header.mp-first,
+    .mp-topbar + .mp-section-header,
     .mp-section-header:first-of-type {
-        margin-top: 18px;
+        margin-top: 0;
         padding-top: 0;
         border-top: none;
     }
@@ -156,7 +158,7 @@
 </div>
 
 {{-- SECTION 1: PARAMETER PENILAIAN LOKASI (3 CARDS) --}}
-<div class="mp-section-header">
+<div class="mp-section-header mp-first">
     <div class="mp-section-header-left">
         <div class="mp-section-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
