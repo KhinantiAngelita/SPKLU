@@ -12,6 +12,27 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    public const UP3_MAP = [
+        'BDG' => 'UP3 Bandung',
+        'BGR' => 'UP3 Bogor',
+        'BKS' => 'UP3 Bekasi',
+        'CJR' => 'UP3 Cianjur',
+        'CKG' => 'UP3 Cikarang',
+        'CMI' => 'UP3 Cimahi',
+        'CRB' => 'UP3 Cirebon',
+        'DPK' => 'UP3 Depok',
+        'GPI' => 'UP3 Gunung Putri',
+        'GRT' => 'UP3 Garut',
+        'IDM' => 'UP3 Indramayu',
+        'KRW' => 'UP3 Karawang',
+        'MJA' => 'UP3 Majalaya',
+        'PWK' => 'UP3 Purwakarta',
+        'SKI' => 'UP3 Sukabumi',
+        'SMD' => 'UP3 Sumedang',
+        'TSK' => 'UP3 Tasikmalaya',
+        'UID' => 'UID Jawa Barat',
+    ];
+
     public const DAFTAR_UP3 = [
         'UP3 Bandung',
         'UP3 Bekasi',
@@ -23,12 +44,14 @@ class User extends Authenticatable
         'UP3 Depok',
         'UP3 Garut',
         'UP3 Gunung Putri',
+        'UP3 Indramayu',
         'UP3 Karawang',
         'UP3 Majalaya',
         'UP3 Purwakarta',
         'UP3 Sukabumi',
         'UP3 Sumedang',
         'UP3 Tasikmalaya',
+        'UID Jawa Barat',
     ];
 
     protected $fillable = [

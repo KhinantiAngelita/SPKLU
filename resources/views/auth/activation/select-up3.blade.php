@@ -224,33 +224,43 @@
             padding: 2px 8px;
             border-radius: 6px;
         }
+        .up3-banner-code {
+            display: inline-block;
+            background: #023E8A;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 5px;
+            letter-spacing: .03em;
+        }
 
-        /* Grid Pilih Cepat 16 UP3 */
+        /* Grid 18 UP3 (6x3) */
         .up3-quick-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 7px;
             margin-bottom: 24px;
         }
-        @media (max-width: 580px) {
+        @media (max-width: 520px) {
             .up3-quick-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         .up3-chip-btn {
             background: #FFFFFF;
             border: 1.5px solid #E2E8F0;
-            border-radius: 10px;
-            padding: 11px 8px;
+            border-radius: 9px;
+            padding: 9px 4px;
             font-size: 12.5px;
-            font-weight: 600;
-            color: #334155;
+            font-weight: 750;
+            color: #1E293B;
             text-align: center;
             cursor: pointer;
-            transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: all .15s ease;
             outline: none;
             width: 100%;
+            letter-spacing: .02em;
         }
         .up3-chip-btn:hover {
             border-color: #0081AB;
@@ -262,8 +272,8 @@
             background: #023E8A;
             color: #FFFFFF;
             border-color: #023E8A;
-            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.25);
-            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.22);
+            font-weight: 800;
         }
 
         .act-btn-submit {
@@ -317,7 +327,7 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
             </div>
             <h1>Aktivasi Akun SPKLU</h1>
             <p>Pilih Unit Pelaksana Pelayanan Pelanggan (UP3) wilayah kerja Anda sebelum verifikasi OTP</p>
@@ -371,36 +381,52 @@
                 <input type="hidden" name="up3" id="selected-up3-input" value="{{ old('up3', $user->up3) }}">
 
                 <div class="act-section-label">
-                    <span>Pilih UP3 Wilayah Kerja (16 Unit)</span>
-                    <span style="font-size: 11px; color: #64748B; text-transform: none; font-weight: 500;">Klik salah satu</span>
+                    <span>Pilih Unit UP3 Wilayah Kerja (18 Unit)</span>
                 </div>
 
                 {{-- Status Banner Terpilih --}}
                 @php
                     $initialUp3 = old('up3', $user->up3);
+                    $up3List = $up3Map ?? \App\Models\User::UP3_MAP;
+                    $initialKode = null;
+                    if ($initialUp3) {
+                        foreach ($up3List as $k => $n) {
+                            if ($initialUp3 === $k || $initialUp3 === $n) {
+                                $initialKode = $k;
+                                $initialUp3 = $n;
+                                break;
+                            }
+                        }
+                    }
                 @endphp
                 <div id="up3Banner" class="up3-selected-banner {{ $initialUp3 ? '' : 'empty' }}">
                     <div class="up3-selected-left">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         <div class="up3-selected-name" id="up3BannerText">
-                            {{ $initialUp3 ? $initialUp3 : 'Silakan klik salah satu unit UP3 di bawah ini' }}
+                            @if ($initialUp3)
+                                @if ($initialKode)<span class="up3-banner-code">{{ $initialKode }}</span>@endif
+                                <span>{{ $initialUp3 }} (UID Jawa Barat)</span>
+                            @else
+                                Silakan klik salah satu unit UP3 di bawah ini
+                            @endif
                         </div>
                     </div>
                     <span class="up3-selected-badge" id="up3BannerBadge" style="{{ $initialUp3 ? '' : 'display:none;' }}">✓ Terpilih</span>
                 </div>
 
-                {{-- Pilih Cepat 16 UP3 --}}
+                {{-- Singkatan 18 UP3 --}}
                 <div class="up3-quick-grid">
-                    @foreach ($daftarUp3 as $up3)
+                    @foreach ($up3List as $kode => $nama)
                         @php
-                            $shortName = str_replace('UP3 ', '', $up3);
-                            $isSelected = $initialUp3 === $up3;
+                            $isSelected = ($initialUp3 === $kode || $initialUp3 === $nama);
                         @endphp
                         <button type="button" 
                                 class="up3-chip-btn {{ $isSelected ? 'active' : '' }}" 
-                                data-up3="{{ $up3 }}"
-                                onclick="pilihUp3('{{ $up3 }}')">
-                            {{ $shortName }}
+                                data-up3="{{ $nama }}"
+                                data-kode="{{ $kode }}"
+                                title="{{ $nama }}"
+                                onclick="pilihUp3('{{ $nama }}', '{{ $kode }}')">
+                            {{ $kode }}
                         </button>
                     @endforeach
                 </div>
@@ -419,7 +445,7 @@
     </div>
 
     <script>
-        function pilihUp3(nama) {
+        function pilihUp3(nama, kode) {
             document.getElementById('selected-up3-input').value = nama;
 
             // Update status banner
@@ -428,12 +454,12 @@
             const badge = document.getElementById('up3BannerBadge');
 
             banner.classList.remove('empty');
-            text.textContent = nama + ' (UID Jawa Barat)';
+            text.innerHTML = `<span class="up3-banner-code">${kode}</span> <span>${nama} (UID Jawa Barat)</span>`;
             badge.style.display = 'inline-block';
 
             // Update active states on buttons
             document.querySelectorAll('.up3-chip-btn').forEach(btn => {
-                if (btn.getAttribute('data-up3') === nama) {
+                if (btn.getAttribute('data-up3') === nama || btn.getAttribute('data-kode') === kode) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');

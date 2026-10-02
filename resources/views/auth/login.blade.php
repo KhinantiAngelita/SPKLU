@@ -114,12 +114,12 @@
 
         .login-submit-btn {
             width: 100%; padding: 14.5px; border: none; border-radius: 11px;
-            background: linear-gradient(135deg, #FF7A00 0%, #EA580C 100%); color: #fff;
+            background: linear-gradient(90deg, #FB7303 0%, #EF6109 100%); color: #fff;
             font-size: 14.5px; font-weight: 700; letter-spacing: .01em; cursor: pointer; transition: all .18s ease;
-            box-shadow: 0 4px 14px rgba(234, 88, 12, .32);
+            box-shadow: 0 4px 14px rgba(251, 115, 3, .38);
         }
-        .login-submit-btn:hover { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(234, 88, 12, .42); }
-        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(234, 88, 12, .25); }
+        .login-submit-btn:hover { background: linear-gradient(90deg, #FA6A00 0%, #E25500 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(251, 115, 3, .45); }
+        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(251, 115, 3, .28); }
 
         .login-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; }
         .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #eef1f5; }

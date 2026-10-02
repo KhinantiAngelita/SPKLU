@@ -28,6 +28,7 @@ class ActivationController extends Controller
     {
         return view('auth.activation.direct-entry', [
             'daftarUp3' => User::DAFTAR_UP3,
+            'up3Map' => User::UP3_MAP,
         ]);
     }
 
@@ -36,14 +37,18 @@ class ActivationController extends Controller
      */
     public function requestOtpDirect(Request $request)
     {
+        $validUp3 = array_merge(User::DAFTAR_UP3, array_keys(User::UP3_MAP));
+
         $request->validate([
             'email' => 'required|email',
-            'up3' => ['required', Rule::in(User::DAFTAR_UP3)],
+            'up3' => ['required', Rule::in($validUp3)],
         ], [
             'email.required' => 'Email wajib diisi.',
             'up3.required' => 'Pilih unit UP3 Anda terlebih dahulu.',
             'up3.in' => 'Pilihan UP3 tidak valid.',
         ]);
+
+        $up3Selected = User::UP3_MAP[$request->up3] ?? $request->up3;
 
         $email = strtolower(trim((string) $request->email));
         $user = User::where('email', $email)->first();
@@ -60,7 +65,7 @@ class ActivationController extends Controller
 
         // Simpan UP3 yang dipilih
         $user->update([
-            'up3' => $request->up3,
+            'up3' => $up3Selected,
             'invitation_token' => $user->invitation_token ?: User::generateInvitationToken(),
             'invitation_expires_at' => now()->addDays(7),
         ]);
@@ -91,6 +96,7 @@ class ActivationController extends Controller
             'user' => $user,
             'token' => $token,
             'daftarUp3' => User::DAFTAR_UP3,
+            'up3Map' => User::UP3_MAP,
         ]);
     }
 
@@ -105,14 +111,18 @@ class ActivationController extends Controller
         }
         abort_if($user->invitationIsExpired(), 410, 'Link undangan sudah kedaluwarsa.');
 
+        $validUp3 = array_merge(User::DAFTAR_UP3, array_keys(User::UP3_MAP));
+
         $request->validate([
-            'up3' => ['required', Rule::in(User::DAFTAR_UP3)],
+            'up3' => ['required', Rule::in($validUp3)],
         ], [
             'up3.required' => 'Pilih unit UP3 wilayah Anda terlebih dahulu sebelum aktivasi.',
             'up3.in' => 'Pilihan UP3 tidak valid.',
         ]);
 
-        $user->update(['up3' => $request->up3]);
+        $up3Selected = User::UP3_MAP[$request->up3] ?? $request->up3;
+
+        $user->update(['up3' => $up3Selected]);
 
         $this->otpService->sendTo($user);
 
