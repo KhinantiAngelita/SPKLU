@@ -81,4 +81,29 @@ class GlobalUp3FilterTest extends TestCase
         $response->assertViewHas('activeUp3', 'UP3 Bandung');
         $response->assertViewHas('selectedUp3', 'UP3 Bandung');
     }
+
+    public function test_dashboard_renders_top_spklu_performa_and_esg_metrics(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin Utama',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password123'),
+            'role' => 'super_admin',
+            'status' => UserStatus::Active,
+            'force_password_change' => false,
+            'up3' => null,
+            'password_changed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->get('/dashboard');
+        $response->assertStatus(200);
+        $response->assertViewHas('topSpkluPerforma');
+        $response->assertViewHas('ringkasanKeuangan');
+        $ringkasan = $response->viewData('ringkasanKeuangan');
+        $this->assertArrayHasKey('reduksi_co2_kg', $ringkasan);
+        $this->assertArrayHasKey('bensin_saved_liter', $ringkasan);
+        $response->assertSee('Top 5 SPKLU Berkinerja Tertinggi');
+        $response->assertSee('Reduksi Emisi Karbon');
+        $response->assertSee('Ekuivalen Penghematan BBM');
+    }
 }

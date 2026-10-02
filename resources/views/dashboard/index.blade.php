@@ -430,6 +430,84 @@
         line-height: 1.1;
     }
 
+    /* ===== ESG & Green Energy Impact Strip ===== */
+    .dsh-esg-strip {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        background: #F0FDF4;
+        border: 1px solid #BBF7D0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        gap: 16px;
+        margin-top: 2px;
+    }
+    .dsh-esg-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+    .dsh-esg-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .dsh-esg-icon.co2 {
+        background: #DCFCE7;
+        color: #16A34A;
+    }
+    .dsh-esg-icon.bbm {
+        background: #FEF3C7;
+        color: #D97706;
+    }
+    .dsh-esg-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+    .dsh-esg-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        display: block;
+        line-height: 1.2;
+    }
+    .dsh-esg-value {
+        font-size: 14.5px;
+        font-weight: 800;
+        color: #0F172A;
+        line-height: 1.2;
+        margin-top: 2px;
+        display: block;
+    }
+    .dsh-esg-value small {
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748B;
+    }
+    .dsh-esg-divider {
+        width: 1px;
+        height: 28px;
+        background: #BBF7D0;
+        flex-shrink: 0;
+    }
+    @media (max-width: 600px) {
+        .dsh-esg-strip {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .dsh-esg-divider {
+            display: none;
+        }
+    }
+
     .dsh-zona-body {
         padding: 22px;
         flex: 1;
@@ -1199,6 +1277,37 @@
                     </span>
                 </div>
             </div>
+
+            {{-- Metrik ESG & Emisi Hijau --}}
+            <div class="dsh-esg-strip">
+                <div class="dsh-esg-item">
+                    <div class="dsh-esg-icon co2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9-4.03-9-9-9z"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="dsh-esg-label">Reduksi Emisi Karbon</span>
+                        <span class="dsh-esg-value">{{ number_format($ringkasanKeuangan['reduksi_co2_kg'] / 1000, 2, ',', '.') }} <small>Ton CO₂e</small></span>
+                    </div>
+                </div>
+                <div class="dsh-esg-divider"></div>
+                <div class="dsh-esg-item">
+                    <div class="dsh-esg-icon bbm">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="22" x2="15" y2="22"/>
+                            <line x1="4" y1="9" x2="14" y2="9"/>
+                            <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/>
+                            <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="dsh-esg-label">Ekuivalen Penghematan BBM</span>
+                        <span class="dsh-esg-value">{{ number_format($ringkasanKeuangan['bensin_saved_liter'], 0, ',', '.') }} <small>Liter</small></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1461,7 +1570,94 @@
 </div>
 
 {{-- =========================================================
-      7. TOP 5 KANDIDAT PRIORITAS (RANKED TABLE)
+      7. TOP 5 SPKLU BERKINERJA TERTINGGI (EXISTING ASSETS)
+    ========================================================= --}}
+<div class="surface-card">
+    <div class="section-header-bar">
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+            </div>
+            <div>
+                <h2>Top 5 SPKLU Berkinerja Tertinggi</h2>
+                <p>Unit SPKLU dengan volume energi dan transaksi tertinggi periode terpilih</p>
+            </div>
+        </div>
+        <a href="{{ route('transaksi.index') }}" class="link-btn">
+            Lihat Data Transaksi
+            <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table class="dsh-table">
+            <thead>
+                <tr>
+                    <th style="width:8%; text-align:center;">Peringkat</th>
+                    <th style="width:36%;">Nama SPKLU &amp; Spesifikasi</th>
+                    <th style="width:20%;">Wilayah / UP3</th>
+                    <th style="width:18%; text-align:right;">Energi &amp; Pendapatan</th>
+                    <th style="width:18%; text-align:right;">Total Transaksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($topSpkluPerforma as $i => $item)
+                    @php
+                        $rankClass = match($i) {
+                            0 => 'dsh-rank-1',
+                            1 => 'dsh-rank-2',
+                            2 => 'dsh-rank-3',
+                            default => 'dsh-rank-other',
+                        };
+                    @endphp
+                    <tr>
+                        <td style="text-align:center;">
+                            <span class="dsh-rank-badge {{ $rankClass }}">{{ $i + 1 }}</span>
+                        </td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:3px;">
+                                <strong style="color:#0F172A; font-size:13.5px;">{{ $item->spklu?->nama ?? 'SPKLU Tidak Teridentifikasi' }}</strong>
+                                <span style="font-size:11px; color:#64748B;">
+                                    Tipe: <span style="font-weight:700; color:#0284C7;">{{ $item->spklu?->type ?: 'Standar' }}</span>
+                                    @if ($item->spklu?->nozzle)
+                                        &bull; {{ $item->spklu->nozzle }} Nozzle
+                                    @endif
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="display:inline-flex; align-items:center; gap:5px; color:#475569; font-size:13px;">
+                                <svg style="width:13px; height:13px; color:#0081AB; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                {{ $item->spklu?->up3 ?? '-' }}
+                                @if ($item->spklu?->ulp?->nama_pendek)
+                                    <span style="color:#94A3B8;">({{ $item->spklu->ulp->nama_pendek }})</span>
+                                @endif
+                            </span>
+                        </td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+                                <strong style="color:#023E8A; font-size:13.5px;">{{ number_format($item->total_energi, 1, ',', '.') }} kWh</strong>
+                                <span style="font-size:11.5px; color:#10B981; font-weight:700;">Rp {{ number_format($item->total_pendapatan / 1000000, 2, ',', '.') }} Jt</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right;">
+                            <span style="font-weight:700; color:#0F172A; font-size:13px; background:#F8FAFC; border:1px solid #E2E8F0; padding:5px 12px; border-radius:8px; display:inline-block;">
+                                {{ number_format($item->total_transaksi, 0, ',', '.') }} Sesi
+                            </span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="5" style="text-align:center; padding:36px 20px; color:#94A3B8;">Belum ada data transaksi tercatat pada periode ini.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{-- =========================================================
+      8. TOP 5 KANDIDAT PRIORITAS (RANKED TABLE)
     ========================================================= --}}
 <div class="surface-card">
     <div class="section-header-bar">

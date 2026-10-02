@@ -83,6 +83,19 @@ class DashboardController extends Controller
         // ===== Ringkasan Keuangan & Energi bulan berjalan vs bulan lalu =====
         $ringkasanKeuangan = $this->buildRingkasanKeuangan($selectedUp3);
 
+        // ===== Top 5 SPKLU Berkinerja Tertinggi (Existing Assets) =====
+        $topSpkluPerforma = Transaksi::query()
+            ->whereNotNull('spklu_id')
+            ->whereHas('spklu')
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
+            ->whereBetween('tanggal', [$mulai, $sampai])
+            ->groupBy('spklu_id')
+            ->selectRaw('spklu_id, SUM(jumlah_transaksi) as total_transaksi, SUM(energi_kwh) as total_energi, SUM(pendapatan_rp) as total_pendapatan')
+            ->orderByDesc('total_energi')
+            ->take(5)
+            ->with(['spklu.ulp'])
+            ->get();
+
         // ===== Ringkasan Rekomendasi Lokasi (bagian "murah", tanpa grid scan) =====
         $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
         $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
@@ -119,6 +132,7 @@ class DashboardController extends Controller
             'kalenderBulanIni' => $this->buildKalenderData($selectedUp3),
 
             'topKandidat' => $topKandidat,
+            'topSpkluPerforma' => $topSpkluPerforma,
             'pengajuanTerbaru' => $pengajuanTerbaru,
 
             'ringkasanKeuangan' => $ringkasanKeuangan,
@@ -174,12 +188,18 @@ class DashboardController extends Controller
             return round((($sekarang - $dulu) / $dulu) * 100, 1);
         };
 
+        // Reduksi Emisi: faktor emisi EV terhindar ~0.85 kg CO2/kWh; Ekuivalen BBM ~0.35 Liter/kWh
+        $reduksiCo2Kg = round($energiBulanIni * 0.85, 1);
+        $bensinSavedLiter = round($energiBulanIni * 0.35, 1);
+
         return [
             'pendapatan_bulan_ini' => $pendapatanBulanIni,
             'tren_pendapatan_persen' => $hitungTren($pendapatanBulanIni, $pendapatanBulanLalu),
             'energi_bulan_ini' => $energiBulanIni,
             'tren_energi_persen' => $hitungTren($energiBulanIni, $energiBulanLalu),
             'nama_bulan' => $bulanIni->translatedFormat('F Y'),
+            'reduksi_co2_kg' => $reduksiCo2Kg,
+            'bensin_saved_liter' => $bensinSavedLiter,
         ];
     }
 
