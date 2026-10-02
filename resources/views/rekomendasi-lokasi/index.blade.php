@@ -228,19 +228,10 @@
 
         <div class="rl-filter-group">
             <form method="GET" style="display:flex; align-items:center; gap:8px;">
-                @if ($isSuperAdmin)
-                    <select name="up3" class="rl-select" onchange="this.form.submit()" style="font-weight:600; color:#023E8A; border-color:#023E8A; background-color:#F0F7FA; min-width:180px;">
-                        <option value="">Semua UP3 (UID Jabar)</option>
-                        @foreach ($daftarUp3 as $u)
-                            <option value="{{ $u }}" {{ $selectedUp3 === $u ? 'selected' : '' }}>{{ $u }}</option>
-                        @endforeach
-                    </select>
-                @else
-                    @if ($selectedUp3)
-                        <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
-                    @endif
+                @if ($selectedUp3)
+                    <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
                 @endif
-                <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()" style="min-width:170px;">
+                <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()" style="min-width:180px;">
                     <option value="">Semua ULP</option>
                     @foreach ($daftarUlp as $ulp)
                         <option value="{{ $ulp->id }}" {{ (string) $ulpTerpilih === (string) $ulp->id ? 'selected' : '' }}>{{ $ulp->nama_penuh }}</option>

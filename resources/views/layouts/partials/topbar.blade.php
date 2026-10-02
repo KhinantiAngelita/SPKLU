@@ -94,15 +94,43 @@
         </div>
 
         @php
-            $topbarUp3 = $selectedUp3 ?? (request('up3') ?: (auth()->user()->up3 ?? null));
+            $isSuperAdminUser = auth()->user()->isSuperAdmin();
+            $currentActiveUp3 = $activeUp3 ?? session('active_up3') ?? ($isSuperAdminUser ? null : auth()->user()->up3);
+            $listUp3 = $globalDaftarUp3 ?? \App\Models\User::DAFTAR_UP3;
         @endphp
-        <div class="topbar-wilayah-pill" title="Wilayah Kerja Aktif">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13" height="13" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/>
-                <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span>Wilayah: <strong>{{ $topbarUp3 ?: 'UID Jawa Barat (Semua Unit)' }}</strong></span>
-        </div>
+
+        @if ($isSuperAdminUser)
+            <form method="GET" action="{{ url()->current() }}" id="topbar-up3-form" class="topbar-up3-form" style="margin:0;">
+                @foreach(request()->except(['up3', 'page']) as $k => $v)
+                    @if(is_array($v))
+                        @foreach($v as $subK => $subV)
+                            <input type="hidden" name="{{ $k }}[{{ $subK }}]" value="{{ $subV }}">
+                        @endforeach
+                    @else
+                        <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                    @endif
+                @endforeach
+                <div class="topbar-up3-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13" height="13" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="topbar-up3-pin">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <select name="up3" onchange="this.form.submit()" class="topbar-up3-select" title="Filter Wilayah Kerja (Otomatis berlaku ke semua menu)">
+                        <option value="">Semua Wilayah (UID Jawa Barat)</option>
+                        @foreach($listUp3 as $u)
+                            <option value="{{ $u }}" {{ $currentActiveUp3 === $u ? 'selected' : '' }}>{{ $u }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </form>
+        @else
+            <div class="topbar-wilayah-pill" title="Unit Kerja Akun Anda">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13" height="13" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Wilayah: <strong>{{ $currentActiveUp3 ?: 'UID Jawa Barat' }}</strong></span>
+            </div>
+        @endif
     </div>
 
     <div class="topbar-actions">
@@ -233,6 +261,59 @@
 </header>
 
 <style>
+.topbar-up3-form {
+    display: inline-flex;
+    align-items: center;
+}
+.topbar-up3-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.topbar-up3-pin {
+    position: absolute;
+    left: 12px;
+    color: #0284C7;
+    pointer-events: none;
+    z-index: 2;
+}
+.topbar-up3-select {
+    padding: 7px 32px 7px 32px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1.5px solid #BAE6FD;
+    font-size: 12.5px;
+    font-weight: 700;
+    background-color: #F0F9FF;
+    color: #0284C7;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%230284C7' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    transition: all .15s ease;
+    white-space: nowrap;
+}
+.topbar-up3-select:hover {
+    background-color: #E0F2FE;
+    border-color: #0284C7;
+}
+.topbar-up3-select:focus {
+    outline: none;
+    border-color: #0284C7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    background-color: #fff;
+}
+@media (max-width: 1024px) {
+    .topbar-up3-select {
+        max-width: 190px;
+    }
+}
+@media (max-width: 768px) {
+    .topbar-up3-form {
+        display: none;
+    }
+}
 .topbar-wilayah-pill {
     display: inline-flex;
     align-items: center;

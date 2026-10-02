@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\ForcePasswordChange;
+use App\Http\Middleware\ManageActiveUp3;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware ini jalan otomatis untuk SEMUA route yang butuh login (append ke grup 'web')
         $middleware->appendToGroup('web', [
             ForcePasswordChange::class,
+            ManageActiveUp3::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

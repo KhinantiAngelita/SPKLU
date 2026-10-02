@@ -175,19 +175,8 @@
 
 <div class="msp-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">
             Master SPKLU
-            @if ($selectedUp3)
-                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: {{ $selectedUp3 }}
-                </span>
-            @else
-                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: UID Jawa Barat (Semua Unit)
-                </span>
-            @endif
         </h1>
         <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
     </div>
@@ -319,16 +308,8 @@
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama SPKLU..." class="msp-input" autocomplete="off">
         </div>
 
-        @if ($isSuperAdmin)
-            <div class="msp-field">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                <select name="up3" class="msp-select" onchange="this.form.submit()">
-                    <option value="">Semua UP3 (UID Jabar)</option>
-                    @foreach ($daftarUp3 as $optUp3)
-                        <option value="{{ $optUp3 }}" {{ request('up3', $selectedUp3) === $optUp3 ? 'selected' : '' }}>{{ $optUp3 }}</option>
-                    @endforeach
-                </select>
-            </div>
+        @if ($selectedUp3)
+            <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
         @endif
 
         <div class="msp-field">
