@@ -15,8 +15,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: #F4F6FB;
-            padding: 32px 20px;
+            background-color: #E2EFF9;
+            background: linear-gradient(145deg, #EBF5FC 0%, #D8ECF8 100%);
+            padding: 20px;
             color: #0F172A;
         }
 

@@ -15,32 +15,33 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: #F4F6FB;
-            padding: 32px 20px;
+            background-color: #E2EFF9;
+            background: linear-gradient(145deg, #EBF5FC 0%, #D8ECF8 100%);
+            padding: 12px 16px;
             color: #0F172A;
         }
 
         .act-card {
             background: #FFFFFF;
-            border-radius: 20px;
-            width: 540px;
+            border-radius: 18px;
+            width: 520px;
             max-width: 100%;
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-            border: 1px solid #E2E8F0;
+            box-shadow: 0 8px 30px rgba(2, 62, 138, 0.08), 0 2px 6px rgba(2, 62, 138, 0.04);
+            border: 1px solid rgba(2, 62, 138, 0.08);
             overflow: hidden;
         }
 
         .act-header {
             background: #FFFFFF;
-            padding: 32px 36px 22px;
+            padding: 16px 28px 10px;
             text-align: center;
             border-bottom: 1px solid #F1F5F9;
         }
 
         .act-illustration {
-            width: 160px;
-            height: 125px;
-            margin: 0 auto 12px;
+            width: 140px;
+            height: 84px;
+            margin: 0 auto 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -52,31 +53,31 @@
         }
 
         .act-header h1 {
-            font-size: 21px;
+            font-size: 19px;
             font-weight: 800;
             color: #1B2559;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
             letter-spacing: -.02em;
         }
         .act-header p {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748B;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .act-body {
-            padding: 26px 36px 36px;
+            padding: 14px 28px 18px;
         }
 
         .field-group {
-            margin-bottom: 20px;
+            margin-bottom: 11px;
         }
         .field-label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #334155;
-            margin-bottom: 7px;
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
@@ -87,11 +88,11 @@
         }
         .field-input-icon {
             position: absolute;
-            left: 14px;
+            left: 13px;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,21 +102,21 @@
             transition: color .15s ease;
         }
         .field-input-icon svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             stroke-width: 2;
         }
         .field-input,
         input.field-input,
         .field-input-wrap input {
             width: 100% !important;
-            padding-left: 46px !important;
-            padding-right: 16px !important;
-            padding-top: 13px !important;
-            padding-bottom: 13px !important;
-            border-radius: 11px !important;
-            border: 1.8px solid #CBD5E1 !important;
-            font-size: 14px !important;
+            padding-left: 42px !important;
+            padding-right: 14px !important;
+            padding-top: 9.5px !important;
+            padding-bottom: 9.5px !important;
+            border-radius: 9px !important;
+            border: 1.6px solid #CBD5E1 !important;
+            font-size: 13.5px !important;
             color: #0F172A !important;
             font-family: inherit !important;
             transition: all .15s ease !important;
@@ -127,7 +128,7 @@
         .field-input-wrap input:focus {
             outline: none !important;
             border-color: #0081AB !important;
-            box-shadow: 0 0 0 4px rgba(0, 129, 171, 0.15) !important;
+            box-shadow: 0 0 0 3px rgba(0, 129, 171, 0.15) !important;
         }
         .field-input-wrap:focus-within .field-input-icon {
             color: #0081AB;
@@ -140,9 +141,9 @@
             justify-content: space-between;
             background: #F0F9FF;
             border: 1.5px solid #BAE6FD;
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
+            border-radius: 9px;
+            padding: 7px 12px;
+            margin-bottom: 8px;
         }
         .up3-selected-banner.empty {
             background: #F8FAFC;
@@ -151,18 +152,18 @@
         .up3-selected-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
         }
         .up3-selected-left svg {
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             color: #0284C7;
         }
         .up3-selected-banner.empty .up3-selected-left svg {
             color: #94A3B8;
         }
         .up3-selected-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #1E293B;
             display: flex;
@@ -170,26 +171,26 @@
             gap: 6px;
         }
         .up3-selected-banner.empty .up3-selected-name {
-            font-size: 12.5px;
+            font-size: 11.5px;
             font-weight: 500;
             color: #64748B;
         }
         .up3-selected-badge {
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
             background: #0284C7;
             color: #FFFFFF;
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 2px 7px;
+            border-radius: 5px;
         }
         .up3-banner-code {
             display: inline-block;
             background: #023E8A;
             color: #FFFFFF;
             font-weight: 800;
-            font-size: 11px;
-            padding: 2px 7px;
-            border-radius: 5px;
+            font-size: 10.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
             letter-spacing: .03em;
         }
 
@@ -197,8 +198,8 @@
         .up3-quick-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 7px;
-            margin-bottom: 22px;
+            gap: 5px;
+            margin-bottom: 12px;
         }
         @media (max-width: 520px) {
             .up3-quick-grid {
@@ -208,9 +209,9 @@
         .up3-chip-btn {
             background: #FFFFFF;
             border: 1.5px solid #E2E8F0;
-            border-radius: 9px;
-            padding: 9px 4px;
-            font-size: 12.5px;
+            border-radius: 7px;
+            padding: 6.5px 2px;
+            font-size: 11.5px;
             font-weight: 750;
             color: #1E293B;
             text-align: center;
@@ -230,15 +231,15 @@
             background: #023E8A;
             color: #FFFFFF;
             border-color: #023E8A;
-            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.22);
+            box-shadow: 0 3px 10px rgba(2, 62, 138, 0.22);
             font-weight: 800;
         }
 
         .act-btn-submit {
             width: 100%;
-            padding: 13px 20px;
-            border-radius: 12px;
-            font-size: 14px;
+            padding: 10.5px 18px;
+            border-radius: 10px;
+            font-size: 13.5px;
             font-weight: 800;
             cursor: pointer;
             border: none;
@@ -250,7 +251,7 @@
             justify-content: center;
             gap: 8px;
             transition: all .15s ease;
-            margin-top: 10px;
+            margin-top: 3px;
         }
         .act-btn-submit:hover {
             background: #002D66;
@@ -260,8 +261,8 @@
 
         .back-login-box {
             text-align: center;
-            margin-top: 20px;
-            font-size: 13px;
+            margin-top: 11px;
+            font-size: 12px;
             color: #64748B;
         }
         .back-login-link {
@@ -277,79 +278,147 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-illustration">
-                <svg viewBox="0 0 180 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Soft Background Bubble / Glow -->
-                    <ellipse cx="90" cy="78" rx="64" ry="46" fill="#F0F9FF"/>
-                    <circle cx="134" cy="50" r="28" fill="#E0F2FE" opacity="0.7"/>
-                    <circle cx="48" cy="54" r="22" fill="#E0F2FE" opacity="0.6"/>
-
-                    <!-- Decorative Sparks / Stars in PLN Bright Orange and Electric Yellow -->
-                    <path d="M152 30 L154 24 L156 30 L162 32 L156 34 L154 40 L152 34 L146 32 Z" fill="#FFC629"/>
-                    <path d="M26 38 L27.5 33 L29 38 L34 39.5 L29 41 L27.5 46 L26 41 L21 39.5 Z" fill="#FB7303"/>
-                    <circle cx="34" cy="98" r="3" fill="#0081AB" opacity="0.4"/>
-                    <circle cx="158" cy="90" r="3.5" fill="#10B981" opacity="0.5"/>
-
-                    <!-- Smartphone / Verification Screen (Left/Center) -->
-                    <g filter="drop-shadow(0 6px 14px rgba(2,62,138,0.10))">
-                        <rect x="28" y="34" width="56" height="84" rx="10" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.8"/>
-                        <!-- Phone Speaker Bar -->
-                        <rect x="47" y="39" width="18" height="3" rx="1.5" fill="#CBD5E1"/>
-                        <!-- Screen Avatar Profile -->
-                        <circle cx="56" cy="58" r="11" fill="#E0F2FE"/>
-                        <circle cx="56" cy="55" r="5" fill="#0284C7"/>
-                        <path d="M48 66 C48 62.5 51.5 61 56 61 C60.5 61 64 62.5 64 66" fill="#0284C7"/>
-                        <!-- Screen Form Input Rows -->
-                        <rect x="37" y="74" width="38" height="5" rx="2.5" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="0.8"/>
-                        <rect x="37" y="83" width="28" height="5" rx="2.5" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="0.8"/>
-                        <!-- OTP Mini Dots / Action button -->
-                        <rect x="37" y="94" width="38" height="12" rx="4" fill="url(#btnGrad)"/>
-                        <circle cx="48" cy="100" r="1.5" fill="#FFFFFF"/>
-                        <circle cx="56" cy="100" r="1.5" fill="#FFFFFF"/>
-                        <circle cx="64" cy="100" r="1.5" fill="#FFFFFF"/>
-                    </g>
-
-                    <!-- Floating Verification Check Shield (Center-Top) -->
-                    <g filter="drop-shadow(0 4px 10px rgba(16,185,129,0.25))">
-                        <circle cx="84" cy="34" r="15" fill="#FFFFFF"/>
-                        <path d="M84 21 L95 25.5 C95 33.5 90.5 41 84 43.5 C77.5 41 73 33.5 73 25.5 Z" fill="#10B981"/>
-                        <path d="M79 32 L82.5 35.5 L89 29" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </g>
-
-                    <!-- Person / User Figure (Right) -->
-                    <!-- Body / Polo Shirt (PLN Deep Blue) -->
-                    <path d="M102 126 C102 108 114 102 128 102 C142 102 154 108 154 126" fill="#023E8A"/>
-                    <!-- Shirt Collar & Button Placket -->
-                    <path d="M123 102 L128 112 L133 102" fill="#FFFFFF"/>
-                    <line x1="128" y1="112" x2="128" y2="124" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                    <!-- Lanyard & ID Card -->
-                    <path d="M124 106 L128 117 L132 106" stroke="#0081AB" stroke-width="1.5" fill="none"/>
-                    <rect x="124.5" y="117" width="7" height="9" rx="1.5" fill="#FFFFFF" stroke="#0081AB" stroke-width="1"/>
-
-                    <!-- Neck -->
-                    <rect x="124" y="88" width="8" height="15" rx="3" fill="#FED7AA"/>
-
-                    <!-- Head / Face -->
-                    <circle cx="128" cy="76" r="15" fill="#FED7AA"/>
-                    <!-- Friendly Facial Expression -->
-                    <circle cx="123" cy="74" r="1.5" fill="#1E293B"/>
-                    <circle cx="131" cy="74" r="1.5" fill="#1E293B"/>
-                    <path d="M125 79 Q128 82 131 79" stroke="#1E293B" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-
-                    <!-- Hair (Neat Modern Style) -->
-                    <path d="M113 74 C113 61 120 56 129 56 C140 56 144 63 144 73 C140 71 135 70 128 70 C120 70 115 72 113 74 Z" fill="#1E293B"/>
-                    <path d="M113 74 C113 78 115 80 115 80" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
-
-                    <!-- Arm & Hand Reaching Toward Phone/Check Shield -->
-                    <path d="M102 114 C92 108 84 98 76 96" stroke="#023E8A" stroke-width="7" stroke-linecap="round"/>
-                    <circle cx="74" cy="95" r="4.5" fill="#FED7AA"/>
-
-                    <!-- Gradient Definition for Mini Screen Button -->
+                <svg viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="btnGrad" x1="37" y1="94" x2="75" y2="106" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#FB7303"/>
-                            <stop offset="1" stop-color="#EF6109"/>
+                        <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#0284C7"/>
+                            <stop offset="100%" stop-color="#023E8A"/>
+                        </linearGradient>
+                        <linearGradient id="btnGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#FFC629"/>
+                            <stop offset="100%" stop-color="#FF7800"/>
+                        </linearGradient>
+                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#34D399"/>
+                            <stop offset="100%" stop-color="#059669"/>
+                        </linearGradient>
+                        <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#034FA8"/>
+                            <stop offset="100%" stop-color="#023E8A"/>
                         </linearGradient>
                     </defs>
+
+                    <!-- Soft Ambient Background Circles -->
+                    <ellipse cx="110" cy="75" rx="85" ry="48" fill="#E0F2FE" opacity="0.6"/>
+                    <circle cx="165" cy="46" r="30" fill="#BAE6FD" opacity="0.45"/>
+                    <circle cx="50" cy="52" r="26" fill="#BAE6FD" opacity="0.4"/>
+
+                    <!-- Sparkles & Accent Dots -->
+                    <path d="M196 28 L198 22 L200 28 L206 30 L200 32 L198 38 L196 32 L190 30 Z" fill="#FFC629"/>
+                    <path d="M22 36 L23.5 31 L25 36 L30 37.5 L25 39 L23.5 44 L22 39 L17 37.5 Z" fill="#FF7800"/>
+                    <circle cx="28" cy="95" r="3" fill="#0081AB" opacity="0.4"/>
+                    <circle cx="202" cy="85" r="3" fill="#10B981" opacity="0.5"/>
+                    <circle cx="110" cy="18" r="2.5" fill="#FFC629"/>
+
+                    <!-- Smartphone (Left side) -->
+                    <g filter="drop-shadow(0 4px 10px rgba(2,62,138,0.12))">
+                        <!-- Outer Phone Chassis -->
+                        <rect x="34" y="14" width="70" height="106" rx="13" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.2"/>
+                        
+                        <!-- Dynamic Island / Speaker Notch -->
+                        <rect x="58" y="19" width="22" height="3.5" rx="1.75" fill="#1E293B"/>
+
+                        <!-- Screen Area Inner Background -->
+                        <rect x="37" y="25" width="64" height="91" rx="9" fill="#F8FAFC"/>
+
+                        <!-- Profile Badge on Screen -->
+                        <rect x="42" y="30" width="54" height="34" rx="7" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+                        <!-- Avatar Circle -->
+                        <circle cx="69" cy="44" r="9" fill="url(#avatarGrad)"/>
+                        <circle cx="69" cy="42" r="3" fill="#FFFFFF"/>
+                        <path d="M64 49 C64 46.8 66 45.8 69 45.8 C72 45.8 74 46.8 74 49" fill="#FFFFFF"/>
+                        <!-- Tiny Verified Checkmark on Avatar -->
+                        <circle cx="76" cy="49" r="3" fill="#10B981"/>
+                        <polyline points="74.8 49 75.8 50 77.2 48" fill="none" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+
+                        <!-- Screen UI Lines -->
+                        <rect x="49" y="56" width="40" height="3" rx="1.5" fill="#CBD5E1"/>
+
+                        <!-- Passcode Dots / PIN Indicator -->
+                        <rect x="44" y="68" width="50" height="12" rx="4" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+                        <circle cx="53" cy="74" r="2" fill="#023E8A"/>
+                        <circle cx="61" cy="74" r="2" fill="#023E8A"/>
+                        <circle cx="69" cy="74" r="2" fill="#023E8A"/>
+                        <circle cx="77" cy="74" r="2" fill="#023E8A"/>
+                        <polyline points="83 72.5 84.5 74 87 71.5" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+                        <!-- Button on Screen -->
+                        <rect x="44" y="85" width="50" height="15" rx="5" fill="url(#btnGrad)"/>
+                        <text x="69" y="95.5" font-family="'Inter', sans-serif" font-size="6.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">AKTIFKAN</text>
+                        <circle cx="88" cy="92.5" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+                    </g>
+
+                    <!-- Floating Verified Shield Badge -->
+                    <g filter="drop-shadow(0 3px 8px rgba(16,185,129,0.3))">
+                        <circle cx="108" cy="34" r="16" fill="#FFFFFF"/>
+                        <path d="M108 21 L120 26 C120 35 115 43 108 46 C101 43 96 35 96 26 Z" fill="url(#shieldGrad)"/>
+                        <polyline points="102.5 33.5 106.5 37.5 113.5 30" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </g>
+
+                    <!-- Modern Friendly Character (Right side) -->
+                    <g>
+                        <!-- Body / Corporate Polo -->
+                        <path d="M130 126 C130 106 142 100 157 100 C172 100 184 106 184 126 Z" fill="url(#bodyGrad)"/>
+                        
+                        <!-- Polo Collar & Details -->
+                        <path d="M151 100 L157 111 L163 100" fill="#FFFFFF"/>
+                        <path d="M152 100 L157 109 L162 100" fill="#E2E8F0"/>
+                        <line x1="157" y1="111" x2="157" y2="124" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="157" cy="115" r="1" fill="#023E8A"/>
+                        <circle cx="157" cy="120" r="1" fill="#023E8A"/>
+
+                        <!-- Lanyard & ID Card -->
+                        <path d="M153 104 L157 117 L161 104" stroke="#0081AB" stroke-width="1.8" fill="none"/>
+                        <rect x="153" y="117" width="8" height="9" rx="1.5" fill="#FFFFFF" stroke="#0081AB" stroke-width="1"/>
+                        <rect x="154.5" y="119" width="5" height="1.5" rx="0.75" fill="#023E8A"/>
+
+                        <!-- Neck -->
+                        <rect x="153" y="87" width="8" height="14" rx="3" fill="#FED7AA"/>
+                        <!-- Neck shadow under chin -->
+                        <path d="M153 91 C155 93 159 93 161 91 L161 87 L153 87 Z" fill="#FDBA74" opacity="0.6"/>
+
+                        <!-- Head / Face -->
+                        <circle cx="157" cy="75" r="15" fill="#FED7AA"/>
+
+                        <!-- Ears -->
+                        <circle cx="142.5" cy="75" r="3" fill="#FED7AA"/>
+                        <circle cx="171.5" cy="75" r="3" fill="#FED7AA"/>
+
+                        <!-- Hair (Modern side-sweep fringe with volume) -->
+                        <path d="M142 73 C142 59 149 53 158 53 C169 53 174 61 174 72 C170 70 164 69 157 69 C149 69 144 71 142 73 Z" fill="#0F172A"/>
+                        <!-- Sideburns & fringe lock -->
+                        <path d="M142.5 73 L142.5 78 L145 74 Z" fill="#0F172A"/>
+                        <path d="M171.5 73 L171.5 78 L169 74 Z" fill="#0F172A"/>
+                        <!-- Hair highlight shine -->
+                        <path d="M150 56 C154 55 160 55 165 57" stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+                        <!-- Expressive Friendly Face -->
+                        <!-- Eyebrows -->
+                        <path d="M149 69 C151 68 153 68.5 154 69" stroke="#1E293B" stroke-width="1" stroke-linecap="round" fill="none"/>
+                        <path d="M160 69 C161 68.5 163 68 165 69" stroke="#1E293B" stroke-width="1" stroke-linecap="round" fill="none"/>
+                        <!-- Eyes -->
+                        <circle cx="151.5" cy="73.5" r="1.6" fill="#0F172A"/>
+                        <circle cx="162.5" cy="73.5" r="1.6" fill="#0F172A"/>
+                        <circle cx="152" cy="73" r="0.6" fill="#FFFFFF"/>
+                        <circle cx="163" cy="73" r="0.6" fill="#FFFFFF"/>
+                        <!-- Cheeks blush -->
+                        <circle cx="147.5" cy="77" r="2.2" fill="#F87171" opacity="0.4"/>
+                        <circle cx="166.5" cy="77" r="2.2" fill="#F87171" opacity="0.4"/>
+                        <!-- Gentle Smile -->
+                        <path d="M154.5 78 Q157 81 159.5 78" stroke="#0F172A" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+
+                        <!-- Arm & Hand Pointing/Tapping directly at phone button -->
+                        <path d="M135 110 C122 106 108 98 96 93" stroke="url(#bodyGrad)" stroke-width="8" stroke-linecap="round"/>
+                        <!-- Sleeve Cuff -->
+                        <ellipse cx="98" cy="94" rx="2.5" ry="4.5" fill="#0081AB" transform="rotate(-25 98 94)"/>
+                        <!-- Hand / Fingers tapping button -->
+                        <circle cx="92" cy="92" r="3.8" fill="#FED7AA"/>
+                        <!-- Extended Index Finger touching screen button -->
+                        <path d="M92 92 L85 91" stroke="#FED7AA" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="84" cy="91" r="1.5" fill="#FED7AA"/>
+                        <!-- Tap sparkle -->
+                        <path d="M79 87 L80 84 L81 87 L84 88 L81 89 L80 92 L79 89 L76 88 Z" fill="#FFC629"/>
+                    </g>
                 </svg>
             </div>
             <h1>Aktivasi Akun Mandiri</h1>
