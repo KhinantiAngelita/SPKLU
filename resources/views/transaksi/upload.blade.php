@@ -411,10 +411,6 @@
                 <p>Daftar nama SPKLU di file transaksi yang belum cocok otomatis. Jika sudah dipetakan, data akan otomatis masuk ke <strong>Pemetaan Alias SPKLU</strong> di menu <strong>Master SPKLU</strong>.</p>
             </div>
         </div>
-        <a href="{{ route('master-spklu.index') }}" class="link-btn">
-            Buka Pemetaan di Master SPKLU
-            <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
     </div>
 
     @if ($unmatchedList->count() > 0)
