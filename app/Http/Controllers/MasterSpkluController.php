@@ -9,6 +9,7 @@ use App\Models\Spklu;
 use App\Models\SpkluAlias;
 use App\Models\TransaksiUnmatchedName;
 use App\Models\UlpMapping;
+use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,9 +18,22 @@ class MasterSpkluController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        // Filter UP3:
+        // - Super Admin: bisa pilih UP3 via filter atau lihat semua unit
+        // - Non-Super Admin: otomatis terkunci ke UP3 pengguna jika diset
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $spklus = Spklu::query()
             ->with('ulp')
             ->aktif()
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->when($request->search, fn ($q) => $q->where('nama', 'like', "%{$request->search}%"))
             ->when($request->ulp_id, fn ($q) => $q->where('ulp_mapping_id', $request->ulp_id))
             ->when($request->type, fn ($q) => $q->where('type', $request->type))
@@ -29,17 +43,28 @@ class MasterSpkluController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        $statsQuery = Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3));
+
+        $totalUnit = (clone $statsQuery)->count();
+        $totalByType = (clone $statsQuery)->selectRaw('type, count(*) as jumlah')->groupBy('type')->pluck('jumlah', 'type');
+        $totalByKepemilikan = (clone $statsQuery)->selectRaw('kepemilikan, count(*) as jumlah')->groupBy('kepemilikan')->pluck('jumlah', 'kepemilikan');
+        $totalKapasitas = (clone $statsQuery)->sum('kw');
+
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
         $unmatchedTransaksiCount = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)->count();
 
         return view('master-spklu.index', [
             'spklus' => $spklus,
             'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
+            'selectedUp3' => $selectedUp3,
+            'userUp3' => $userUp3,
+            'isSuperAdmin' => $isSuperAdmin,
+            'daftarUp3' => User::DAFTAR_UP3,
 
-            'totalUnit' => Spklu::aktif()->count(),
-            'totalByType' => Spklu::aktif()->selectRaw('type, count(*) as jumlah')->groupBy('type')->pluck('jumlah', 'type'),
-            'totalByKepemilikan' => Spklu::aktif()->selectRaw('kepemilikan, count(*) as jumlah')->groupBy('kepemilikan')->pluck('jumlah', 'kepemilikan'),
-            'totalKapasitas' => Spklu::aktif()->sum('kw'),
+            'totalUnit' => $totalUnit,
+            'totalByType' => $totalByType,
+            'totalByKepemilikan' => $totalByKepemilikan,
+            'totalKapasitas' => $totalKapasitas,
 
             'menungguValidasiCount' => Spklu::menungguValidasi()->count(),
             'unmatchedTransaksiCount' => $unmatchedTransaksiCount,
@@ -123,6 +148,7 @@ class MasterSpkluController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'up3' => 'nullable|string|max:100',
             'kode_unit' => 'nullable|string|max:50',
             'ulp_mapping_id' => 'required|exists:ulp_mappings,id',
             'type' => 'required|in:AC,DC',
@@ -132,6 +158,10 @@ class MasterSpkluController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
         ]);
+
+        if (empty($validated['up3'])) {
+            $validated['up3'] = $request->user()?->up3 ?: 'UP3 Bogor';
+        }
 
         if (empty($validated['kode_unit'])) {
             $validated['kode_unit'] = Spklu::where('ulp_mapping_id', $validated['ulp_mapping_id'])
@@ -224,6 +254,7 @@ class MasterSpkluController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'up3' => 'nullable|string|max:100',
             'kode_unit' => 'nullable|string|max:50',
             'ulp_mapping_id' => 'required|exists:ulp_mappings,id',
             'type' => 'required|in:AC,DC',

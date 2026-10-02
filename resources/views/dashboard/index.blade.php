@@ -843,19 +843,42 @@
 {{-- =========================================================
       1. TOPBAR & WELCOME BANNER
     ========================================================= --}}
-<div class="dsh-topbar">
+<div class="dsh-topbar" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px;">
     <div>
         <h1 class="dsh-welcome-title">
             Dashboard Eksekutif SPKLU
-            @if (auth()->check() && auth()->user()->up3)
+            @if ($selectedUp3)
                 <span style="font-size:13px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal; vertical-align:middle;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: {{ auth()->user()->up3 }}
+                    Wilayah: {{ $selectedUp3 }}
+                </span>
+            @else
+                <span style="font-size:13px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal; vertical-align:middle;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: UID Jawa Barat (Semua Unit)
                 </span>
             @endif
         </h1>
         <p class="dsh-welcome-subtitle">Overview performa operasional, penetrasi wilayah, transaksi energi, dan pipeline kandidat SPKLU PLN UID</p>
     </div>
+
+    @if ($isSuperAdmin)
+        <form method="GET" action="{{ route('dashboard') }}" style="display:inline-flex; align-items:center; gap:8px;">
+            <label for="filter-up3-dash" style="font-size:12px; font-weight:700; color:#64748B; white-space:nowrap;">Pilih Wilayah UP3:</label>
+            <select id="filter-up3-dash" name="up3" onchange="this.form.submit()" style="height:36px; padding:0 12px; border-radius:8px; border:1.5px solid #CBD5E1; font-size:13px; font-weight:600; color:#0F172A; background:#fff; cursor:pointer;">
+                <option value="">Semua Wilayah (UID Jawa Barat)</option>
+                @foreach ($daftarUp3 as $optUp3)
+                    <option value="{{ $optUp3 }}" {{ $selectedUp3 === $optUp3 ? 'selected' : '' }}>{{ $optUp3 }}</option>
+                @endforeach
+            </select>
+            @if (request('dari_bulan'))
+                <input type="hidden" name="dari_bulan" value="{{ request('dari_bulan') }}">
+            @endif
+            @if (request('sampai_bulan'))
+                <input type="hidden" name="sampai_bulan" value="{{ request('sampai_bulan') }}">
+            @endif
+        </form>
+    @endif
 </div>
 
 {{-- =========================================================

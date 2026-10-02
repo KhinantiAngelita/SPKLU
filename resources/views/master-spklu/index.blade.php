@@ -177,10 +177,15 @@
     <div>
         <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
             Master SPKLU
-            @if (auth()->check() && auth()->user()->up3)
+            @if ($selectedUp3)
                 <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: {{ auth()->user()->up3 }}
+                    Wilayah: {{ $selectedUp3 }}
+                </span>
+            @else
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: UID Jawa Barat (Semua Unit)
                 </span>
             @endif
         </h1>
@@ -310,6 +315,18 @@
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama SPKLU..." class="msp-input" autocomplete="off">
         </div>
 
+        @if ($isSuperAdmin)
+            <div class="msp-field">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <select name="up3" class="msp-select" onchange="this.form.submit()">
+                    <option value="">Semua UP3 (UID Jabar)</option>
+                    @foreach ($daftarUp3 as $optUp3)
+                        <option value="{{ $optUp3 }}" {{ request('up3', $selectedUp3) === $optUp3 ? 'selected' : '' }}>{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+
         <div class="msp-field">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             <select name="ulp_id" class="msp-select" onchange="this.form.submit()">
@@ -338,7 +355,7 @@
             </select>
         </div>
 
-        @if (request()->anyFilled(['search', 'ulp_id', 'type', 'kepemilikan']))
+        @if (request()->anyFilled(['search', 'up3', 'ulp_id', 'type', 'kepemilikan']))
             <button type="button" class="msp-reset" onclick="window.location.href='{{ route('master-spklu.index') }}'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 Reset filter
@@ -354,6 +371,7 @@
                     <th>Id SPKLU</th>
                     <th>Kode Unit</th>
                     <th>Nama SPKLU</th>
+                    <th>UP3</th>
                     <th>ULP</th>
                     <th>Type</th>
                     <th>KW</th>
@@ -372,6 +390,11 @@
                         <td>{{ $spklu->id_spklu }}</td>
                         <td>{{ $spklu->kode_unit ?? '—' }}</td>
                         <td style="font-weight:600; white-space:nowrap;">{{ $spklu->nama }}</td>
+                        <td>
+                            <span style="font-size:11px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:2px 7px; border-radius:5px; white-space:nowrap;">
+                                {{ $spklu->up3 ?? 'UP3 Bogor' }}
+                            </span>
+                        </td>
                         <td>{{ $spklu->ulp->nama_penuh ?? '—' }}</td>
                         <td>
                             <span class="msp-pill {{ $spklu->type === 'DC' ? 'msp-pill-dc' : 'msp-pill-ac' }}">{{ $spklu->type }}</span>
@@ -404,10 +427,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="12">
+                        <td colspan="14">
                             <div class="msp-empty">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                                <p>Belum ada data SPKLU.</p>
+                                <p>Belum ada data SPKLU terdaftar{{ $selectedUp3 ? ' untuk ' . $selectedUp3 : '' }}.</p>
                             </div>
                         </td>
                     </tr>
@@ -523,6 +546,13 @@
                 <label>Nama SPKLU</label>
                 <input type="text" name="nama" required>
 
+                <label>Unit Pelaksana (UP3)</label>
+                <select name="up3" required>
+                    @foreach ($daftarUp3 as $optUp3)
+                        <option value="{{ $optUp3 }}" {{ (auth()->user()->up3 ?? 'UP3 Bogor') === $optUp3 ? 'selected' : '' }}>{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
+
                 <label>ULP</label>
                 <select name="ulp_mapping_id" id="tambah-ulp" required>
                     <option value="">Pilih ULP...</option>
@@ -625,6 +655,13 @@
 
                 <label>Nama SPKLU</label>
                 <input type="text" name="nama" id="edit-nama" required>
+
+                <label>Unit Pelaksana (UP3)</label>
+                <select name="up3" id="edit-up3" required>
+                    @foreach ($daftarUp3 as $optUp3)
+                        <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
 
                 <label>ULP</label>
                 <select name="ulp_mapping_id" id="edit-ulp" required>
@@ -769,6 +806,7 @@
 function bukaModalEdit(spklu) {
     document.getElementById('form-edit-spklu').action = '/master-spklu/' + spklu.id;
     document.getElementById('edit-nama').value = spklu.nama ?? '';
+    document.getElementById('edit-up3').value = spklu.up3 || 'UP3 Bogor';
     document.getElementById('edit-ulp').value = spklu.ulp_mapping_id ?? '';
     document.getElementById('edit-kode-unit').value = spklu.kode_unit ?? '';
     document.getElementById('edit-type').value = spklu.type ?? '';

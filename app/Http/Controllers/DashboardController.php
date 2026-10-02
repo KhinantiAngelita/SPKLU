@@ -7,6 +7,7 @@ use App\Models\Probabilitas;
 use App\Models\Spklu;
 use App\Models\TargetTahunan;
 use App\Models\Transaksi;
+use App\Models\User;
 use App\Services\KandidatPeringkatService;
 use App\Services\RekomendasiLokasiService;
 use Illuminate\Http\Request;
@@ -77,13 +78,31 @@ class DashboardController extends Controller
         $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
         $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
 
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $spkluQuery = Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3));
+        $totalSpkluTerpasang = (clone $spkluQuery)->count();
+        $spkluBaruBulanIni = (clone $spkluQuery)->whereMonth('created_at', now()->month)->count();
+
         // ===== Target Tahunan SPKLU dari Master Parameter =====
         $targetTahunan = TargetTahunan::where('tahun', now()->year)->value('target_jumlah_spklu');
 
         return view('dashboard.index', [
-            'totalSpkluTerpasang' => Spklu::aktif()->count(),
-            'spkluBaruBulanIni' => Spklu::aktif()->whereMonth('created_at', now()->month)->count(),
+            'totalSpkluTerpasang' => $totalSpkluTerpasang,
+            'spkluBaruBulanIni' => $spkluBaruBulanIni,
             'targetTahunan' => $targetTahunan,
+
+            'selectedUp3' => $selectedUp3,
+            'userUp3' => $userUp3,
+            'isSuperAdmin' => $isSuperAdmin,
+            'daftarUp3' => User::DAFTAR_UP3,
 
             'pengajuanOnProgress' => $pengajuanOnProgress,
             'kandidatAktif' => $kandidatAktif,
