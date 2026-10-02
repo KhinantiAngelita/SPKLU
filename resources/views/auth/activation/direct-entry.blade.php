@@ -373,25 +373,25 @@
                         <!-- Status Pill -->
                         <rect x="272" y="82" width="38" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
                         <circle cx="278" cy="88.5" r="2.2" fill="#10B981"/>
-                        <text x="293" y="91.5" font-family="'Inter', sans-serif" font-size="5.8" font-weight="800" fill="#059669" text-anchor="middle">AKTIF</text>
+                        <text x="293" y="88.5" font-family="'Inter', sans-serif" font-size="5.8" font-weight="700" fill="#059669" text-anchor="middle" dominant-baseline="central">Aktif</text>
 
                         <!-- Soft Blue Divider Line -->
-                        <line x1="186" y1="104" x2="310" y2="104" stroke="#F1F5F9" stroke-width="1"/>
+                        <line x1="186" y1="103" x2="310" y2="103" stroke="#F1F5F9" stroke-width="1"/>
 
                         <!-- Activation Bar with Matchmaker Gradient Button -->
-                        <rect x="186" y="112" width="124" height="24" rx="7" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
+                        <rect x="186" y="109" width="124" height="28" rx="8" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
                         <!-- Key Icon -->
-                        <circle cx="197" cy="124" r="5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
-                        <circle cx="197" cy="123" r="1.6" fill="#0081AB"/>
-                        <line x1="197" y1="125" x2="197" y2="127" stroke="#0081AB" stroke-width="1.2"/>
-                        <!-- Matchmaker Orange Button -->
-                        <rect x="208" y="115" width="96" height="18" rx="9" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
-                        <text x="256" y="127" font-family="'Inter', sans-serif" font-size="6.8" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.4">AKTIFKAN SEKARANG</text>
+                        <circle cx="196" cy="123" r="5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
+                        <circle cx="196" cy="122" r="1.6" fill="#0081AB"/>
+                        <line x1="196" y1="124" x2="196" y2="126" stroke="#0081AB" stroke-width="1.2"/>
+                        <!-- Matchmaker Orange Button with Comfortable Padding -->
+                        <rect x="205" y="112.5" width="100" height="21" rx="10.5" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
+                        <text x="255" y="123" font-family="'Inter', -apple-system, sans-serif" font-size="6.3" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" letter-spacing="0.2">Aktifkan Sekarang</text>
 
                         <!-- Bottom Verification Row -->
-                        <circle cx="193" cy="152" r="5.5" fill="#ECFDF5"/>
-                        <polyline points="191 152 192.5 153.5 195.5 150.5" fill="none" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <text x="203" y="153.5" font-family="'Inter', sans-serif" font-size="6.2" font-weight="600" fill="#334155">Email & Unit Terdaftar</text>
+                        <circle cx="193" cy="151.5" r="5.5" fill="#ECFDF5"/>
+                        <polyline points="191 151.5 192.5 153" 195.5 150" fill="none" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="203" y="151.5" font-family="'Inter', sans-serif" font-size="6.2" font-weight="600" fill="#334155" dominant-baseline="central">Email & Unit Terdaftar</text>
 
                         <!-- Secure Lock Icon -->
                         <rect x="300" y="148" width="8" height="6.5" rx="1.5" fill="#94A3B8"/>
