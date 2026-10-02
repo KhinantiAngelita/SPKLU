@@ -954,7 +954,7 @@
     }
     /* ── Modal Large (Detail User) ── */
     .mu-modal-lg {
-        width: 660px !important;
+        width: 680px !important;
         max-width: 95vw !important;
         max-height: 90vh;
         display: flex;
@@ -962,32 +962,73 @@
     }
     .mu-modal-scrollable {
         overflow-y: auto;
-        padding: 20px 24px;
-        max-height: calc(90vh - 130px);
+        padding: 16px 22px 18px;
+        max-height: calc(88vh - 125px);
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E1 transparent;
+    }
+    .mu-modal-scrollable::-webkit-scrollbar {
+        width: 5px;
+    }
+    .mu-modal-scrollable::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .mu-modal-scrollable::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 999px;
+    }
+    .mu-modal-scrollable::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
     }
     .mu-detail-card {
-        background: #F8FAFC;
+        background: #FAFCFF;
         border: 1px solid #E2E8F0;
         border-radius: 14px;
-        padding: 16px 18px;
-        margin-bottom: 20px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
     }
     .mu-detail-top {
         display: flex;
         align-items: center;
         gap: 14px;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
     .mu-detail-avatar {
         width: 48px;
         height: 48px;
-        border-radius: 13px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 16px;
         font-weight: 800;
         flex-shrink: 0;
+        letter-spacing: -0.02em;
+    }
+    .mu-detail-avatar.role-super_admin {
+        background: #EBF3FA;
+        color: #023E8A;
+        border: 1.5px solid #B8D5ED;
+        box-shadow: 0 2px 8px rgba(2, 62, 138, 0.12);
+    }
+    .mu-detail-avatar.role-pemasaran {
+        background: #F0F9FF;
+        color: #0081AB;
+        border: 1.5px solid #BAE6FD;
+        box-shadow: 0 2px 8px rgba(0, 129, 171, 0.12);
+    }
+    .mu-detail-avatar.role-pengelola {
+        background: #ECFDF5;
+        color: #059669;
+        border: 1.5px solid #A7F3D0;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+    }
+    .mu-detail-avatar.role-manajemen {
+        background: #F5F3FF;
+        color: #7C3AED;
+        border: 1.5px solid #DDD6FE;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.12);
     }
     .mu-detail-meta {
         flex: 1;
@@ -1004,16 +1045,19 @@
         flex-wrap: wrap;
     }
     .mu-detail-email {
-        font-size: 13px;
+        font-size: 12.5px;
         color: #64748B;
-        margin: 2px 0 0;
+        margin: 3px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
     }
     .mu-detail-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         padding-top: 12px;
-        border-top: 1px solid #E2E8F0;
+        border-top: 1px solid #EDF2F7;
     }
     @media (max-width: 540px) {
         .mu-detail-grid {
@@ -1024,19 +1068,27 @@
         background: #fff;
         border: 1px solid #EDF2F7;
         border-radius: 10px;
-        padding: 10px 12px;
+        padding: 9px 12px;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 5px;
     }
     .mu-detail-item-highlight {
         grid-column: span 2;
-        background: linear-gradient(135deg, rgba(2,62,138,.04), rgba(0,129,171,.08));
+        background: #F0F9FF;
         border: 1px solid #BAE6FD;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 9px 14px;
     }
     @media (max-width: 540px) {
         .mu-detail-item-highlight {
             grid-column: span 1;
+            flex-direction: column;
+            align-items: flex-start;
         }
     }
     .mu-detail-item-label {
@@ -1056,28 +1108,69 @@
     }
     .mu-detail-item-val.highlight {
         color: #023E8A;
-        font-size: 13.5px;
+        font-size: 13px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
         gap: 6px;
+    }
+    .mu-detail-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        width: fit-content;
+    }
+    .mu-detail-status-pill.active {
+        background: #ECFDF5;
+        color: #059669;
+        border: 1px solid #A7F3D0;
+    }
+    .mu-detail-status-pill.pending {
+        background: #FEF3C7;
+        color: #B45309;
+        border: 1px solid #FDE68A;
+    }
+    .mu-detail-status-pill.inactive {
+        background: #F1F5F9;
+        color: #64748B;
+        border: 1px solid #CBD5E1;
+    }
+    .mu-detail-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .mu-detail-status-pill.active .mu-detail-status-dot { background: #10B981; }
+    .mu-detail-status-pill.pending .mu-detail-status-dot { background: #F59E0B; }
+    .mu-detail-status-pill.inactive .mu-detail-status-dot { background: #94A3B8; }
+    .mu-detail-time-ago {
+        font-size: 11.5px;
+        color: #64748B;
+        background: #F1F5F9;
+        border: 1px solid #E2E8F0;
+        padding: 1px 6px;
+        border-radius: 5px;
+        font-weight: 600;
     }
 
     /* Sub Tabs inside Modal Detail */
     .mu-subtabs {
         display: flex;
         gap: 8px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         border-bottom: 1px solid #EEF2F6;
-        padding-bottom: 10px;
+        padding-bottom: 8px;
     }
     .mu-subtab-btn {
         background: transparent;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 9px;
-        font-size: 13px;
+        border: 1px solid transparent;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 12.5px;
         font-weight: 700;
         color: #64748B;
         cursor: pointer;
@@ -1087,23 +1180,25 @@
         transition: all .15s ease;
     }
     .mu-subtab-btn:hover {
-        background: #F1F5F9;
+        background: #F8FAFC;
         color: #1E293B;
     }
     .mu-subtab-btn.active {
-        background: #EFF6FB;
-        color: #0081AB;
+        background: #F0F9FF;
+        border-color: #BAE6FD;
+        color: #0284C7;
     }
     .mu-subtab-badge {
         font-size: 11px;
+        font-weight: 700;
         background: #E2E8F0;
         color: #475569;
         padding: 1px 7px;
         border-radius: 999px;
     }
     .mu-subtab-btn.active .mu-subtab-badge {
-        background: #BAE6FD;
-        color: #023E8A;
+        background: #0284C7;
+        color: #ffffff;
     }
 
     /* Timeline Activity & Logs */
@@ -1750,24 +1845,24 @@
                 {{-- Tab Pane 1: Riwayat Login & Logout --}}
                 <div id="pane-detail-login">
                     <div id="list-login-logs" class="mu-timeline"></div>
-                    <div id="empty-login-logs" class="mu-empty-box" style="display:none; padding: 25px 15px;">
-                        <div class="mu-empty-icon" style="width: 38px; height: 38px; margin-bottom: 8px;">
+                    <div id="empty-login-logs" class="mu-empty-box" style="display:none; padding: 18px 15px;">
+                        <div class="mu-empty-icon" style="width: 36px; height: 36px; margin: 0 auto 6px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; color: #94A3B8;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         </div>
-                        <p class="mu-empty-title" style="font-size: 13.5px;">Belum Ada Riwayat Sesi</p>
-                        <p class="mu-empty-text" style="font-size: 12px; margin: 0;">Pengguna ini belum memiliki catatan riwayat login atau logout di sistem.</p>
+                        <p class="mu-empty-title" style="font-size: 13px; font-weight: 700; color: #334155; margin: 0 0 2px;">Belum Ada Riwayat Sesi</p>
+                        <p class="mu-empty-text" style="font-size: 12px; color: #64748B; margin: 0;">Pengguna ini belum memiliki catatan riwayat login atau logout di sistem.</p>
                     </div>
                 </div>
 
                 {{-- Tab Pane 2: Riwayat Perubahan Data --}}
                 <div id="pane-detail-changes" style="display:none;">
                     <div id="list-change-logs" class="mu-timeline"></div>
-                    <div id="empty-change-logs" class="mu-empty-box" style="display:none; padding: 25px 15px;">
-                        <div class="mu-empty-icon" style="width: 38px; height: 38px; margin-bottom: 8px;">
+                    <div id="empty-change-logs" class="mu-empty-box" style="display:none; padding: 18px 15px;">
+                        <div class="mu-empty-icon" style="width: 36px; height: 36px; margin: 0 auto 6px; border-radius: 10px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; color: #94A3B8;">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         </div>
-                        <p class="mu-empty-title" style="font-size: 13.5px;">Belum Ada Riwayat Perubahan</p>
-                        <p class="mu-empty-text" style="font-size: 12px; margin: 0;">Belum ada perubahan data (audit log) yang tercatat untuk atau oleh pengguna ini.</p>
+                        <p class="mu-empty-title" style="font-size: 13px; font-weight: 700; color: #334155; margin: 0 0 2px;">Belum Ada Riwayat Perubahan</p>
+                        <p class="mu-empty-text" style="font-size: 12px; color: #64748B; margin: 0;">Belum ada perubahan data (audit log) yang tercatat untuk atau oleh pengguna ini.</p>
                     </div>
                 </div>
             </div>
@@ -1841,7 +1936,7 @@ function openDetailUser(userId) {
     .then(data => {
         const u = data.user;
 
-        subtitleEl.textContent = `${u.email} • ID #${u.id}`;
+        subtitleEl.innerHTML = `<span class="mu-modal-email-chip">ID #${u.id}</span> <span style="color:#CBD5E1; margin:0 5px;">&bull;</span> <span style="color:#64748B; font-weight:600; font-size:12px;">Profil &amp; Riwayat Log Pengguna</span>`;
 
         // Avatar
         const avatarEl = document.getElementById('detail-avatar');
@@ -1853,7 +1948,10 @@ function openDetailUser(userId) {
             ${escapeHtml(u.name)}
             ${u.is_current_user ? '<span class="mu-user-you">Anda</span>' : ''}
         `;
-        document.getElementById('detail-email').textContent = u.email;
+        document.getElementById('detail-email').innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13" height="13" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>${escapeHtml(u.email)}</span>
+        `;
 
         // Role
         document.getElementById('detail-role').innerHTML = `
@@ -1868,30 +1966,40 @@ function openDetailUser(userId) {
         // Status
         const statusClass = u.status === 'active' ? 'active' : (u.status === 'pending' ? 'pending' : 'inactive');
         document.getElementById('detail-status').innerHTML = `
-            <span class="mu-status-text ${statusClass}">${escapeHtml(u.status_label)}</span>
+            <span class="mu-detail-status-pill ${statusClass}">
+                <span class="mu-detail-status-dot"></span>
+                ${escapeHtml(u.status_label)}
+            </span>
         `;
 
         // Registered
         document.getElementById('detail-registered').innerHTML = `
-            <span>${escapeHtml(u.created_at)}</span>
-            <span style="font-size: 11.5px; color: #94A3B8; font-weight: 500;">(${escapeHtml(u.created_at_human)})</span>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <span style="font-weight:750; color:#1E293B;">${escapeHtml(u.created_at)}</span>
+                <span class="mu-detail-time-ago">${escapeHtml(u.created_at_human)}</span>
+            </div>
         `;
 
         // Terakhir Login Highlight
         const lastLoginEl = document.getElementById('detail-last-login');
         if (u.last_login_at) {
             lastLoginEl.innerHTML = `
-                <span style="font-weight: 800; color: #023E8A; font-size: 13.5px;">
-                    ${escapeHtml(u.last_login_at)}
-                </span>
-                <span style="font-size: 11.5px; font-weight: 700; color: #0081AB; background: #fff; padding: 2px 8px; border-radius: 6px; border: 1px solid #BAE6FD; display: inline-flex; align-items: center; gap: 4px;">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    ${escapeHtml(u.last_login_human)}
-                </span>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <span style="font-weight: 800; color: #023E8A; font-size: 13px;">
+                        ${escapeHtml(u.last_login_at)}
+                    </span>
+                    <span style="font-size: 11px; font-weight: 700; color: #0081AB; background: #fff; padding: 2px 7px; border-radius: 6px; border: 1px solid #BAE6FD; display: inline-flex; align-items: center; gap: 4px;">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ${escapeHtml(u.last_login_human)}
+                    </span>
+                </div>
             `;
         } else {
             lastLoginEl.innerHTML = `
-                <span style="color: #94A3B8; font-weight: 500; font-size: 13px;">Belum pernah login ke sistem</span>
+                <span style="color: #64748B; font-weight: 500; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px;">
+                    <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#CBD5E1;"></span>
+                    Belum pernah login ke sistem
+                </span>
             `;
         }
 
