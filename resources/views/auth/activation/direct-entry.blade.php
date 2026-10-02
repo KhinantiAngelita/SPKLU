@@ -17,31 +17,31 @@
             justify-content: center;
             background-color: #E2EFF9;
             background: linear-gradient(145deg, #EBF5FC 0%, #D8ECF8 100%);
-            padding: 12px 16px;
+            padding: 24px 20px;
             color: #0F172A;
         }
 
         .act-card {
             background: #FFFFFF;
-            border-radius: 18px;
-            width: 520px;
+            border-radius: 22px;
+            width: 550px;
             max-width: 100%;
-            box-shadow: 0 8px 30px rgba(2, 62, 138, 0.08), 0 2px 6px rgba(2, 62, 138, 0.04);
+            box-shadow: 0 16px 40px rgba(2, 62, 138, 0.09), 0 3px 10px rgba(2, 62, 138, 0.04);
             border: 1px solid rgba(2, 62, 138, 0.08);
             overflow: hidden;
         }
 
         .act-header {
             background: #FFFFFF;
-            padding: 16px 28px 10px;
+            padding: 26px 36px 16px;
             text-align: center;
             border-bottom: 1px solid #F1F5F9;
         }
 
         .act-illustration {
-            width: 140px;
-            height: 84px;
-            margin: 0 auto 5px;
+            width: 220px;
+            height: 126px;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,31 +53,31 @@
         }
 
         .act-header h1 {
-            font-size: 19px;
+            font-size: 21px;
             font-weight: 800;
             color: #1B2559;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
             letter-spacing: -.02em;
         }
         .act-header p {
-            font-size: 12px;
+            font-size: 13px;
             color: #64748B;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .act-body {
-            padding: 14px 28px 18px;
+            padding: 24px 36px 30px;
         }
 
         .field-group {
-            margin-bottom: 11px;
+            margin-bottom: 18px;
         }
         .field-label {
             display: block;
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
             color: #334155;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
@@ -88,11 +88,11 @@
         }
         .field-input-icon {
             position: absolute;
-            left: 13px;
+            left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
+            width: 19px;
+            height: 19px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -102,21 +102,21 @@
             transition: color .15s ease;
         }
         .field-input-icon svg {
-            width: 16px;
-            height: 16px;
+            width: 17px;
+            height: 17px;
             stroke-width: 2;
         }
         .field-input,
         input.field-input,
         .field-input-wrap input {
             width: 100% !important;
-            padding-left: 42px !important;
-            padding-right: 14px !important;
-            padding-top: 9.5px !important;
-            padding-bottom: 9.5px !important;
-            border-radius: 9px !important;
+            padding-left: 44px !important;
+            padding-right: 16px !important;
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+            border-radius: 11px !important;
             border: 1.6px solid #CBD5E1 !important;
-            font-size: 13.5px !important;
+            font-size: 14px !important;
             color: #0F172A !important;
             font-family: inherit !important;
             transition: all .15s ease !important;
@@ -128,7 +128,7 @@
         .field-input-wrap input:focus {
             outline: none !important;
             border-color: #0081AB !important;
-            box-shadow: 0 0 0 3px rgba(0, 129, 171, 0.15) !important;
+            box-shadow: 0 0 0 4px rgba(0, 129, 171, 0.15) !important;
         }
         .field-input-wrap:focus-within .field-input-icon {
             color: #0081AB;
@@ -141,9 +141,9 @@
             justify-content: space-between;
             background: #F0F9FF;
             border: 1.5px solid #BAE6FD;
-            border-radius: 9px;
-            padding: 7px 12px;
-            margin-bottom: 8px;
+            border-radius: 10px;
+            padding: 9px 14px;
+            margin-bottom: 11px;
         }
         .up3-selected-banner.empty {
             background: #F8FAFC;
@@ -152,18 +152,18 @@
         .up3-selected-left {
             display: flex;
             align-items: center;
-            gap: 7px;
+            gap: 8px;
         }
         .up3-selected-left svg {
-            width: 15px;
-            height: 15px;
+            width: 16px;
+            height: 16px;
             color: #0284C7;
         }
         .up3-selected-banner.empty .up3-selected-left svg {
             color: #94A3B8;
         }
         .up3-selected-name {
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 700;
             color: #1E293B;
             display: flex;
@@ -171,26 +171,26 @@
             gap: 6px;
         }
         .up3-selected-banner.empty .up3-selected-name {
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 500;
             color: #64748B;
         }
         .up3-selected-badge {
-            font-size: 10px;
+            font-size: 10.5px;
             font-weight: 700;
             background: #0284C7;
             color: #FFFFFF;
-            padding: 2px 7px;
-            border-radius: 5px;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
         .up3-banner-code {
             display: inline-block;
             background: #023E8A;
             color: #FFFFFF;
             font-weight: 800;
-            font-size: 10.5px;
-            padding: 2px 6px;
-            border-radius: 4px;
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 5px;
             letter-spacing: .03em;
         }
 
@@ -198,8 +198,8 @@
         .up3-quick-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
-            margin-bottom: 12px;
+            gap: 7px;
+            margin-bottom: 20px;
         }
         @media (max-width: 520px) {
             .up3-quick-grid {
@@ -209,9 +209,9 @@
         .up3-chip-btn {
             background: #FFFFFF;
             border: 1.5px solid #E2E8F0;
-            border-radius: 7px;
-            padding: 6.5px 2px;
-            font-size: 11.5px;
+            border-radius: 8px;
+            padding: 8.5px 3px;
+            font-size: 12px;
             font-weight: 750;
             color: #1E293B;
             text-align: center;
@@ -231,15 +231,15 @@
             background: #023E8A;
             color: #FFFFFF;
             border-color: #023E8A;
-            box-shadow: 0 3px 10px rgba(2, 62, 138, 0.22);
+            box-shadow: 0 4px 12px rgba(2, 62, 138, 0.22);
             font-weight: 800;
         }
 
         .act-btn-submit {
             width: 100%;
-            padding: 10.5px 18px;
-            border-radius: 10px;
-            font-size: 13.5px;
+            padding: 12.5px 20px;
+            border-radius: 11px;
+            font-size: 14px;
             font-weight: 800;
             cursor: pointer;
             border: none;
@@ -251,7 +251,7 @@
             justify-content: center;
             gap: 8px;
             transition: all .15s ease;
-            margin-top: 3px;
+            margin-top: 4px;
         }
         .act-btn-submit:hover {
             background: #002D66;
@@ -261,8 +261,8 @@
 
         .back-login-box {
             text-align: center;
-            margin-top: 11px;
-            font-size: 12px;
+            margin-top: 18px;
+            font-size: 12.5px;
             color: #64748B;
         }
         .back-login-link {
@@ -278,146 +278,155 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-illustration">
-                <svg viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#0284C7"/>
+                            <stop offset="0%" stop-color="#0081AB"/>
                             <stop offset="100%" stop-color="#023E8A"/>
+                        </linearGradient>
+                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#10B981"/>
+                            <stop offset="100%" stop-color="#047857"/>
                         </linearGradient>
                         <linearGradient id="btnGrad" x1="0" y1="0" x2="1" y2="0">
                             <stop offset="0%" stop-color="#FFC629"/>
                             <stop offset="100%" stop-color="#FF7800"/>
                         </linearGradient>
-                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#34D399"/>
-                            <stop offset="100%" stop-color="#059669"/>
-                        </linearGradient>
-                        <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="poloGrad" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="0%" stop-color="#034FA8"/>
                             <stop offset="100%" stop-color="#023E8A"/>
                         </linearGradient>
+                        <linearGradient id="phoneBody" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#FFFFFF"/>
+                            <stop offset="100%" stop-color="#F1F5F9"/>
+                        </linearGradient>
+                        <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#023E8A" flood-opacity="0.10"/>
+                        </filter>
+                        <filter id="badgeGlow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10B981" flood-opacity="0.28"/>
+                        </filter>
                     </defs>
 
-                    <!-- Soft Ambient Background Circles -->
-                    <ellipse cx="110" cy="75" rx="85" ry="48" fill="#E0F2FE" opacity="0.6"/>
-                    <circle cx="165" cy="46" r="30" fill="#BAE6FD" opacity="0.45"/>
-                    <circle cx="50" cy="52" r="26" fill="#BAE6FD" opacity="0.4"/>
+                    <!-- Ambient Backdrop Clouds / Glow -->
+                    <ellipse cx="140" cy="85" rx="105" ry="60" fill="#E0F2FE" opacity="0.6"/>
+                    <circle cx="210" cy="55" r="40" fill="#BAE6FD" opacity="0.45"/>
+                    <circle cx="65" cy="65" r="35" fill="#BAE6FD" opacity="0.4"/>
 
-                    <!-- Sparkles & Accent Dots -->
-                    <path d="M196 28 L198 22 L200 28 L206 30 L200 32 L198 38 L196 32 L190 30 Z" fill="#FFC629"/>
-                    <path d="M22 36 L23.5 31 L25 36 L30 37.5 L25 39 L23.5 44 L22 39 L17 37.5 Z" fill="#FF7800"/>
-                    <circle cx="28" cy="95" r="3" fill="#0081AB" opacity="0.4"/>
-                    <circle cx="202" cy="85" r="3" fill="#10B981" opacity="0.5"/>
-                    <circle cx="110" cy="18" r="2.5" fill="#FFC629"/>
+                    <!-- Ground / Pedestal Shadow -->
+                    <ellipse cx="140" cy="150" rx="105" ry="8" fill="#CBD5E1" opacity="0.45"/>
+                    <ellipse cx="140" cy="150" rx="65" ry="4" fill="#94A3B8" opacity="0.3"/>
+
+                    <!-- Floating Sparkle Stars -->
+                    <path d="M245 32 L247.5 24 L250 32 L258 34.5 L250 37 L247.5 45 L245 37 L237 34.5 Z" fill="#FFC629"/>
+                    <path d="M24 42 L25.5 36 L27 42 L33 43.5 L27 45 L25.5 51 L24 45 L18 43.5 Z" fill="#FF7800"/>
+                    <circle cx="35" cy="115" r="3" fill="#0081AB" opacity="0.4"/>
+                    <circle cx="255" cy="105" r="3.5" fill="#10B981" opacity="0.5"/>
+                    <circle cx="135" cy="18" r="2.5" fill="#FFC629"/>
 
                     <!-- Smartphone (Left side) -->
-                    <g filter="drop-shadow(0 4px 10px rgba(2,62,138,0.12))">
-                        <!-- Outer Phone Chassis -->
-                        <rect x="34" y="14" width="70" height="106" rx="13" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.2"/>
+                    <g filter="url(#cardShadow)">
+                        <!-- Outer Phone Body -->
+                        <rect x="42" y="18" width="82" height="124" rx="15" fill="url(#phoneBody)" stroke="#1E293B" stroke-width="2.2"/>
+                        <!-- Notch Speaker -->
+                        <rect x="71" y="24" width="24" height="3.5" rx="1.75" fill="#334155"/>
+
+                        <!-- Screen Container -->
+                        <rect x="46" y="31" width="74" height="106" rx="10" fill="#FFFFFF"/>
+
+                        <!-- Screen Header Badge -->
+                        <rect x="52" y="36" width="62" height="38" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8"/>
                         
-                        <!-- Dynamic Island / Speaker Notch -->
-                        <rect x="58" y="19" width="22" height="3.5" rx="1.75" fill="#1E293B"/>
+                        <!-- User Avatar on Screen -->
+                        <circle cx="83" cy="51" r="11" fill="url(#avatarGrad)"/>
+                        <path d="M83 48 A3.5 3.5 0 1 0 83 55 A3.5 3.5 0 1 0 83 48" fill="#FFFFFF"/>
+                        <path d="M77 60 C77 56.5 80 55.5 83 55.5 C86 55.5 89 56.5 89 60" fill="#FFFFFF"/>
 
-                        <!-- Screen Area Inner Background -->
-                        <rect x="37" y="25" width="64" height="91" rx="9" fill="#F8FAFC"/>
+                        <!-- Verified check pill on avatar -->
+                        <circle cx="91" cy="58" r="3.8" fill="#10B981"/>
+                        <polyline points="89.5 58 90.8 59.3 92.5 57" fill="none" stroke="#FFFFFF" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
 
-                        <!-- Profile Badge on Screen -->
-                        <rect x="42" y="30" width="54" height="34" rx="7" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
-                        <!-- Avatar Circle -->
-                        <circle cx="69" cy="44" r="9" fill="url(#avatarGrad)"/>
-                        <circle cx="69" cy="42" r="3" fill="#FFFFFF"/>
-                        <path d="M64 49 C64 46.8 66 45.8 69 45.8 C72 45.8 74 46.8 74 49" fill="#FFFFFF"/>
-                        <!-- Tiny Verified Checkmark on Avatar -->
-                        <circle cx="76" cy="49" r="3" fill="#10B981"/>
-                        <polyline points="74.8 49 75.8 50 77.2 48" fill="none" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Screen text line -->
+                        <rect x="62" y="66" width="42" height="3.5" rx="1.75" fill="#CBD5E1"/>
 
-                        <!-- Screen UI Lines -->
-                        <rect x="49" y="56" width="40" height="3" rx="1.5" fill="#CBD5E1"/>
+                        <!-- PIN Code Input Row -->
+                        <rect x="52" y="80" width="62" height="14" rx="5" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="0.8"/>
+                        <circle cx="63" cy="87" r="2.5" fill="#023E8A"/>
+                        <circle cx="73" cy="87" r="2.5" fill="#023E8A"/>
+                        <circle cx="83" cy="87" r="2.5" fill="#023E8A"/>
+                        <circle cx="93" cy="87" r="2.5" fill="#023E8A"/>
+                        <polyline points="101 85 103 87 106 84" fill="none" stroke="#10B981" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
 
-                        <!-- Passcode Dots / PIN Indicator -->
-                        <rect x="44" y="68" width="50" height="12" rx="4" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
-                        <circle cx="53" cy="74" r="2" fill="#023E8A"/>
-                        <circle cx="61" cy="74" r="2" fill="#023E8A"/>
-                        <circle cx="69" cy="74" r="2" fill="#023E8A"/>
-                        <circle cx="77" cy="74" r="2" fill="#023E8A"/>
-                        <polyline points="83 72.5 84.5 74 87 71.5" fill="none" stroke="#10B981" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-
-                        <!-- Button on Screen -->
-                        <rect x="44" y="85" width="50" height="15" rx="5" fill="url(#btnGrad)"/>
-                        <text x="69" y="95.5" font-family="'Inter', sans-serif" font-size="6.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">AKTIFKAN</text>
-                        <circle cx="88" cy="92.5" r="1.5" fill="#FFFFFF" opacity="0.8"/>
+                        <!-- Action Button on Screen -->
+                        <rect x="52" y="101" width="62" height="18" rx="6" fill="url(#btnGrad)"/>
+                        <text x="83" y="113" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.6">AKTIVASI</text>
+                        <circle cx="106" cy="110" r="1.5" fill="#FFFFFF" opacity="0.8"/>
                     </g>
 
-                    <!-- Floating Verified Shield Badge -->
-                    <g filter="drop-shadow(0 3px 8px rgba(16,185,129,0.3))">
-                        <circle cx="108" cy="34" r="16" fill="#FFFFFF"/>
-                        <path d="M108 21 L120 26 C120 35 115 43 108 46 C101 43 96 35 96 26 Z" fill="url(#shieldGrad)"/>
-                        <polyline points="102.5 33.5 106.5 37.5 113.5 30" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Floating Verified Shield Badge (Center-Top) -->
+                    <g filter="url(#badgeGlow)">
+                        <circle cx="130" cy="38" r="19" fill="#FFFFFF"/>
+                        <path d="M130 23 L144 29 C144 39.5 138 49 130 52 C122 49 116 39.5 116 29 Z" fill="url(#shieldGrad)"/>
+                        <polyline points="123.5 37.5 128.5 42.5 137 33.5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                     </g>
 
-                    <!-- Modern Friendly Character (Right side) -->
+                    <!-- Modern Stylized Character (Right side, Undraw/Tech Corporate style) -->
                     <g>
-                        <!-- Body / Corporate Polo -->
-                        <path d="M130 126 C130 106 142 100 157 100 C172 100 184 106 184 126 Z" fill="url(#bodyGrad)"/>
-                        
-                        <!-- Polo Collar & Details -->
-                        <path d="M151 100 L157 111 L163 100" fill="#FFFFFF"/>
-                        <path d="M152 100 L157 109 L162 100" fill="#E2E8F0"/>
-                        <line x1="157" y1="111" x2="157" y2="124" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
-                        <circle cx="157" cy="115" r="1" fill="#023E8A"/>
-                        <circle cx="157" cy="120" r="1" fill="#023E8A"/>
+                        <!-- Lower Body / Trousers (Grounding) -->
+                        <path d="M168 135 L164 150 L180 150 L184 135 Z" fill="#1E293B"/>
+                        <path d="M188 135 L192 150 L208 150 L204 135 Z" fill="#0F172A"/>
 
-                        <!-- Lanyard & ID Card -->
-                        <path d="M153 104 L157 117 L161 104" stroke="#0081AB" stroke-width="1.8" fill="none"/>
-                        <rect x="153" y="117" width="8" height="9" rx="1.5" fill="#FFFFFF" stroke="#0081AB" stroke-width="1"/>
-                        <rect x="154.5" y="119" width="5" height="1.5" rx="0.75" fill="#023E8A"/>
+                        <!-- Torso / Polo Shirt (PLN Deep Blue) -->
+                        <path d="M158 136 C158 112 172 105 188 105 C204 105 218 112 218 136 Z" fill="url(#poloGrad)"/>
+
+                        <!-- Polo Collar & Trim -->
+                        <path d="M181 105 L188 118 L195 105" fill="#FFFFFF"/>
+                        <path d="M182 105 L188 115 L194 105" fill="#E2E8F0"/>
+                        <line x1="188" y1="118" x2="188" y2="132" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
+                        <circle cx="188" cy="122" r="1.2" fill="#023E8A"/>
+                        <circle cx="188" cy="128" r="1.2" fill="#023E8A"/>
+
+                        <!-- ID Card Lanyard -->
+                        <path d="M183 110 L188 124 L193 110" stroke="#0081AB" stroke-width="2" fill="none"/>
+                        <rect x="183.5" y="124" width="9" height="10" rx="1.8" fill="#FFFFFF" stroke="#0081AB" stroke-width="1.2"/>
+                        <rect x="185" y="126.5" width="6" height="2" rx="1" fill="#023E8A"/>
 
                         <!-- Neck -->
-                        <rect x="153" y="87" width="8" height="14" rx="3" fill="#FED7AA"/>
-                        <!-- Neck shadow under chin -->
-                        <path d="M153 91 C155 93 159 93 161 91 L161 87 L153 87 Z" fill="#FDBA74" opacity="0.6"/>
+                        <rect x="183" y="90" width="10" height="17" rx="3.5" fill="#FCD34D"/>
+                        <path d="M183 94 C185 97 191 97 193 94 L193 90 L183 90 Z" fill="#F59E0B" opacity="0.3"/>
 
-                        <!-- Head / Face -->
-                        <circle cx="157" cy="75" r="15" fill="#FED7AA"/>
-
+                        <!-- Head (Modern stylized silhouette) -->
+                        <circle cx="188" cy="76" r="17" fill="#FCD34D"/>
                         <!-- Ears -->
-                        <circle cx="142.5" cy="75" r="3" fill="#FED7AA"/>
-                        <circle cx="171.5" cy="75" r="3" fill="#FED7AA"/>
+                        <circle cx="171" cy="76" r="3.5" fill="#FCD34D"/>
+                        <circle cx="205" cy="76" r="3.5" fill="#FCD34D"/>
 
-                        <!-- Hair (Modern side-sweep fringe with volume) -->
-                        <path d="M142 73 C142 59 149 53 158 53 C169 53 174 61 174 72 C170 70 164 69 157 69 C149 69 144 71 142 73 Z" fill="#0F172A"/>
-                        <!-- Sideburns & fringe lock -->
-                        <path d="M142.5 73 L142.5 78 L145 74 Z" fill="#0F172A"/>
-                        <path d="M171.5 73 L171.5 78 L169 74 Z" fill="#0F172A"/>
-                        <!-- Hair highlight shine -->
-                        <path d="M150 56 C154 55 160 55 165 57" stroke="#334155" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                        <!-- Hair (Sleek modern side-part haircut) -->
+                        <path d="M170 74 C170 57 178 50 189 50 C202 50 207 60 207 72 C202 70 195 68 187 68 C178 68 172 71 170 74 Z" fill="#0F172A"/>
+                        <path d="M170 74 L170 80 L174 75 Z" fill="#0F172A"/>
+                        <path d="M205 74 L205 80 L202 75 Z" fill="#0F172A"/>
+                        <!-- Hair volume highlight -->
+                        <path d="M180 54 C184 53 192 53 198 55" stroke="#334155" stroke-width="1.8" stroke-linecap="round" fill="none"/>
 
-                        <!-- Expressive Friendly Face -->
-                        <!-- Eyebrows -->
-                        <path d="M149 69 C151 68 153 68.5 154 69" stroke="#1E293B" stroke-width="1" stroke-linecap="round" fill="none"/>
-                        <path d="M160 69 C161 68.5 163 68 165 69" stroke="#1E293B" stroke-width="1" stroke-linecap="round" fill="none"/>
-                        <!-- Eyes -->
-                        <circle cx="151.5" cy="73.5" r="1.6" fill="#0F172A"/>
-                        <circle cx="162.5" cy="73.5" r="1.6" fill="#0F172A"/>
-                        <circle cx="152" cy="73" r="0.6" fill="#FFFFFF"/>
-                        <circle cx="163" cy="73" r="0.6" fill="#FFFFFF"/>
-                        <!-- Cheeks blush -->
-                        <circle cx="147.5" cy="77" r="2.2" fill="#F87171" opacity="0.4"/>
-                        <circle cx="166.5" cy="77" r="2.2" fill="#F87171" opacity="0.4"/>
-                        <!-- Gentle Smile -->
-                        <path d="M154.5 78 Q157 81 159.5 78" stroke="#0F172A" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                        <!-- Minimalist Sleek Profile (Undraw Style) -->
+                        <circle cx="182" cy="74" r="1.8" fill="#0F172A"/>
+                        <circle cx="194" cy="74" r="1.8" fill="#0F172A"/>
+                        <path d="M185 79 Q188 82 191 79" stroke="#0F172A" stroke-width="1.4" stroke-linecap="round" fill="none"/>
 
-                        <!-- Arm & Hand Pointing/Tapping directly at phone button -->
-                        <path d="M135 110 C122 106 108 98 96 93" stroke="url(#bodyGrad)" stroke-width="8" stroke-linecap="round"/>
-                        <!-- Sleeve Cuff -->
-                        <ellipse cx="98" cy="94" rx="2.5" ry="4.5" fill="#0081AB" transform="rotate(-25 98 94)"/>
-                        <!-- Hand / Fingers tapping button -->
-                        <circle cx="92" cy="92" r="3.8" fill="#FED7AA"/>
-                        <!-- Extended Index Finger touching screen button -->
-                        <path d="M92 92 L85 91" stroke="#FED7AA" stroke-width="3" stroke-linecap="round"/>
-                        <circle cx="84" cy="91" r="1.5" fill="#FED7AA"/>
-                        <!-- Tap sparkle -->
-                        <path d="M79 87 L80 84 L81 87 L84 88 L81 89 L80 92 L79 89 L76 88 Z" fill="#FFC629"/>
+                        <!-- Left Arm & Hand: Reaching naturally forward to touch screen button -->
+                        <path d="M165 118 C150 114 135 106 120 102" stroke="url(#poloGrad)" stroke-width="9.5" stroke-linecap="round"/>
+                        <ellipse cx="123" cy="103" rx="3" ry="5.5" fill="#0081AB" transform="rotate(-20 123 103)"/>
+                        <circle cx="116" cy="101" r="4.5" fill="#FCD34D"/>
+                        <!-- Index Finger touching activation button -->
+                        <path d="M116 101 L108 100" stroke="#FCD34D" stroke-width="3.6" stroke-linecap="round"/>
+                        <circle cx="107" cy="100" r="1.8" fill="#FCD34D"/>
+
+                        <!-- Tapping Interaction Sparkle on Button -->
+                        <path d="M100 95 L101.5 91 L103 95 L107 96.5 L103 98 L101.5 102 L100 98 L96 96.5 Z" fill="#FFC629"/>
+
+                        <!-- Right Arm: Natural relaxed posture -->
+                        <path d="M211 118 C220 125 224 134 220 144" stroke="url(#poloGrad)" stroke-width="9" stroke-linecap="round"/>
+                        <circle cx="218" cy="144" r="4.5" fill="#FCD34D"/>
                     </g>
                 </svg>
             </div>
