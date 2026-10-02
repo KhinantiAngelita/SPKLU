@@ -930,7 +930,7 @@
     .mu-modal-footer {
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: flex-start;
         gap: 10px;
         padding: 16px 24px;
         background: #FAFBFD;

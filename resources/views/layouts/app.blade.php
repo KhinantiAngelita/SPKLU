@@ -684,6 +684,7 @@
         .topbar-user {
             display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 6px;
             border-radius: 14px; cursor: pointer; transition: background-color .2s ease; border: none; background: none;
+            text-align: left;
         }
         .topbar-user:hover, .topbar-user.is-open { background-color: var(--bg-page); }
         .topbar-avatar {
@@ -695,8 +696,8 @@
             content: ''; position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%;
             background: var(--status-green); border: 2px solid #fff;
         }
-        .topbar-user-name { font-size: 13.8px; font-weight: 700; margin: 0; color: var(--text-primary); line-height: 1.3; }
-        .topbar-user-role { font-size: 11.5px; margin: 0; color: var(--text-secondary); font-weight: 500; line-height: 1.3; }
+        .topbar-user-name { font-size: 13.8px; font-weight: 700; margin: 0; color: var(--text-primary); line-height: 1.3; text-align: left; }
+        .topbar-user-role { font-size: 11.5px; margin: 0; color: var(--text-secondary); font-weight: 500; line-height: 1.3; text-align: left; }
         .topbar-user-chevron { width: 15px; height: 15px; color: var(--text-secondary); transition: transform .2s ease; flex-shrink: 0; }
         .topbar-user.is-open .topbar-user-chevron { transform: rotate(180deg); }
 

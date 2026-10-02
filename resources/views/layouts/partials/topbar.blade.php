@@ -158,12 +158,23 @@
         <div class="topbar-dropdown-wrap">
             <button class="topbar-user" type="button" data-dropdown-trigger="panel-profil">
                 <div class="topbar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
-                <div>
+                <div class="topbar-user-info">
                     <p class="topbar-user-name">{{ auth()->user()->name }}</p>
                     <p class="topbar-user-role">
-                        {{ $roleLabel }}
-                        @if (auth()->user()->up3)
-                            <span class="topbar-user-up3">&bull; {{ auth()->user()->up3 }}</span>
+                        @php
+                            $isNameSameAsRole = strcasecmp(trim(auth()->user()->name), trim($roleLabel)) === 0;
+                        @endphp
+                        @if (! $isNameSameAsRole)
+                            {{ $roleLabel }}
+                            @if (auth()->user()->up3)
+                                <span class="topbar-user-up3">&bull; {{ auth()->user()->up3 }}</span>
+                            @endif
+                        @else
+                            @if (auth()->user()->up3)
+                                <span class="topbar-user-up3" style="margin-left: 0;">{{ auth()->user()->up3 }}</span>
+                            @else
+                                {{ $roleLabel }}
+                            @endif
                         @endif
                     </p>
                 </div>
@@ -211,6 +222,21 @@
 </header>
 
 <style>
+.topbar-user {
+    text-align: left !important;
+}
+.topbar-user-info {
+    text-align: left !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.topbar-user-name {
+    text-align: left !important;
+}
+.topbar-user-role {
+    text-align: left !important;
+}
 .topbar-user-up3 {
     font-size: 11px;
     font-weight: 700;
