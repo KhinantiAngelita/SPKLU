@@ -108,9 +108,15 @@ class DashboardController extends Controller
             'kandidatAktif' => $kandidatAktif,
             'kandidatButuhTindakLanjut' => $kandidatButuhTindakLanjut,
 
-            'jadwalHariIni' => Jadwal::whereDate('waktu_mulai', today())->orderBy('waktu_mulai')->get(),
-            'jadwalBesok' => Jadwal::whereDate('waktu_mulai', today()->addDay())->orderBy('waktu_mulai')->get(),
-            'kalenderBulanIni' => $this->buildKalenderData(),
+            'jadwalHariIni' => Jadwal::whereDate('waktu_mulai', today())
+                ->when($selectedUp3, fn ($q) => $q->whereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3)))
+                ->orderBy('waktu_mulai')
+                ->get(),
+            'jadwalBesok' => Jadwal::whereDate('waktu_mulai', today()->addDay())
+                ->when($selectedUp3, fn ($q) => $q->whereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3)))
+                ->orderBy('waktu_mulai')
+                ->get(),
+            'kalenderBulanIni' => $this->buildKalenderData($selectedUp3),
 
             'topKandidat' => $topKandidat,
             'pengajuanTerbaru' => $pengajuanTerbaru,
@@ -220,11 +226,12 @@ class DashboardController extends Controller
         ];
     }
 
-    private function buildKalenderData(): array
+    private function buildKalenderData(?string $selectedUp3 = null): array
     {
         $bulan = now();
         $jadwalBulanIni = Jadwal::whereMonth('waktu_mulai', $bulan->month)
             ->whereYear('waktu_mulai', $bulan->year)
+            ->when($selectedUp3, fn ($q) => $q->whereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3)))
             ->get()
             ->groupBy(fn ($j) => $j->waktu_mulai->format('j'));
 

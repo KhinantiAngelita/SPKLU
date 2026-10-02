@@ -584,12 +584,12 @@
     .dsh-grid-2col > .surface-card {
         display: flex;
         flex-direction: column;
-        height: 400px;
+        height: 425px;
         margin-bottom: 0;
     }
 
     .calendar-widget {
-        padding: 16px 20px;
+        padding: 16px 20px 10px;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -604,25 +604,29 @@
         text-align: center;
         font-size: 11px;
         font-weight: 700;
-        color: #94A3B8;
-        padding: 4px 0 8px;
+        color: #64748B;
+        padding: 2px 0 6px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
+    .calendar-day-label.weekend {
+        color: #94A3B8;
+    }
     .calendar-cell {
-        height: 36px;
+        height: 35px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
+        border-radius: 9px;
         font-size: 13px;
         font-weight: 600;
         position: relative;
         color: #1E293B;
-        transition: background 0.15s ease, transform 0.15s ease;
+        transition: all 0.15s ease;
     }
-    .calendar-cell:not(.today):not(:empty):hover {
+    .calendar-cell:not(.today):not(.empty):hover {
         background: #F1F5F9;
+        color: #023E8A;
         cursor: default;
     }
     .calendar-cell.today {
@@ -631,19 +635,59 @@
         font-weight: 800;
         box-shadow: 0 4px 12px rgba(2, 62, 138, 0.28);
     }
-    .calendar-cell.has-event::after {
-        content: '';
+    .calendar-cell .event-dot {
         position: absolute;
-        bottom: 4px;
+        bottom: 3.5px;
         width: 5px;
         height: 5px;
         border-radius: 50%;
         background: #0081AB;
     }
-    .calendar-cell.today.has-event::after {
+    .calendar-cell .event-dot-today {
         background: #FFC629;
     }
+    .calendar-footer {
+        padding: 10px 20px;
+        border-top: 1px solid #F1F5F9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 11.5px;
+        color: #64748B;
+        background: #FAFBFD;
+        border-radius: 0 0 18px 18px;
+    }
+    .calendar-legend {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .calendar-legend .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748B;
+    }
+    .calendar-legend .legend-indicator {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .legend-indicator.today-indicator { background: #023E8A; }
+    .legend-indicator.event-indicator { background: #0081AB; }
+    .calendar-summary-text {
+        font-size: 11px;
+        color: #64748B;
+    }
+    .calendar-summary-text strong {
+        color: #023E8A;
+        font-weight: 700;
+    }
 
+    /* ===== Agenda & Jadwal Terdekat Widget ===== */
     .jadwal-widget {
         padding: 16px 20px;
         flex: 1;
@@ -651,50 +695,83 @@
     }
     .jadwal-widget::-webkit-scrollbar { width: 5px; }
     .jadwal-widget::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-    .jadwal-section-label {
+    .jadwal-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .jadwal-date-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.05em;
+        padding: 3px 9px;
+        border-radius: 6px;
+    }
+    .jadwal-date-badge.today {
+        background: rgba(2, 62, 138, 0.08);
+        color: #023E8A;
+        border: 1px solid rgba(2, 62, 138, 0.15);
+    }
+    .jadwal-date-badge.tomorrow {
+        background: #F1F5F9;
+        color: #475569;
+        border: 1px solid #E2E8F0;
+    }
+    .jadwal-count-pill {
+        font-size: 11px;
+        font-weight: 600;
         color: #94A3B8;
-        margin: 0 0 10px 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .jadwal-section-label:not(:first-child) {
-        margin-top: 18px;
-    }
-    .jadwal-section-label::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: #E2E8F0;
     }
     .jadwal-item {
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 10px 12px;
-        border-radius: 12px;
+        padding: 9px 12px;
+        border-radius: 11px;
         background: #F8FAFC;
-        border-left: 3px solid #059669;
+        border: 1px solid #EEF2F6;
+        border-left: 3.5px solid #059669;
         margin-bottom: 8px;
-        transition: transform 0.15s ease, background 0.15s ease;
+        transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
     }
     .jadwal-item:hover {
         transform: translateX(3px);
-        background: #F1F5F9;
+        background: #FFFFFF;
+        border-color: #E2E8F0;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
-    .jadwal-item.besok {
-        border-left-color: #D97706;
+    .jadwal-item.tomorrow-item {
+        border-left-color: #0284C7;
+    }
+    .jadwal-time-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        padding: 4px 0;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        flex-shrink: 0;
     }
     .jadwal-time {
         font-weight: 800;
         color: #023E8A;
-        font-size: 13px;
-        width: 44px;
-        flex-shrink: 0;
+        font-size: 12.5px;
+        line-height: 1;
+    }
+    .jadwal-time-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: #94A3B8;
+        letter-spacing: 0.04em;
+        margin-top: 2px;
     }
     .jadwal-info {
         flex: 1;
@@ -702,7 +779,7 @@
     }
     .jadwal-title {
         font-weight: 700;
-        font-size: 13px;
+        font-size: 12.5px;
         color: #0F172A;
         margin: 0;
         white-space: nowrap;
@@ -712,27 +789,63 @@
     .jadwal-desc {
         font-size: 11.5px;
         color: #64748B;
-        margin: 1px 0 0 0;
+        margin: 2px 0 0 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
     .jadwal-badge {
         display: inline-flex;
-        padding: 3px 10px;
+        padding: 3px 9px;
         border-radius: 999px;
         font-size: 10.5px;
         font-weight: 700;
         flex-shrink: 0;
     }
     .jadwal-badge-online {
-        background: rgba(46, 158, 91, 0.12);
-        color: #15803D;
-        border: 1px solid rgba(46, 158, 91, 0.2);
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
     .jadwal-badge-offline {
-        background: #E2E8F0;
+        background: rgba(2, 62, 138, 0.08);
+        color: #023E8A;
+        border: 1px solid rgba(2, 62, 138, 0.15);
+    }
+    .jadwal-empty-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        background: #FAFBFD;
+        border: 1px dashed #E2E8F0;
+        border-radius: 10px;
+        margin-bottom: 8px;
+    }
+    .jadwal-empty-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #EEF2F6;
+        color: #94A3B8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .jadwal-empty-title {
+        font-size: 12px;
+        font-weight: 700;
         color: #475569;
+        margin: 0 0 1px;
+    }
+    .jadwal-empty-sub {
+        font-size: 11px;
+        color: #94A3B8;
+        margin: 0;
     }
 
     /* ===== Top 5 Kandidat Prioritas Table ===== */
@@ -1219,11 +1332,11 @@
 
             <div class="calendar-grid">
                 @foreach (['Sen','Sel','Rab','Kam','Jum','Sab','Min'] as $hari)
-                    <div class="calendar-day-label">{{ $hari }}</div>
+                    <div class="calendar-day-label {{ in_array($hari, ['Sab', 'Min']) ? 'weekend' : '' }}">{{ $hari }}</div>
                 @endforeach
 
                 @for ($i = 0; $i < $offsetAwal; $i++)
-                    <div></div>
+                    <div class="calendar-cell empty"></div>
                 @endfor
 
                 @for ($tgl = 1; $tgl <= $akhirBulan->day; $tgl++)
@@ -1231,8 +1344,23 @@
                         $isToday = $tgl === $bulanIni->day;
                         $hasEvent = in_array((string) $tgl, $kalenderBulanIni['tanggalBerjadwal'] ?? []);
                     @endphp
-                    <div class="calendar-cell {{ $isToday ? 'today' : '' }} {{ $hasEvent ? 'has-event' : '' }}">{{ $tgl }}</div>
+                    <div class="calendar-cell {{ $isToday ? 'today' : '' }} {{ $hasEvent ? 'has-event' : '' }}" title="{{ $isToday ? 'Hari ini' : '' }}{{ $hasEvent ? ($isToday ? ' &bull; Ada agenda' : 'Ada agenda') : '' }}">
+                        <span>{{ $tgl }}</span>
+                        @if ($hasEvent)
+                            <span class="event-dot {{ $isToday ? 'event-dot-today' : '' }}"></span>
+                        @endif
+                    </div>
                 @endfor
+            </div>
+        </div>
+
+        <div class="calendar-footer">
+            <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-indicator today-indicator"></span> Hari Ini</span>
+                <span class="legend-item"><span class="legend-indicator event-indicator"></span> Ada Agenda</span>
+            </div>
+            <div class="calendar-summary-text">
+                <strong>{{ count($kalenderBulanIni['tanggalBerjadwal'] ?? []) }}</strong> hari beragenda
             </div>
         </div>
     </div>
@@ -1251,35 +1379,82 @@
                     <p>Pertemuan &amp; survei lokasi terdekat</p>
                 </div>
             </div>
+            @can('create', \App\Models\Jadwal::class)
+                <a href="{{ route('penjadwalan.create') }}" class="link-btn">
+                    + Buat Jadwal
+                </a>
+            @endcan
         </div>
 
         <div class="jadwal-widget">
-            <p class="jadwal-section-label">Hari Ini &bull; {{ now()->translatedFormat('d M') }}</p>
+            <div class="jadwal-section-header">
+                <span class="jadwal-date-badge today">
+                    <svg style="width:11px; height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Hari Ini &bull; {{ now()->translatedFormat('d M') }}
+                </span>
+                <span class="jadwal-count-pill">{{ count($jadwalHariIni) }} agenda</span>
+            </div>
+
             @forelse ($jadwalHariIni as $jadwal)
                 <div class="jadwal-item">
-                    <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
+                    <div class="jadwal-time-box">
+                        <span class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</span>
+                        <span class="jadwal-time-label">WIB</span>
+                    </div>
                     <div class="jadwal-info">
-                        <p class="jadwal-title">{{ $jadwal->judul }}</p>
-                        <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
+                        <p class="jadwal-title" title="{{ $jadwal->judul }}">{{ $jadwal->judul }}</p>
+                        <p class="jadwal-desc" title="{{ $jadwal->deskripsi }}">
+                            <svg style="width:11px; height:11px; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span>{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 38) ?: ($jadwal->probabilitas->nama_lokasi ?? 'Lokasi internal') }}</span>
+                        </p>
                     </div>
                     <span class="jadwal-badge {{ $jadwal->mode === 'online' ? 'jadwal-badge-online' : 'jadwal-badge-offline' }}">{{ ucfirst($jadwal->mode) }}</span>
                 </div>
             @empty
-                <p style="text-align:center; padding:12px 10px; color:#94A3B8; font-size:12.5px; margin:0;">Tidak ada jadwal agenda untuk hari ini.</p>
+                <div class="jadwal-empty-card">
+                    <div class="jadwal-empty-icon">
+                        <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div>
+                        <div class="jadwal-empty-title" style="font-weight:700; color:#475569;">Tidak ada agenda hari ini</div>
+                        <div style="font-size:11px; color:#94A3B8;">Belum ada jadwal pertemuan atau survei lapangan yang tercatat.</div>
+                    </div>
+                </div>
             @endforelse
 
-            <p class="jadwal-section-label">Besok &bull; {{ now()->addDay()->translatedFormat('d M') }}</p>
+            <div class="jadwal-section-header" style="margin-top: 14px;">
+                <span class="jadwal-date-badge tomorrow">
+                    <svg style="width:11px; height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                    Besok &bull; {{ now()->addDay()->translatedFormat('d M') }}
+                </span>
+                <span class="jadwal-count-pill">{{ count($jadwalBesok) }} agenda</span>
+            </div>
+
             @forelse ($jadwalBesok as $jadwal)
-                <div class="jadwal-item besok">
-                    <div class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</div>
+                <div class="jadwal-item tomorrow-item">
+                    <div class="jadwal-time-box">
+                        <span class="jadwal-time">{{ $jadwal->waktu_mulai->format('H:i') }}</span>
+                        <span class="jadwal-time-label">WIB</span>
+                    </div>
                     <div class="jadwal-info">
-                        <p class="jadwal-title">{{ $jadwal->judul }}</p>
-                        <p class="jadwal-desc">{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 40) }}</p>
+                        <p class="jadwal-title" title="{{ $jadwal->judul }}">{{ $jadwal->judul }}</p>
+                        <p class="jadwal-desc" title="{{ $jadwal->deskripsi }}">
+                            <svg style="width:11px; height:11px; flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span>{{ \Illuminate\Support\Str::limit($jadwal->deskripsi, 38) ?: ($jadwal->probabilitas->nama_lokasi ?? 'Lokasi internal') }}</span>
+                        </p>
                     </div>
                     <span class="jadwal-badge {{ $jadwal->mode === 'online' ? 'jadwal-badge-online' : 'jadwal-badge-offline' }}">{{ ucfirst($jadwal->mode) }}</span>
                 </div>
             @empty
-                <p style="text-align:center; padding:12px 10px; color:#94A3B8; font-size:12.5px; margin:0;">Tidak ada agenda untuk besok.</p>
+                <div class="jadwal-empty-card">
+                    <div class="jadwal-empty-icon">
+                        <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div>
+                        <div class="jadwal-empty-title" style="font-weight:700; color:#475569;">Tidak ada agenda untuk besok</div>
+                        <div style="font-size:11px; color:#94A3B8;">Agenda hari berikutnya masih kosong.</div>
+                    </div>
+                </div>
             @endforelse
         </div>
     </div>
