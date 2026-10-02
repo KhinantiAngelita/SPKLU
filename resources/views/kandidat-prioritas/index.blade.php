@@ -960,45 +960,20 @@
             });
 
 
-        /* Konfirmasi "Ambil Otomatis" pakai SweetAlert2, ganti native confirm() */
+        /* Klik tombol "Otomatis" memunculkan pop out fitur dalam pengembangan */
         document.querySelectorAll('.form-ambil-otomatis').forEach(function (form) {
-
             form.addEventListener('submit', function (e) {
-
                 e.preventDefault();
 
                 Swal.fire({
-                    title: 'Ambil Jarak Otomatis?',
-                    html: 'Jarak akan dihitung ulang lewat <strong>Google Routes API</strong> dan menimpa data jarak yang ada sekarang.',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Ambil Sekarang',
-                    cancelButtonText: 'Batal',
+                    icon: 'info',
+                    title: 'Fitur Masih Dalam Pengembangan',
+                    html: 'Pengambilan jarak SPKLU secara otomatis saat ini masih dalam tahap pengembangan.<br><span style="display:inline-block; margin-top:8px; font-size:13px; color:#64748B;">Silakan gunakan tombol <strong>Manual</strong> untuk mengatur jarak SPKLU terdekat.</span>',
+                    confirmButtonText: 'Mengerti',
                     confirmButtonColor: '#023E8A',
-                    cancelButtonColor: '#94a3b8',
-                    reverseButtons: true,
                     borderRadius: '14px',
-                }).then(function (result) {
-
-                    if (result.isConfirmed) {
-
-                        Swal.fire({
-                            title: 'Mengambil jarak dari Google...',
-                            html: 'Mohon tunggu sebentar',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        form.submit();
-                    }
-
                 });
-
             });
-
         });
 
     </script>
