@@ -361,41 +361,44 @@
                     <!-- Foreground Floating Activation Card (Overlapping Phone) -->
                     <g filter="url(#floatCardShadow)">
                         <!-- Card White Container with Crisp Light-Blue Border -->
-                        <rect x="176" y="72" width="144" height="106" rx="12" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <rect x="176" y="72" width="144" height="102" rx="12" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
 
                         <!-- Header Row of Floating Card: Avatar & Status -->
-                        <circle cx="193" cy="89" r="8.5" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.2"/>
-                        <polyline points="189.5 89 192 91.5 196.5 86.5" fill="none" stroke="#10B981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="193" cy="87" r="8.5" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.2"/>
+                        <polyline points="189.5 87 192 89.5 196.5 84.5" fill="none" stroke="#10B981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                         
-                        <text x="206" y="87" font-family="'Inter', sans-serif" font-size="7.5" font-weight="700" fill="#1E293B">Aktivasi Akun</text>
-                        <text x="206" y="96" font-family="'Inter', sans-serif" font-size="6" font-weight="500" fill="#64748B">Verifikasi Unit UP3</text>
+                        <text x="206" y="85" font-family="'Inter', sans-serif" font-size="7.5" font-weight="700" fill="#1E293B">Aktivasi Akun</text>
+                        <text x="206" y="94" font-family="'Inter', sans-serif" font-size="6" font-weight="500" fill="#64748B">Verifikasi Unit UP3</text>
 
                         <!-- Status Pill -->
-                        <rect x="272" y="82" width="38" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
-                        <circle cx="278" cy="88.5" r="2.2" fill="#10B981"/>
-                        <text x="293" y="88.5" font-family="'Inter', sans-serif" font-size="5.8" font-weight="700" fill="#059669" text-anchor="middle" dominant-baseline="central">Aktif</text>
+                        <rect x="272" y="80.5" width="38" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
+                        <circle cx="278" cy="87" r="2.2" fill="#10B981"/>
+                        <text x="293" y="87" font-family="'Inter', sans-serif" font-size="5.8" font-weight="700" fill="#059669" text-anchor="middle" dominant-baseline="central">Aktif</text>
 
                         <!-- Soft Blue Divider Line -->
-                        <line x1="186" y1="103" x2="310" y2="103" stroke="#F1F5F9" stroke-width="1"/>
+                        <line x1="186" y1="101" x2="310" y2="101" stroke="#F1F5F9" stroke-width="1"/>
 
                         <!-- Activation Bar with Matchmaker Gradient Button -->
-                        <rect x="186" y="109" width="124" height="28" rx="8" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
+                        <rect x="186" y="106" width="124" height="27" rx="7.5" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
                         <!-- Key Icon -->
-                        <circle cx="196" cy="123" r="5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
-                        <circle cx="196" cy="122" r="1.6" fill="#0081AB"/>
-                        <line x1="196" y1="124" x2="196" y2="126" stroke="#0081AB" stroke-width="1.2"/>
+                        <circle cx="196" cy="119.5" r="5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
+                        <circle cx="196" cy="118.5" r="1.6" fill="#0081AB"/>
+                        <line x1="196" y1="120.5" x2="196" y2="122.5" stroke="#0081AB" stroke-width="1.2"/>
                         <!-- Matchmaker Orange Button with Comfortable Padding -->
-                        <rect x="205" y="112.5" width="100" height="21" rx="10.5" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
-                        <text x="255" y="123" font-family="'Inter', -apple-system, sans-serif" font-size="6.3" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" letter-spacing="0.2">Aktifkan Sekarang</text>
+                        <rect x="205" y="109" width="100" height="21" rx="10.5" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
+                        <text x="255" y="119.5" font-family="'Inter', -apple-system, sans-serif" font-size="6.3" font-weight="700" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" letter-spacing="0.2">Aktifkan Sekarang</text>
 
-                        <!-- Bottom Verification Row -->
-                        <circle cx="193" cy="151.5" r="5.5" fill="#ECFDF5"/>
-                        <polyline points="191 151.5 192.5 153" 195.5 150" fill="none" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <text x="203" y="151.5" font-family="'Inter', sans-serif" font-size="6.2" font-weight="600" fill="#334155" dominant-baseline="central">Email & Unit Terdaftar</text>
-
-                        <!-- Secure Lock Icon -->
-                        <rect x="300" y="148" width="8" height="6.5" rx="1.5" fill="#94A3B8"/>
-                        <path d="M302 148 L302 146 C302 144.9 302.9 144 304 144 C305.1 144 306 144.9 306 146 L306 148" fill="none" stroke="#94A3B8" stroke-width="1.1"/>
+                        <!-- Bottom Verification Banner (Email & Unit Terdaftar) -->
+                        <rect x="186" y="139" width="124" height="23" rx="6.5" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="0.8"/>
+                        <!-- Crisp Solid Green Checkmark Circle -->
+                        <circle cx="198" cy="150.5" r="5.5" fill="#10B981"/>
+                        <polyline points="195.5 150.5 197.3 152.3 200.8 148.5" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Text -->
+                        <text x="208" y="150.5" font-family="'Inter', -apple-system, sans-serif" font-size="6.2" font-weight="700" fill="#15803D" dominant-baseline="central">Email &amp; Unit Terdaftar</text>
+                        <!-- Valid Status Tag -->
+                        <rect x="277" y="144" width="28" height="13" rx="6.5" fill="#DCFCE7"/>
+                        <circle cx="282.5" cy="150.5" r="1.8" fill="#10B981"/>
+                        <text x="294" y="150.5" font-family="'Inter', sans-serif" font-size="5.5" font-weight="800" fill="#15803D" text-anchor="middle" dominant-baseline="central">VALID</text>
                     </g>
 
                     <!-- Top-Left Badge: Email Terverifikasi (Mail Envelope with Checkmark) -->
