@@ -188,8 +188,15 @@
        yang udah pernah kejadian & difix di modal "Cocokkan Data" (lihat komentar
        overflow:hidden DIHAPUS di atas), sekarang muncul lagi di card ini karena card
        ini pakai wrapper beda (.surface-card, bukan .up-modal). */
+    .surface-card:has(#alias-unmatched-table),
     .surface-card:has(#alias-bulk-rows),
     .surface-card:has(#modal-cocokkan-list) {
+        overflow: visible;
+    }
+    .up-table-scroll-alias {
+        overflow: visible;
+    }
+    .up-table-scroll-alias table td {
         overflow: visible;
     }
 </style>
@@ -224,10 +231,10 @@
             <p class="up-summary-value">{{ number_format($unmatchedList->count()) }}</p>
         </div>
     </div>
-    <div class="up-summary-card green">
+    <div class="up-summary-card green" style="cursor:pointer;" onclick="window.location='{{ route('master-spklu.index') }}'">
         <div class="up-summary-icon up-ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
         <div>
-            <p class="up-summary-label">Alias Tersimpan</p>
+            <p class="up-summary-label">Alias di Master SPKLU</p>
             <p class="up-summary-value">{{ number_format($aliasList->count()) }}</p>
         </div>
     </div>
@@ -258,45 +265,6 @@
         </button>
     </div>
 </div>
-
-@if ($unmatchedList->count() > 0)
-<div class="surface-card">
-    <div class="section-header-bar">
-        <div class="section-header-bar-left">
-            <div class="section-header-bar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div>
-            <div>
-                <h2>Nama SPKLU Belum Dipetakan ({{ $unmatchedList->count() }})</h2>
-                <p>Gabungan dari semua file. Pilih SPKLU untuk beberapa nama sekaligus, lalu klik "Simpan Semua" — gak perlu satu-satu.</p>
-            </div>
-        </div>
-    </div>
-    <div class="up-card-body">
-        <div id="alias-bulk-rows">
-            @foreach ($unmatchedList as $item)
-                <div class="up-alias-row" data-nama="{{ $item->nama_asli }}">
-                    <div class="up-alias-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
-                    <div class="up-alias-name">
-                        <strong>{{ $item->nama_asli }}</strong><br>
-                        <span style="color:#94a3b8; font-size:11.5px;">{{ number_format($item->jumlah_baris_total) }} baris (akumulasi)</span>
-                    </div>
-                    <select class="alias-searchable">
-                        <option value="">Pilih SPKLU yang benar...</option>
-                        @foreach ($spkluList as $s)<option value="{{ $s->id }}">{{ $s->nama }}</option>@endforeach
-                    </select>
-                </div>
-            @endforeach
-        </div>
-        <div style="margin-top:18px; display:flex; justify-content:flex-end; align-items:center; gap:12px;">
-            <span id="alias-bulk-info" style="font-size:12.5px; color:#94a3b8;"></span>
-            <button type="button" class="up-btn up-btn-primary" id="btn-simpan-alias-bulk">Simpan Semua yang Dipilih</button>
-        </div>
-    </div>
-</div>
-@endif
 
 <div class="surface-card">
     <div class="section-header-bar">
@@ -431,41 +399,94 @@
     <div style="padding:16px 24px;">{{ $riwayat->links() }}</div>
 </div>
 
-@if ($aliasList->count() > 0)
+{{-- Card: Pemetaan Alias yang Belum Dipetakan --}}
 <div class="surface-card">
     <div class="section-header-bar">
         <div class="section-header-bar-left">
             <div class="section-header-bar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             </div>
             <div>
-                <h2>Pemetaan Alias yang Sudah Selesai</h2>
-                <p>Otomatis dipakai untuk upload berikutnya. Klik ikon pensil untuk ubah pemetaan.</p>
+                <h2>Pemetaan Alias yang Belum Dipetakan @if($unmatchedList->count() > 0)<span style="margin-left:6px; font-size:12px; font-weight:700; background:rgba(232,163,23,0.15); color:#92660F; padding:2px 10px; border-radius:999px;">{{ $unmatchedList->count() }} nama</span>@endif</h2>
+                <p>Daftar nama SPKLU di file transaksi yang belum cocok otomatis. Jika sudah dipetakan, data akan otomatis masuk ke <strong>Pemetaan Alias SPKLU</strong> di menu <strong>Master SPKLU</strong>.</p>
             </div>
         </div>
+        <a href="{{ route('master-spklu.index') }}" class="link-btn">
+            Buka Pemetaan di Master SPKLU
+            <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
     </div>
-    <div class="up-table-scroll">
-        <table class="up-table" style="min-width:0;">
-            <thead><tr><th>Nama di File Sumber</th><th>Dipetakan ke SPKLU</th><th style="width:70px;">Aksi</th></tr></thead>
-            <tbody>
-                @foreach ($aliasList as $alias)
-                    <tr data-alias-id="{{ $alias->id }}" data-alias-nama="{{ $alias->nama_asli }}" data-alias-spklu-id="{{ $alias->spklu_id }}">
-                        <td>{{ $alias->nama_asli }}</td>
-                        <td>{{ $alias->spklu->nama ?? '—' }}</td>
-                        <td>
-                            <div class="up-action-group">
-                                <button type="button" class="up-edit-btn" title="Ubah Pemetaan" onclick="openEditAliasModal(this)">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
-                                </button>
-                            </div>
-                        </td>
+
+    @if ($unmatchedList->count() > 0)
+        <div class="up-table-scroll up-table-scroll-alias">
+            <table class="up-table" id="alias-unmatched-table" style="min-width:0;">
+                <thead>
+                    <tr>
+                        <th style="width:36%;">Nama di File Sumber</th>
+                        <th style="width:16%;">Jumlah Baris</th>
+                        <th style="width:36%;">Dipetakan ke Master SPKLU</th>
+                        <th style="width:12%; text-align:center;">Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach ($unmatchedList as $item)
+                        <tr class="up-alias-row" data-nama="{{ $item->nama_asli }}">
+                            <td>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <div class="up-alias-icon" style="width:30px; height:30px; border-radius:8px; background:rgba(232,163,23,0.12); color:#D97706;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:15px; height:15px;"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                    </div>
+                                    <div>
+                                        <strong style="color:#0F172A; font-size:13.5px;">{{ $item->nama_asli }}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="up-badge up-badge-warn">
+                                    {{ number_format($item->jumlah_baris_total) }} baris
+                                </span>
+                            </td>
+                            <td style="overflow:visible;">
+                                <select class="alias-searchable" style="width:100%;">
+                                    <option value="">Pilih Master SPKLU tujuan...</option>
+                                    @foreach ($spkluList as $s)
+                                        <option value="{{ $s->id }}">{{ $s->nama }} ({{ $s->up3 }})</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td style="text-align:center;">
+                                <button type="button" class="up-btn up-btn-primary" style="padding:6px 14px; font-size:12px; width:100%; justify-content:center;" onclick="simpanSingleAlias(this)" title="Petakan nama ini ke Master SPKLU">
+                                    Petakan
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:16px 24px; background:#FAFBFD; border-top:1px solid #EEF2F6; display:flex; justify-content:space-between; align-items:center; border-radius:0 0 18px 18px; flex-wrap:wrap; gap:12px;">
+            <span style="font-size:12.5px; color:#64748B;">
+                <svg style="width:14px; height:14px; display:inline; vertical-align:-2px; color:#0081AB; margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Pilih SPKLU untuk beberapa baris sekaligus, lalu klik tombol di samping untuk menyimpan bersamaan.
+            </span>
+            <button type="button" class="up-btn up-btn-primary" id="btn-simpan-alias-bulk">
+                Simpan Semua yang Dipilih
+            </button>
+        </div>
+    @else
+        <div class="up-empty" style="padding:48px 24px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(46,158,91,0.12); color:#2E9E5B; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                <svg style="width:24px; height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <p style="font-weight:700; color:#1E293B; font-size:15px; margin:0 0 4px;">Semua Nama SPKLU Telah Dipetakan</p>
+            <p style="color:#64748B; font-size:13px; margin:0 0 18px; max-width:480px; margin-inline:auto;">Tidak ada alias transaksi yang tertunda. Seluruh alias yang tersimpan aktif dapat dilihat dan dikelola pada menu <strong>Master SPKLU</strong>.</p>
+            <a href="{{ route('master-spklu.index') }}" class="up-btn up-btn-outline" style="display:inline-flex;">
+                Lihat Pemetaan Alias di Master SPKLU
+                <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+        </div>
+    @endif
 </div>
-@endif
 
 {{-- Modal Cocokkan Data --}}
 <div class="up-modal-overlay" id="modal-cocokkan">
@@ -481,31 +502,6 @@
             <button type="button" class="up-btn" style="background:#fff; border:1px solid #e2e8f0; flex:1; justify-content:center;"
                     onclick="document.getElementById('modal-cocokkan').classList.remove('show')">Tutup</button>
             <button type="button" class="up-btn up-btn-primary" style="flex:1; justify-content:center;" id="btn-simpan-modal-cocokkan">Simpan Semua yang Dipilih</button>
-        </div>
-    </div>
-</div>
-
-{{-- Modal Edit Pemetaan Alias --}}
-<div class="up-modal-overlay" id="modal-edit-alias">
-    <div class="up-modal" style="width:460px;">
-        <div class="up-modal-header">
-            <h3>Edit Pemetaan Alias</h3>
-            <p id="modal-edit-alias-subtitle">—</p>
-        </div>
-        <div class="up-modal-body">
-            <label style="display:block; font-size:12.5px; font-weight:600; color:#334155; margin-bottom:8px;">Dipetakan ke SPKLU</label>
-            <input type="text" id="modal-edit-alias-search" placeholder="Cari SPKLU..."
-                   style="width:100%; padding:9px 12px; border:1px solid #e2e8f0; border-radius:7px; font-size:12.8px; font-family:inherit; margin-bottom:8px; box-sizing:border-box;">
-            <select id="modal-edit-alias-select" size="6"
-                    style="width:100%; padding:6px; border:1px solid #e2e8f0; border-radius:7px; font-size:12.8px; font-family:inherit; box-sizing:border-box;">
-                <option value="">Pilih SPKLU...</option>
-                @foreach ($spkluList as $s)<option value="{{ $s->id }}" data-nama="{{ strtolower($s->nama) }}">{{ $s->nama }}</option>@endforeach
-            </select>
-        </div>
-        <div class="up-modal-footer" style="display:flex; gap:8px;">
-            <button type="button" class="up-btn" style="background:#fff; border:1px solid #e2e8f0; flex:1; justify-content:center;"
-                    onclick="closeEditAliasModal()">Batal</button>
-            <button type="button" class="up-btn up-btn-primary" style="flex:1; justify-content:center;" id="btn-simpan-edit-alias">Simpan</button>
         </div>
     </div>
 </div>
@@ -787,7 +783,12 @@ async function submitAliasBulk(containerSelector, btn) {
         });
         const data = await res.json();
         if (res.ok && data.success) {
-            await Swal.fire({ icon: 'success', title: `${data.jumlah} pemetaan berhasil disimpan`, text: 'Halaman akan dimuat ulang.' });
+            await Swal.fire({
+                icon: 'success',
+                title: `${data.jumlah} Pemetaan Berhasil Disimpan`,
+                text: 'Data pemetaan otomatis masuk ke Pemetaan Alias SPKLU di menu Master SPKLU. Halaman akan dimuat ulang.',
+                confirmButtonColor: '#0081AB',
+            });
             location.reload();
         } else {
             throw new Error(data.message || 'Gagal menyimpan');
@@ -799,8 +800,54 @@ async function submitAliasBulk(containerSelector, btn) {
     }
 }
 
+// ===== Simpan alias per baris (single) =====
+async function simpanSingleAlias(btn) {
+    const row = btn.closest('tr.up-alias-row');
+    const namaAsli = row.dataset.nama;
+    const select = row.querySelector('select.alias-searchable');
+    const spkluId = select ? select.value : '';
+
+    if (!spkluId) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Pilih SPKLU Terlebih Dahulu',
+            text: 'Silakan pilih Master SPKLU yang sesuai untuk "' + namaAsli + '" sebelum memetakan.',
+            confirmButtonColor: '#0081AB',
+        });
+        return;
+    }
+
+    btn.disabled = true;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'Menyimpan...';
+
+    try {
+        const res = await fetch('{{ route('master-spklu.alias.bulk-store') }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+            body: JSON.stringify({ mappings: [{ nama_asli: namaAsli, spklu_id: spkluId }] }),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Pemetaan Berhasil Disimpan',
+                text: `"${namaAsli}" kini otomatis terhubung ke Master SPKLU dan tersimpan di menu Master SPKLU.`,
+                confirmButtonColor: '#0081AB',
+            });
+            location.reload();
+        } else {
+            throw new Error(data.message || 'Gagal menyimpan pemetaan');
+        }
+    } catch (e) {
+        Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: e.message });
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
 document.getElementById('btn-simpan-alias-bulk')?.addEventListener('click', function () {
-    submitAliasBulk('#alias-bulk-rows', this);
+    submitAliasBulk('#alias-unmatched-table', this);
 });
 
 document.getElementById('btn-simpan-modal-cocokkan')?.addEventListener('click', function () {
@@ -840,78 +887,7 @@ function openMatchModal(btn) {
     });
 }
 
-// ===== Edit alias — via modal =====
-// Sengaja PAKAI SELECT NATIVE (bukan Choices.js) untuk dropdown ini — supaya
-// gak ada lagi resiko masalah timing-init / z-index / overflow yang bikin
-// widget custom gak kepencet. Search-nya dibikin manual: input teks yang
-// nge-filter <option> dengan show/hide biasa.
-function openEditAliasModal(btn) {
-    const row = btn.closest('tr');
-    const aliasId = row.dataset.aliasId;
-    const namaAsli = row.dataset.aliasNama;
-    const spkluId = row.dataset.aliasSpkluId;
 
-    document.getElementById('modal-edit-alias-subtitle').textContent = namaAsli;
-
-    const select = document.getElementById('modal-edit-alias-select');
-    select.dataset.aliasId = aliasId;
-    select.value = spkluId || '';
-
-    const search = document.getElementById('modal-edit-alias-search');
-    search.value = '';
-    filterEditAliasOptions('');
-
-    document.getElementById('modal-edit-alias').classList.add('show');
-}
-
-function filterEditAliasOptions(keyword) {
-    const kw = keyword.trim().toLowerCase();
-    document.querySelectorAll('#modal-edit-alias-select option[data-nama]').forEach(opt => {
-        opt.hidden = kw !== '' && !opt.dataset.nama.includes(kw);
-    });
-}
-
-document.getElementById('modal-edit-alias-search')?.addEventListener('input', function () {
-    filterEditAliasOptions(this.value);
-});
-
-function closeEditAliasModal() {
-    document.getElementById('modal-edit-alias').classList.remove('show');
-}
-
-document.getElementById('btn-simpan-edit-alias')?.addEventListener('click', async function () {
-    const select = document.getElementById('modal-edit-alias-select');
-    const aliasId = select.dataset.aliasId;
-    const spkluId = select.value;
-
-    if (!spkluId) {
-        Swal.fire({ icon: 'info', title: 'Pilih SPKLU dulu' });
-        return;
-    }
-
-    const btn = this;
-    btn.disabled = true;
-    const teksAsli = btn.textContent;
-    btn.textContent = 'Menyimpan...';
-
-    try {
-        const res = await fetch(`/master-spklu/alias/${aliasId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-            body: JSON.stringify({ spklu_id: spkluId }),
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-            location.reload();
-        } else {
-            throw new Error(data.message || 'Gagal menyimpan perubahan');
-        }
-    } catch (e) {
-        Swal.fire({ icon: 'error', title: 'Gagal', text: e.message });
-        btn.disabled = false;
-        btn.textContent = teksAsli;
-    }
-});
 
 
 // ===== Proses ulang 1-klik: pakai file mentah yang sudah tersimpan di server =====
