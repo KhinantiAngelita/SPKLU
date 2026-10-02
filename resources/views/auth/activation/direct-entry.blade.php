@@ -278,7 +278,7 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-illustration">
-                <svg viewBox="0 0 420 205" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 430 205" fill="none" xmlns="http://www.w3.org/2000/svg" style="user-select: none; -webkit-user-select: none;">
                     <defs>
                         <!-- Screen Card Gradient -->
                         <linearGradient id="phoneCardGrad" x1="0" y1="0" x2="0" y2="1">
@@ -292,19 +292,13 @@
                             <stop offset="100%" stop-color="#FF7800"/>
                         </linearGradient>
 
-                        <!-- Handshake Teal Gradient -->
-                        <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#0081AB"/>
-                            <stop offset="100%" stop-color="#023E8A"/>
-                        </linearGradient>
-
                         <!-- Crisp Drop Shadows with Light Blue / Navy Hue -->
                         <filter id="phoneShadow" x="-15%" y="-15%" width="130%" height="130%">
                             <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#023E8A" flood-opacity="0.08"/>
                         </filter>
 
                         <filter id="floatCardShadow" x="-15%" y="-15%" width="130%" height="130%">
-                            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#023E8A" flood-opacity="0.11"/>
+                            <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#023E8A" flood-opacity="0.10"/>
                         </filter>
 
                         <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -316,145 +310,141 @@
                         </filter>
                     </defs>
 
-                    <!-- Subtle Light-Blue Ground Blueprint Grid -->
-                    <line x1="30" y1="168" x2="390" y2="168" stroke="#E0F2FE" stroke-width="1.2"/>
-                    <line x1="30" y1="190" x2="390" y2="190" stroke="#E0F2FE" stroke-width="1.2"/>
-                    <line x1="68" y1="150" x2="68" y2="198" stroke="#E0F2FE" stroke-width="1.2"/>
-                    <line x1="112" y1="150" x2="112" y2="198" stroke="#E0F2FE" stroke-width="1.2"/>
-                    <line x1="308" y1="150" x2="308" y2="198" stroke="#E0F2FE" stroke-width="1.2"/>
-                    <line x1="352" y1="150" x2="352" y2="198" stroke="#E0F2FE" stroke-width="1.2"/>
+                    <!-- Clean Subtle Tech Floor Lines -->
+                    <line x1="40" y1="182" x2="390" y2="182" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4 4"/>
+                    <line x1="20" y1="196" x2="410" y2="196" stroke="#E0F2FE" stroke-width="1.2"/>
 
-                    <!-- Dashed Circuit Connecting Lines (Light Blue) -->
-                    <path d="M68 56 L112 56 L112 76 L148 76" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
-                    <path d="M68 150 L112 150 L112 134 L148 134" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
-                    <path d="M352 56 L308 56 L308 76 L272 76" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
-                    <path d="M352 150 L308 150 L308 134 L272 134" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <!-- Dashed Circuit Connecting Lines (Symmetric Light Blue) -->
+                    <path d="M54 54 L104 54 L104 74 L146 74" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M54 150 L104 150 L104 130 L146 130" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M376 54 L326 54 L326 74 L264 74" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M376 150 L336 150 L336 150 L320 150" stroke="#7DD3FC" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
 
                     <!-- Circuit Glowing Nodes -->
-                    <circle cx="112" cy="56" r="5" fill="#BAE6FD" opacity="0.8"/>
-                    <circle cx="112" cy="56" r="2.8" fill="#0284C7"/>
-                    <circle cx="112" cy="150" r="5" fill="#BAE6FD" opacity="0.8"/>
-                    <circle cx="112" cy="150" r="2.8" fill="#0284C7"/>
-                    <circle cx="308" cy="56" r="5" fill="#BAE6FD" opacity="0.8"/>
-                    <circle cx="308" cy="56" r="2.8" fill="#0284C7"/>
-                    <circle cx="308" cy="150" r="5" fill="#BAE6FD" opacity="0.8"/>
-                    <circle cx="308" cy="150" r="2.8" fill="#0284C7"/>
+                    <circle cx="104" cy="54" r="4.5" fill="#BAE6FD" opacity="0.8"/>
+                    <circle cx="104" cy="54" r="2.5" fill="#0284C7"/>
+                    <circle cx="104" cy="150" r="4.5" fill="#BAE6FD" opacity="0.8"/>
+                    <circle cx="104" cy="150" r="2.5" fill="#0284C7"/>
+                    <circle cx="326" cy="54" r="4.5" fill="#BAE6FD" opacity="0.8"/>
+                    <circle cx="326" cy="54" r="2.5" fill="#0284C7"/>
+                    <circle cx="336" cy="150" r="4.5" fill="#BAE6FD" opacity="0.8"/>
+                    <circle cx="336" cy="150" r="2.5" fill="#0284C7"/>
 
                     <!-- Central Smartphone -->
                     <g filter="url(#phoneShadow)">
                         <!-- Outer Chassis: Pure White with Crisp Light-Blue Border -->
-                        <rect x="148" y="12" width="124" height="182" rx="20" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <rect x="146" y="12" width="118" height="182" rx="20" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
 
                         <!-- Speaker / Earpiece -->
-                        <rect x="194" y="18" width="32" height="3" rx="1.5" fill="#CBD5E1"/>
+                        <rect x="190" y="18" width="30" height="3" rx="1.5" fill="#CBD5E1"/>
 
                         <!-- Phone Screen with Hint of Light Blue -->
-                        <rect x="154" y="25" width="112" height="163" rx="14" fill="#F0F9FF" stroke="#E0F2FE" stroke-width="1"/>
+                        <rect x="152" y="25" width="106" height="163" rx="14" fill="#F0F9FF" stroke="#E0F2FE" stroke-width="1"/>
 
                         <!-- Screen Header: Mini Profile & Verification -->
-                        <circle cx="170" cy="38" r="7.5" fill="#0284C7"/>
-                        <circle cx="170" cy="36.5" r="2.6" fill="#FFFFFF"/>
-                        <path d="M165.5 42.5 C165.5 40.5 167.5 39.5 170 39.5 C172.5 39.5 174.5 40.5 174.5 42.5" fill="#FFFFFF"/>
-                        <rect x="183" y="34.5" width="46" height="4" rx="2" fill="#BAE6FD"/>
-                        <rect x="183" y="41" width="30" height="3" rx="1.5" fill="#CBD5E1"/>
+                        <circle cx="168" cy="38" r="7.5" fill="#0284C7"/>
+                        <circle cx="168" cy="36.5" r="2.6" fill="#FFFFFF"/>
+                        <path d="M163.5 42.5 C163.5 40.5 165.5 39.5 168 39.5 C170.5 39.5 172.5 40.5 172.5 42.5" fill="#FFFFFF"/>
+                        <rect x="180" y="34.5" width="44" height="4" rx="2" fill="#BAE6FD"/>
+                        <rect x="180" y="41" width="28" height="3" rx="1.5" fill="#CBD5E1"/>
 
                         <!-- Deep Blue / Cyan Feature Card on Screen -->
-                        <rect x="160" y="52" width="100" height="128" rx="10" fill="url(#phoneCardGrad)"/>
+                        <rect x="158" y="52" width="94" height="128" rx="10" fill="url(#phoneCardGrad)"/>
 
                         <!-- SPKLU Electric Bolt Badge on Screen -->
-                        <circle cx="210" cy="88" r="20" fill="#0081AB" opacity="0.45"/>
-                        <polygon points="212 76 202 90 210 90 208 104 219 90 211 90" fill="#FFC629"/>
-                        <text x="210" y="118" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.6">SPKLU PLN</text>
-                        <text x="210" y="128" font-family="'Inter', sans-serif" font-size="5.5" font-weight="600" fill="#BAE6FD" text-anchor="middle" letter-spacing="0.4">AKTIVASI SISTEM</text>
+                        <circle cx="205" cy="88" r="20" fill="#0081AB" opacity="0.45"/>
+                        <polygon points="207 76 197 90 205 90 203 104 214 90 206 90" fill="#FFC629"/>
+                        <text x="205" y="118" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.6">SPKLU PLN</text>
+                        <text x="205" y="128" font-family="'Inter', sans-serif" font-size="5.5" font-weight="600" fill="#BAE6FD" text-anchor="middle" letter-spacing="0.4">AKTIVASI SISTEM</text>
                     </g>
 
                     <!-- Foreground Floating Activation Card (Overlapping Phone) -->
                     <g filter="url(#floatCardShadow)">
                         <!-- Card White Container with Crisp Light-Blue Border -->
-                        <rect x="172" y="72" width="156" height="106" rx="12" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <rect x="176" y="72" width="144" height="106" rx="12" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
 
                         <!-- Header Row of Floating Card: Avatar & Status -->
-                        <circle cx="191" cy="89" r="8.5" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.2"/>
-                        <polyline points="187.5 89 190 91.5 194.5 86.5" fill="none" stroke="#10B981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="193" cy="89" r="8.5" fill="#F0FDF4" stroke="#86EFAC" stroke-width="1.2"/>
+                        <polyline points="189.5 89 192 91.5 196.5 86.5" fill="none" stroke="#10B981" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                         
-                        <text x="206" y="87" font-family="'Inter', sans-serif" font-size="7.5" font-weight="700" fill="#1E293B">Aktivasi Pengguna</text>
+                        <text x="206" y="87" font-family="'Inter', sans-serif" font-size="7.5" font-weight="700" fill="#1E293B">Aktivasi Akun</text>
                         <text x="206" y="96" font-family="'Inter', sans-serif" font-size="6" font-weight="500" fill="#64748B">Verifikasi Unit UP3</text>
 
                         <!-- Status Pill -->
-                        <rect x="278" y="82" width="40" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
-                        <circle cx="285" cy="88.5" r="2.2" fill="#10B981"/>
-                        <text x="300" y="91.5" font-family="'Inter', sans-serif" font-size="5.8" font-weight="800" fill="#059669" text-anchor="middle">AKTIF</text>
+                        <rect x="272" y="82" width="38" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
+                        <circle cx="278" cy="88.5" r="2.2" fill="#10B981"/>
+                        <text x="293" y="91.5" font-family="'Inter', sans-serif" font-size="5.8" font-weight="800" fill="#059669" text-anchor="middle">AKTIF</text>
 
                         <!-- Soft Blue Divider Line -->
-                        <line x1="184" y1="104" x2="316" y2="104" stroke="#F1F5F9" stroke-width="1"/>
+                        <line x1="186" y1="104" x2="310" y2="104" stroke="#F1F5F9" stroke-width="1"/>
 
                         <!-- Activation Bar with Matchmaker Gradient Button -->
-                        <rect x="184" y="112" width="132" height="24" rx="7" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
-                        <circle cx="196" cy="124" r="5.5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
-                        <circle cx="196" cy="123" r="1.8" fill="#0081AB"/>
-                        <rect x="210" y="115" width="102" height="18" rx="9" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
-                        <text x="261" y="127" font-family="'Inter', sans-serif" font-size="7" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.4">AKTIFKAN SEKARANG</text>
+                        <rect x="186" y="112" width="124" height="24" rx="7" fill="#F8FAFC" stroke="#BAE6FD" stroke-width="1"/>
+                        <!-- Key Icon -->
+                        <circle cx="197" cy="124" r="5" fill="#E0F2FE" stroke="#0081AB" stroke-width="1"/>
+                        <circle cx="197" cy="123" r="1.6" fill="#0081AB"/>
+                        <line x1="197" y1="125" x2="197" y2="127" stroke="#0081AB" stroke-width="1.2"/>
+                        <!-- Matchmaker Orange Button -->
+                        <rect x="208" y="115" width="96" height="18" rx="9" fill="url(#btnGrad)" filter="url(#btnShadow)"/>
+                        <text x="256" y="127" font-family="'Inter', sans-serif" font-size="6.8" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.4">AKTIFKAN SEKARANG</text>
 
-                        <!-- Toggle Switch Row -->
-                        <rect x="184" y="146" width="22" height="12" rx="6" fill="#10B981"/>
-                        <circle cx="199" cy="152" r="4.5" fill="#FFFFFF"/>
-                        <text x="213" y="153.5" font-family="'Inter', sans-serif" font-size="6.5" font-weight="600" fill="#475569">Sistem Terintegrasi</text>
+                        <!-- Bottom Verification Row -->
+                        <circle cx="193" cy="152" r="5.5" fill="#ECFDF5"/>
+                        <polyline points="191 152 192.5 153.5 195.5 150.5" fill="none" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="203" y="153.5" font-family="'Inter', sans-serif" font-size="6.2" font-weight="600" fill="#334155">Email & Unit Terdaftar</text>
 
-                        <!-- Checkmark Pill -->
-                        <circle cx="310" cy="152" r="6" fill="#E0F2FE"/>
-                        <polyline points="307.5 152 309.5 154 312.5 150" fill="none" stroke="#0284C7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Secure Lock Icon -->
+                        <rect x="300" y="148" width="8" height="6.5" rx="1.5" fill="#94A3B8"/>
+                        <path d="M302 148 L302 146 C302 144.9 302.9 144 304 144 C305.1 144 306 144.9 306 146 L306 148" fill="none" stroke="#94A3B8" stroke-width="1.1"/>
                     </g>
 
-                    <!-- Top-Left Badge: User Account Group Badge -->
+                    <!-- Top-Left Badge: Email Terverifikasi (Mail Envelope with Checkmark) -->
                     <g filter="url(#badgeShadow)">
-                        <circle cx="68" cy="56" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
-                        <circle cx="68" cy="56" r="19" fill="#F0FDF4"/>
-                        <!-- User Group Icons in Emerald Green -->
-                        <circle cx="68" cy="50" r="4.5" fill="#10B981"/>
-                        <path d="M60 62 C60 58 63.5 56.5 68 56.5 C72.5 56.5 76 58 76 62" fill="#10B981"/>
-                        <circle cx="59" cy="52" r="3.5" fill="#34D399"/>
-                        <path d="M53 61 C53 58.5 55.5 57.5 59 57.5" fill="#34D399"/>
-                        <circle cx="77" cy="52" r="3.5" fill="#34D399"/>
-                        <path d="M83 61 C83 58.5 80.5 57.5 77 57.5" fill="#34D399"/>
+                        <circle cx="54" cy="54" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <circle cx="54" cy="54" r="19" fill="#F0FDF4"/>
+                        <!-- Mail Envelope -->
+                        <rect x="43" y="47" width="22" height="14" rx="2.5" fill="#0284C7"/>
+                        <path d="M43 49 L54 56.5 L65 49" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Green Checkmark Badge -->
+                        <circle cx="62" cy="47" r="4.5" fill="#10B981" stroke="#FFFFFF" stroke-width="1"/>
+                        <polyline points="60 47 61.5 48.5 64 45.8" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
                     </g>
 
-                    <!-- Bottom-Left Badge: Setting Gear with Verified Checkmark -->
+                    <!-- Bottom-Left Badge: Unit UP3 Wilayah Kerja (Location Pin with PLN Bolt) -->
                     <g filter="url(#badgeShadow)">
-                        <circle cx="68" cy="150" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
-                        <circle cx="68" cy="150" r="19" fill="#F0F9FF"/>
-                        <!-- Gear Shape in Blue -->
-                        <path d="M68 138 L70 138 L70.5 141 C71.5 141.3 72.5 141.8 73.4 142.5 L76 141 L77.5 142.5 L76 145.1 C76.7 146 77.2 147 77.5 148 L80.5 148.5 L80.5 150.5 L77.5 151 C77.2 152 76.7 153 76 153.9 L77.5 156.5 L76 158 L73.4 156.5 C72.5 157.2 71.5 157.7 70.5 158 L70 161 L68 161 L67.5 158 C66.5 157.7 65.5 157.2 64.6 156.5 L62 158 L60.5 156.5 L62 153.9 C61.3 153 60.8 152 60.5 151 L57.5 150.5 L57.5 148.5 L60.5 148 C60.8 147 61.3 146 62 145.1 L60.5 142.5 L62 141 L64.6 142.5 C65.5 141.8 66.5 141.3 67.5 141 Z" fill="#0284C7"/>
-                        <!-- Center Verified Checkmark -->
-                        <circle cx="68" cy="149.5" r="8" fill="#023E8A"/>
-                        <polyline points="63.5 149.5 66.5 152.5 72.5 146.5" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="54" cy="150" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <circle cx="54" cy="150" r="19" fill="#F0FDF4"/>
+                        <!-- Location Pin -->
+                        <path d="M54 139 C49.5 139 46 142.5 46 147 C46 152.5 54 161 54 161 C54 161 62 152.5 62 147 C62 142.5 58.5 139 54 139 Z" fill="#023E8A"/>
+                        <!-- Inner PLN Lightning Bolt -->
+                        <polygon points="55 142 50.5 147 54 147 53 152 57.5 147 54 147" fill="#FFC629"/>
                     </g>
 
-                    <!-- Top-Right Badge: Security Question & OTP Message Bubbles -->
+                    <!-- Top-Right Badge: Keamanan Kode OTP (Security Shield with Keyhole & OTP Dots) -->
                     <g filter="url(#badgeShadow)">
-                        <!-- Outer Base -->
-                        <circle cx="352" cy="56" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
-                        <!-- Cyan Question Bubble -->
-                        <rect x="338" y="43" width="22" height="16" rx="4.5" fill="#38BDF8"/>
-                        <polygon points="344 59 344 62 348 59" fill="#38BDF8"/>
-                        <text x="349" y="54.5" font-family="'Inter', sans-serif" font-size="9.5" font-weight="900" fill="#FFFFFF" text-anchor="middle">?</text>
-
-                        <!-- Dark Blue OTP Dots Bubble -->
-                        <rect x="351" y="52" width="24" height="17" rx="4.5" fill="#023E8A"/>
-                        <polygon points="368 69 368 72 364 69" fill="#023E8A"/>
-                        <circle cx="358" cy="60.5" r="1.5" fill="#FFFFFF"/>
-                        <circle cx="363" cy="60.5" r="1.5" fill="#FFFFFF"/>
-                        <circle cx="368" cy="60.5" r="1.5" fill="#FFFFFF"/>
+                        <circle cx="376" cy="54" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <circle cx="376" cy="54" r="19" fill="#EFF6FF"/>
+                        <!-- Security Shield -->
+                        <path d="M376 43 L386 46.5 C386 53 381.5 58.5 376 61.5 C370.5 58.5 366 53 366 46.5 Z" fill="#0081AB"/>
+                        <!-- Keyhole inside Shield -->
+                        <circle cx="376" cy="50" r="2.2" fill="#FFFFFF"/>
+                        <polygon points="375 51 377 51 377.5 55 374.5 55" fill="#FFFFFF"/>
+                        <!-- Mini OTP 3 Dots -->
+                        <circle cx="372" cy="57" r="1" fill="#BAE6FD"/>
+                        <circle cx="376" cy="57" r="1" fill="#FFFFFF"/>
+                        <circle cx="379.8" cy="57" r="1" fill="#BAE6FD"/>
                     </g>
 
-                    <!-- Bottom-Right Badge: SPKLU Partnership / Access Handshake -->
+                    <!-- Bottom-Right Badge: Akun Pegawai Aktif (Verified User Profile with Green Checkmark) -->
                     <g filter="url(#badgeShadow)">
-                        <circle cx="352" cy="150" r="23" fill="url(#tealGrad)" stroke="#BAE6FD" stroke-width="1.8"/>
-                        <circle cx="352" cy="150" r="20" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
-                        <!-- White Handshake Vector -->
-                        <path d="M341 149 L346 144 L352 150 L358 144 L363 149 L357 155 L352 152 L347 155 Z" fill="#FFFFFF"/>
-                        <!-- Light Blue Cuffs -->
-                        <path d="M340 147 L343 144 L346 148 L343 151 Z" fill="#BAE6FD"/>
-                        <path d="M364 147 L361 144 L358 148 L361 151 Z" fill="#BAE6FD"/>
+                        <circle cx="376" cy="150" r="23" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.8"/>
+                        <circle cx="376" cy="150" r="19" fill="#F0FDF4"/>
+                        <!-- User Silhouette -->
+                        <circle cx="376" cy="144" r="4.8" fill="#023E8A"/>
+                        <path d="M367.5 156.5 C367.5 152.5 371.2 151 376 151 C380.8 151 384.5 152.5 384.5 156.5" fill="#023E8A"/>
+                        <!-- Green Verified Shield Badge -->
+                        <circle cx="383" cy="144" r="4.5" fill="#10B981" stroke="#FFFFFF" stroke-width="1.1"/>
+                        <polyline points="381.2 144 382.5 145.3 384.8 142.8" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
                     </g>
                 </svg>
             </div>
