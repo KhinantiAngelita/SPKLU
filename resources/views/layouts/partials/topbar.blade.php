@@ -92,6 +92,17 @@
                 </div>
             </div>
         </div>
+
+        @php
+            $topbarUp3 = $selectedUp3 ?? (request('up3') ?: (auth()->user()->up3 ?? null));
+        @endphp
+        <div class="topbar-wilayah-pill" title="Wilayah Kerja Aktif">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="13" height="13" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span>Wilayah: <strong>{{ $topbarUp3 ?: 'UID Jawa Barat (Semua Unit)' }}</strong></span>
+        </div>
     </div>
 
     <div class="topbar-actions">
@@ -222,6 +233,45 @@
 </header>
 
 <style>
+.topbar-wilayah-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0284C7;
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    padding: 6px 13px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: normal;
+    user-select: none;
+    transition: all .15s ease;
+}
+.topbar-wilayah-pill strong {
+    font-weight: 700;
+    color: #0284C7;
+}
+.topbar-wilayah-pill svg {
+    width: 13px;
+    height: 13px;
+    color: #0284C7;
+    stroke-width: 2.2;
+    flex-shrink: 0;
+}
+@media (max-width: 1024px) {
+    .topbar-wilayah-pill span {
+        max-width: 170px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+@media (max-width: 768px) {
+    .topbar-wilayah-pill {
+        display: none;
+    }
+}
 .topbar-user {
     text-align: left !important;
 }

@@ -50,24 +50,15 @@
     .rl-card-note { font-size:12px; color:#64748B; line-height:1.4; margin:0; }
 
     .rl-select {
-        padding:9px 32px 9px 14px; border-radius:9px; border:1px solid #e2e8f0; font-size:13px; font-weight:500;
-        background:#fff; color:#1E293B; cursor:pointer; appearance:none;
+        padding:7px 30px 7px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:12.5px; font-weight:500;
+        background:#fff; color:#1E293B; cursor:pointer; appearance:none; height:36px;
         background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2364748B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
-        background-repeat:no-repeat; background-position:right 12px center;
+        background-repeat:no-repeat; background-position:right 10px center;
+        transition:border-color .15s ease, box-shadow .15s ease;
     }
     .rl-select:focus { outline:none; border-color:#0081AB; box-shadow:0 0 0 3px rgba(0,129,171,.14); }
 
-    .rl-filter-group { display:flex; align-items:center; gap:8px; }
-
-    .rl-filter-pills { display:inline-flex; gap:3px; background:#F1F5F9; padding:3px; border-radius:9px; margin-left:14px; }
-    .rl-pill {
-        border:none; background:transparent; padding:5px 11px; border-radius:6px;
-        font-size:12px; font-weight:600; color:#64748B; cursor:pointer;
-        transition:all .15s ease; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;
-    }
-    .rl-pill:hover { color:#0F172A; background:rgba(255,255,255,0.7); }
-    .rl-pill.active { background:#fff; color:#0081AB; font-weight:700; box-shadow:0 1px 3px rgba(15,23,42,.08); }
-    @media (max-width:1050px) { .rl-filter-pills { display:none; } }
+    .rl-filter-group { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 
     .rl-peta-wrapper { margin-bottom:20px; }
 
@@ -81,11 +72,34 @@
 
     #peta-rekomendasi { height:560px; width:100%; border-radius:0 0 16px 16px; }
 
-    .rl-legend { display:flex; gap:16px; flex-wrap:wrap; padding:14px 20px; border-bottom:1px solid #f1f5f9; font-size:12.5px; }
-    .rl-legend-item { display:flex; align-items:center; gap:7px; color:#334155; cursor:pointer; padding:4px 8px; border-radius:6px; transition:background .15s ease; }
-    .rl-legend-item:hover { background:#f8fafc; }
-    .rl-legend-item.rl-legend-item-off { opacity:.35; }
-    .rl-legend-dot { width:16px; height:16px; border-radius:50%; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
+    .rl-legend {
+        display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+        padding:10px 20px; border-bottom:1px solid #f1f5f9; background:#FAFBFD;
+        font-size:12px;
+    }
+    .rl-legend-divider { width:1px; height:18px; background:#E2E8F0; margin:0 3px; flex-shrink:0; }
+    .rl-legend-chip {
+        border:1px solid #E2E8F0; background:#fff; padding:5px 12px; border-radius:7px;
+        font-size:12px; font-weight:600; color:#64748B; cursor:pointer;
+        display:inline-flex; align-items:center; gap:5px; transition:all .15s ease;
+    }
+    .rl-legend-chip:hover { background:#F1F5F9; color:#0F172A; }
+    .rl-legend-chip.active {
+        background:#0284C7; color:#fff; border-color:#0284C7; font-weight:700;
+        box-shadow:0 1px 3px rgba(2,132,199,.25);
+    }
+    .rl-legend-item {
+        display:inline-flex; align-items:center; gap:6px; color:#334155; cursor:pointer;
+        padding:4.5px 9px; border-radius:7px; background:#fff; border:1px solid #E2E8F0;
+        font-size:12px; font-weight:500; transition:all .15s ease;
+    }
+    .rl-legend-item:hover { background:#F1F5F9; border-color:#CBD5E1; color:#0F172A; }
+    .rl-legend-item.rl-legend-item-active {
+        border-color:#0284C7; background:#F0F9FF; box-shadow:0 0 0 2px rgba(2,132,199,.15);
+        color:#0284C7; font-weight:700;
+    }
+    .rl-legend-item.rl-legend-item-off { opacity:.32; background:transparent; border-color:transparent; box-shadow:none; }
+    .rl-legend-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
     .rl-legend-dot.rl-legend-plus { background:#2563EB; position:relative; }
 
     .rl-wilayah-item { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid #f5f7fa; }
@@ -139,19 +153,8 @@
 
 <div class="rl-page-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">
             Rekomendasi Lokasi
-            @if ($selectedUp3)
-                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: {{ $selectedUp3 }}
-                </span>
-            @else
-                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Wilayah: UID Jawa Barat (Semua Unit)
-                </span>
-            @endif
         </h1>
         <p class="rl-page-subtitle">Peta sebaran SPKLU eksisting (DC/AC), kandidat pipeline berdasarkan kepemilikan mitra mesin, dan titik rekomendasi otomatis.</p>
     </div>
@@ -218,33 +221,13 @@
 
 <div class="rl-peta-wrapper surface-card" style="overflow:hidden;">
     <div class="section-header-bar">
-        <div class="section-header-bar-left" style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                <div><h2>Peta Zona SPKLU</h2></div>
-            </div>
-            <div class="rl-filter-pills">
-                <button type="button" class="rl-pill active" data-pill="" onclick="filterKategoriPeta('')">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                    Semua Titik
-                </button>
-                <button type="button" class="rl-pill" data-pill="_semua_spklu" onclick="filterKategoriPeta('_semua_spklu')">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    Keduanya (Master + Baru)
-                </button>
-                <button type="button" class="rl-pill" data-pill="_master_spklu" onclick="filterKategoriPeta('_master_spklu')">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
-                    Master SPKLU
-                </button>
-                <button type="button" class="rl-pill" data-pill="_semua_kandidat" onclick="filterKategoriPeta('_semua_kandidat')">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
-                    SPKLU Baru
-                </button>
-            </div>
+        <div class="section-header-bar-left">
+            <div class="section-header-bar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><h2>Peta Zona SPKLU</h2></div>
         </div>
 
         <div class="rl-filter-group">
-            <form method="GET" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <form method="GET" style="display:flex; align-items:center; gap:8px;">
                 @if ($isSuperAdmin)
                     <select name="up3" class="rl-select" onchange="this.form.submit()" style="font-weight:600; color:#023E8A; border-color:#023E8A; background-color:#F0F7FA; min-width:180px;">
                         <option value="">Semua UP3 (UID Jabar)</option>
@@ -268,42 +251,51 @@
     </div>
 
     <div class="rl-legend">
-        <span class="rl-legend-item" data-kategori="_semua_spklu" onclick="toggleFilterLegenda('_semua_spklu')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <strong style="color:#0284C7;">Keduanya</strong>
-        </span>
+        <button type="button" class="rl-legend-chip active" data-pill="" onclick="filterKategoriPeta('')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            Semua Titik
+        </button>
+
+        <div class="rl-legend-divider"></div>
+
         <span class="rl-legend-item" data-kategori="_master_spklu" onclick="toggleFilterLegenda('_master_spklu')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#023E8A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
             <strong style="color:#023E8A;">Master SPKLU</strong>
         </span>
         <span class="rl-legend-item" data-kategori="dc" onclick="toggleFilterLegenda('dc')">
             <span class="rl-legend-dot" style="background:#023E8A;">
-                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+                <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
             </span>
             DC
         </span>
         <span class="rl-legend-item" data-kategori="ac" onclick="toggleFilterLegenda('ac')">
             <span class="rl-legend-dot" style="background:#0081AB;">
-                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+                <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
             </span>
             AC
         </span>
+
+        <div class="rl-legend-divider"></div>
+
         <span class="rl-legend-item" data-kategori="_semua_kandidat" onclick="toggleFilterLegenda('_semua_kandidat')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
             <strong style="color:#7C3AED;">SPKLU Baru</strong>
         </span>
         <span class="rl-legend-item" data-kategori="kuning" onclick="toggleFilterLegenda('kuning')">
             <span class="rl-legend-dot" style="background:#E8A317;">
-                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+                <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
             </span>
             Ada Pasangan
         </span>
         <span class="rl-legend-item" data-kategori="ungu" onclick="toggleFilterLegenda('ungu')">
             <span class="rl-legend-dot" style="background:#7C3AED;">
-                <svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
+                <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="11" height="18" rx="2"/><path d="M8.5 7.5L7 11h3l-1.5 3.5"/><path d="M14 9h2a2 2 0 0 1 2 2v6.5a1.5 1.5 0 0 0 3 0V11.5"/></svg>
             </span>
             Belum Pasangan
         </span>
+
+        <div class="rl-legend-divider"></div>
+
         <span class="rl-legend-item" data-kategori="_rekomendasi" onclick="toggleFilterLegenda('_rekomendasi')">
             <span class="rl-legend-dot rl-legend-plus" style="background:#2563EB; color:#fff; font-weight:800; font-size:11px; line-height:1;">+</span>
             Titik Rekomendasi
@@ -702,8 +694,8 @@
             }
         });
 
-        // Sinkronisasi highlight pills
-        document.querySelectorAll('.rl-pill[data-pill]').forEach(pill => {
+        // Sinkronisasi highlight chip Semua Titik
+        document.querySelectorAll('.rl-legend-chip[data-pill]').forEach(pill => {
             pill.classList.toggle('active', pill.dataset.pill === kategoriAktif);
         });
 
@@ -725,20 +717,28 @@
         // Sinkronisasi highlight legenda
         document.querySelectorAll('.rl-legend-item[data-kategori]').forEach(item => {
             let isOff = false;
+            let isActive = false;
             if (!kategoriAktif) {
                 isOff = false;
+                isActive = false;
             } else if (item.dataset.kategori === kategoriAktif) {
                 isOff = false;
+                isActive = true;
             } else if (kategoriAktif === '_master_spklu' && (item.dataset.kategori === 'dc' || item.dataset.kategori === 'ac' || item.dataset.kategori === '_master_spklu')) {
                 isOff = false;
+                isActive = (item.dataset.kategori === '_master_spklu');
             } else if (kategoriAktif === '_semua_kandidat' && (item.dataset.kategori === 'kuning' || item.dataset.kategori === 'ungu' || item.dataset.kategori === '_semua_kandidat')) {
                 isOff = false;
+                isActive = (item.dataset.kategori === '_semua_kandidat');
             } else if (kategoriAktif === '_semua_spklu' && item.dataset.kategori !== '_rekomendasi') {
                 isOff = false;
+                isActive = (item.dataset.kategori === '_semua_spklu');
             } else {
                 isOff = true;
+                isActive = false;
             }
             item.classList.toggle('rl-legend-item-off', isOff);
+            item.classList.toggle('rl-legend-item-active', isActive);
         });
     }
 
