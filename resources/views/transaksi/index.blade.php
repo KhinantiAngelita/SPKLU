@@ -120,33 +120,36 @@
         background: #94A3B8;
     }
     .trx-data-table {
+        table-layout: fixed;
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        min-width: 1350px;
     }
     .trx-data-table thead th {
         background: #F8FAFC;
         text-align: right;
-        font-size: 10.5px;
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #64748B;
-        padding: 12px 14px;
-        border-bottom: 1.5px solid #E2E8F0;
+        padding: 10px 14px;
+        border-bottom: 2px solid #E2E8F0;
         white-space: nowrap;
-        position: relative;
+        box-sizing: border-box;
+        vertical-align: middle;
     }
     .trx-data-table tbody td {
         text-align: right;
         font-size: 12.5px;
         color: #1E293B;
-        padding: 11px 14px;
+        padding: 10px 14px;
         border-bottom: 1px solid #F1F5F9;
         white-space: nowrap;
         font-variant-numeric: tabular-nums;
         background: #FFFFFF;
+        box-sizing: border-box;
+        vertical-align: middle;
         transition: background-color 0.15s ease;
     }
     .trx-data-table tbody tr:nth-child(even) td {
@@ -160,33 +163,41 @@
     .col-sticky-no {
         position: sticky;
         left: 0;
-        width: 48px;
-        min-width: 48px;
-        max-width: 48px;
+        width: 50px;
+        min-width: 50px;
+        max-width: 50px;
         text-align: center !important;
+        padding: 10px 4px !important;
+        box-sizing: border-box;
     }
     .col-sticky-unit {
         position: sticky;
-        left: 48px;
-        width: 82px;
-        min-width: 82px;
-        max-width: 82px;
+        left: 50px;
+        width: 85px;
+        min-width: 85px;
+        max-width: 85px;
         text-align: center !important;
+        padding: 10px 6px !important;
+        box-sizing: border-box;
+    }
+    .trx-data-table tbody td.col-sticky-unit {
         color: #64748B !important;
         font-weight: 600;
         font-size: 12px !important;
     }
     .col-sticky-spklu {
         position: sticky;
-        left: 130px;
-        width: 250px;
-        min-width: 250px;
-        max-width: 280px;
+        left: 135px;
+        width: 260px;
+        min-width: 260px;
+        max-width: 260px;
         text-align: left !important;
+        padding: 10px 14px !important;
+        box-sizing: border-box;
         font-weight: 700 !important;
         color: #0F172A !important;
-        border-right: 2px solid #E2E8F0 !important;
-        box-shadow: 4px 0 8px -2px rgba(15, 23, 42, 0.07);
+        border-right: 2px solid #CBD5E1 !important;
+        box-shadow: 4px 0 8px -2px rgba(15, 23, 42, 0.08);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -209,13 +220,16 @@
     .col-sticky-rata {
         position: sticky;
         right: 0;
-        width: 105px;
-        min-width: 105px;
-        max-width: 115px;
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
         text-align: right !important;
+        padding: 10px 14px !important;
+        box-sizing: border-box;
         font-weight: 800 !important;
         border-left: 2px solid #BAE6FD !important;
-        box-shadow: -4px 0 8px -2px rgba(15, 23, 42, 0.07);
+        box-shadow: -4px 0 8px -2px rgba(15, 23, 42, 0.08);
+        white-space: nowrap;
     }
     .trx-data-table thead th.col-sticky-rata {
         z-index: 4;
@@ -500,7 +514,16 @@
     </div>
 
     <div class="trx-data-table-wrap">
-        <table class="trx-data-table">
+        <table class="trx-data-table" style="min-width: {{ 515 + ($periodeMatriks->count() * 110) }}px;">
+            <colgroup>
+                <col style="width: 50px;">
+                <col style="width: 85px;">
+                <col style="width: 260px;">
+                @foreach ($periodeMatriks as $p)
+                    <col style="width: 110px;">
+                @endforeach
+                <col style="width: 120px;">
+            </colgroup>
             <thead>
                 <tr>
                     <th class="col-sticky-no">No</th>
