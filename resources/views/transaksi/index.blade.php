@@ -98,17 +98,153 @@
     .trx-year-checkbox { display:inline-flex; align-items:center; gap:6px; font-size:12.8px; font-weight:600; color:#334155; cursor:pointer; }
     .trx-year-checkbox input { accent-color:#0081AB; cursor:pointer; }
 
-    .trx-data-table-wrap { overflow-x:auto; border-top:1px solid #f1f5f9; }
-    .trx-data-table { width:100%; border-collapse:collapse; min-width:800px; }
-    .trx-data-table th { text-align:right; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#94a3b8; padding:11px 14px; border-bottom:1.5px solid #eef1f5; white-space:nowrap; }
-    .trx-data-table th:first-child { text-align:left; }
-    .trx-data-table td { text-align:right; font-size:12.5px; color:#334155; padding:10px 14px; border-bottom:1px solid #f5f7fa; white-space:nowrap; font-variant-numeric:tabular-nums; }
-    .trx-data-table td:first-child { text-align:left; padding:8px 14px; }
-    .trx-data-table tbody tr:nth-child(even) { background:#fbfcfd; }
-    .trx-data-table tbody tr:hover { background:rgba(0,129,171,.05); }
-    .trx-data-table td.total-col, .trx-data-table th.total-col { font-weight:800; color:#023E8A; background:#F0F7FA; }
-    .trx-data-table tbody tr:nth-child(even) td.total-col { background:#EAF3F7; }
-    .trx-data-table tr:last-child td { border-bottom:none; }
+    .trx-data-table-wrap {
+        overflow-x: auto;
+        position: relative;
+        border-top: 1px solid #EEF2F6;
+        background: #FFFFFF;
+        border-radius: 0 0 16px 16px;
+    }
+    .trx-data-table-wrap::-webkit-scrollbar {
+        height: 7px;
+    }
+    .trx-data-table-wrap::-webkit-scrollbar-track {
+        background: #F1F5F9;
+        border-radius: 4px;
+    }
+    .trx-data-table-wrap::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 4px;
+    }
+    .trx-data-table-wrap::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
+    }
+    .trx-data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1350px;
+    }
+    .trx-data-table thead th {
+        background: #F8FAFC;
+        text-align: right;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748B;
+        padding: 12px 14px;
+        border-bottom: 1.5px solid #E2E8F0;
+        white-space: nowrap;
+        position: relative;
+    }
+    .trx-data-table tbody td {
+        text-align: right;
+        font-size: 12.5px;
+        color: #1E293B;
+        padding: 11px 14px;
+        border-bottom: 1px solid #F1F5F9;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+        background: #FFFFFF;
+        transition: background-color 0.15s ease;
+    }
+    .trx-data-table tbody tr:nth-child(even) td {
+        background: #FBFDFE;
+    }
+    .trx-data-table tbody tr:hover td {
+        background: #F0F7FA !important;
+    }
+
+    /* ===== Sticky Columns: No, Unit UP, SPKLU (Left side) ===== */
+    .col-sticky-no {
+        position: sticky;
+        left: 0;
+        width: 48px;
+        min-width: 48px;
+        max-width: 48px;
+        text-align: center !important;
+    }
+    .col-sticky-unit {
+        position: sticky;
+        left: 48px;
+        width: 82px;
+        min-width: 82px;
+        max-width: 82px;
+        text-align: center !important;
+        color: #64748B !important;
+        font-weight: 600;
+        font-size: 12px !important;
+    }
+    .col-sticky-spklu {
+        position: sticky;
+        left: 130px;
+        width: 250px;
+        min-width: 250px;
+        max-width: 280px;
+        text-align: left !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        border-right: 2px solid #E2E8F0 !important;
+        box-shadow: 4px 0 8px -2px rgba(15, 23, 42, 0.07);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Z-index: Left sticky cells */
+    .trx-data-table tbody td.col-sticky-no,
+    .trx-data-table tbody td.col-sticky-unit,
+    .trx-data-table tbody td.col-sticky-spklu {
+        z-index: 2;
+    }
+    .trx-data-table thead th.col-sticky-no,
+    .trx-data-table thead th.col-sticky-unit,
+    .trx-data-table thead th.col-sticky-spklu {
+        z-index: 4;
+        background: #F8FAFC !important;
+    }
+
+    /* ===== Sticky Column: Rata-Rata (Right side) ===== */
+    .col-sticky-rata {
+        position: sticky;
+        right: 0;
+        width: 105px;
+        min-width: 105px;
+        max-width: 115px;
+        text-align: right !important;
+        font-weight: 800 !important;
+        border-left: 2px solid #BAE6FD !important;
+        box-shadow: -4px 0 8px -2px rgba(15, 23, 42, 0.07);
+    }
+    .trx-data-table thead th.col-sticky-rata {
+        z-index: 4;
+        background: #EFF6FF !important;
+        color: #023E8A !important;
+    }
+    .trx-data-table tbody td.col-sticky-rata {
+        z-index: 2;
+        background: #F0F9FF !important;
+        color: #023E8A !important;
+    }
+    .trx-data-table tbody tr:nth-child(even) td.col-sticky-rata {
+        background: #E8F4FC !important;
+    }
+    .trx-data-table tbody tr:hover td.col-sticky-rata {
+        background: #BAE6FD !important;
+    }
+
+    .trx-data-table tr:last-child td {
+        border-bottom: none;
+    }
+    .trx-data-table td .trx-null {
+        color: #94A3B8;
+        font-weight: 400;
+    }
+    .trx-data-table td .trx-num {
+        color: #1E293B;
+        font-weight: 600;
+    }
 
     .trx-tahun-chip {
         display:inline-flex; align-items:center; gap:7px; padding:5px 12px 5px 9px; border-radius:999px;
@@ -364,32 +500,44 @@
     </div>
 
     <div class="trx-data-table-wrap">
-        <table class="trx-data-table" style="min-width:1200px;">
+        <table class="trx-data-table">
             <thead>
                 <tr>
-                    <th style="text-align:left;">No</th>
-                    <th style="text-align:left;">Unit UP</th>
-                    <th style="text-align:left;">SPKLU</th>
+                    <th class="col-sticky-no">No</th>
+                    <th class="col-sticky-unit">Unit UP</th>
+                    <th class="col-sticky-spklu">SPKLU</th>
                     @foreach ($periodeMatriks as $p)
                         {{-- Format 'Y-m' atau 'Ym' diubah menjadi Nama Bulan Bahasa Indonesia --}}
                         <th>{{ \Illuminate\Support\Carbon::parse(str_contains($p, '-') ? $p : substr($p,0,4).'-'.substr($p,4,2))->translatedFormat('F Y') }}</th>
                     @endforeach
-                    <th class="total-col">Rata-Rata</th>
+                    <th class="col-sticky-rata">Rata-Rata</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($matriksKaliTransaksi as $row)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $row['kode_unit'] ?? '—' }}</td>
-                        <td style="text-align:left; font-weight:600;">{{ $row['nama'] }}</td>
+                        <td class="col-sticky-no">{{ $loop->iteration }}</td>
+                        <td class="col-sticky-unit">{{ $row['kode_unit'] ?? '—' }}</td>
+                        <td class="col-sticky-spklu" title="{{ $row['nama'] }}">{{ $row['nama'] }}</td>
                         @foreach ($row['per_bulan'] as $nilai)
-                            <td>{{ $nilai !== null ? number_format($nilai, 0, ',', '.') : '—' }}</td>
+                            <td>
+                                @if ($nilai !== null)
+                                    <span class="trx-num">{{ number_format($nilai, 0, ',', '.') }}</span>
+                                @else
+                                    <span class="trx-null">&mdash;</span>
+                                @endif
+                            </td>
                         @endforeach
-                        <td class="total-col">{{ $row['rata_rata'] !== null ? number_format($row['rata_rata'], 0, ',', '.') : '—' }}</td>
+                        <td class="col-sticky-rata">
+                            @if ($row['rata_rata'] !== null)
+                                {{ number_format($row['rata_rata'], 0, ',', '.') }}
+                            @else
+                                <span class="trx-null">&mdash;</span>
+                            @endif
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="{{ $periodeMatriks->count() + 4 }}" style="text-align:center; color:#94a3b8;">Belum ada data transaksi.</td></tr>
+                    <tr><td colspan="{{ $periodeMatriks->count() + 4 }}" style="text-align:center; color:#94a3b8; padding:36px 20px;">Belum ada data transaksi.</td></tr>
                 @endforelse
             </tbody>
         </table>
