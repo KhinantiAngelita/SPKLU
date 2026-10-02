@@ -39,9 +39,9 @@
         }
 
         .act-illustration {
-            width: 290px;
-            height: 158px;
-            margin: 0 auto 10px;
+            width: 320px;
+            height: 168px;
+            margin: 0 auto 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -278,199 +278,191 @@
     <div class="act-card">
         <div class="act-header">
             <div class="act-illustration">
-                <svg viewBox="0 0 420 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg viewBox="0 0 420 220" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="padlockGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#FFD026"/>
-                            <stop offset="100%" stop-color="#EAA605"/>
+                        <!-- Tech Blue Gradient Background Canvas -->
+                        <linearGradient id="techBgGrad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#2563EB"/>
+                            <stop offset="45%" stop-color="#1D4ED8"/>
+                            <stop offset="100%" stop-color="#023E8A"/>
                         </linearGradient>
-                        <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#34D399"/>
-                            <stop offset="100%" stop-color="#059669"/>
+
+                        <!-- Screen Card Gradient -->
+                        <linearGradient id="phoneCardGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#1E40AF"/>
+                            <stop offset="100%" stop-color="#172554"/>
                         </linearGradient>
+
+                        <!-- Button Gradient -->
                         <linearGradient id="btnGrad" x1="0" y1="0" x2="1" y2="0">
                             <stop offset="0%" stop-color="#FFC629"/>
                             <stop offset="100%" stop-color="#FF7800"/>
                         </linearGradient>
-                        <filter id="winShadow" x="-10%" y="-10%" width="120%" height="125%">
-                            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#1E293B" flood-opacity="0.12"/>
+
+                        <!-- Handshake Teal Gradient -->
+                        <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#0081AB"/>
+                            <stop offset="100%" stop-color="#023E8A"/>
+                        </linearGradient>
+
+                        <!-- Badge Shadow -->
+                        <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#021D4A" flood-opacity="0.30"/>
+                        </filter>
+
+                        <!-- Floating Card Shadow -->
+                        <filter id="floatCardShadow" x="-15%" y="-15%" width="130%" height="130%">
+                            <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#00173D" flood-opacity="0.35"/>
                         </filter>
                     </defs>
 
-                    <!-- Base Ground Shadow -->
-                    <ellipse cx="210" cy="216" rx="175" ry="6" fill="#D2E7F9" opacity="0.85"/>
+                    <!-- Rounded Tech Blueprint Canvas -->
+                    <rect x="6" y="6" width="408" height="208" rx="16" fill="url(#techBgGrad)"/>
 
-                    <!-- Soft Pastel Blue Backdrop Circle -->
-                    <ellipse cx="205" cy="115" rx="115" ry="90" fill="#E8F4FD"/>
+                    <!-- Subtle Blueprint Grid Lines (Bottom Half) -->
+                    <line x1="6" y1="165" x2="414" y2="165" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                    <line x1="6" y1="190" x2="414" y2="190" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                    <line x1="60" y1="145" x2="60" y2="214" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                    <line x1="120" y1="145" x2="120" y2="214" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                    <line x1="300" y1="145" x2="300" y2="214" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                    <line x1="360" y1="145" x2="360" y2="214" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
 
-                    <!-- Left Foliage (Layer 1 - Darker Olive Green) -->
-                    <path d="M110 212 C100 170 95 120 120 65 C135 95 130 145 124 212 Z" fill="#689F38"/>
-                    <path d="M92 212 C80 180 82 145 98 105 C112 130 108 170 102 212 Z" fill="#558B2F"/>
+                    <!-- Circuit Dashed Connecting Lines -->
+                    <path d="M72 58 L115 58 L115 80 L145 80" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M72 165 L115 165 L115 145 L145 145" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M350 58 L305 58 L305 80 L275 80" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+                    <path d="M350 165 L305 165 L305 145 L275 145" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
 
-                    <!-- Left Foliage (Layer 2 - Vibrant Leafy Fronds) -->
-                    <path d="M125 212 C115 155 118 100 142 50 C158 85 152 145 140 212 Z" fill="#8BC34A"/>
-                    <path d="M102 212 C90 170 92 135 116 85 C130 115 124 165 115 212 Z" fill="#9CCC65"/>
-                    <path d="M85 212 C72 185 78 155 96 125 C108 150 102 185 94 212 Z" fill="#8BC34A"/>
-                    <!-- Leaf Veins -->
-                    <path d="M128 160 Q135 120 140 65" stroke="#7CB342" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-                    <path d="M133 130 Q142 125 147 122" stroke="#7CB342" stroke-width="1.4" stroke-linecap="round" fill="none"/>
-                    <path d="M131 105 Q140 98 144 94" stroke="#7CB342" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                    <!-- Glowing Circuit Connection Nodes -->
+                    <circle cx="115" cy="58" r="5" fill="#FFFFFF" opacity="0.3"/>
+                    <circle cx="115" cy="58" r="3" fill="#FFFFFF"/>
+                    <circle cx="115" cy="165" r="5" fill="#FFFFFF" opacity="0.3"/>
+                    <circle cx="115" cy="165" r="3" fill="#FFFFFF"/>
+                    <circle cx="305" cy="58" r="5" fill="#FFFFFF" opacity="0.3"/>
+                    <circle cx="305" cy="58" r="3" fill="#FFFFFF"/>
+                    <circle cx="305" cy="165" r="5" fill="#FFFFFF" opacity="0.3"/>
+                    <circle cx="305" cy="165" r="3" fill="#FFFFFF"/>
 
-                    <!-- Bottom Left Soft Blue Cloud -->
-                    <path d="M72 208 C70 198 78 190 88 190 C90 190 92 191 94 192 C97 185 105 180 113 180 C123 180 131 187 132 197 C136 198 139 203 138 208 Z" fill="#B8DAF8"/>
+                    <!-- Phone Long Diagonal Drop Shadow -->
+                    <polygon points="145 18 265 18 365 214 115 214" fill="rgba(2, 28, 70, 0.35)"/>
 
-                    <!-- Giant Smartphone (Center) -->
+                    <!-- Central Smartphone -->
                     <g>
-                        <!-- Phone Chassis -->
-                        <rect x="156" y="28" width="112" height="182" rx="22" fill="#2D2E3E"/>
-                        <rect x="160" y="32" width="104" height="174" rx="19" fill="#36384C"/>
-                        
-                        <!-- Top Speaker Notch -->
-                        <rect x="198" y="36" width="28" height="4" rx="2" fill="#20212D"/>
-                        <circle cx="230" cy="38" r="1.5" fill="#20212D"/>
+                        <!-- Phone Outer White Frame -->
+                        <rect x="145" y="16" width="122" height="188" rx="20" fill="#FFFFFF"/>
+                        <!-- Top Notch Speaker Bar -->
+                        <rect x="186" y="22" width="40" height="3.5" rx="1.75" fill="#CBD5E1"/>
 
-                        <!-- Screen Area -->
-                        <rect x="164" y="44" width="96" height="152" rx="14" fill="#FFFFFF"/>
+                        <!-- Screen Content -->
+                        <!-- Profile Header Row on Screen -->
+                        <circle cx="168" cy="38" r="9" fill="#0284C7"/>
+                        <circle cx="168" cy="36" r="3" fill="#FFFFFF"/>
+                        <path d="M163 43 C163 40.5 165 39.5 168 39.5 C171 39.5 173 40.5 173 43" fill="#FFFFFF"/>
+                        <rect x="184" y="34" width="68" height="8" rx="4" fill="#0284C7" opacity="0.8"/>
+
+                        <!-- Screen Skeleton Content Lines -->
+                        <rect x="158" y="54" width="96" height="4" rx="2" fill="#E2E8F0"/>
+                        <rect x="158" y="63" width="72" height="4" rx="2" fill="#E2E8F0"/>
+
+                        <!-- Deep Blue App Feature Card on Screen -->
+                        <rect x="158" y="76" width="96" height="114" rx="10" fill="url(#phoneCardGrad)"/>
                         
-                        <!-- Bottom Chin / Home Pill -->
-                        <rect x="200" y="202" width="24" height="3" rx="1.5" fill="#4A4C63"/>
+                        <!-- SPKLU Electric Bolt & Power Glow on Screen -->
+                        <circle cx="206" cy="122" r="26" fill="#3B82F6" opacity="0.35"/>
+                        <polygon points="208 106 197 122 206 122 204 138 215 122 206 122" fill="#FFC629"/>
+                        <text x="206" y="154" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">SPKLU PLN</text>
                     </g>
 
-                    <!-- Floating Modal / Card Window (Overlapping Phone) -->
-                    <g filter="url(#winShadow)">
-                        <!-- Card Body -->
-                        <rect x="135" y="78" width="154" height="98" rx="10" fill="#FFFFFF"/>
-                        
-                        <!-- Card Header Bar (Soft Sky Blue) -->
-                        <path d="M135 88 A10 10 0 0 1 145 78 L279 78 A10 10 0 0 1 289 88 L289 100 L135 100 Z" fill="#D0E5F9"/>
+                    <!-- Foreground Floating Card (Overlapping Phone) -->
+                    <g filter="url(#floatCardShadow)">
+                        <!-- Card White Container -->
+                        <rect x="176" y="86" width="150" height="96" rx="11" fill="#FFFFFF"/>
 
-                        <!-- Window Control Buttons (Red, Yellow, Green) -->
-                        <circle cx="261" cy="89" r="3.2" fill="#EF4444"/>
-                        <circle cx="270" cy="89" r="3.2" fill="#F59E0B"/>
-                        <circle cx="279" cy="89" r="3.2" fill="#10B981"/>
+                        <!-- Header Row of Floating Card: Avatar & Status -->
+                        <circle cx="194" cy="102" r="7.5" fill="#60A5FA"/>
+                        <circle cx="194" cy="100.5" r="2.5" fill="#FFFFFF"/>
+                        <path d="M190 106 C190 104 191.5 103 194 103 C196.5 103 198 104 198 106" fill="#FFFFFF"/>
+                        <rect x="206" y="99" width="38" height="3" rx="1.5" fill="#94A3B8"/>
+                        <rect x="206" y="105" width="24" height="2.5" rx="1.25" fill="#CBD5E1"/>
 
-                        <!-- Card Interior - Account / Activation Elements -->
-                        <!-- Subtitle Badge: SPKLU ID & Aktivasi -->
-                        <rect x="146" y="107" width="56" height="13" rx="6.5" fill="#F0F9FF" stroke="#BAE6FD" stroke-width="0.8"/>
-                        <circle cx="153" cy="113.5" r="3.5" fill="#0284C7"/>
-                        <text x="161" y="116" font-family="'Inter', sans-serif" font-size="6" font-weight="700" fill="#023E8A">SPKLU ID</text>
+                        <!-- Divider Line -->
+                        <rect x="187" y="115" width="128" height="2" rx="1" fill="#93C5FD"/>
 
-                        <rect x="240" y="107" width="38" height="13" rx="6.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="0.8"/>
-                        <text x="259" y="116" font-family="'Inter', sans-serif" font-size="6.2" font-weight="800" fill="#059669" text-anchor="middle">AKTIF ✓</text>
+                        <!-- OTP / Activation Input Pill Row -->
+                        <!-- Key / Link Icon -->
+                        <circle cx="194" cy="129" r="4.5" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1"/>
+                        <line x1="193" y1="129" x2="197" y2="129" stroke="#3B82F6" stroke-width="1.2"/>
+                        <!-- Activation Pill Bar with Matchmaker Gradient Button -->
+                        <rect x="204" y="123" width="102" height="13" rx="6.5" fill="#F0F9FF" stroke="#BFDBFE" stroke-width="0.8"/>
+                        <rect x="204" y="123" width="62" height="13" rx="6.5" fill="url(#btnGrad)"/>
+                        <text x="235" y="132" font-family="'Inter', sans-serif" font-size="6.2" font-weight="800" fill="#FFFFFF" text-anchor="middle">AKTIFKAN AKUN</text>
 
-                        <!-- Password / OTP Input Bar (Soft Blue Box with Blue Asterisks) -->
-                        <rect x="146" y="126" width="132" height="28" rx="7" fill="#B8DAF8"/>
-                        <!-- 8 Bold Password Asterisks matching reference image -->
-                        <text x="212" y="146" font-family="monospace, sans-serif" font-size="21" font-weight="900" fill="#4B96E6" text-anchor="middle" letter-spacing="4">✱✱✱✱✱✱✱✱</text>
+                        <!-- Toggle Switch Row -->
+                        <rect x="187" y="143" width="18" height="9" rx="4.5" fill="#10B981"/>
+                        <circle cx="199" cy="147.5" r="3.2" fill="#FFFFFF"/>
+                        <rect x="210" y="145" width="48" height="2.5" rx="1.25" fill="#CBD5E1"/>
+                        <rect x="264" y="145" width="36" height="2.5" rx="1.25" fill="#CBD5E1"/>
 
-                        <!-- Bottom Action Row: Progress / Ready indicator -->
-                        <rect x="146" y="160" width="132" height="10" rx="5" fill="#F1F5F9"/>
-                        <rect x="146" y="160" width="98" height="10" rx="5" fill="url(#btnGrad)"/>
-                        <text x="195" y="167.5" font-family="'Inter', sans-serif" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">VERIFIKASI AKTIVASI</text>
+                        <!-- Bottom Feedback Icons Row -->
+                        <line x1="187" y1="159" x2="315" y2="159" stroke="#F1F5F9" stroke-width="1"/>
+                        <!-- Thumbs up -->
+                        <path d="M198 168 C198 165.5 200 165.5 200 164 L200 163 C200 162.5 199.5 162 199 162 L196 164 L196 170 L202 170 C202.5 170 203 169.5 203 169 L203.5 167 C203.8 166.5 203.5 166 203 166 Z" stroke="#94A3B8" stroke-width="0.9" fill="none"/>
+                        <!-- Heart -->
+                        <path d="M228 164 C226 162 224 163.5 224 165 C224 167 228 170 228 170 C228 170 232 167 232 165 C232 163.5 230 162 228 164 Z" stroke="#94A3B8" stroke-width="0.9" fill="none"/>
+                        <!-- Verified Check -->
+                        <polyline points="258 166 260.5 168.5 265 164" fill="none" stroke="#10B981" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Send Arrow -->
+                        <path d="M292 163 L298 166 L292 169 L293.5 166 Z" stroke="#94A3B8" stroke-width="0.9" fill="none"/>
                     </g>
 
-                    <!-- Golden Security Padlock (Mounted on Top Center of Window) -->
-                    <g>
-                        <!-- Lock Shackle -->
-                        <path d="M201 78 L201 60 A11 11 0 0 1 223 60 L223 78" stroke="#EAA605" stroke-width="6.5" stroke-linecap="round" fill="none"/>
-                        <path d="M201 78 L201 60 A11 11 0 0 1 223 60 L223 78" stroke="#FFD026" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-
-                        <!-- Lock Body (Yellow Gold with Rounded Corners) -->
-                        <rect x="190" y="72" width="44" height="38" rx="8" fill="url(#padlockGrad)"/>
-                        <!-- 3D Shadow on Lock Body -->
-                        <path d="M190 102 A8 8 0 0 0 198 110 L226 110 A8 8 0 0 0 234 102 L234 98 L190 98 Z" fill="#D69404" opacity="0.6"/>
-
-                        <!-- Keyhole -->
-                        <circle cx="212" cy="87" r="4.2" fill="#B57B00"/>
-                        <path d="M209.5 87 L214.5 87 L216 98 L208 98 Z" fill="#B57B00"/>
-
-                        <!-- Verification Checkmark Shield (Badge on lock indicating "Aktivasi") -->
-                        <circle cx="228" cy="98" r="8.5" fill="#FFFFFF"/>
-                        <circle cx="228" cy="98" r="7.2" fill="url(#shieldGrad)"/>
-                        <polyline points="224.5 98 227 100.5 231.5 95.5" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Top-Left Badge: User Account Group Badge -->
+                    <g filter="url(#badgeShadow)">
+                        <circle cx="72" cy="58" r="23" fill="#FFFFFF"/>
+                        <circle cx="72" cy="58" r="19" fill="#ECFDF5"/>
+                        <!-- User Group Icons in Emerald Green -->
+                        <circle cx="72" cy="52" r="4.5" fill="#10B981"/>
+                        <path d="M64 64 C64 60 67.5 58.5 72 58.5 C76.5 58.5 80 60 80 64" fill="#10B981"/>
+                        <circle cx="63" cy="54" r="3.5" fill="#34D399"/>
+                        <path d="M57 63 C57 60.5 59.5 59.5 63 59.5" fill="#34D399"/>
+                        <circle cx="81" cy="54" r="3.5" fill="#34D399"/>
+                        <path d="M87 63 C87 60.5 84.5 59.5 81 59.5" fill="#34D399"/>
                     </g>
 
-                    <!-- Right Side: Potted Plant (Beside Character) -->
-                    <g>
-                        <!-- Yellow Flower Pot -->
-                        <path d="M348 180 L350 212 A2 2 0 0 0 352 214 L368 214 A2 2 0 0 0 370 212 L372 180 Z" fill="#F5BA13"/>
-                        <rect x="346" y="177" width="28" height="5" rx="2" fill="#E0A307"/>
-                        <ellipse cx="360" cy="179" rx="12" ry="2" fill="#8D5B04"/>
-
-                        <!-- Foliage / Leaves Sprouting from Pot -->
-                        <!-- Tall Stem & Leaves -->
-                        <path d="M360 178 C360 150 365 125 372 102 C378 122 376 150 368 178 Z" fill="#7CB342"/>
-                        <path d="M358 178 C354 155 350 135 344 118 C354 130 358 152 360 178 Z" fill="#689F38"/>
-                        <path d="M362 178 C366 160 375 145 385 132 C382 148 374 165 364 178 Z" fill="#8BC34A"/>
-                        <!-- Stems with leaf pairs -->
-                        <path d="M370 140 C378 136 384 140 385 146 C379 148 373 145 370 140 Z" fill="#8BC34A"/>
-                        <path d="M366 120 C374 116 380 120 381 126 C375 128 369 125 366 120 Z" fill="#9CCC65"/>
-                        <path d="M352 148 C344 145 340 150 340 156 C346 157 351 154 352 148 Z" fill="#689F38"/>
+                    <!-- Bottom-Left Badge: Setting Gear with Verified Checkmark -->
+                    <g filter="url(#badgeShadow)">
+                        <circle cx="72" cy="165" r="23" fill="#FFFFFF"/>
+                        <circle cx="72" cy="165" r="19" fill="#F0F9FF"/>
+                        <!-- Gear Shape in Blue -->
+                        <path d="M72 153 L74 153 L74.5 156 C75.5 156.3 76.5 156.8 77.4 157.5 L80 156 L81.5 157.5 L80 160.1 C80.7 161 81.2 162 81.5 163 L84.5 163.5 L84.5 165.5 L81.5 166 C81.2 167 80.7 168 80 168.9 L81.5 171.5 L80 173 L77.4 171.5 C76.5 172.2 75.5 172.7 74.5 173 L74 176 L72 176 L71.5 173 C70.5 172.7 69.5 172.2 68.6 171.5 L66 173 L64.5 171.5 L66 168.9 C65.3 168 64.8 167 64.5 166 L61.5 165.5 L61.5 163.5 L64.5 163 C64.8 162 65.3 161 66 160.1 L64.5 157.5 L66 156 L68.6 157.5 C69.5 156.8 70.5 156.3 71.5 156 Z" fill="#0284C7"/>
+                        <!-- Center Verified Checkmark -->
+                        <circle cx="72" cy="164.5" r="8" fill="#023E8A"/>
+                        <polyline points="67.5 164.5 70.5 167.5 76.5 161.5" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
                     </g>
 
-                    <!-- Right Side: Friendly Character Presenting the Modal -->
-                    <g>
-                        <!-- Shoes (Bright Yellow with subtle shadow) -->
-                        <ellipse cx="312" cy="214" rx="7.5" ry="3.8" fill="#F5BA13"/>
-                        <ellipse cx="310" cy="213" rx="4.5" ry="2" fill="#FFD026"/>
-                        <ellipse cx="334" cy="214" rx="7.5" ry="3.8" fill="#F5BA13"/>
-                        <ellipse cx="332" cy="213" rx="4.5" ry="2" fill="#FFD026"/>
+                    <!-- Top-Right Badge: Security Question & OTP Message Bubbles -->
+                    <g filter="url(#badgeShadow)">
+                        <!-- Cyan Question Bubble -->
+                        <rect x="332" y="44" width="24" height="18" rx="5" fill="#38BDF8"/>
+                        <polygon points="338 62 338 66 343 62" fill="#38BDF8"/>
+                        <text x="344" y="57" font-family="'Inter', sans-serif" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle">?</text>
 
-                        <!-- Trousers (Sky Blue with natural folds) -->
-                        <!-- Left Leg -->
-                        <path d="M309 146 L308 211 L316 211 L319 146 Z" fill="#4BA3F5"/>
-                        <!-- Right Leg -->
-                        <path d="M325 146 L329 211 L338 211 L334 146 Z" fill="#3B8CE0"/>
-                        <!-- Crotch & Waist connector -->
-                        <path d="M312 146 L331 146 L326 165 L318 165 Z" fill="#3B8CE0"/>
-                        <!-- Belt / Waist detail -->
-                        <rect x="310" y="142" width="23" height="4" rx="1.5" fill="#2563EB"/>
+                        <!-- Dark Blue OTP Dots Bubble -->
+                        <rect x="348" y="55" width="28" height="20" rx="5" fill="#023E8A"/>
+                        <polygon points="368 75 368 79 363 75" fill="#023E8A"/>
+                        <circle cx="356" cy="65" r="1.8" fill="#FFFFFF"/>
+                        <circle cx="362" cy="65" r="1.8" fill="#FFFFFF"/>
+                        <circle cx="368" cy="65" r="1.8" fill="#FFFFFF"/>
+                    </g>
 
-                        <!-- Shirt (Vibrant Red-Orange matching reference image) -->
-                        <path d="M307 142 L306 112 C306 102 314 98 322 98 C331 98 338 102 338 112 L337 142 Z" fill="#FA5C38"/>
-                        <!-- White Vertical Button Placket -->
-                        <rect x="320" y="104" width="3" height="38" rx="1" fill="#FFFFFF"/>
-                        <circle cx="321.5" cy="112" r="0.9" fill="#FA5C38"/>
-                        <circle cx="321.5" cy="120" r="0.9" fill="#FA5C38"/>
-                        <circle cx="321.5" cy="128" r="0.9" fill="#FA5C38"/>
-                        <circle cx="321.5" cy="136" r="0.9" fill="#FA5C38"/>
-
-                        <!-- White Collar -->
-                        <path d="M316 98 L321.5 106 L327 98" fill="#FFFFFF"/>
-                        
-                        <!-- Right Arm (Resting on side) -->
-                        <path d="M336 105 C343 112 344 125 342 136" stroke="#FA5C38" stroke-width="7" stroke-linecap="round" fill="none"/>
-                        <circle cx="341" cy="138" r="3.2" fill="#FED7AA"/>
-
-                        <!-- Left Arm (Extended forward, presenting the card) -->
-                        <!-- Sleeve -->
-                        <path d="M309 105 C300 110 294 116 288 120" stroke="#FA5C38" stroke-width="7" stroke-linecap="round" fill="none"/>
-                        <!-- Forearm & Hand pointing/presenting toward card -->
-                        <path d="M288 120 L277 122" stroke="#FED7AA" stroke-width="5" stroke-linecap="round"/>
-                        <!-- Open Hand fingers gesturing at the card -->
-                        <path d="M277 122 L271 121" stroke="#FED7AA" stroke-width="2.5" stroke-linecap="round"/>
-                        <path d="M277 124 L272 124" stroke="#FED7AA" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M278 120 L274 118" stroke="#FED7AA" stroke-width="2" stroke-linecap="round"/>
-
-                        <!-- Neck -->
-                        <rect x="319" y="88" width="6.5" height="12" rx="2.5" fill="#FED7AA"/>
-
-                        <!-- Head & Face -->
-                        <circle cx="322" cy="78" r="12" fill="#FED7AA"/>
-                        <!-- Cheerful Profile Face looking left towards window -->
-                        <circle cx="317.5" cy="76" r="1.4" fill="#1E293B"/>
-                        <!-- Happy smiling mouth -->
-                        <path d="M316 82 Q318.5 85 321 82" stroke="#1E293B" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-                        <!-- Rosy Cheek -->
-                        <circle cx="316" cy="79" r="1.8" fill="#FB7185" opacity="0.45"/>
-                        <!-- Ear -->
-                        <circle cx="328" cy="78" r="2.6" fill="#FED7AA"/>
-
-                        <!-- Hair (Dark Brown / Black stylish cut matching reference) -->
-                        <path d="M313 74 C313 64 319 59 328 59 C336 59 339 67 338 75 C334 73 328 72 322 72 C317 72 314 73 313 74 Z" fill="#292524"/>
-                        <path d="M313 74 L313 78 L316 75 Z" fill="#292524"/>
-                        <path d="M336 74 L336 79 L333 75 Z" fill="#292524"/>
-                        <path d="M322 62 Q327 60 332 64" stroke="#44403C" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                    <!-- Bottom-Right Badge: SPKLU Partnership / Access Handshake -->
+                    <g filter="url(#badgeShadow)">
+                        <circle cx="360" cy="165" r="23" fill="url(#tealGrad)"/>
+                        <circle cx="360" cy="165" r="21" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <!-- White Handshake Vector -->
+                        <path d="M349 164 L354 159 L360 165 L366 159 L371 164 L365 170 L360 167 L355 170 Z" fill="#FFFFFF"/>
+                        <!-- Cuffs -->
+                        <path d="M348 162 L351 159 L354 163 L351 166 Z" fill="#BAE6FD"/>
+                        <path d="M372 162 L369 159 L366 163 L369 166 Z" fill="#BAE6FD"/>
                     </g>
                 </svg>
             </div>
