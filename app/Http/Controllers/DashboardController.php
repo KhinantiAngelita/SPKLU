@@ -23,8 +23,17 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $minTanggal = Transaksi::min('tanggal');
-        $maxTanggal = Transaksi::max('tanggal');
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $minTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->min('tanggal');
+        $maxTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
 
         $defaultDari = $minTanggal ? Carbon::parse($minTanggal)->format('Y-m') : now()->startOfYear()->format('Y-m');
         $defaultSampai = $maxTanggal ? Carbon::parse($maxTanggal)->format('Y-m') : now()->format('Y-m');
@@ -35,7 +44,7 @@ class DashboardController extends Controller
         $mulai = Carbon::createFromFormat('Y-m', $dariBulan)->startOfMonth();
         $sampai = Carbon::createFromFormat('Y-m', $sampaiBulan)->endOfMonth();
 
-        $trenTransaksi = $this->buildTrenTransaksi($mulai, $sampai);
+        $trenTransaksi = $this->buildTrenTransaksi($mulai, $sampai, $selectedUp3);
 
         // ===== Kandidat & Pengajuan — tersambung ke Probabilitas =====
         $probabilitasAktif = Probabilitas::whereNull('spklu_id')
@@ -72,20 +81,11 @@ class DashboardController extends Controller
             ]);
 
         // ===== Ringkasan Keuangan & Energi bulan berjalan vs bulan lalu =====
-        $ringkasanKeuangan = $this->buildRingkasanKeuangan();
+        $ringkasanKeuangan = $this->buildRingkasanKeuangan($selectedUp3);
 
         // ===== Ringkasan Rekomendasi Lokasi (bagian "murah", tanpa grid scan) =====
         $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
         $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
-
-        $user = $request->user();
-        $userUp3 = $user?->up3;
-        $isSuperAdmin = $user?->role === 'super_admin';
-
-        $selectedUp3 = $request->get('up3');
-        if (! $isSuperAdmin && $userUp3) {
-            $selectedUp3 = $userUp3;
-        }
 
         $spkluQuery = Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3));
         $totalSpkluTerpasang = (clone $spkluQuery)->count();
@@ -131,10 +131,10 @@ class DashboardController extends Controller
      * Pendapatan & energi bulan berjalan vs bulan lalu.
      * Menggunakan bulan data transaksi terkini bila bulan kalender saat ini belum memiliki transaksi upload.
      */
-    private function buildRingkasanKeuangan(): array
+    private function buildRingkasanKeuangan(?string $selectedUp3 = null): array
     {
-        $latestDate = Transaksi::max('tanggal');
-        $bulanAcuan = ($latestDate && Transaksi::whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->doesntExist())
+        $latestDate = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
+        $bulanAcuan = ($latestDate && Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->doesntExist())
             ? Carbon::parse($latestDate)
             : now();
 
@@ -142,12 +142,14 @@ class DashboardController extends Controller
         $bulanLalu = $bulanIni->copy()->subMonth();
 
         $agregatBulanIni = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->whereMonth('tanggal', $bulanIni->month)
             ->whereYear('tanggal', $bulanIni->year)
             ->selectRaw('SUM(pendapatan_rp) as pendapatan, SUM(energi_kwh) as energi')
             ->first();
 
         $agregatBulanLalu = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->whereMonth('tanggal', $bulanLalu->month)
             ->whereYear('tanggal', $bulanLalu->year)
             ->selectRaw('SUM(pendapatan_rp) as pendapatan, SUM(energi_kwh) as energi')
@@ -179,7 +181,7 @@ class DashboardController extends Controller
      * Agregat jumlah transaksi per bulan dari tabel transaksis (data hasil upload),
      * plus persentase perubahan dibanding periode sebelumnya dengan panjang yang sama.
      */
-    private function buildTrenTransaksi(Carbon $mulai, Carbon $sampai): array
+    private function buildTrenTransaksi(Carbon $mulai, Carbon $sampai, ?string $selectedUp3 = null): array
     {
         $driver = DB::connection()->getDriverName();
         $formatSql = $driver === 'sqlite'
@@ -187,6 +189,7 @@ class DashboardController extends Controller
             : "DATE_FORMAT(tanggal, '%Y-%m')";
 
         $data = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->whereBetween('tanggal', [$mulai, $sampai])
             ->selectRaw("{$formatSql} as bulan, SUM(jumlah_transaksi) as total")
             ->groupBy('bulan')
@@ -200,6 +203,7 @@ class DashboardController extends Controller
         $sampaiSebelumnya = $mulai->copy()->subDay();
 
         $totalSebelumnya = (int) Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->whereBetween('tanggal', [$mulaiSebelumnya, $sampaiSebelumnya])
             ->sum('jumlah_transaksi');
 

@@ -247,9 +247,9 @@
             </td>
             <td style="width: 42%;">
                 <div class="kop-meta">
-                    <span class="kop-meta-badge">{{ $spkluTerpilih ? 'SPKLU TUNGGAL' : 'SEMUA SPKLU ('.$totalSpkluAktif.' UNIT)' }}</span><br>
+                    <span class="kop-meta-badge">{{ $selectedUp3 ? strtoupper($selectedUp3) : 'UID JAWA BARAT (SEMUA UNIT)' }}</span><br>
                     <strong>Periode:</strong> {{ $mulai->translatedFormat('d F Y') }} &ndash; {{ $sampai->translatedFormat('d F Y') }}<br>
-                    <strong>Cakupan:</strong> {{ $spkluTerpilih ? $spkluTerpilih->nama : 'Seluruh Unit SPKLU Aktif' }}<br>
+                    <strong>Cakupan:</strong> {{ $spkluTerpilih ? $spkluTerpilih->nama : ($selectedUp3 ? 'Semua SPKLU di ' . $selectedUp3 . ' ('.$totalSpkluAktif.' Unit)' : 'Seluruh Unit SPKLU Aktif ('.$totalSpkluAktif.' Unit)') }}<br>
                     <strong>Dicetak:</strong> {{ now()->translatedFormat('d F Y, H:i') }} WIB
                 </div>
             </td>

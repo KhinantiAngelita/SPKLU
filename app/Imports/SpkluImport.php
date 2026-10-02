@@ -60,6 +60,7 @@ class SpkluImport implements SkipsEmptyRows, SkipsOnFailure, ToModel, WithCalcul
             'longitude' => $lng,
             'status' => 'aktif',
             'sumber' => 'import',
+            'up3' => ! empty($row['up3']) ? trim($row['up3']) : (auth()->user()?->up3 ?? 'UP3 Bogor'),
         ];
 
         $existing = Spklu::withTrashed()

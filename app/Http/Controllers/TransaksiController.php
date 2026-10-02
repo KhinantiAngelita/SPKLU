@@ -9,6 +9,7 @@ use App\Models\SpkluAlias;
 use App\Models\Transaksi;
 use App\Models\TransaksiUnmatchedName;
 use App\Models\TransaksiUpload;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -36,6 +37,15 @@ class TransaksiController extends Controller
 
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $spkluId = $request->spklu_id;
         $satuan = $request->satuan ?? 'kali';
 
@@ -45,12 +55,13 @@ class TransaksiController extends Controller
             default => 'jumlah_transaksi',
         };
 
-        $minTanggal = Transaksi::min('tanggal');
-        $maxTanggal = Transaksi::max('tanggal');
+        $minTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->min('tanggal');
+        $maxTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
         $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
         $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
 
         $ringkasan = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->whereBetween('tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')])
             ->selectRaw('SUM(jumlah_transaksi) as total_transaksi, SUM(energi_kwh) as total_energi, SUM(pendapatan_rp) as total_pendapatan')
@@ -66,6 +77,7 @@ class TransaksiController extends Controller
         $sampaiSebelumnya = $mulai->copy()->subDay();
 
         $ringkasanSebelumnya = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->whereBetween('tanggal', [$mulaiSebelumnya, $sampaiSebelumnya])
             ->selectRaw('SUM(jumlah_transaksi) as total_transaksi, SUM(energi_kwh) as total_energi, SUM(pendapatan_rp) as total_pendapatan')
@@ -87,6 +99,7 @@ class TransaksiController extends Controller
 
         $rincian = Transaksi::query()
             ->with('spklu')
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->whereBetween('tanggal', [$mulai, $sampai])
             ->orderByDesc('tanggal')
@@ -94,6 +107,7 @@ class TransaksiController extends Controller
             ->withQueryString();
 
         $tahunTersedia = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->selectRaw('DISTINCT YEAR(tanggal) as tahun')
             ->orderBy('tahun')
@@ -101,7 +115,7 @@ class TransaksiController extends Controller
             ->map(fn ($t) => (int) $t)
             ->values();
 
-        if ($kolom === 'energi_kwh' && ! $spkluId) {
+        if ($kolom === 'energi_kwh' && ! $spkluId && (! $selectedUp3 || $selectedUp3 === 'UP3 Bogor')) {
             $tahunTersedia = $tahunTersedia
                 ->concat(array_keys(self::DATA_HISTORIS_KWH))
                 ->unique()
@@ -120,20 +134,25 @@ class TransaksiController extends Controller
             [$bulanAwal, $bulanAkhir] = [$bulanAkhir, $bulanAwal];
         }
 
-        $trenPerTahun = $this->buildTrenPerTahunBulanan($tahunDipilih, $spkluId, $kolom, $bulanAwal, $bulanAkhir);
+        $trenPerTahun = $this->buildTrenPerTahunBulanan($tahunDipilih, $spkluId, $kolom, $bulanAwal, $bulanAkhir, $selectedUp3);
 
         $jumlahBarisPerTahun = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->selectRaw('YEAR(tanggal) as tahun, COUNT(*) as jumlah')
             ->groupBy('tahun')
             ->orderBy('tahun')
             ->get();
 
-        $matriksData = $this->buildMatriksBulananPerSpklu();
+        $matriksData = $this->buildMatriksBulananPerSpklu($selectedUp3);
 
         return view('transaksi.index', [
-            'spkluList' => Spklu::aktif()->orderBy('nama')->get(),
+            'spkluList' => Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama')->get(),
             'spkluTerpilih' => $spkluId,
+            'selectedUp3' => $selectedUp3,
+            'userUp3' => $userUp3,
+            'isSuperAdmin' => $isSuperAdmin,
+            'daftarUp3' => User::DAFTAR_UP3,
             'satuan' => $satuan,
             'dari' => $mulai->format('Y-m-d'),
             'sampai' => $sampai->format('Y-m-d'),
@@ -157,12 +176,12 @@ class TransaksiController extends Controller
         ]);
     }
 
-    private function buildTrenPerTahunBulanan(array $tahunList, $spkluId, string $kolom, int $bulanAwal, int $bulanAkhir): array
+    private function buildTrenPerTahunBulanan(array $tahunList, $spkluId, string $kolom, int $bulanAwal, int $bulanAkhir, ?string $selectedUp3 = null): array
     {
         $hasil = [];
 
         foreach ($tahunList as $tahun) {
-            if ($kolom === 'energi_kwh' && ! $spkluId && isset(self::DATA_HISTORIS_KWH[$tahun])) {
+            if ($kolom === 'energi_kwh' && ! $spkluId && (! $selectedUp3 || $selectedUp3 === 'UP3 Bogor') && isset(self::DATA_HISTORIS_KWH[$tahun])) {
                 $bulanan = self::DATA_HISTORIS_KWH[$tahun];
 
                 $hasil[$tahun] = collect(range($bulanAwal, $bulanAkhir))
@@ -174,6 +193,7 @@ class TransaksiController extends Controller
             }
 
             $perBulan = Transaksi::query()
+                ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
                 ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
                 ->whereYear('tanggal', $tahun)
                 ->whereRaw('MONTH(tanggal) BETWEEN ? AND ?', [$bulanAwal, $bulanAkhir])
@@ -190,7 +210,7 @@ class TransaksiController extends Controller
         return $hasil;
     }
 
-    private function buildMatriksBulananPerSpklu(): array
+    private function buildMatriksBulananPerSpklu(?string $selectedUp3 = null): array
     {
         $bulanAkhir = now()->startOfMonth();
         $bulanAwal = $bulanAkhir->copy()->subMonths(self::JUMLAH_BULAN_MATRIKS - 1);
@@ -200,6 +220,7 @@ class TransaksiController extends Controller
 
         $dataMentah = Transaksi::query()
             ->join('spklus', 'spklus.id', '=', 'transaksis.spklu_id')
+            ->when($selectedUp3, fn ($q) => $q->where('spklus.up3', $selectedUp3))
             ->whereBetween('transaksis.tanggal', [$bulanAwal, $bulanAkhir->copy()->endOfMonth()])
             ->selectRaw("
                 spklus.id as spklu_id,
@@ -211,6 +232,7 @@ class TransaksiController extends Controller
             ->groupBy('spklu_id');
 
         $spkluAktif = Spklu::aktif()
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->orderBy('kode_unit')
             ->orderBy('nama')
             ->get(['id', 'nama', 'kode_unit']);
@@ -274,15 +296,25 @@ class TransaksiController extends Controller
 
     public function export(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $spkluId = $request->spklu_id;
         $spkluTerpilih = $spkluId ? Spklu::find($spkluId) : null;
 
-        $minTanggal = Transaksi::min('tanggal');
-        $maxTanggal = Transaksi::max('tanggal');
+        $minTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->min('tanggal');
+        $maxTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
         $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
         $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
 
         $baseQuery = Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->when($spkluId, fn ($q) => $q->where('spklu_id', $spkluId))
             ->whereBetween('tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')]);
 
@@ -310,6 +342,7 @@ class TransaksiController extends Controller
         $rekapSpklu = Transaksi::query()
             ->join('spklus', 'spklus.id', '=', 'transaksis.spklu_id')
             ->leftJoin('ulp_mappings', 'ulp_mappings.id', '=', 'spklus.ulp_mapping_id')
+            ->when($selectedUp3, fn ($q) => $q->where('spklus.up3', $selectedUp3))
             ->when($spkluId, fn ($q) => $q->where('transaksis.spklu_id', $spkluId))
             ->whereBetween('transaksis.tanggal', [$mulai->format('Y-m-d'), $sampai->format('Y-m-d')])
             ->selectRaw('
@@ -348,6 +381,7 @@ class TransaksiController extends Controller
 
         $pdf = Pdf::loadView('transaksi.export-pdf', compact(
             'spkluTerpilih',
+            'selectedUp3',
             'mulai',
             'sampai',
             'totalTransaksi',
@@ -364,7 +398,8 @@ class TransaksiController extends Controller
             'isSpkluKhusus'
         ))->setPaper('a4', 'portrait');
 
-        $slugSpklu = $spkluTerpilih ? Str::slug($spkluTerpilih->nama) : 'semua-spklu';
+        $slugWilayah = $selectedUp3 ? Str::slug($selectedUp3) : 'uid-jawa-barat';
+        $slugSpklu = $spkluTerpilih ? Str::slug($spkluTerpilih->nama) : $slugWilayah;
         $namaFile = 'Laporan-Transaksi-SPKLU-'.$slugSpklu.'-'.now()->format('Ymd-His').'.pdf';
 
         return $pdf->download($namaFile);
