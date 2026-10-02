@@ -418,7 +418,7 @@ class MasterSpkluController extends Controller
                     $s->nozzle ?? 1,
                     $s->kepemilikan,
                     $s->skema ?? '-',
-                    ucfirst($s->status),
+                    $s->status instanceof SpkluStatus ? $s->status->label() : ucfirst((string) $s->status),
                     $s->latitude ?? '-',
                     $s->longitude ?? '-',
                     $s->created_at ? $s->created_at->format('Y-m-d H:i') : '-',
