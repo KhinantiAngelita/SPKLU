@@ -244,24 +244,7 @@
         </div>
 
         <div class="rl-filter-group">
-            {{-- Filter kategori zona & jenis titik — client-side, gak reload halaman --}}
-            <select id="rl-filter-kategori" class="rl-select" onchange="filterKategoriPeta(this.value)">
-                <option value="">Semua Titik (SPKLU &amp; Rekomendasi)</option>
-                <optgroup label="── KELOMPOK UTAMA ──">
-                    <option value="_semua_spklu">Tampilkan Keduanya (Master SPKLU + SPKLU Baru)</option>
-                    <option value="_master_spklu">Hanya SPKLU Terintegrasi (Master SPKLU)</option>
-                    <option value="_semua_kandidat">Hanya SPKLU Baru (Pipeline Probing)</option>
-                </optgroup>
-                <optgroup label="── KATEGORI DETAIL ──">
-                    <option value="dc">Biru Tua — SPKLU Existing (DC)</option>
-                    <option value="ac">Biru Muda — SPKLU Existing (AC)</option>
-                    <option value="kuning">Kuning — Kandidat (Ada Pasangan)</option>
-                    <option value="ungu">Ungu — Kandidat (Belum Ada Pasangan)</option>
-                    <option value="_rekomendasi">Biru (+) — Titik Rekomendasi</option>
-                </optgroup>
-            </select>
-
-            <form method="GET" style="display:flex; align-items:center; gap:8px;">
+            <form method="GET" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                 @if ($isSuperAdmin)
                     <select name="up3" class="rl-select" onchange="this.form.submit()" style="font-weight:600; color:#023E8A; border-color:#023E8A; background-color:#F0F7FA; min-width:180px;">
                         <option value="">Semua UP3 (UID Jabar)</option>
@@ -274,7 +257,7 @@
                         <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
                     @endif
                 @endif
-                <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()">
+                <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()" style="min-width:170px;">
                     <option value="">Semua ULP</option>
                     @foreach ($daftarUlp as $ulp)
                         <option value="{{ $ulp->id }}" {{ (string) $ulpTerpilih === (string) $ulp->id ? 'selected' : '' }}>{{ $ulp->nama_penuh }}</option>
@@ -718,9 +701,6 @@
                 if (peta.hasLayer(marker)) peta.removeLayer(marker);
             }
         });
-
-        // Sinkronisasi tampilan dropdown
-        document.getElementById('rl-filter-kategori').value = kategoriAktif;
 
         // Sinkronisasi highlight pills
         document.querySelectorAll('.rl-pill[data-pill]').forEach(pill => {
