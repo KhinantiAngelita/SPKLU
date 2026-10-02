@@ -114,12 +114,20 @@
 
         .login-submit-btn {
             width: 100%; padding: 14.5px; border: none; border-radius: 11px;
-            background: linear-gradient(90deg, #FB7303 0%, #EF6109 100%); color: #fff;
-            font-size: 14.5px; font-weight: 700; letter-spacing: .01em; cursor: pointer; transition: all .18s ease;
-            box-shadow: 0 4px 14px rgba(251, 115, 3, .38);
+            background: linear-gradient(90deg, #FFC629 0%, #FF7800 100%); color: #ffffff;
+            font-size: 15px; font-weight: 800; letter-spacing: .02em; cursor: pointer; transition: all .18s ease;
+            box-shadow: 0 4px 16px rgba(255, 140, 0, .42);
+            text-shadow: 0 1px 2px rgba(150, 50, 0, .32);
         }
-        .login-submit-btn:hover { background: linear-gradient(90deg, #FA6A00 0%, #E25500 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(251, 115, 3, .45); }
-        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(251, 115, 3, .28); }
+        .login-submit-btn:hover {
+            background: linear-gradient(90deg, #FFBE1A 0%, #F56E00 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 140, 0, .52);
+        }
+        .login-submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(255, 140, 0, .3);
+        }
 
         .login-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; }
         .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #eef1f5; }
