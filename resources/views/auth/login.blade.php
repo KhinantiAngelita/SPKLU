@@ -55,7 +55,7 @@
         .login-brand-text .subtitle { font-size: 12.5px; color: rgba(255,255,255,.7); margin: 3px 0 0; }
 
         .login-brand-hero { position: relative; z-index: 1; margin-top: auto; margin-bottom: 44px; max-width: 480px; }
-        .login-brand-hero h1 { font-size: 54px; font-weight: 800; line-height: 1.1; margin: 0 0 18px; letter-spacing: -.02em; }
+        .login-brand-hero h1 { color: #ffffff !important; font-size: 54px; font-weight: 800; line-height: 1.1; margin: 0 0 18px; letter-spacing: -.02em; }
         .login-brand-hero h1 .accent { color: #FFC629; }
         .login-brand-hero p { font-size: 15px; color: rgba(255,255,255,.78); line-height: 1.7; margin: 0; max-width: 400px; }
 
@@ -114,12 +114,12 @@
 
         .login-submit-btn {
             width: 100%; padding: 14.5px; border: none; border-radius: 11px;
-            background: #023E8A; color: #fff;
+            background: linear-gradient(135deg, #FF7A00 0%, #EA580C 100%); color: #fff;
             font-size: 14.5px; font-weight: 700; letter-spacing: .01em; cursor: pointer; transition: all .18s ease;
-            box-shadow: 0 4px 14px rgba(2,62,138,.28);
+            box-shadow: 0 4px 14px rgba(234, 88, 12, .32);
         }
-        .login-submit-btn:hover { background: #002D66; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(2,62,138,.35); }
-        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(2,62,138,.25); }
+        .login-submit-btn:hover { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(234, 88, 12, .42); }
+        .login-submit-btn:active { transform: translateY(0); box-shadow: 0 3px 10px rgba(234, 88, 12, .25); }
 
         .login-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0; }
         .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #eef1f5; }
@@ -164,7 +164,7 @@
             </div>
 
             <div class="login-brand-hero">
-                <h1>The SPKLU<br><span class="accent">Matchmaker</span></h1>
+                <h1 style="color: #ffffff !important;">The SPKLU<br><span class="accent">Matchmaker</span></h1>
                 <p>Metode pemasaran yang menawarkan konsep matchmaker antara pemilik lahan dengan pemilik mesin, dengan tujuan peningkatan penjualan kWh melalui kemitraan SPKLU.</p>
 
                 <div class="login-brand-features">
