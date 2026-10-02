@@ -125,6 +125,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [MasterSpkluController::class, 'index'])
             ->name('index');
 
+        Route::get('export', [MasterSpkluController::class, 'export'])
+            ->name('export');
+
         Route::post('/', [MasterSpkluController::class, 'store'])
             ->middleware('role:super_admin,pengelola')
             ->name('store');

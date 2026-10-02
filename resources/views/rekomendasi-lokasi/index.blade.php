@@ -139,7 +139,20 @@
 
 <div class="rl-page-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Rekomendasi Lokasi</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            Rekomendasi Lokasi
+            @if ($selectedUp3)
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: {{ $selectedUp3 }}
+                </span>
+            @else
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: UID Jawa Barat (Semua Unit)
+                </span>
+            @endif
+        </h1>
         <p class="rl-page-subtitle">Peta sebaran SPKLU eksisting (DC/AC), kandidat pipeline berdasarkan kepemilikan mitra mesin, dan titik rekomendasi otomatis.</p>
     </div>
 </div>
@@ -248,7 +261,19 @@
                 </optgroup>
             </select>
 
-            <form method="GET">
+            <form method="GET" style="display:flex; align-items:center; gap:8px;">
+                @if ($isSuperAdmin)
+                    <select name="up3" class="rl-select" onchange="this.form.submit()" style="font-weight:600; color:#023E8A; border-color:#023E8A; background-color:#F0F7FA; min-width:180px;">
+                        <option value="">Semua UP3 (UID Jabar)</option>
+                        @foreach ($daftarUp3 as $u)
+                            <option value="{{ $u }}" {{ $selectedUp3 === $u ? 'selected' : '' }}>{{ $u }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    @if ($selectedUp3)
+                        <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
+                    @endif
+                @endif
                 <select name="ulp_mapping_id" class="rl-select" onchange="this.form.submit()">
                     <option value="">Semua ULP</option>
                     @foreach ($daftarUlp as $ulp)
@@ -467,11 +492,32 @@
         L.latLng(-5.80, 109.05)  // Timur Laut: pesisir utara Karawang s.d. Cirebon
     );
 
+    const koordinatUp3Default = {
+        'UP3 Bandung': [-6.9175, 107.6191],
+        'UP3 Bogor': [-6.5971, 106.8060],
+        'UP3 Bekasi': [-6.2383, 106.9756],
+        'UP3 Depok': [-6.4025, 106.7942],
+        'UP3 Cimahi': [-6.8722, 107.5422],
+        'UP3 Cirebon': [-6.7320, 108.5523],
+        'UP3 Karawang': [-6.3054, 107.3025],
+        'UP3 Sukabumi': [-6.9277, 106.9300],
+        'UP3 Cianjur': [-6.8173, 107.1378],
+        'UP3 Purwakarta': [-6.5569, 107.4433],
+        'UP3 Sumedang': [-6.8584, 107.9266],
+        'UP3 Garut': [-7.2144, 107.9048],
+        'UP3 Tasikmalaya': [-7.3274, 108.2207],
+        'UP3 Indramayu': [-6.3263, 108.3200],
+    };
+
+    const up3Terpilih = @json($selectedUp3);
     let pusatLat = -6.9147, pusatLng = 107.6098, zoomAwal = 9;
     if (titikPeta.length > 0) {
         pusatLat = titikPeta.reduce((a, t) => a + t.latitude, 0) / titikPeta.length;
         pusatLng = titikPeta.reduce((a, t) => a + t.longitude, 0) / titikPeta.length;
-        zoomAwal = 10;
+        zoomAwal = 11;
+    } else if (up3Terpilih && koordinatUp3Default[up3Terpilih]) {
+        [pusatLat, pusatLng] = koordinatUp3Default[up3Terpilih];
+        zoomAwal = 11;
     }
 
     const peta = L.map('peta-rekomendasi', {

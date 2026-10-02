@@ -12,6 +12,7 @@ use App\Models\UlpMapping;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MasterSpkluController extends Controller
@@ -347,5 +348,84 @@ class MasterSpkluController extends Controller
         }
 
         return back()->with('success', "Pemetaan \"{$spkluAlias->nama_asli}\" berhasil diperbarui.");
+    }
+
+    public function export(Request $request)
+    {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $spklus = Spklu::query()
+            ->with('ulp')
+            ->aktif()
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
+            ->when($request->search, fn ($q) => $q->where('nama', 'like', "%{$request->search}%"))
+            ->when($request->ulp_id, fn ($q) => $q->where('ulp_mapping_id', $request->ulp_id))
+            ->when($request->type, fn ($q) => $q->where('type', $request->type))
+            ->when($request->kepemilikan, fn ($q) => $q->where('kepemilikan', $request->kepemilikan))
+            ->when($request->skema, fn ($q) => $q->where('skema', $request->skema))
+            ->orderBy('up3')
+            ->orderBy('nama')
+            ->get();
+
+        $slug = $selectedUp3 ? Str::slug($selectedUp3) : 'uid-jawa-barat';
+        $filename = 'Master-SPKLU-'.$slug.'-'.now()->format('Ymd-His').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () use ($spklus) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            fputcsv($handle, [
+                'ID SPKLU',
+                'Kode Unit',
+                'Nama SPKLU',
+                'Wilayah UP3',
+                'ULP',
+                'Tipe Charger',
+                'Kapasitas (kW)',
+                'Nozzle',
+                'Kepemilikan',
+                'Skema',
+                'Status',
+                'Latitude',
+                'Longitude',
+                'Dibuat Pada',
+            ], ';');
+
+            foreach ($spklus as $s) {
+                fputcsv($handle, [
+                    $s->id_spklu,
+                    $s->kode_unit ?? '-',
+                    $s->nama,
+                    $s->up3 ?? 'UP3 Bogor',
+                    $s->ulp?->nama_penuh ?? '-',
+                    $s->type,
+                    $s->kw ?? 0,
+                    $s->nozzle ?? 1,
+                    $s->kepemilikan,
+                    $s->skema ?? '-',
+                    ucfirst($s->status),
+                    $s->latitude ?? '-',
+                    $s->longitude ?? '-',
+                    $s->created_at ? $s->created_at->format('Y-m-d H:i') : '-',
+                ], ';');
+            }
+
+            fclose($handle);
+        }, 200, $headers);
     }
 }

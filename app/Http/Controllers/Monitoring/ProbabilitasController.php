@@ -96,12 +96,22 @@ class ProbabilitasController extends Controller
                 ->withErrors(['lokasi' => 'Kandidat dengan lokasi dan titik koordinat yang sama sudah pernah ditambahkan.']);
         }
 
+        $targetUp3 = null;
+        if (! empty($validated['ulp'])) {
+            $ulpModel = UlpMapping::where('nama_singkat', $validated['ulp'])
+                ->orWhere('nama_penuh', $validated['ulp'])
+                ->first();
+            $targetUp3 = $ulpModel?->up3;
+        }
+        $targetUp3 = $targetUp3 ?? ($request->user()?->up3 ?? 'UP3 Bogor');
+
         $probabilitas = Probabilitas::create([
             'lokasi' => $validated['lokasi'],
             'alamat' => $validated['alamat'] ?? null,
             'nomor_telepon' => $validated['nomor_telepon'] ?? null,
             'pic' => $validated['pic'] ?? null,
             'ulp' => $validated['ulp'] ?? null,
+            'up3' => $targetUp3,
             'tikor_lat' => $lat,
             'tikor_lng' => $lng,
             'created_by' => $request->user()?->id,

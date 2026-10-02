@@ -13,7 +13,17 @@ class PenjadwalanController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $jadwals = Jadwal::with(['probabilitas', 'penanggungJawab'])
+            ->when($selectedUp3, fn ($q) => $q->whereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3)))
             ->when($request->status, fn ($q) => $q->where('status', $request->status))
             ->orderBy('waktu_mulai')
             ->paginate(10)
@@ -27,6 +37,7 @@ class PenjadwalanController extends Controller
             : now();
 
         $jadwalSebulan = Jadwal::with('probabilitas')
+            ->when($selectedUp3, fn ($q) => $q->whereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3)))
             ->whereBetween('waktu_mulai', [
                 $bulanTampil->copy()->startOfMonth(),
                 $bulanTampil->copy()->endOfMonth(),
@@ -42,15 +53,26 @@ class PenjadwalanController extends Controller
                 'deskripsi' => $j->deskripsi,
             ]);
 
-        return view('penjadwalan.index', compact('jadwals', 'jadwalSebulan', 'bulanTampil'));
+        return view('penjadwalan.index', compact('jadwals', 'jadwalSebulan', 'bulanTampil', 'selectedUp3', 'userUp3', 'isSuperAdmin') + [
+            'daftarUp3' => User::DAFTAR_UP3,
+        ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $probabilitasList = $this->probabilitasBisaDijadwalkan();
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $probabilitasList = $this->probabilitasBisaDijadwalkan($selectedUp3);
         $users = User::orderBy('name')->get();
 
-        return view('penjadwalan.create', compact('probabilitasList', 'users'));
+        return view('penjadwalan.create', compact('probabilitasList', 'users', 'selectedUp3'));
     }
 
     public function store(Request $request)
@@ -143,9 +165,10 @@ class PenjadwalanController extends Controller
         return "{$labelMode} — {$namaLokasi}";
     }
 
-    protected function probabilitasBisaDijadwalkan()
+    protected function probabilitasBisaDijadwalkan(?string $selectedUp3 = null)
     {
         return Probabilitas::with('riwayatTahapan')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->orderBy('lokasi')
             ->get()
             ->reject(fn ($p) => $p->statusKanban() === 'selesai_integrasi')

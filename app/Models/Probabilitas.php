@@ -24,6 +24,7 @@ class Probabilitas extends Model
         'tikor_lat',
         'tikor_lng',
         'ulp',
+        'up3',
         'skema',
         'kebutuhan_22kw',
         'kebutuhan_30kw',

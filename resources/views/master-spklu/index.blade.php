@@ -191,8 +191,12 @@
         </h1>
         <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
     </div>
-    @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
-        <div class="msp-actions">
+    <div class="msp-actions">
+        <a href="{{ route('master-spklu.export', request()->query()) }}" class="msp-btn msp-btn-outline" style="text-decoration:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Excel
+        </a>
+        @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))
             @if (($unmatchedTransaksiCount ?? 0) > 0)
                 <button class="msp-btn msp-btn-warning" onclick="bukaModalPemetaanBulk()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8"/><path d="m8 18 4 4 4-4"/></svg>
@@ -207,8 +211,8 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Tambah SPKLU
             </button>
-        </div>
-    @endif
+        @endif
+    </div>
 </div>
 
 <div class="msp-card-grid">

@@ -56,12 +56,13 @@ class RekomendasiLokasiService
      * Bagian "murah": titik peta + status zona + ringkasan counts.
      * Dipakai baik oleh halaman penuh maupun widget ringkas di Dashboard.
      */
-    public function hitungZonaSpklu(?int $ulpId = null): array
+    public function hitungZonaSpklu(?int $ulpId = null, ?string $selectedUp3 = null): array
     {
         $spkluQuery = Spklu::aktif()
             ->with('ulp')
             ->whereNotNull('latitude')
-            ->whereNotNull('longitude');
+            ->whereNotNull('longitude')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3));
 
         if ($ulpId) {
             $spkluQuery->where('ulp_mapping_id', $ulpId);
@@ -117,13 +118,14 @@ class RekomendasiLokasiService
      * sebagai "rekomendasi wilayah paling potensial" (halaman penuh &
      * headline ringkas di Dashboard).
      */
-    public function hitungRekomendasiWilayah(): Collection
+    public function hitungRekomendasiWilayah(?string $selectedUp3 = null): Collection
     {
         $semuaSpklu = Spklu::aktif()
             ->with('ulp')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->whereNotNull('ulp_mapping_id')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->get();
 
         if ($semuaSpklu->isEmpty()) {

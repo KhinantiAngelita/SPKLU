@@ -343,15 +343,43 @@
 
 <div class="jdi-page-header">
     <div>
-        <h1>Penjadwalan</h1>
-        <p>Kelola jadwal kunjungan Anda</p>
+        <h1 style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            Penjadwalan
+            @if ($selectedUp3)
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: {{ $selectedUp3 }}
+                </span>
+            @else
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: UID Jawa Barat (Semua Unit)
+                </span>
+            @endif
+        </h1>
+        <p>Kelola jadwal kunjungan dan survei calon lokasi SPKLU</p>
     </div>
-    @can('create', \App\Models\Jadwal::class)
-        <a href="{{ route('penjadwalan.create') }}" class="jdi-btn jdi-btn-primary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Buat Jadwal
-        </a>
-    @endcan
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        @if ($isSuperAdmin)
+            <form method="GET" id="form-up3-filter" style="display:inline-block; margin:0;">
+                @if(request('status'))
+                    <input type="hidden" name="status" value="{{ request('status') }}">
+                @endif
+                <select name="up3" class="jdi-select" onchange="document.getElementById('form-up3-filter').submit()" style="font-weight:600; color:#023E8A; border-color:#023E8A; background-color:#F0F7FA; min-width:200px;">
+                    <option value="">Semua UP3 (UID Jabar)</option>
+                    @foreach ($daftarUp3 as $u)
+                        <option value="{{ $u }}" {{ $selectedUp3 === $u ? 'selected' : '' }}>{{ $u }}</option>
+                    @endforeach
+                </select>
+            </form>
+        @endif
+        @can('create', \App\Models\Jadwal::class)
+            <a href="{{ route('penjadwalan.create', $selectedUp3 ? ['up3' => $selectedUp3] : []) }}" class="jdi-btn jdi-btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Buat Jadwal
+            </a>
+        @endcan
+    </div>
 </div>
 
 {{-- ===== KALENDER BESAR + JADWAL HARI INI ===== --}}
@@ -417,6 +445,9 @@
     </div>
 
     <form method="GET" class="jdi-filters">
+        @if ($selectedUp3)
+            <input type="hidden" name="up3" value="{{ $selectedUp3 }}">
+        @endif
         <select name="status" class="jdi-select" onchange="this.form.submit()">
             <option value="">Semua Status</option>
             @foreach (['terjadwal', 'berlangsung', 'selesai', 'batal'] as $s)

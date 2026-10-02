@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UlpMapping extends Model
 {
-    protected $fillable = ['nama_singkat', 'nama_penuh', 'jarak_ideal_km', 'kategori_area'];
+    protected $fillable = ['nama_singkat', 'nama_penuh', 'up3', 'jarak_ideal_km', 'kategori_area'];
 
     /**
      * Pemetaan resmi Kode ULP berdasarkan data PLN UID Jawa Barat:

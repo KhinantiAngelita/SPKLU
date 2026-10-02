@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Probabilitas;
 use App\Models\UlpMapping;
+use App\Models\User;
 use App\Services\RekomendasiLokasiService;
 use Illuminate\Http\Request;
 
@@ -20,11 +21,20 @@ class RekomendasiLokasiController extends Controller
 
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $ulpId = $request->input('ulp_mapping_id');
 
-        ['titikPeta' => $titikPeta, 'ringkasan' => $ringkasan] = $this->service->hitungZonaSpklu($ulpId);
+        ['titikPeta' => $titikPeta, 'ringkasan' => $ringkasan] = $this->service->hitungZonaSpklu($ulpId, $selectedUp3);
 
-        $rekomendasiWilayah = $this->service->hitungRekomendasiWilayah();
+        $rekomendasiWilayah = $this->service->hitungRekomendasiWilayah($selectedUp3);
         $titikRekomendasi = $this->service->generateTitikRekomendasi($titikPeta);
 
         // SPKLU existing yang statusnya udah merah (padat) — beda dari
@@ -37,6 +47,7 @@ class RekomendasiLokasiController extends Controller
         $kandidatBaruQuery = Probabilitas::whereNotNull('tikor_lat')
             ->whereNotNull('tikor_lng')
             ->whereNull('spklu_id')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->with(['riwayatTahapan']);
 
         if ($ulpId) {
@@ -69,7 +80,9 @@ class RekomendasiLokasiController extends Controller
         $ringkasan['dc'] = collect($titikPeta)->where('type', 'DC')->count();
         $ringkasan['ac'] = collect($titikPeta)->where('type', 'AC')->count();
 
-        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
+        $daftarUlp = UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
+            ->orderBy('nama_penuh')
+            ->get();
 
         return view('rekomendasi-lokasi.index', [
             'titikPeta' => $titikPeta,
@@ -80,6 +93,10 @@ class RekomendasiLokasiController extends Controller
             'kandidatBaru' => $kandidatBaru,
             'daftarUlp' => $daftarUlp,
             'ulpTerpilih' => $ulpId,
+            'selectedUp3' => $selectedUp3,
+            'userUp3' => $userUp3,
+            'isSuperAdmin' => $isSuperAdmin,
+            'daftarUp3' => User::DAFTAR_UP3,
         ]);
     }
 }
