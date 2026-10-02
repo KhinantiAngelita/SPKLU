@@ -125,7 +125,28 @@
     .up-table tbody tr:hover { background:rgba(0,129,171,.04); }
     .up-table tbody tr:last-child td { border-bottom:none; }
     .up-empty { text-align:center; padding:48px 20px; color:#94a3b8; font-size:13.5px; }
-    .up-empty svg { width:32px; height:32px; color:#cbd5e1; margin-bottom:8px; stroke-width:1.5; }
+    .up-empty > svg { width:32px; height:32px; color:#cbd5e1; margin-bottom:8px; stroke-width:1.5; }
+
+    .up-empty-icon-success {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #DCFCE7;
+        border: 2px solid #86EFAC;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 14px rgba(22, 163, 74, 0.14);
+    }
+    .up-empty-icon-success svg {
+        width: 26px !important;
+        height: 26px !important;
+        color: #16A34A !important;
+        stroke: #16A34A !important;
+        stroke-width: 2.8 !important;
+        margin-bottom: 0 !important;
+    }
 
     .up-badge { display:inline-flex; align-items:center; padding:4px 11px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; }
     .up-badge-success { background:rgba(46,158,91,.14); color:#2E9E5B; }
@@ -471,11 +492,13 @@
         </div>
     @else
         <div class="up-empty" style="padding:48px 24px;">
-            <div style="width:48px; height:48px; border-radius:50%; background:rgba(46,158,91,0.12); color:#2E9E5B; display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
-                <svg style="width:24px; height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <div class="up-empty-icon-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
             </div>
-            <p style="font-weight:700; color:#1E293B; font-size:15px; margin:0 0 4px;">Semua Nama SPKLU Telah Dipetakan</p>
-            <p style="color:#64748B; font-size:13px; margin:0 0 18px; max-width:480px; margin-inline:auto;">Tidak ada alias transaksi yang tertunda. Seluruh alias yang tersimpan aktif dapat dilihat dan dikelola pada menu <strong>Master SPKLU</strong>.</p>
+            <p style="font-weight:800; color:#1E293B; font-size:16px; margin:0 0 6px;">Semua Nama SPKLU Telah Dipetakan</p>
+            <p style="color:#64748B; font-size:13px; margin:0 0 20px; max-width:480px; margin-inline:auto; line-height:1.5;">Tidak ada alias transaksi yang tertunda. Seluruh alias yang tersimpan aktif dapat dilihat dan dikelola pada menu <strong>Master SPKLU</strong>.</p>
             <a href="{{ route('master-spklu.index') }}" class="up-btn up-btn-outline" style="display:inline-flex;">
                 Lihat Pemetaan Alias di Master SPKLU
                 <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
