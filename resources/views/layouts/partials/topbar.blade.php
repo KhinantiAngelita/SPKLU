@@ -160,7 +160,12 @@
                 <div class="topbar-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
                 <div>
                     <p class="topbar-user-name">{{ auth()->user()->name }}</p>
-                    <p class="topbar-user-role">{{ $roleLabel }}</p>
+                    <p class="topbar-user-role">
+                        {{ $roleLabel }}
+                        @if (auth()->user()->up3)
+                            <span class="topbar-user-up3">&bull; {{ auth()->user()->up3 }}</span>
+                        @endif
+                    </p>
                 </div>
                 <i data-lucide="chevron-down" class="topbar-user-chevron"></i>
             </button>
@@ -171,10 +176,18 @@
                     <div>
                         <h4>{{ auth()->user()->name }}</h4>
                         <p>{{ auth()->user()->email }}</p>
-                        <span class="topbar-role-badge role-badge-{{ $roleKey }}">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            {{ $roleLabel }}
-                        </span>
+                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:6px;">
+                            <span class="topbar-role-badge role-badge-{{ $roleKey }}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                {{ $roleLabel }}
+                            </span>
+                            @if (auth()->user()->up3)
+                                <span class="topbar-up3-chip" title="Unit Kerja Pelaksana">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="11" height="11" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    {{ auth()->user()->up3 }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -198,6 +211,24 @@
 </header>
 
 <style>
+.topbar-user-up3 {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0284C7;
+    margin-left: 2px;
+}
+.topbar-up3-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #F0F9FF;
+    color: #0284C7;
+    border: 1px solid #BAE6FD;
+}
 .topbar-search-dropdown {
     position: absolute;
     top: calc(100% + 8px);

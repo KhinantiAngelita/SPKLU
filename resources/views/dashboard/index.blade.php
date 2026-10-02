@@ -845,7 +845,15 @@
     ========================================================= --}}
 <div class="dsh-topbar">
     <div>
-        <h1 class="dsh-welcome-title">Dashboard Eksekutif SPKLU</h1>
+        <h1 class="dsh-welcome-title">
+            Dashboard Eksekutif SPKLU
+            @if (auth()->check() && auth()->user()->up3)
+                <span style="font-size:13px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal; vertical-align:middle;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: {{ auth()->user()->up3 }}
+                </span>
+            @endif
+        </h1>
         <p class="dsh-welcome-subtitle">Overview performa operasional, penetrasi wilayah, transaksi energi, dan pipeline kandidat SPKLU PLN UID</p>
     </div>
 </div>

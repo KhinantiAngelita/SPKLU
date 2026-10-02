@@ -175,7 +175,15 @@
 
 <div class="msp-header">
     <div>
-        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em;">Master SPKLU</h1>
+        <h1 style="font-size:22px; font-weight:800; color:#1B2559; margin:0 0 4px; letter-spacing:-0.015em; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            Master SPKLU
+            @if (auth()->check() && auth()->user()->up3)
+                <span style="font-size:12.5px; font-weight:700; color:#0284C7; background:#F0F9FF; border:1px solid #BAE6FD; padding:3px 10px; border-radius:999px; letter-spacing:normal;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="12" height="12" stroke-width="2.2" style="display:inline; vertical-align:-1px; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Wilayah: {{ auth()->user()->up3 }}
+                </span>
+            @endif
+        </h1>
         <p class="msp-subtitle">Daftar SPKLU yang sudah aktif di sistem</p>
     </div>
     @if (in_array(auth()->user()->role, ['super_admin', 'pengelola']))

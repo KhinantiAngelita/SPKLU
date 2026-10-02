@@ -176,4 +176,14 @@ class User extends Authenticatable
     {
         return $this->status === UserStatus::Active;
     }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function getUnitLabelAttribute(): string
+    {
+        return $this->up3 ?: 'UID Jawa Barat';
+    }
 }

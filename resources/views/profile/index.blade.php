@@ -98,6 +98,19 @@
         border: 1px solid rgba(232,163,23,.25);
     }
 
+    .prof-badge-up3 {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 700;
+        background: #F0F9FF;
+        color: #0284C7;
+        border: 1px solid #BAE6FD;
+    }
+
     .prof-hero-email {
         font-size: 13px;
         color: #64748B;
@@ -456,6 +469,10 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="12" height="12"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         {{ ucwords(str_replace('_', ' ', $user->role)) }}
                     </span>
+                    <span class="prof-badge-up3" title="Unit Pelaksana Kerja">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="12" height="12"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        {{ $user->up3 ?? 'UID Jawa Barat' }}
+                    </span>
                     <span class="prof-hero-email">&bull; {{ $user->email }}</span>
                 </div>
             </div>
@@ -511,6 +528,11 @@
                     <div class="prof-detail-item">
                         <span class="prof-detail-label">Tingkat Hak Akses</span>
                         <span class="prof-detail-val" style="color:#B45309;">{{ ucwords(str_replace('_', ' ', $user->role)) }}</span>
+                    </div>
+
+                    <div class="prof-detail-item">
+                        <span class="prof-detail-label">Unit Pelaksana (UP3)</span>
+                        <span class="prof-detail-val" style="color:#0284C7; font-weight:700;">{{ $user->up3 ?? 'UID Jawa Barat' }}</span>
                     </div>
 
                     <div class="prof-detail-item">

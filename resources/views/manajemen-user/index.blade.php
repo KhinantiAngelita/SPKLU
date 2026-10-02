@@ -856,7 +856,7 @@
 
     /* Modal Form Body */
     .mu-modal-body {
-        padding: 22px;
+        padding: 22px 24px 24px;
     }
     .mu-field {
         margin-bottom: 16px;
@@ -866,22 +866,34 @@
     }
     .mu-field label {
         display: block;
-        font-size: 12.5px;
+        font-size: 12px;
         font-weight: 700;
         color: #334155;
-        margin-bottom: 6px;
+        margin-bottom: 7px;
+        letter-spacing: .01em;
     }
     .mu-field input,
     .mu-field select {
         width: 100%;
-        padding: 10px 14px;
-        border-radius: 9px;
-        border: 1px solid #e2e8f0;
+        height: 42px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 1.5px solid #E2E8F0;
         font-size: 13.5px;
         background: #fff;
-        color: #0f172a;
+        color: #0F172A;
+        font-family: inherit;
         transition: border-color .15s ease, box-shadow .15s ease;
         box-sizing: border-box;
+    }
+    .mu-field select {
+        padding-right: 36px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
     }
     .mu-field input:focus,
     .mu-field select:focus {
@@ -896,24 +908,49 @@
         cursor: not-allowed;
     }
     .mu-hint-box {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 9px;
-        padding: 10px 14px;
+        background: #F0F9FF;
+        border: 1px solid #BAE6FD;
+        border-radius: 10px;
+        padding: 11px 14px;
         font-size: 12px;
-        color: #64748B;
-        margin-top: 12px;
+        color: #0369A1;
+        margin-top: 14px;
         line-height: 1.5;
         display: flex;
         align-items: flex-start;
-        gap: 8px;
+        gap: 9px;
     }
     .mu-hint-box svg {
-        width: 15px;
-        height: 15px;
-        color: #0081AB;
+        width: 16px;
+        height: 16px;
+        color: #0284C7;
         flex-shrink: 0;
-        margin-top: 2px;
+        margin-top: 1px;
+    }
+    .mu-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 24px;
+        background: #FAFBFD;
+        border-top: 1px solid #EEF2F6;
+        margin: 22px -24px -24px -24px;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+    .mu-modal-email-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 3px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #0284C7;
+        background: #F0F9FF;
+        border: 1px solid #BAE6FD;
+        padding: 2px 8px;
+        border-radius: 6px;
     }
     /* ── Modal Large (Detail User) ── */
     .mu-modal-lg {
@@ -1512,6 +1549,16 @@
                 </select>
             </div>
 
+            <div class="mu-field">
+                <label for="new-up3">Unit Kerja (UP3 Pelaksana)</label>
+                <select id="new-up3" name="up3">
+                    <option value="">-- Tidak Ditentukan / Kantor Pusat --</option>
+                    @foreach (\App\Models\User::DAFTAR_UP3 as $optUp3)
+                        <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div id="panel-invite">
                 <div class="mu-hint-box">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -1548,15 +1595,15 @@
     <div class="mu-modal" onclick="event.stopPropagation()">
         <div class="mu-modal-header">
             <div class="mu-modal-header-left">
-                <div class="mu-modal-header-icon">
+                <div class="mu-modal-header-icon" style="width: 36px; height: 36px; border-radius: 10px;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
                 </div>
                 <div>
-                    <h3>Edit Data Pengguna</h3>
-                    <p id="edit-user-email-display" style="margin: 2px 0 0; font-size: 11.5px; color: #64748B;"></p>
+                    <h3 style="font-size: 16px; font-weight: 800; color: #1B2559;">Edit Data Pengguna</h3>
+                    <div id="edit-user-email-display" class="mu-modal-email-chip"></div>
                 </div>
             </div>
-            <button type="button" class="mu-modal-close" onclick="closeModal('modal-edit-user')">
+            <button type="button" class="mu-modal-close" onclick="closeModal('modal-edit-user')" title="Tutup">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
@@ -1567,7 +1614,7 @@
 
             <div class="mu-field">
                 <label for="edit-user-name">Nama Lengkap</label>
-                <input type="text" id="edit-user-name" name="name" required>
+                <input type="text" id="edit-user-name" name="name" placeholder="Masukkan nama lengkap pengguna" required>
             </div>
 
             <div class="mu-field">
@@ -1581,9 +1628,9 @@
             </div>
 
             <div class="mu-field">
-                <label for="edit-user-up3">Unit Pelaksana Pelayanan Pelanggan (UP3)</label>
+                <label for="edit-user-up3">Unit Kerja (UP3 Pelaksana)</label>
                 <select id="edit-user-up3" name="up3">
-                    <option value="">-- Tidak Ditentukan / Pusat --</option>
+                    <option value="">-- Tidak Ditentukan / Kantor Pusat --</option>
                     @foreach (\App\Models\User::DAFTAR_UP3 as $optUp3)
                         <option value="{{ $optUp3 }}">{{ $optUp3 }}</option>
                     @endforeach
@@ -1591,8 +1638,8 @@
             </div>
 
             <div class="mu-hint-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span>Perubahan data langsung tersimpan. Alamat email tidak dapat diubah demi audit integritas.</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span>Perubahan data langsung tersimpan. Alamat email dilindungi dan tidak dapat diubah demi audit integritas.</span>
             </div>
 
             <div class="mu-modal-footer">
