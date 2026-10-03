@@ -15,7 +15,7 @@ class ForcePasswordChangeController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate(['password' => 'required|min:8|confirmed']);
+        $request->validate(['password' => 'required|string|min:8|max:100|confirmed']);
 
         $request->user()->update([
             'password' => Hash::make($request->password),

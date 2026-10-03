@@ -118,7 +118,7 @@ class PenjadwalanController extends Controller
     public function update(Request $request, Jadwal $jadwal)
     {
         $validated = $this->validasi($request);
-        $validated['status'] = $request->input('status', $jadwal->status);
+        $validated['status'] = $validated['status'] ?? $jadwal->status;
 
         $probabilitas = Probabilitas::find($validated['probabilitas_id']);
         $validated['judul'] = $this->buatJudulOtomatis($probabilitas, $validated['mode']);
@@ -150,10 +150,12 @@ class PenjadwalanController extends Controller
             'probabilitas_id' => 'required|exists:probabilitas,id',
             'waktu_mulai' => 'required|date',
             'mode' => 'required|in:online,offline',
-            'lokasi' => 'nullable|string|required_if:mode,offline',
+            'lokasi' => 'nullable|string|max:255|required_if:mode,offline',
             'platform' => 'nullable|in:Zoom,Google Meet,Lainnya|required_if:mode,online',
-            'link_pertemuan' => 'nullable|url|required_if:mode,online',
+            'link_pertemuan' => 'nullable|url|max:255|required_if:mode,online',
             'penanggung_jawab' => 'nullable|exists:users,id',
+            'deskripsi' => 'nullable|string|max:1000',
+            'status' => 'nullable|in:terjadwal,selesai,dibatalkan',
         ]);
     }
 

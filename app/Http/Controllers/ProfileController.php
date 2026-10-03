@@ -21,7 +21,7 @@ class ProfileController extends Controller
         ];
 
         if ($request->filled('password')) {
-            $rules['password'] = 'required|string|min:8|confirmed';
+            $rules['password'] = 'required|string|min:8|max:100|confirmed';
         }
 
         $validated = $request->validate($rules);

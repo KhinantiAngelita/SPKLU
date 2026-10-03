@@ -82,18 +82,17 @@ class PengajuanController extends Controller
                 ->first();
         }
 
-        $nomorUrut = Spklu::withTrashed()->max('id') + 1;
+        $nomorTerakhir = Spklu::withTrashed()
+            ->where('id_spklu', 'like', 'SPKLU-%')
+            ->get(['id_spklu'])
+            ->map(fn ($s) => (int) preg_replace('/\D/', '', $s->id_spklu))
+            ->max();
+
+        $nomorBerikutnya = ($nomorTerakhir ?? 0) + 1;
 
         $spklu = Spklu::create([
             ...$validated,
-
-            'id_spklu' => 'SPKLU-'.str_pad(
-                (string) $nomorUrut,
-                3,
-                '0',
-                STR_PAD_LEFT
-            ),
-
+            'id_spklu' => 'SPKLU-'.str_pad((string) $nomorBerikutnya, 3, '0', STR_PAD_LEFT),
             'nama' => $probabilitas->lokasi,
             'latitude' => $probabilitas->tikor_lat,
             'longitude' => $probabilitas->tikor_lng,

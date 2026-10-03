@@ -38,11 +38,33 @@ class DashboardController extends Controller
         $defaultDari = $minTanggal ? Carbon::parse($minTanggal)->format('Y-m') : now()->startOfYear()->format('Y-m');
         $defaultSampai = $maxTanggal ? Carbon::parse($maxTanggal)->format('Y-m') : now()->format('Y-m');
 
-        $dariBulan = $request->dari_bulan ?: $defaultDari;
-        $sampaiBulan = $request->sampai_bulan ?: $defaultSampai;
+        $request->validate([
+            'up3' => 'nullable|string|max:100',
+            'dari_bulan' => ['nullable', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
+            'sampai_bulan' => ['nullable', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
+        ]);
 
-        $mulai = Carbon::createFromFormat('Y-m', $dariBulan)->startOfMonth();
-        $sampai = Carbon::createFromFormat('Y-m', $sampaiBulan)->endOfMonth();
+        $dariBulan = $request->filled('dari_bulan') ? $request->dari_bulan : $defaultDari;
+        $sampaiBulan = $request->filled('sampai_bulan') ? $request->sampai_bulan : $defaultSampai;
+
+        try {
+            $mulai = Carbon::createFromFormat('Y-m', $dariBulan)->startOfMonth();
+        } catch (\Throwable) {
+            $mulai = Carbon::createFromFormat('Y-m', $defaultDari)->startOfMonth();
+            $dariBulan = $defaultDari;
+        }
+
+        try {
+            $sampai = Carbon::createFromFormat('Y-m', $sampaiBulan)->endOfMonth();
+        } catch (\Throwable) {
+            $sampai = Carbon::createFromFormat('Y-m', $defaultSampai)->endOfMonth();
+            $sampaiBulan = $defaultSampai;
+        }
+
+        if ($mulai->gt($sampai)) {
+            [$mulai, $sampai] = [$sampai->copy()->startOfMonth(), $mulai->copy()->endOfMonth()];
+            [$dariBulan, $sampaiBulan] = [$sampaiBulan, $dariBulan];
+        }
 
         $trenTransaksi = $this->buildTrenTransaksi($mulai, $sampai, $selectedUp3);
 

@@ -46,6 +46,18 @@ class TransaksiController extends Controller
             $selectedUp3 = $userUp3;
         }
 
+        $request->validate([
+            'up3' => 'nullable|string|max:100',
+            'spklu_id' => 'nullable|integer',
+            'satuan' => 'nullable|in:kali,kwh,rp',
+            'dari' => 'nullable|date',
+            'sampai' => 'nullable|date',
+            'tahun' => 'nullable|array',
+            'tahun.*' => 'integer',
+            'bulan_awal' => 'nullable|integer|min:1|max:12',
+            'bulan_akhir' => 'nullable|integer|min:1|max:12',
+        ]);
+
         $spkluId = $request->spklu_id;
         $satuan = $request->satuan ?? 'kali';
 
@@ -57,8 +69,22 @@ class TransaksiController extends Controller
 
         $minTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->min('tanggal');
         $maxTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
-        $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
-        $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
+
+        try {
+            $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
+        } catch (\Throwable) {
+            $mulai = $minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear();
+        }
+
+        try {
+            $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
+        } catch (\Throwable) {
+            $sampai = $maxTanggal ? Carbon::parse($maxTanggal) : now();
+        }
+
+        if ($mulai->gt($sampai)) {
+            [$mulai, $sampai] = [$sampai, $mulai];
+        }
 
         $ringkasan = Transaksi::query()
             ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
@@ -305,13 +331,34 @@ class TransaksiController extends Controller
             $selectedUp3 = $userUp3;
         }
 
+        $request->validate([
+            'up3' => 'nullable|string|max:100',
+            'spklu_id' => 'nullable|integer',
+            'dari' => 'nullable|date',
+            'sampai' => 'nullable|date',
+        ]);
+
         $spkluId = $request->spklu_id;
         $spkluTerpilih = $spkluId ? Spklu::find($spkluId) : null;
 
         $minTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->min('tanggal');
         $maxTanggal = Transaksi::when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))->max('tanggal');
-        $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
-        $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
+
+        try {
+            $mulai = $request->dari ? Carbon::parse($request->dari) : ($minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear());
+        } catch (\Throwable) {
+            $mulai = $minTanggal ? Carbon::parse($minTanggal) : now()->startOfYear();
+        }
+
+        try {
+            $sampai = $request->sampai ? Carbon::parse($request->sampai) : ($maxTanggal ? Carbon::parse($maxTanggal) : now());
+        } catch (\Throwable) {
+            $sampai = $maxTanggal ? Carbon::parse($maxTanggal) : now();
+        }
+
+        if ($mulai->gt($sampai)) {
+            [$mulai, $sampai] = [$sampai, $mulai];
+        }
 
         $baseQuery = Transaksi::query()
             ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))

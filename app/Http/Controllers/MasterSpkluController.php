@@ -124,7 +124,7 @@ class MasterSpkluController extends Controller
     {
         abort_unless($spklu->status === SpkluStatus::MenungguValidasi, 400);
 
-        $request->validate(['alasan' => 'required|string']);
+        $request->validate(['alasan' => 'required|string|max:1000']);
 
         $spklu->delete();
 
@@ -295,7 +295,7 @@ class MasterSpkluController extends Controller
     public function storeAlias(Request $request)
     {
         $request->validate([
-            'nama_asli' => 'required|string|unique:spklu_aliases,nama_asli',
+            'nama_asli' => 'required|string|max:255|unique:spklu_aliases,nama_asli',
             'spklu_id' => 'required|exists:spklus,id',
         ]);
 
@@ -312,7 +312,7 @@ class MasterSpkluController extends Controller
     {
         $request->validate([
             'mappings' => 'required|array|min:1',
-            'mappings.*.nama_asli' => 'required|string',
+            'mappings.*.nama_asli' => 'required|string|max:255',
             'mappings.*.spklu_id' => 'required|exists:spklus,id',
         ]);
 

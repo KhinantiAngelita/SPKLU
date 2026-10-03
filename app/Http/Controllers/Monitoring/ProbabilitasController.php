@@ -186,7 +186,7 @@ class ProbabilitasController extends Controller
             'okupansi_pintu_tol' => 'boolean',
             'okupansi_pusat_keramaian' => 'boolean',
             'okupansi_ruas_jalan' => 'boolean',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'nullable|string|max:1000',
         ]);
         // Field kebutuhan mesin & poin jaringan NOT NULL di database — kalau
         // dikosongkan di form (dianggap 0 unit), isi null-nya jadi 0 di sini.
@@ -217,7 +217,7 @@ class ProbabilitasController extends Controller
             'tanggal' => 'required|date',
             'petugas_pic' => 'nullable|string|max:255',
             'hasil' => 'required|in:berhasil,perlu_kunjungan_ulang,gagal',
-            'catatan' => 'nullable|string',
+            'catatan' => 'nullable|string|max:1000',
         ]);
 
         // Urutan cuma wajib MULAI dari setelah "kpp_final" (PKS, Bayar BP,
@@ -256,9 +256,9 @@ class ProbabilitasController extends Controller
         $tahapLabel = Probabilitas::TAHAPAN[$validated['tahap']] ?? $validated['tahap'];
         NotifikasiHelper::kirim(
             'kandidat',
-            "Pencatatan progres \"{$tahapLabel}\" untuk kandidat {$probabilitas->lokasi} ({$validated['status']}).",
+            "Pencatatan progres \"{$tahapLabel}\" untuk kandidat {$probabilitas->lokasi} ({$validated['hasil']}).",
             'clipboard-check',
-            route('monitoring.probabilitas.riwayatLengkap', ['probabilitas' => $probabilitas->id, 'tahap' => $validated['tahap']]),
+            route('monitoring.probabilitas.riwayat-lengkap', ['probabilitas' => $probabilitas->id, 'tahap' => $validated['tahap']]),
             ['super_admin', 'pengelola', 'manajemen'],
             'Update Progres Probing'
         );

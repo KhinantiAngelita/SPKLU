@@ -130,9 +130,9 @@ class FsSkemaController extends Controller
     public function preview(Request $request)
     {
         $data = $request->validate([
-            'nama_lokasi' => 'nullable|string',
+            'nama_lokasi' => 'nullable|string|max:255',
             'skema' => 'nullable|in:skema_2,skema_3',
-            'titik_koordinat' => 'nullable|string',
+            'titik_koordinat' => 'nullable|string|max:100',
             'layanan_listrik' => 'nullable|in:TM,TR,LTR',
             'total_rab_investasi' => 'nullable|numeric|min:0',
             'rab_mitra_mesin' => 'nullable|numeric|min:0',
@@ -142,7 +142,7 @@ class FsSkemaController extends Controller
             'transaksi_kwh_per_mobil' => 'nullable|numeric|min:0',
             'masa_kontrak_tahun' => 'nullable|integer|min:1|max:30',
             'fasilitas' => 'nullable|array',
-            'kesiapan_jaringan' => 'nullable|string',
+            'kesiapan_jaringan' => 'nullable|string|max:255',
             'okupansi' => 'nullable|array',
         ]);
 
@@ -186,7 +186,7 @@ class FsSkemaController extends Controller
             'kandidat_id' => 'nullable|exists:kandidat_prioritas,id',
             'skema' => 'required|in:skema_2,skema_3',
             'nama_lokasi' => 'required|string|max:255',
-            'titik_koordinat' => 'nullable|string',
+            'titik_koordinat' => 'nullable|string|max:100',
             'total_rab_investasi' => 'required_if:skema,skema_2|nullable|numeric|min:0',
             'rab_mitra_mesin' => 'required_if:skema,skema_3|nullable|numeric|min:0',
             'rab_mitra_lahan' => 'required_if:skema,skema_3|nullable|numeric|min:0',
@@ -196,7 +196,7 @@ class FsSkemaController extends Controller
             'transaksi_kwh_per_mobil' => 'required|numeric|min:0',
             'masa_kontrak_tahun' => 'required|integer|min:1|max:30',
             'fasilitas' => 'nullable|array',
-            'kesiapan_jaringan' => 'nullable|string',
+            'kesiapan_jaringan' => 'nullable|string|max:255',
             'okupansi' => 'nullable|array',
         ]);
     }
