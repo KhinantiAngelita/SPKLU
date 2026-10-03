@@ -26,7 +26,20 @@ class ProbabilitasController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $query = Probabilitas::with('riwayatTahapan')->latest();
+
+        if ($selectedUp3) {
+            $query->where('up3', $selectedUp3);
+        }
 
         if ($request->filled('ulp')) {
             $query->where('ulp', $request->input('ulp'));
@@ -40,23 +53,32 @@ class ProbabilitasController extends Controller
 
         $daftarProbabilitas = $query->paginate(15);
 
-        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
+        $daftarUlp = UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get();
 
         $daftarMitraMesin = Schema::hasTable('mitra_mesin')
             ? MitraMesin::where('is_aktif', true)->orderBy('urutan')->orderBy('nama')->get()
             : collect();
 
-        return view('monitoring.probabilitas.index', compact('daftarProbabilitas', 'daftarUlp', 'daftarMitraMesin'));
+        return view('monitoring.probabilitas.index', compact('daftarProbabilitas', 'daftarUlp', 'daftarMitraMesin', 'selectedUp3'));
     }
 
     /**
      * Halaman form "Tambah Kandidat Baru".
      */
-    public function create()
+    public function create(Request $request)
     {
-        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
 
-        return view('monitoring.kandidat.create', compact('daftarUlp'));
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $daftarUlp = UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get();
+
+        return view('monitoring.kandidat.create', compact('daftarUlp', 'selectedUp3'));
     }
 
     /**
@@ -103,7 +125,7 @@ class ProbabilitasController extends Controller
                 ->first();
             $targetUp3 = $ulpModel?->up3;
         }
-        $targetUp3 = $targetUp3 ?? ($request->user()?->up3 ?? 'UP3 Bogor');
+        $targetUp3 = $targetUp3 ?? ($request->get('up3') ?? session('active_up3') ?? $request->user()?->up3 ?? 'UP3 Bogor');
 
         $probabilitas = Probabilitas::create([
             'lokasi' => $validated['lokasi'],

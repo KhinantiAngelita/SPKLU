@@ -70,6 +70,7 @@ class DashboardController extends Controller
 
         // ===== Kandidat & Pengajuan — tersambung ke Probabilitas =====
         $probabilitasAktif = Probabilitas::whereNull('spklu_id')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->with('riwayatTahapan')
             ->get();
 
@@ -83,13 +84,14 @@ class DashboardController extends Controller
             fn ($p) => $p->statusKanban() === 'on_progress'
         )->count();
 
-        $topKandidat = $this->peringkatService->top(5)->map(fn ($k) => (object) [
+        $topKandidat = $this->peringkatService->top(5, $selectedUp3)->map(fn ($k) => (object) [
             'nama' => $k->nama_lokasi,
             'wilayah' => $k->ulpMapping->nama_penuh ?? '-',
             'skor' => $k->skor_akhir,
         ]);
 
         $pengajuanTerbaru = Probabilitas::with('riwayatTahapan')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->latest()
             ->take(5)
             ->get()
@@ -119,8 +121,8 @@ class DashboardController extends Controller
             ->get();
 
         // ===== Ringkasan Rekomendasi Lokasi (bagian "murah", tanpa grid scan) =====
-        $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu();
-        $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah()->first();
+        $zonaSpklu = $this->rekomendasiLokasiService->hitungZonaSpklu(null, $selectedUp3);
+        $wilayahPotensialTop = $this->rekomendasiLokasiService->hitungRekomendasiWilayah($selectedUp3)->first();
 
         $spkluQuery = Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3));
         $totalSpkluTerpasang = (clone $spkluQuery)->count();

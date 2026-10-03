@@ -20,21 +20,45 @@ class FsSkemaController extends Controller
 
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $fsSkemas = FsSkema::with('kandidat')
+            ->when($selectedUp3, function ($q) use ($selectedUp3) {
+                $q->where(function ($sub) use ($selectedUp3) {
+                    $sub->whereHas('kandidat.ulpMapping', fn ($u) => $u->where('up3', $selectedUp3))
+                        ->orWhereHas('kandidat.probabilitas', fn ($p) => $p->where('up3', $selectedUp3));
+                });
+            })
             ->when($request->skema, fn ($q) => $q->where('skema', $request->skema))
             ->latest()
             ->paginate(10);
 
-        return view('fs-skema.index', compact('fsSkemas'));
+        return view('fs-skema.index', compact('fsSkemas', 'selectedUp3'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $probabilitasList = $this->ambilProbabilitasUntukDropdown($selectedUp3);
         $poinJaringanMap = $this->calculator->poinJaringanMapUntukJs();
         $poinJaringanFallback = $this->calculator->poinJaringanFallbackUntukJs();
 
-        return view('fs-skema.create', compact('probabilitasList', 'poinJaringanMap', 'poinJaringanFallback'));
+        return view('fs-skema.create', compact('probabilitasList', 'poinJaringanMap', 'poinJaringanFallback', 'selectedUp3'));
     }
 
     public function store(Request $request)
@@ -66,11 +90,20 @@ class FsSkemaController extends Controller
         return view('fs-skema.show', compact('fsSkema', 'spkluTerdekat', 'proyeksiRoi', 'riwayatAnalisis'));
     }
 
-    public function edit(FsSkema $fsSkema)
+    public function edit(Request $request, FsSkema $fsSkema)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $fsSkema->load('kandidat');
 
-        $probabilitasList = $this->ambilProbabilitasUntukDropdown();
+        $probabilitasList = $this->ambilProbabilitasUntukDropdown($selectedUp3);
         $poinJaringanMap = $this->calculator->poinJaringanMapUntukJs();
         $poinJaringanFallback = $this->calculator->poinJaringanFallbackUntukJs();
 
@@ -83,7 +116,8 @@ class FsSkemaController extends Controller
             'poinJaringanMap',
             'poinJaringanFallback',
             'spkluTerdekat',
-            'proyeksiRoi'
+            'proyeksiRoi',
+            'selectedUp3'
         ));
     }
 
@@ -270,9 +304,10 @@ class FsSkemaController extends Controller
      * yang sudah tersambung bisa langsung auto-terisi (hidden field,
      * tidak lagi ada dropdown kandidat terpisah untuk diisi manual).
      */
-    protected function ambilProbabilitasUntukDropdown()
+    protected function ambilProbabilitasUntukDropdown(?string $selectedUp3 = null)
     {
         return Probabilitas::with('kandidatPrioritas:id,probabilitas_id')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->orderBy('lokasi')
             ->get(['id', 'lokasi', 'tikor_lat', 'tikor_lng']);
     }

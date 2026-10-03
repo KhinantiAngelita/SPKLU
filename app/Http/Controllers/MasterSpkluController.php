@@ -52,11 +52,24 @@ class MasterSpkluController extends Controller
         $totalKapasitas = (clone $statsQuery)->sum('kw');
 
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
-        $unmatchedTransaksiCount = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)->count();
+        $unmatchedQuery = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias);
+        if ($selectedUp3) {
+            $unmatchedQuery->whereIn('nama_asli', function ($sub) use ($selectedUp3) {
+                $sub->select('transaksi_upload_unmatched.nama_asli')
+                    ->from('transaksi_upload_unmatched')
+                    ->join('transaksi_uploads', 'transaksi_uploads.id', '=', 'transaksi_upload_unmatched.transaksi_upload_id')
+                    ->where('transaksi_uploads.up3', $selectedUp3);
+            });
+        }
+        $unmatchedTransaksiCount = (clone $unmatchedQuery)->count();
+        $unmatchedList = (clone $unmatchedQuery)->orderByDesc('jumlah_baris_total')->get();
+
+        $allSpkluList = Spklu::aktif()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama')->get();
 
         return view('master-spklu.index', [
             'spklus' => $spklus,
-            'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
+            'allSpkluList' => $allSpkluList,
+            'ulpList' => UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get(),
             'selectedUp3' => $selectedUp3,
             'userUp3' => $userUp3,
             'isSuperAdmin' => $isSuperAdmin,
@@ -67,22 +80,36 @@ class MasterSpkluController extends Controller
             'totalByKepemilikan' => $totalByKepemilikan,
             'totalKapasitas' => $totalKapasitas,
 
-            'menungguValidasiCount' => Spklu::menungguValidasi()->count(),
+            'menungguValidasiCount' => Spklu::menungguValidasi()->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->count(),
             'unmatchedTransaksiCount' => $unmatchedTransaksiCount,
 
             // Mengirim data Alias dan Unmatched ke Halaman Master SPKLU
-            'aliasList' => SpkluAlias::with('spklu')->latest()->get(),
-            'unmatchedList' => TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)
-                ->orderByDesc('jumlah_baris_total')
+            'aliasList' => SpkluAlias::with('spklu')
+                ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
+                ->latest()
                 ->get(),
+            'unmatchedList' => $unmatchedList,
         ]);
     }
 
-    public function validasiIndex()
+    public function validasiIndex(Request $request)
     {
-        $pending = Spklu::menungguValidasi()->with('ulp')->latest()->get();
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
 
-        return view('master-spklu.validasi', compact('pending'));
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $pending = Spklu::menungguValidasi()
+            ->with('ulp')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
+            ->latest()
+            ->get();
+
+        return view('master-spklu.validasi', compact('pending', 'selectedUp3'));
     }
 
     public function validasiApprove(Request $request, Spklu $spklu)

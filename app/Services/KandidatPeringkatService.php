@@ -36,7 +36,7 @@ class KandidatPeringkatService
      * Hitung & urutkan seluruh kandidat (atau yang lolos filter) berdasarkan
      * skor akhir. Tidak melakukan pagination — itu tetap tanggung jawab caller.
      */
-    public function rank(?string $search = null, ?int $ulpId = null): Collection
+    public function rank(?string $search = null, ?int $ulpId = null, ?string $up3 = null): Collection
     {
         $query = KandidatPrioritas::query()
             ->with(['ulpMapping', 'probabilitas.riwayatTahapan', 'spkluTerdekat' => function ($q) {
@@ -50,6 +50,13 @@ class KandidatPeringkatService
 
         if ($ulpId) {
             $query->where('ulp_mapping_id', $ulpId);
+        }
+
+        if ($up3) {
+            $query->where(function ($sub) use ($up3) {
+                $sub->whereHas('ulpMapping', fn ($q) => $q->where('up3', $up3))
+                    ->orWhereHas('probabilitas', fn ($q) => $q->where('up3', $up3));
+            });
         }
 
         $semuaKandidat = $query->get();
@@ -133,9 +140,9 @@ class KandidatPeringkatService
      * Top N kandidat by skor akhir (skor_akhir tidak null), sudah diurutkan.
      * Dipakai Dashboard untuk "Top 5 Kandidat Prioritas".
      */
-    public function top(int $n = 5): Collection
+    public function top(int $n = 5, ?string $up3 = null): Collection
     {
-        return $this->rank()
+        return $this->rank(null, null, $up3)
             ->filter(fn ($k) => ! is_null($k->skor_akhir))
             ->sortByDesc('skor_akhir')
             ->take($n)

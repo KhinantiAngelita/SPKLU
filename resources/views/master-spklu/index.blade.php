@@ -723,7 +723,7 @@
 
                 <label>Petakan ke Master SPKLU</label>
                 <select name="spklu_id" id="alias-spklu-id" required>
-                    @foreach ($spklus as $spklu)
+                    @foreach (($allSpkluList ?? $spklus) as $spklu)
                         <option value="{{ $spklu->id }}">{{ $spklu->nama }}</option>
                     @endforeach
                 </select>
@@ -762,7 +762,7 @@
                             <input type="hidden" name="mappings[{{ $idx }}][nama_asli]" value="{{ $u->nama_asli }}">
                             <select name="mappings[{{ $idx }}][spklu_id]" required style="margin-top:6px;">
                                 <option value="">-- Pilih SPKLU Tujuan --</option>
-                                @foreach ($spklus as $spklu)
+                                @foreach (($allSpkluList ?? $spklus) as $spklu)
                                     <option value="{{ $spklu->id }}">{{ $spklu->nama }}</option>
                                 @endforeach
                             </select>

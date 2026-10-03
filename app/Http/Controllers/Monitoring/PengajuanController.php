@@ -13,7 +13,17 @@ class PengajuanController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $semua = Probabilitas::with('riwayatTahapan')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->orderBy('lokasi')
             ->get();
 
@@ -29,6 +39,7 @@ class PengajuanController extends Controller
 
         $mapKodeUnitPerUlp = Spklu::whereNotNull('kode_unit')
             ->where('kode_unit', '!=', '')
+            ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
             ->get(['ulp_mapping_id', 'kode_unit'])
             ->groupBy('ulp_mapping_id')
             ->map(fn ($items) => $items->countBy('kode_unit')->sortDesc()->keys()->first())
@@ -38,8 +49,9 @@ class PengajuanController extends Controller
             'belumMulai' => $kolom['belum_mulai'],
             'onProgress' => $kolom['on_progress'],
             'selesaiIntegrasi' => $kolom['selesai_integrasi'],
-            'ulpList' => UlpMapping::orderBy('nama_penuh')->get(),
+            'ulpList' => UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get(),
             'mapKodeUnitPerUlp' => $mapKodeUnitPerUlp,
+            'selectedUp3' => $selectedUp3,
         ]);
     }
 

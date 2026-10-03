@@ -13,12 +13,28 @@ class KandidatPrioritasController extends Controller
 
     public function index(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $search = $request->input('search');
         $ulpId = $request->input('ulp_mapping_id');
         $typeKw = $request->input('type_kw');
         $kepemilikan = $request->input('kepemilikan');
 
         $query = KandidatPrioritas::query()->with(['ulpMapping', 'probabilitas']);
+
+        if ($selectedUp3) {
+            $query->where(function ($sub) use ($selectedUp3) {
+                $sub->whereHas('ulpMapping', fn ($q) => $q->where('up3', $selectedUp3))
+                    ->orWhereHas('probabilitas', fn ($q) => $q->where('up3', $selectedUp3));
+            });
+        }
 
         if ($search) {
             $query->where('nama_lokasi', 'like', "%{$search}%");
@@ -95,6 +111,12 @@ class KandidatPrioritasController extends Controller
 
         // Summary cards dihitung dari SELURUH data yang lolos filter
         $baseQuery = fn () => KandidatPrioritas::query()
+            ->when($selectedUp3, function ($q) use ($selectedUp3) {
+                $q->where(function ($sub) use ($selectedUp3) {
+                    $sub->whereHas('ulpMapping', fn ($u) => $u->where('up3', $selectedUp3))
+                        ->orWhereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3));
+                });
+            })
             ->when($search, fn ($q) => $q->where('nama_lokasi', 'like', "%{$search}%"))
             ->when($ulpId, fn ($q) => $q->where('ulp_mapping_id', $ulpId))
             ->when($typeKw, fn ($q) => $q->where('type_kw', $typeKw))
@@ -118,9 +140,19 @@ class KandidatPrioritasController extends Controller
             'kebutuhan_ulp' => $rataRataKebutuhan ? (int) round($rataRataKebutuhan) : 0,
         ];
 
-        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
-        $daftarTypeKw = KandidatPrioritas::query()->whereNotNull('type_kw')->distinct()->orderBy('type_kw')->pluck('type_kw');
-        $daftarKepemilikan = KandidatPrioritas::query()->whereNotNull('kepemilikan')->distinct()->orderBy('kepemilikan')->pluck('kepemilikan');
+        $daftarUlp = UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get();
+        $daftarTypeKw = KandidatPrioritas::query()
+            ->when($selectedUp3, fn ($q) => $q->where(function ($sub) use ($selectedUp3) {
+                $sub->whereHas('ulpMapping', fn ($u) => $u->where('up3', $selectedUp3))
+                    ->orWhereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3));
+            }))
+            ->whereNotNull('type_kw')->distinct()->orderBy('type_kw')->pluck('type_kw');
+        $daftarKepemilikan = KandidatPrioritas::query()
+            ->when($selectedUp3, fn ($q) => $q->where(function ($sub) use ($selectedUp3) {
+                $sub->whereHas('ulpMapping', fn ($u) => $u->where('up3', $selectedUp3))
+                    ->orWhereHas('probabilitas', fn ($p) => $p->where('up3', $selectedUp3));
+            }))
+            ->whereNotNull('kepemilikan')->distinct()->orderBy('kepemilikan')->pluck('kepemilikan');
 
         return view('kandidat-prioritas.index', [
             'kandidatList' => $kandidatList,

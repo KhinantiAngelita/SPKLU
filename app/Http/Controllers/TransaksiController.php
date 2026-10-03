@@ -291,12 +291,29 @@ class TransaksiController extends Controller
 
     public function uploadPage(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $namaSudahDialias = SpkluAlias::pluck('nama_asli')->all();
         $urutan = $request->input('urutan', 'terbaru');
         $direction = $urutan === 'terlama' ? 'asc' : 'desc';
 
-        $riwayat = TransaksiUpload::with(['diuploadOleh', 'unmatchedNames'])
-            ->orderBy('id', $direction)
+        $riwayatQuery = TransaksiUpload::with(['diuploadOleh', 'unmatchedNames']);
+        if ($selectedUp3) {
+            $riwayatQuery->where(function ($q) use ($selectedUp3) {
+                $q->where('up3', $selectedUp3)
+                    ->orWhereHas('transaksis.spklu', fn ($s) => $s->where('up3', $selectedUp3))
+                    ->orWhereHas('diuploadOleh', fn ($u) => $u->where('up3', $selectedUp3));
+            });
+        }
+
+        $riwayat = $riwayatQuery->orderBy('id', $direction)
             ->paginate(15)
             ->withQueryString();
 
@@ -308,15 +325,30 @@ class TransaksiController extends Controller
             return $upload;
         });
 
+        $unmatchedQuery = TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias);
+        if ($selectedUp3) {
+            $unmatchedQuery->whereIn('nama_asli', function ($sub) use ($selectedUp3) {
+                $sub->select('transaksi_upload_unmatched.nama_asli')
+                    ->from('transaksi_upload_unmatched')
+                    ->join('transaksi_uploads', 'transaksi_uploads.id', '=', 'transaksi_upload_unmatched.transaksi_upload_id')
+                    ->where('transaksi_uploads.up3', $selectedUp3);
+            });
+        }
+        $unmatchedList = $unmatchedQuery->orderByDesc('jumlah_baris_total')->get();
+
         return view('transaksi.upload', [
             'riwayat' => $riwayat,
             'urutan' => $urutan,
-            'aliasList' => SpkluAlias::with('spklu')->latest()->get(),
-            'spkluList' => Spklu::aktif()->orderBy('nama')->get(),
-
-            'unmatchedList' => TransaksiUnmatchedName::whereNotIn('nama_asli', $namaSudahDialias)
-                ->orderByDesc('jumlah_baris_total')
+            'selectedUp3' => $selectedUp3,
+            'aliasList' => SpkluAlias::with('spklu')
+                ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
+                ->latest()
                 ->get(),
+            'spkluList' => Spklu::aktif()
+                ->when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))
+                ->orderBy('nama')
+                ->get(),
+            'unmatchedList' => $unmatchedList,
         ]);
     }
 
@@ -468,11 +500,14 @@ class TransaksiController extends Controller
         $ukuranBytes = $uploadedFile->getSize();
         $extension = strtolower($uploadedFile->getClientOriginalExtension());
 
+        $selectedUp3 = $request->get('up3') ?? session('active_up3') ?? $request->user()?->up3 ?? 'UP3 Bogor';
+
         $uploadLog = TransaksiUpload::create([
             'nama_file' => $namaFileAsli,
             'ukuran_bytes' => $ukuranBytes,
             'status' => 'diproses',
             'diupload_oleh' => $request->user()->id,
+            'up3' => $selectedUp3,
         ]);
 
         if (! $this->simpanFileMentah($uploadedFile, $uploadLog)) {

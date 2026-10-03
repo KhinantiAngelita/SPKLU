@@ -13,7 +13,16 @@ class ProyeksiEnergiController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->proyeksiService->siapkanDataProyeksi();
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
+        $data = $this->proyeksiService->siapkanDataProyeksi($selectedUp3);
 
         return view('transaksi.proyeksi', [
             'asumsiTeks' => $data['asumsi_teks'],
@@ -24,6 +33,7 @@ class ProyeksiEnergiController extends Controller
             'periods' => $data['periods'],
             'hasDbData' => $data['has_db_data'],
             'periodsJson' => json_encode($data['periods']),
+            'selectedUp3' => $selectedUp3,
         ]);
     }
 }

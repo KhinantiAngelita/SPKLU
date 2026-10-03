@@ -54,6 +54,52 @@ class UlpMappingSeeder extends Seeder
             ['up3' => 'UP3 Karawang', 'nama_singkat' => 'Krw Kota', 'nama_penuh' => 'Karawang Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Kota Padat'],
             ['up3' => 'UP3 Karawang', 'nama_singkat' => 'Kosambi', 'nama_penuh' => 'Kosambi', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
             ['up3' => 'UP3 Karawang', 'nama_singkat' => 'Rengasdengklok', 'nama_penuh' => 'Rengasdengklok', 'jarak_ideal_km' => 4.5, 'kategori_area' => 'Luar Kota'],
+
+            // UP3 Cianjur
+            ['up3' => 'UP3 Cianjur', 'nama_singkat' => 'Cjr Kota', 'nama_penuh' => 'Cianjur Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Cianjur', 'nama_singkat' => 'Cipanas', 'nama_penuh' => 'Cipanas', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Cianjur', 'nama_singkat' => 'Tanggeung', 'nama_penuh' => 'Tanggeung', 'jarak_ideal_km' => 5.0, 'kategori_area' => 'Luar Kota'],
+            ['up3' => 'UP3 Cianjur', 'nama_singkat' => 'Sukanagara', 'nama_penuh' => 'Sukanagara', 'jarak_ideal_km' => 5.0, 'kategori_area' => 'Luar Kota'],
+
+            // UP3 Sukabumi
+            ['up3' => 'UP3 Sukabumi', 'nama_singkat' => 'Skb Kota', 'nama_penuh' => 'Sukabumi Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Sukabumi', 'nama_singkat' => 'Cibadak', 'nama_penuh' => 'Cibadak', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Sukabumi', 'nama_singkat' => 'Cicurug', 'nama_penuh' => 'Cicurug', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Sukabumi', 'nama_singkat' => 'Palabuhanratu', 'nama_penuh' => 'Palabuhanratu', 'jarak_ideal_km' => 5.0, 'kategori_area' => 'Luar Kota'],
+
+            // UP3 Gunung Putri
+            ['up3' => 'UP3 Gunung Putri', 'nama_singkat' => 'Gn Putri', 'nama_penuh' => 'Gunung Putri', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Gunung Putri', 'nama_singkat' => 'Cileungsi', 'nama_penuh' => 'Cileungsi', 'jarak_ideal_km' => 3.0, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Gunung Putri', 'nama_singkat' => 'Citeureup', 'nama_penuh' => 'Citeureup', 'jarak_ideal_km' => 3.0, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Cikarang
+            ['up3' => 'UP3 Cikarang', 'nama_singkat' => 'Ckr Kota', 'nama_penuh' => 'Cikarang Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Cikarang', 'nama_singkat' => 'Cibitung', 'nama_penuh' => 'Cibitung', 'jarak_ideal_km' => 3.0, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Cikarang', 'nama_singkat' => 'Tambun', 'nama_penuh' => 'Tambun', 'jarak_ideal_km' => 3.0, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Garut
+            ['up3' => 'UP3 Garut', 'nama_singkat' => 'Grt Kota', 'nama_penuh' => 'Garut Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Garut', 'nama_singkat' => 'Leles', 'nama_penuh' => 'Leles', 'jarak_ideal_km' => 4.0, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Tasikmalaya
+            ['up3' => 'UP3 Tasikmalaya', 'nama_singkat' => 'Tsk Kota', 'nama_penuh' => 'Tasikmalaya Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Tasikmalaya', 'nama_singkat' => 'Singaparna', 'nama_penuh' => 'Singaparna', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Purwakarta
+            ['up3' => 'UP3 Purwakarta', 'nama_singkat' => 'Pwk Kota', 'nama_penuh' => 'Purwakarta Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Purwakarta', 'nama_singkat' => 'Subang', 'nama_penuh' => 'Subang', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Sumedang
+            ['up3' => 'UP3 Sumedang', 'nama_singkat' => 'Smd Kota', 'nama_penuh' => 'Sumedang Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Sumedang', 'nama_singkat' => 'Majalengka', 'nama_penuh' => 'Majalengka', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Indramayu
+            ['up3' => 'UP3 Indramayu', 'nama_singkat' => 'Idm Kota', 'nama_penuh' => 'Indramayu Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Indramayu', 'nama_singkat' => 'Jatibarang', 'nama_penuh' => 'Jatibarang', 'jarak_ideal_km' => 3.5, 'kategori_area' => 'Dalam Kota'],
+
+            // UP3 Majalaya
+            ['up3' => 'UP3 Majalaya', 'nama_singkat' => 'Mjl Kota', 'nama_penuh' => 'Majalaya Kota', 'jarak_ideal_km' => 2.5, 'kategori_area' => 'Dalam Kota'],
+            ['up3' => 'UP3 Majalaya', 'nama_singkat' => 'Baleendah', 'nama_penuh' => 'Baleendah', 'jarak_ideal_km' => 3.0, 'kategori_area' => 'Dalam Kota'],
         ];
 
         foreach ($data as $row) {

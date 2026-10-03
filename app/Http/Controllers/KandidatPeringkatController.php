@@ -20,10 +20,19 @@ class KandidatPeringkatController extends Controller
 
     public function index2(Request $request)
     {
+        $user = $request->user();
+        $userUp3 = $user?->up3;
+        $isSuperAdmin = $user?->role === 'super_admin';
+
+        $selectedUp3 = $request->get('up3');
+        if (! $isSuperAdmin && $userUp3) {
+            $selectedUp3 = $userUp3;
+        }
+
         $search = $request->input('search');
         $ulpId = $request->input('ulp_mapping_id');
 
-        $terurut = $this->peringkatService->rank($search, $ulpId);
+        $terurut = $this->peringkatService->rank($search, $ulpId, $selectedUp3);
         $ringkasan = $this->peringkatService->ringkasan($terurut);
 
         $perPage = 15;
@@ -37,7 +46,7 @@ class KandidatPeringkatController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        $daftarUlp = UlpMapping::orderBy('nama_penuh')->get();
+        $daftarUlp = UlpMapping::when($selectedUp3, fn ($q) => $q->where('up3', $selectedUp3))->orderBy('nama_penuh')->get();
 
         return view('kandidat-prioritas.index2', [
             'kandidatList' => $kandidatList,

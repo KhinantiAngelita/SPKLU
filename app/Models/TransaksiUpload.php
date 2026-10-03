@@ -8,7 +8,7 @@ class TransaksiUpload extends Model
 {
     protected $fillable = [
         'nama_file', 'path_file', 'ukuran_bytes', 'total_baris_diproses', 'total_rekap_tersimpan',
-        'jumlah_nama_tidak_cocok', 'status', 'pesan_error', 'diupload_oleh',
+        'jumlah_nama_tidak_cocok', 'status', 'pesan_error', 'diupload_oleh', 'up3',
     ];
 
     public function diuploadOleh()

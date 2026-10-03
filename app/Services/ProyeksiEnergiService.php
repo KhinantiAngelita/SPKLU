@@ -115,7 +115,7 @@ class ProyeksiEnergiService
      *
      * @return Collection<string, float> Key: 'YYYY-MM', Value: total energi_kwh
      */
-    public function ambilRealisasiBulananDb(): Collection
+    public function ambilRealisasiBulananDb(?string $selectedUp3 = null): Collection
     {
         if (! Schema::hasTable('transaksis')) {
             return collect();
@@ -127,6 +127,7 @@ class ProyeksiEnergiService
             : "DATE_FORMAT(tanggal, '%Y-%m')";
 
         return Transaksi::query()
+            ->when($selectedUp3, fn ($q) => $q->whereHas('spklu', fn ($s) => $s->where('up3', $selectedUp3)))
             ->selectRaw("{$formatSql} as periode, SUM(energi_kwh) as total_kwh")
             ->whereNotNull('tanggal')
             ->groupBy('periode')
@@ -153,9 +154,9 @@ class ProyeksiEnergiService
      *
      * @return array<string, mixed>
      */
-    public function siapkanDataProyeksi(): array
+    public function siapkanDataProyeksi(?string $selectedUp3 = null): array
     {
-        $realisasiDb = $this->ambilRealisasiBulananDb();
+        $realisasiDb = $this->ambilRealisasiBulananDb($selectedUp3);
         $tarifPerKwh = $this->ambilTarifListrik();
         $benchmark = self::BENCHMARK_DATA;
 
