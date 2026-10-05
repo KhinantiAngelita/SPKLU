@@ -36,8 +36,8 @@
     .trx-chart-canvas-wrap {
         position: relative;
         width: 100%;
-        height: 300px;
-        min-height: 240px;
+        height: 350px;
+        min-height: 280px;
     }
     .trx-chart-canvas-wrap canvas {
         width: 100% !important;
@@ -480,9 +480,9 @@
                             </span>
                         </td>
                         @foreach ($dataBulanan as $nilai)
-                            <td>{{ $nilai != 0 ? number_format($nilai, 0, ',', '.') : '—' }}</td>
+                            <td>{{ ($nilai !== null && $nilai != 0) ? number_format($nilai, 0, ',', '.') : '—' }}</td>
                         @endforeach
-                        <td class="total-col">{{ number_format(array_sum($dataBulanan), 0, ',', '.') }}</td>
+                        <td class="total-col">{{ number_format(array_sum(array_filter($dataBulanan, fn ($v) => $v !== null)), 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="{{ count($bulanSingkatTerpilih) + 2 }}" style="text-align:center; color:#94a3b8;">Belum ada data transaksi.</td></tr>
@@ -627,8 +627,10 @@
         backgroundColor: paletWarnaTren[i % paletWarnaTren.length],
         tension: 0.3,
         fill: false,
-        pointRadius: 4,
+        pointRadius: 4.5,
+        pointHoverRadius: 7,
         borderWidth: 2.5,
+        spanGaps: false,
     }));
 
     const chartTrenTahunInstance = new Chart(document.getElementById('chart-tren-per-tahun'), {
@@ -638,21 +640,34 @@
             responsive: true,
             maintainAspectRatio: false,
             resizeDelay: 50,
+            layout: {
+                padding: {
+                    top: 32,
+                    right: 32,
+                    left: 14,
+                    bottom: 8,
+                }
+            },
             plugins: {
                 legend: { display: false },
                 datalabels: {
                     display: function(context) {
-                        return context.dataset.data[context.dataIndex] > 0;
+                        const val = context.dataset.data[context.dataIndex];
+                        return val !== null && val !== undefined && val > 0;
                     },
                     align: 'top',
                     anchor: 'end',
+                    offset: 6,
+                    clamp: true,
+                    clip: false,
                     font: {
-                        size: 10,
+                        size: 10.5,
                         weight: 'bold',
                         family: 'inherit'
                     },
                     color: '#334155',
                     formatter: function(value) {
+                        if (value === null || value === undefined) return '';
                         if (satuanAktif === 'rp') {
                             if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
                             if (value >= 1000) return (value / 1000).toFixed(0) + 'k';
@@ -668,9 +683,28 @@
                 },
             },
             scales: {
+                x: {
+                    offset: true,
+                    grid: {
+                        color: '#F1F5F9',
+                    },
+                    ticks: {
+                        font: { size: 11.5, weight: '600' },
+                        color: '#64748B',
+                    }
+                },
                 y: {
                     beginAtZero: true,
-                    ticks: { callback: v => new Intl.NumberFormat('id-ID').format(v) },
+                    grace: '18%',
+                    grid: {
+                        color: '#F1F5F9',
+                    },
+                    ticks: {
+                        callback: v => new Intl.NumberFormat('id-ID').format(v),
+                        font: { size: 11 },
+                        color: '#64748B',
+                        padding: 8,
+                    },
                 },
             },
         }

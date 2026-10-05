@@ -227,8 +227,19 @@ class TransaksiController extends Controller
                 ->groupBy('bulan')
                 ->pluck('total', 'bulan');
 
+            $maxBulanAdaData = $perBulan->isNotEmpty() ? $perBulan->keys()->max() : null;
+
             $hasil[$tahun] = collect(range($bulanAwal, $bulanAkhir))
-                ->map(fn ($b) => round((float) ($perBulan[$b] ?? 0), 2))
+                ->map(function ($b) use ($perBulan, $tahun, $maxBulanAdaData) {
+                    if (isset($perBulan[$b])) {
+                        return round((float) $perBulan[$b], 2);
+                    }
+                    if ($tahun >= now()->year && ($maxBulanAdaData === null || $b > $maxBulanAdaData)) {
+                        return null;
+                    }
+
+                    return 0;
+                })
                 ->values()
                 ->toArray();
         }
